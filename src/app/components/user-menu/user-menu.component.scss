@@ -1,0 +1,22 @@
+::ng-deep .p-avatar-image {
+    // @apply h-6 w-6;
+} 
+
+::ng-deep .p-menuitem-link {
+    @apply flex items-center justify-start gap-5 py-2 px-5;
+
+    .p-menuitem-text {
+        @apply mt-1;
+    }
+}
+
+::ng-deep .logout-option {
+    .p-menuitem-link {
+        .p-menuitem-icon {
+            @apply text-red-500;
+        }
+        .p-menuitem-text {
+            @apply text-red-500;
+        }
+    }
+}

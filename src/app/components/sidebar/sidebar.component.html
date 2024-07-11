@@ -1,0 +1,25 @@
+<div class="header">
+    <div class="logo w-full h-16 flex items-center justify-center border-0 border-b border-solid border-b-gray-200">
+        <span
+            class="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-500 via-gray-500 to-zinc-500 shadow-lg text-white flex items-center justify-center tracking-widest">
+            SA
+        </span>
+    </div>
+</div>
+<div class="list">
+    <ul class="p-0" [@listAnimation]>
+        @for (item of menuItems; track $index) {
+        <li id="menu-item"
+            class="flex items-center justify-start list-none gap-6 my-2 cursor-pointer py-2 mx-3.5 rounded-md min-h-9 max-h-9 min-w-12 pl-4 pr-3.5"
+            [ngClass]="[item?.isActive ? 'bg-[#E7EBED]' : 'hover:bg-[#E7EBED] hover:bg-opacity-70']" (click)="handleItemClick(item)"
+            [pTooltip]="item?.title">
+            <i class="{{item?.icon}} text-base" style="position: relative; display: flex; align-items: center; justify-content: center;"></i>
+            @if (sideBarOpened) {
+            <p class="m-0 text-xs tracking-wider" @titleAnimation>
+                {{item?.title}}
+            </p>
+            }
+        </li>
+        }
+    </ul>
+</div>

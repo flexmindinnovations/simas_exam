@@ -1,0 +1,21 @@
+<ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
+<div class="layout-container h-full w-full flex transition delay-500 duration-1000 ease-in-out lg:xl:grid"
+    [ngClass]="sideBarOpened ? ' lg:xl:grid-cols-[15%_1fr]' : 'lg:xl:grid-cols-[5%_1fr]'">
+    <div class="sidebar bg-[#F6F8F9] border-0 border-r border-solid border-gray-200">
+        @if (!isMobile) {
+        <app-sidebar></app-sidebar>
+        } @else {
+        <p-sidebar [(visible)]="sideBarOpened" (onHide)="handleSidebarOnHide()">
+            <app-sidebar></app-sidebar>
+        </p-sidebar>
+        }
+    </div>
+    <main class="bg-red-400 main-content w-full lg:xl:w-auto">
+        <header class="header bg-white px-3 border-0 border-b border-solid border-gray-200">
+            <app-header></app-header>
+        </header>
+        <div class="dynamic bg-white p-2">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>

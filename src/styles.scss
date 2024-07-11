@@ -1,1 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+    @tailwind components;
+    @tailwind utilities;
+}
+
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+
+.pi {
+    font-family: 'primeicons' !important;
+}
+
+@layer reset {
+
+    button,
+    input {
+        @apply px-2 py-2.5 text-xs min-w-20 rounded-lg;
+        box-shadow: none;
+
+        .p-button-label {
+            font-weight: normal;
+        }
+
+        &:disabled {
+            @apply cursor-not-allowed;
+        }
+    }
+
+    button {
+        @apply px-2 py-2.5 uppercase;
+        letter-spacing: 1px;
+
+        &.action {
+            @apply w-full;
+        }
+    }
+
+    input,
+    .p-inputwrapper,
+    .p-password {
+        @apply w-full;
+    }
+
+    p,
+    label {
+        @apply text-sm select-none;
+    }
+}
+
+html,
+body {
+    @apply m-0 p-0 overflow-hidden box-border;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    width: 100dvw;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+label {
+    // font-family: "Montserrat", sans-serif;
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+}

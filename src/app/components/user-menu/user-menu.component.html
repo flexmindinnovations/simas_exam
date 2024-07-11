@@ -1,0 +1,4 @@
+<p-menu #menu [model]="profileItems" [popup]="true" appendTo="body"></p-menu>
+<p-avatar (click)="menu.toggle($event)" icon="pi pi-user" styleClass="mr-2 
+cursor-pointer" image="https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp"
+    [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" shape="circle" />

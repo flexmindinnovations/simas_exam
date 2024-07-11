@@ -1,0 +1,22 @@
+.hide {
+    display: none;
+    transition: display .1s ease-in-out;
+}
+
+.show {
+    // display: block;
+    animation: showAnimator 0.3s ease-in-out;
+    animation-delay: 0.5s;
+    display: flex;
+}
+
+@keyframes showAnimator {
+    0% {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
