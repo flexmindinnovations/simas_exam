@@ -61,8 +61,8 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         const closeButtonEl = document.getElementsByClassName('p-message-close')[0] as HTMLButtonElement;
         if (closeButtonEl) {
-          // closeButtonEl.click();
-          // utils.messages.set([]);
+          closeButtonEl.click();
+          utils.messages.set([]);
         }
       }, utils.alertTimer);
     })
