@@ -186,12 +186,11 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit, AfterVi
   }
 
   handleOnCountryListChange(event: DropdownChangeEvent) {
-    console.log('event: ', event.value);
-
     const { countryId, countryName } = event?.value;
     this.stateList = [];
     this.cityList = [];
-    this.getStateList(countryId);
+    // this.getStateList(countryId);
+    this.getStateList(event?.value);
   }
 
   handleOnStateListChange(event: DropdownChangeEvent) {
@@ -203,7 +202,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit, AfterVi
       stateName,
       countryName
     } = event?.value;
-    this.getCityList(stateId);
+    // this.getCityList(stateId);
+    this.getCityList(event?.value);
   }
 
   handleOnCityListChange(event: DropdownChangeEvent) {
