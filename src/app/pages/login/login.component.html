@@ -11,8 +11,8 @@ before:opacity-75
 before:z-[-5]
 " [ngClass]="getBgImageClass()">
     <div class="overlay h-full w-full backdrop-blur-md flex items-center justify-center">
-        <div
-            class="card backdrop-blur-lg p-4 w-[90%] lg:xl:max-w-[27%] rounded-lg flex flex-col items-center justify-center"  [@fade]>
+        <div class="card backdrop-blur-lg p-4 w-[90%] lg:xl:max-w-[27%] rounded-lg flex flex-col items-center justify-center"
+            [@fade]>
             <div class="header flex flex-col items-center justify-start">
                 <h2 class="m-0 mb-2 text-4xl text-white">
                     Welcome!
@@ -25,22 +25,23 @@ before:z-[-5]
                 <form [formGroup]="formGroup" class="w-full">
                     <div class="form-group flex flex-col items-end justify-end gap-4">
                         <div class="flex flex-col items-start w-full gap-2">
-                            <label class="text-white" for="username">Username</label>
+                            <label class="text-white" for="userName">Username</label>
                             <span class="p-input-icon-right w-full">
                                 <i class="pi pi-user"></i>
-                                <input type="text" pInputText formControlName="username" />
+                                <input type="text" pInputText formControlName="userName" />
                             </span>
                         </div>
                         <div class="flex flex-col items-start w-full gap-2">
-                            <label class="text-white" for="password">Password</label>
-                            <p-password formControlName="password" [toggleMask]="true" />
+                            <label class="text-white" for="userPassword">Password</label>
+                            <p-password formControlName="userPassword" [toggleMask]="true" [feedback]="false" />
                         </div>
                         <div class="action w-full my-5 flex flex-col items-center justify-center gap-5">
                             <p-button label="Submit" styleClass="action" class="w-full" icon="pi pi-lock"
                                 [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isLoading"
                                 iconPos="right" (onClick)="handleSignIn()" />
                             @if (userType !== UserTypes.STUDENT) {
-                            <p-button label="Reset Password" [text]="true" (onClick)="handleResetPassword()" />
+                            <p-button [style]="{color: 'white'}" label="Reset Password" [text]="true"
+                                (onClick)="handleResetPassword()" />
                             }
                         </div>
                     </div>

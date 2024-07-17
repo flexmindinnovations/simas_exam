@@ -10,6 +10,7 @@
 }
 
 @import "primeng/resources/themes/lara-light-blue/theme.css";
+// @import "primeng/resources/themes/viva-light/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
@@ -22,7 +23,7 @@
 
     button,
     input {
-        @apply px-2 py-2.5 text-xs min-w-20 rounded-lg;
+        @apply px-2 py-2.5 text-xs min-w-20 rounded-md;
         box-shadow: none;
 
         .p-button-label {
@@ -34,13 +35,135 @@
         }
     }
 
+    .p-tooltip {
+        .p-tooltip-text {
+            @apply text-xs p-2;
+        }
+    }
+
+    p-dropdown {
+        box-shadow: none;
+        outline: none;
+
+        .p-inputtext {
+            @apply px-2 py-2 text-sm min-w-20 rounded-sm;
+            box-shadow: none;
+            outline: none;
+        }
+    }
+
+    p-messages {
+        .p-message {
+            @apply m-0 rounded-none;
+
+            .p-message-wrapper {
+                @apply py-1 flex items-center justify-between px-0 pr-3;
+
+                button {
+                    @apply min-w-4 w-10 flex items-center justify-center;
+                }
+            }
+        }
+    }
+
     button {
-        @apply px-2 py-2.5 uppercase;
+        @apply px-2 py-2 outline-none;
         letter-spacing: 1px;
+
+        &.p-button-icon-only {
+            @apply w-8 min-w-8 p-2 flex flex-row items-center justify-center;
+        }
 
         &.action {
             @apply w-full;
         }
+    }
+
+    p-fileupload {
+        .p-fileupload {
+            .p-fileupload-buttonbar {
+                @apply p-3;
+
+                .p-button {
+                    @apply w-full h-8 p-0;
+                }
+            }
+
+            .p-fileupload-empty {
+
+                &:first-child {
+                    @apply flex flex-col items-center justify-center;
+
+                    i {
+                        @apply text-center;
+                        padding: 5px !important;
+                    }
+
+                    p {
+                        margin: 0 !important;
+                    }
+                }
+            }
+
+            .p-fileupload-content {
+                @apply p-2;
+
+                h5 {
+                    @apply m-1;
+                }
+
+
+                &:first-child {
+                    padding: 10px 0 !important;
+                }
+
+                .card {
+                    @apply text-xs font-normal w-full;
+                    padding: 0 !important;
+
+                    span {
+                        @apply font-normal text-xs;
+                    }
+
+                    .p-badge {
+                        @apply flex items-center justify-center;
+                    }
+
+                    button {
+                        @apply w-full h-8 p-0;
+                    }
+                }
+            }
+        }
+    }
+
+    p-table {
+
+        .p-datatable-header {
+            @apply p-1;
+        }
+
+        table {
+            @apply block;
+
+            tr {
+                th {
+                    @apply text-sm font-semibold py-2;
+                }
+
+                td {
+                    @apply text-sm px-1 py-[3px];
+
+                    &.action-cell {
+                        @apply flex items-center justify-start;
+                    }
+                }
+            }
+        }
+    }
+
+    .p-sortable-column-icon {
+        @apply h-[10px] w-[10px];
     }
 
     input,
@@ -49,9 +172,80 @@
         @apply w-full;
     }
 
+    .p-paginator-rpp-options {
+        @apply w-auto h-10 text-xs shadow-none;
+    }
+
+    .p-paginator {
+        @apply flex items-center justify-center lg:xl:justify-end;
+        border: none;
+
+        p-dropdown {
+            @apply w-auto;
+        }
+
+        .p-paginator-pages {
+            @apply hidden lg:xl:flex;
+        }
+
+        button {
+            @apply p-1 h-10 w-auto lg:xl:w-10 rounded-full;
+
+            &.p-paginator-first {
+                @apply hidden lg:xl:flex;
+            }
+
+            &.p-paginator-last {
+                @apply hidden lg:xl:flex;
+            }
+
+            &.p-paginator-page {
+                @apply hidden lg:xl:flex;
+            }
+        }
+    }
+
     p,
     label {
         @apply text-sm select-none;
+    }
+
+    .alert-message {
+        .p-message {
+            .p-message-wrapper {
+                .p-message-icon {
+                    @apply hidden;
+                }
+
+                .p-message-detail {
+                    @apply text-sm;
+                }
+            }
+
+            button {
+                @apply hover:bg-none;
+                .p-icon-wrapper {
+                    @apply h-4 w-4 text-white;
+
+                    svg {
+                        @apply h-3 w-3;
+                    }
+                }
+            }
+        }
+    }
+
+    .p-calendar {
+        @apply w-full;
+    }
+
+    .p-inputtextarea {
+        @apply w-full text-xs;
+        box-shadow: none;
+    }
+
+    .p-inputswitch {
+        box-shadow: none;
     }
 }
 
@@ -62,6 +256,35 @@ body {
     height: 100dvh;
     width: 100vw;
     width: 100dvw;
+}
+
+.p-inputwrapper-focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.p-message-success {
+    @apply bg-green-700 text-white border-0 border-l-8 border-solid border-green-800;
+}
+
+.p-message-error {
+    @apply bg-rose-700 text-white border-0 border-l-8 border-solid border-rose-800;
+}
+
+.p-dropdown-items-wrapper {
+    p-dropdownitem {
+        li {
+            @apply px-2.5 py-2.5 text-sm;
+        }
+    }
+}
+
+.p-message .p-message-close:hover {
+    background: transparent;
+}
+
+.message-container {
+    z-index: 1103;
 }
 
 h1,
@@ -76,4 +299,15 @@ label {
     // font-family: "Montserrat", sans-serif;
     font-family: "Roboto", sans-serif;
     font-optical-sizing: auto;
+}
+
+
+.data-filter {
+    .p-icon-field {
+        @apply min-w-60 flex items-center justify-start gap-4;
+
+        .p-inputicon {
+            @apply flex-auto;
+        }
+    }
 }

@@ -1,4 +1,11 @@
 <ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
+<!-- <ng-http-loader [spinner]="spinkit.skWave"></ng-http-loader> -->
+@if (messages.length) {
+<div class="message-container absolute top-0 w-full h-12">
+    <p-messages styleClass="alert-message" [showTransitionOptions]="'500ms'" [hideTransitionOptions]="'500ms'"
+        [ngStyle]="{'z-index': '10000111'}" [(value)]="messages" [enableService]="false" />
+</div>
+}
 <div class="layout-container h-full w-full flex transition delay-500 duration-1000 ease-in-out lg:xl:grid"
     [ngClass]="sideBarOpened ? ' lg:xl:grid-cols-[15%_1fr]' : 'lg:xl:grid-cols-[5%_1fr]'">
     <div class="sidebar bg-[#F6F8F9] border-0 border-r border-solid border-gray-200">
@@ -14,8 +21,8 @@
         <header class="header bg-white px-3 border-0 border-b border-solid border-gray-200">
             <app-header></app-header>
         </header>
-        <div class="dynamic bg-white p-2">
-            <router-outlet></router-outlet>
+        <div class="dynamic bg-white px-0 lg:xl:px-4 py-4" [@routeAnimations]="prepareRoute(outlet)">
+            <router-outlet #outlet="outlet"></router-outlet>
         </div>
     </main>
 </div>

@@ -7,7 +7,7 @@
         display: grid;
         grid-template-areas: 'header dynamic';
         grid-template-columns: 1fr;
-        grid-template-rows: minmax(40px, 64px) 1fr;
+        grid-template-rows: 64px 1fr;
 
         .header {
             grid-area: 1;

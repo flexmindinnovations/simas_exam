@@ -1,0 +1,103 @@
+<div class="dialog-body">
+    <div class="form-container p-4 overflow-auto max-h-[73dvh]">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
+                    (uploadFile)="handleUploadFile($event)"></image-picker>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseName">Franchise Name</label>
+                <input type="text" pInputText formControlName="franchiseName" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="ownerName">Owner Name</label>
+                <input type="text" pInputText formControlName="ownerName" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="emailId">Email</label>
+                <input type="text" pInputText formControlName="emailId" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="mobileNo">Mobile Number</label>
+                <input type="text" pInputText formControlName="mobileNo" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseePassword">Franchise Password</label>
+                <p-password formControlName="franchiseePassword" [feedback]="false" [toggleMask]="true" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="userPassword">User Password</label>
+                <p-password formControlName="userPassword" [feedback]="false" [toggleMask]="true" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="joiningDate">Joining Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="joiningDate" formControlName="joiningDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="startDate">Start Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="startDate" formControlName="startDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="endDate">End Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="endDate" formControlName="endDate" [showButtonBar]="true"
+                    [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="countryId">Country</label>
+                <p-dropdown appendTo="body" formControlName="countryId" [options]="countryList"
+                    ariaLabelledBy="countryId" [loading]="countryListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnCountryListChange($event)" optionValue="countryId" optionLabel="countryName"
+                    [filter]="true" filterBy="countryName" [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="stateId">State</label>
+                <p-dropdown appendTo="body" [loading]="stateListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    formControlName="stateId" [options]="stateList" (onChange)="handleOnStateListChange($event)"
+                    optionLabel="stateName" optionValue="stateId" [filter]="true" filterBy="stateName"
+                    [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="cityId">City</label>
+                <p-dropdown appendTo="body" [loading]="cityListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    formControlName="cityId" [options]="cityList" (onChange)="handleOnCityListChange($event)"
+                    optionLabel="cityName" optionValue="cityId" [filter]="true" filterBy="cityName"
+                    [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="address1">Address</label>
+                <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
+            </textarea>
+            </div>
+        </form>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary" [loading]="isSubmitActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

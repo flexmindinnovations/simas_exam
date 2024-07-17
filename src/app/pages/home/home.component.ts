@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { UserType } from '../../enums/user-types';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-home',

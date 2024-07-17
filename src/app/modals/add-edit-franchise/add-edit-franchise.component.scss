@@ -1,0 +1,20 @@
+::ng-deep .add-edit-dialog {
+    .p-dialog-header {
+        @apply px-4 pt-4 pb-2;
+
+        .p-dialog-title {
+            @apply text-base font-semibold;
+        }
+
+        .p-dialog-header-icons {
+
+            button {
+                @apply min-w-6 w-8;
+            }
+        }
+    }
+
+    .p-dialog-content {
+        @apply p-0;
+    }
+}

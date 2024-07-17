@@ -21,6 +21,8 @@
     "@angular/router": "^18.0.0",
     "@ngx-loading-bar/core": "^6.0.2",
     "@ngx-loading-bar/router": "^6.0.2",
+    "@types/crypto-js": "^4.2.2",
+    "crypto-js": "^4.2.0",
     "ng-http-loader": "^16.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.3",

@@ -4,3 +4,10 @@ export enum UserType {
     FACULTY = 'faculty',
     INSTRUCTOR = 'instructor'
 }
+
+export const UserTypeObj = {
+    admin: 'admin',
+    student: 'student',
+    faculty: 'faculty',
+    instructor: 'instructor'
+}

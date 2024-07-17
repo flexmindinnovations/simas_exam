@@ -1,8 +1,12 @@
 <nav class="flex items-center justify-between w-full h-full px-5">
     <div class="left">
-        <i class="pi select-none cursor-pointer"
-        [ngClass]="sideBarOpened ? 'pi-align-right' : 'pi-align-left'"
-        (click)="toggleSidebar()"></i>
+        <i class="pi select-none cursor-pointer" [ngClass]="sideBarOpened ? 'pi-align-right' : 'pi-align-left'"
+            (click)="toggleSidebar()"></i>
+    </div>
+    <div class="center flex items-center justify-center">
+        <p class="p-0 m-0 font-semibold">
+            {{activeItem?.title}}
+        </p>
     </div>
     <div class="right">
         <app-user-menu></app-user-menu>

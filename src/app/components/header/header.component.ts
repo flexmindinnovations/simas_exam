@@ -15,11 +15,16 @@ export class HeaderComponent {
   sideBarOpened: boolean = true;
   isMobile: boolean = false;
   isTablet: boolean = false;
+  activeItem: any = {};
 
   constructor() {
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
+    })
+
+    effect(() => {
+      this.activeItem = utils.activeItem();
     })
 
     effect(() => {
