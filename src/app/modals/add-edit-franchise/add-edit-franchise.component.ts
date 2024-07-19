@@ -176,8 +176,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
       cityId: ['', [Validators.required]],
       address1: ['', [Validators.required]],
       joiningDate: ['', [Validators.required]],
-      mobileNo: ['', [Validators.required]],
-      status: ['', [Validators.required]],
+      mobileNo: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{10}$'), Validators.maxLength(14)]],
+      status: !['', [Validators.required]],
       startDate: ['', [Validators.required]],
       endDate: ['', [Validators.required]]
     });
@@ -205,7 +205,7 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   }
 
   handleOnCityListChange(event: DropdownChangeEvent) {
-    console.log('event?.value: ', event?.value);
+    // console.log('event?.value: ', event?.value);
   }
 
   handleDialogCancel() {
