@@ -12,15 +12,23 @@ export interface Franchise {
     updateFranchise: string,
     deleteFranchise: string,
     uploadAndUpdateFranchise: string,
-    getFranchiseType: string,
+    franchiseTypeList: string,
+    franchiseListByType: string,
 }
 
 export interface Instructor {
-    getInstructorList: string,
-    getInstructorById: string,
+    instructorList: string,
+    instructorById: string,
     savetInstructor: string,
     updateInstructor: string,
     deleteInstructor: string,
+}
+export interface Student {
+    studentList: string,
+    studentById: string,
+    savetStudent: string,
+    updateStudent: string,
+    deleteStudent: string,
 }
 
 export interface RoleList {

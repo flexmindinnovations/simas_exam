@@ -13,6 +13,7 @@ export type SeverityType = 'success' | 'info' | 'warn' | 'secondary' | 'contrast
 const DOMAIN = 'Simas Academy';
 export const utils = {
     domain: DOMAIN,
+    apiConfigData: {},
     userType: signal<string>('admin'),
     addButtonTitle: signal<string>(''),
     menuItemClick: signal<any>({}),
@@ -30,6 +31,9 @@ export const utils = {
     messages: signal<Message[]>([]),
     activeItem: signal<any>({}),
     pageTitle: signal<string>(DOMAIN),
+    getRandomNumber(min = 100001, max = 5000001) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
     encryptString(data: string, secret: string): string {
         return crypto.AES.encrypt(data, secret).toString();
     },

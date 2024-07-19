@@ -1,5 +1,16 @@
 ::ng-deep .data-grid-container {
     @apply w-[100dvw] lg:xl:w-full;
 
+    .search-input {
+        @apply flex items-center justify-start gap-4 rounded-md;
+        border: 1px solid #d1d5db;
+
+        input {
+            margin-left: 30px;
+            border: none;
+        }
+    }
+
     .p-datatable-sm {}
+
 }

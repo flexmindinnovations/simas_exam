@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterContentInit, AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, effect, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -27,7 +27,7 @@ import { forkJoin } from 'rxjs';
   templateUrl: './add-edit-franchise.component.html',
   styleUrl: './add-edit-franchise.component.scss'
 })
-export class AddEditFranchiseComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
 
   dialogData: any;
   formGroup!: FormGroup;
@@ -43,6 +43,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit, AfterVi
   cityListLoading: boolean = false;
   selectedFiles: File[] = [];
   selectedImagePath: string = '';
+
+  inputId = new Date().getTime() + utils.getRandomNumber();
 
   constructor(
     private dialogRef: DynamicDialogRef,
@@ -84,10 +86,6 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit, AfterVi
       this.formGroup.patchValue(formData);
       this.cdref.detectChanges();
     }
-  }
-
-  ngAfterViewChecked(): void {
-
   }
 
   handleUploadFile(event: any) {
@@ -228,7 +226,6 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit, AfterVi
     const startDate = new Date(formVal['startDate']).toISOString();
     const endDate = new Date(formVal['endDate']).toISOString();
     const status = formVal['status'];
-    console.log({ joiningDate, startDate, endDate });
     formVal['franchiseTypeId'] = 1;
     formVal['joiningDate'] = joiningDate;
     formVal['startDate'] = startDate;

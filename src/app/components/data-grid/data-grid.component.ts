@@ -57,7 +57,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     private dialogService: DialogService
   ) {
     this.getScreenSize();
-
     effect(() => {
       this.isMobile = utils.isMobile();
     })

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Instructor } from '../../interfaces/api-call';
+import { Instructor as InstructorApiPath } from '../../interfaces/api-call';
 import { AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class InstructorService {
 
-  private instructorPath: Instructor;
+  private instructorPath: InstructorApiPath;
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient
@@ -18,11 +18,16 @@ export class InstructorService {
   }
 
   getInstructorList(): Observable<any> {
-    return this.http.get(this.instructorPath.getInstructorList);
+    return this.http.get(this.instructorPath.instructorList);
   }
 
-  saveInstructor(payload: Instructor): Observable<Instructor> {
-    return this.http.post<Instructor>(this.instructorPath.savetInstructor, payload);
+  getInstructorById(instructorId: number): Observable<any> {
+    const getByIdApiPath = this.instructorPath.instructorById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', instructorId.toString());
+    return this.http.get(getByIdApiPath);
+  }
+
+  saveInstructor(payload: any): Observable<any> {
+    return this.http.post<any>(this.instructorPath.savetInstructor, payload);
   }
 
   updateInstructor(payload: any): Observable<any> {

@@ -1,3 +1,4 @@
+import { utils } from './utils';
 import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
@@ -10,6 +11,7 @@ import { NgHttpLoaderModule } from 'ng-http-loader';
 
 export function configFactory(configService: AppConfigService): Promise<any> {
   return new Promise((resolve, reject) => {
+    utils.apiConfigData = configService.apiConfigData;
     resolve(configService.loadStaticSettings());
   })
 }

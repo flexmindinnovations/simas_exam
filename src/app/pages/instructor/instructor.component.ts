@@ -48,7 +48,7 @@ export class InstructorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    utils.addButtonTitle.set('Franchise');
+    utils.addButtonTitle.set('Instructor');
     this.setTableColumns();
     this.getInstructorList();
   }
@@ -56,22 +56,22 @@ export class InstructorComponent implements OnInit {
   setTableColumns() {
     this.colDefs = [
       {
-        field: 'franchiseId',
+        field: 'instructorId',
         header: 'Id',
         width: '5%',
-        styleClass: 'franchiseId'
+        styleClass: 'instructorId'
+      },
+      {
+        field: 'instructorName',
+        header: 'Instructor Name',
+        width: '20%',
+        styleClass: 'instructorName'
       },
       {
         field: 'franchiseName',
         header: 'Franchise Name',
         width: '20%',
         styleClass: 'franchiseName'
-      },
-      {
-        field: 'ownerName',
-        header: 'Owner Name',
-        width: '20%',
-        styleClass: 'ownerName'
       },
       {
         field: 'mobileNo',
@@ -86,16 +86,28 @@ export class InstructorComponent implements OnInit {
         styleClass: 'emailId'
       },
       {
-        field: 'joiningDate',
-        header: 'Joining Date',
+        field: 'franchiseTypeName',
+        header: 'Franchise Type',
         width: '10%',
-        styleClass: 'joiningDate'
+        styleClass: 'franchiseTypeName'
       },
       {
         field: 'startDate',
         header: 'Start Date',
         width: '10%',
         styleClass: 'startDate'
+      },
+      {
+        field: 'endDate',
+        header: 'End Date',
+        width: '10%',
+        styleClass: 'endDate'
+      },
+      {
+        field: 'status',
+        header: 'Status',
+        width: '10%',
+        styleClass: 'status'
       },
       {
         field: 'action',
@@ -130,7 +142,7 @@ export class InstructorComponent implements OnInit {
       data: this.isEditMode ? this.filterInstructorInfo(data?.franchiseId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '95%' : '90%',
+      height: utils.isMobile() ? '95%' : '87%',
       width: utils.isMobile() ? '95%' : '42%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Instructor details' : 'Add New Instructor',

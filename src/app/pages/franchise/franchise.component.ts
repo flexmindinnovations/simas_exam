@@ -135,7 +135,7 @@ export class FranchiseComponent implements OnInit {
       data: this.isEditMode ? this.filterFranchiseInfo(data?.franchiseId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '95%' : '90%',
+      height: utils.isMobile() ? '95%' : '87%',
       width: utils.isMobile() ? '95%' : '42%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Franchise' : 'Add New Franchise',

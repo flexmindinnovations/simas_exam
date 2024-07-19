@@ -102,7 +102,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
     const formVal = this.formGroup.getRawValue();
     this.authService.createAuthToken(formVal).subscribe({
       next: (response: any) => {
-        console.log('response: ', response);
         if (response) {
           const { token, roleId, roleName } = response;
           const userRoleEnc = utils.encryptString(roleName, token);

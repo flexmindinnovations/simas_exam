@@ -1,1 +1,5 @@
-<app-data-grid [colDefs]="cols" [dataSource]="products" (onRowDelete)="handleRowDelet($event)"></app-data-grid>
+<div class="franchise-container page-container">
+    <div class="table-container">
+        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource" (onAddAction)="handleAddEditAction()"></app-data-grid>
+    </div>
+</div>

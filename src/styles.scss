@@ -224,6 +224,7 @@
 
             button {
                 @apply hover:bg-none;
+
                 .p-icon-wrapper {
                     @apply h-4 w-4 text-white;
 
@@ -297,7 +298,7 @@ p,
 span,
 label {
     // font-family: "Montserrat", sans-serif;
-    font-family: "Roboto", sans-serif;
+    font-family: "Lato", sans-serif;
     font-optical-sizing: auto;
 }
 
@@ -309,5 +310,38 @@ label {
         .p-inputicon {
             @apply flex-auto;
         }
+    }
+}
+
+.form-container {
+    @apply p-4 overflow-auto max-h-[70dvh];
+}
+
+.page-container {
+    @apply h-full w-full;
+
+    .table-container {
+        @apply h-full w-full;
+    }
+}
+
+.add-edit-dialog {
+    .p-dialog-header {
+        @apply px-4 pt-4 pb-2;
+
+        .p-dialog-title {
+            @apply text-base font-semibold;
+        }
+
+        .p-dialog-header-icons {
+
+            button {
+                @apply min-w-6 w-8;
+            }
+        }
+    }
+
+    .p-dialog-content {
+        @apply p-0;
     }
 }

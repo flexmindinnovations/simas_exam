@@ -1,11 +1,14 @@
-@if (dataSource.length) {
+@if (!isLoading) {
 <div class="data-grid-container flex flex-col items-start justify-start gap-5 w-full"
     [ngClass]="isMobile ? 'px-5' : ''">
     <div class="grid-options flex items-center justify-between w-full">
         <div class="search w-[50%
             ] lg:xl:w-[30%]">
-            <input pInputText placeholder="Enter text to filter grid" type="text" (input)="onFilterValueChange($event)"
-                [(ngModel)]="searchValue" />
+            <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
+                <i class="pi pi-search"></i>
+                <input type="text" class="w-96" pInputText placeholder="Enter text to filter grid" type="text"
+                    (input)="onFilterValueChange($event)" [(ngModel)]="searchValue" pInputText />
+            </span>
         </div>
         <div class="options">
             <p-button [label]="addButtonTitle" icon="pi 
@@ -13,17 +16,22 @@
                 [pTooltip]="'Add ' + addButtonTitle" (onClick)="handleAddAction()"></p-button>
         </div>
     </div>
-    <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner" (onRowSelect)="handleRowSelect($event)"
-        [resizableColumns]="true" #dataGrid [columns]="colDefs" [value]="dataSource" [rows]="15" [paginator]="true"
-        [scrollable]="true" [autoLayout]="true" [globalFilterFields]="getGlobalFilters()" sortMode="multiple"
-        [scrollHeight]="scrollHeight" [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
+    <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
+        (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
+        [value]="dataSource" [rows]="15" [paginator]="true" [scrollable]="true" [autoLayout]="true"
+        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight"
+        [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
         [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'min-height': scrollHeight}">
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th *ngFor="let col of columns" [pSortableColumn]="col.field"
                     [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
+                    @if(col.field === 'action') {
+                    <div class="w-full flex items-center justify-center gap-1">
+                        {{col.header}}
+                    </div>
+                    } @else {
                     {{ col.header }}
-                    @if (col.field !== 'action') {
                     <p-sortIcon [field]="col.field" />
                     }
                 </th>
@@ -34,12 +42,14 @@
                 @for (item of colDefs; track $index) {
                 <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
                     @if(item.field === 'action') {
-                    <p-button [text]="true" icon="pi 
-                                pi-pen-to-square" [loading]="rowData.isEditActionLoading"
-                        loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit" (onClick)="handleEditOperation(rowData)" />
-                    <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                        loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData)" pTooltip="Delete"
-                        [text]="true" icon="pi pi-trash" />
+                    <div class="w-full flex items-center justify-center gap-1">
+                        <p-button [text]="true" icon="pi 
+                        pi-pen-to-square" [loading]="rowData.isEditActionLoading" loadingIcon="pi pi-spin pi-spinner"
+                            pTooltip="Edit" (onClick)="handleEditOperation(rowData)" />
+                        <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
+                loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData)" pTooltip="Delete"
+                [text]="true" icon="pi pi-trash" /> -->
+                    </div>
                     } @else {
                     {{rowData[item.field]}}
                     }
@@ -49,15 +59,26 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="5" class="text-center py-3">No records found.</td>
+                <td [attr.colspan]="colDefs.length" [attr.rowspan]="1" class="text-center py-3">No records found.</td>
             </tr>
         </ng-template>
     </p-table>
 </div>
 } @else {
 <div class="w-full h-full flex items-center justify-center">
+    @if (isLoading) {
+    <div class="select-none flex items-end justify-center">
+        <i class="pi pi-spin pi-spinner text-xs space-x-1 mb-1 mr-1"></i> Loading
+        <div class="mb-1 flex gap-1 ml-1">
+            <span class='h-[3px] w-[3px] bg-black rounded-full animate-bounce [animation-delay:-0.3s]'></span>
+            <span class='h-[3px] w-[3px] bg-black rounded-full animate-bounce [animation-delay:-0.15s]'></span>
+            <span class='h-[3px] w-[3px] bg-black rounded-full animate-bounce [animation-delay:-0.30s]'></span>
+        </div>
+    </div>
+    } @else {
     <p class="select-none opacity-80">
         No records found
     </p>
+    }
 </div>
 }

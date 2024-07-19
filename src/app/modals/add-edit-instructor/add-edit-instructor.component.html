@@ -1,1 +1,78 @@
-<p>add-edit-instructor works!</p>
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="instructorName">Instructor Name</label>
+                <input type="text" pInputText formControlName="instructorName" />
+            </div>
+
+            <!-- <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseTypeId">Franchise Type</label>
+                <p-dropdown [options]="franchiseTypeList" appendTo="body" formControlName="franchiseTypeId"
+                    [loading]="isFranchiseTypeNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnFranchiseTypeNameChange($event)" optionLabel="franchiseTypeId"
+                    [filter]="true"></p-dropdown>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseName">Franchise Name</label>
+                <p-dropdown [options]="franchiseListByType" appendTo="body" formControlName="franchiseName"
+                    [loading]="isFranchiseNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnFranchiseNameChange($event)" optionLabel="franchiseTypeId"
+                    [filter]="true"></p-dropdown>
+            </div> -->
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="emailId">Email</label>
+                <input type="email" pInputText formControlName="emailId" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="mobileNo">Mobile Number</label>
+                <input type="tel" pInputText formControlName="mobileNo" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="instructorPassword">Instructor Password</label>
+                <p-password formControlName="instructorPassword" [feedback]="false" [toggleMask]="true" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="userPassword">User Password</label>
+                <p-password formControlName="userPassword" [feedback]="false" [toggleMask]="true" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="startDate">Start Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="startDate" formControlName="startDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="endDate">End Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="endDate" formControlName="endDate" [showButtonBar]="true"
+                    [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="address1">Address</label>
+                <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
+            </textarea>
+            </div>
+        </form>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary" [loading]="isSubmitActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>
