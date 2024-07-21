@@ -112,7 +112,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
           this.router.navigateByUrl('app');
           setTimeout(() => {
             utils.setMessages('You\'re successfully logged in.', 'success');
-          }, 1500);
+          }, 1000);
         }
       },
       error: (error: HttpErrorResponse) => {

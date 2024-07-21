@@ -3,10 +3,10 @@
 } 
 
 ::ng-deep .p-menuitem-link {
-    @apply flex items-center justify-start gap-5 py-2 px-5;
+    @apply flex items-center justify-start gap-5 py-3 px-5;
 
     .p-menuitem-text {
-        @apply mt-1;
+        // @apply mt-1;
     }
 }
 

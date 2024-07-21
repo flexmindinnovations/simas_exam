@@ -10,6 +10,10 @@
     display: flex;
 }
 
+.list {
+    max-height: calc(100dvh - 100px);
+}
+
 @keyframes showAnimator {
     0% {
         opacity: 0;

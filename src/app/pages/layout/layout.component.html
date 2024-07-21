@@ -8,7 +8,7 @@
 }
 <div class="layout-container h-full w-full flex transition delay-500 duration-1000 ease-in-out lg:xl:grid"
     [ngClass]="sideBarOpened ? ' lg:xl:grid-cols-[15%_1fr]' : 'lg:xl:grid-cols-[5%_1fr]'">
-    <div class="sidebar bg-[#f5f5fb] border-0 border-r border-solid border-gray-200">
+    <div class="sidebar border-0 border-r border-solid border-gray-200">
         @if (!isMobile) {
         <app-sidebar></app-sidebar>
         } @else {

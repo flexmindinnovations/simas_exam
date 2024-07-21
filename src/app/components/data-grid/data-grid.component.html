@@ -1,27 +1,34 @@
 @if (!isLoading) {
 <div class="data-grid-container flex flex-col items-start justify-start gap-5 w-full"
-    [ngClass]="isMobile ? 'px-5' : ''">
-    <div class="grid-options flex items-center justify-between w-full">
-        <div class="search w-[50%
-            ] lg:xl:w-[30%]">
+    [ngClass]="isMobile ? 'px-3' : ''">
+    <div
+        class="grid-options flex flex-col lg:xl:flex-row items-start justify-end lg:xl:justify-between w-full gap-4 lg:xl:gap-0">
+        <div class="search w-[100%] lg:xl:w-[30%]">
             <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
                 <i class="pi pi-search"></i>
                 <input type="text" class="w-96" pInputText placeholder="Enter text to filter grid" type="text"
                     (input)="onFilterValueChange($event)" [(ngModel)]="searchValue" pInputText />
             </span>
         </div>
-        <div class="options">
-            <p-button [label]="addButtonTitle" icon="pi 
+        <div class="options flex items-center justify-end w-full">
+            <p-button [ngClass]="dataSource?.length ? 'mr-4' : ''" [label]="addButtonTitle" icon="pi 
                 pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
                 [pTooltip]="'Add ' + addButtonTitle" (onClick)="handleAddAction()"></p-button>
+            <div class="export-option">
+                @if (dataSource?.length) {
+                <p-button icon="pi pi-download" [loading]="isExportActionLoading" loadingIcon="pi pi-spin pi-spinner"
+                    pTooltip="Export table data" (onClick)="downloadOptionsMenu.toggle($event)" />
+                <p-tieredMenu #downloadOptionsMenu [popup]="true" [model]="downloadOptions" />
+                }
+            </div>
         </div>
     </div>
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
         (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
         [value]="dataSource" [rows]="15" [paginator]="true" [scrollable]="true" [autoLayout]="true"
-        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight"
+        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
         [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
-        [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'min-height': scrollHeight}">
+        [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : screenHeight - paginatorPosition[1]  + 'px'}">
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th *ngFor="let col of columns" [pSortableColumn]="col.field"

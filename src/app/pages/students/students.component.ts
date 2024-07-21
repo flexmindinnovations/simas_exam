@@ -80,7 +80,7 @@ export class StudentsComponent implements OnInit {
       data: this.isEditMode ? this.filterFranchiseInfo(data?.franchiseId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '95%' : '87%',
+      height: utils.isMobile() ? '88%' : '87%',
       width: utils.isMobile() ? '95%' : '42%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Student' : 'Add New Student',

@@ -11,7 +11,6 @@ import { NgHttpLoaderModule } from 'ng-http-loader';
 
 export function configFactory(configService: AppConfigService): Promise<any> {
   return new Promise((resolve, reject) => {
-    utils.apiConfigData = configService.apiConfigData;
     resolve(configService.loadStaticSettings());
   })
 }

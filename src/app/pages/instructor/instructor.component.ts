@@ -142,8 +142,8 @@ export class InstructorComponent implements OnInit {
       data: this.isEditMode ? this.filterInstructorInfo(data?.franchiseId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '95%' : '87%',
-      width: utils.isMobile() ? '95%' : '42%',
+      height: utils.isMobile() ? '82%' : '82%',
+      width: utils.isMobile() ? '95%' : '40%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Instructor details' : 'Add New Instructor',
     });

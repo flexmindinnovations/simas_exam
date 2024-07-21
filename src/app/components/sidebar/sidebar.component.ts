@@ -1,4 +1,4 @@
-import { Component, effect, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem } from '../../interfaces/menu-item';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -35,7 +35,7 @@ import { TooltipModule } from 'primeng/tooltip';
     ])
   ]
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   menuItems: Array<MenuItem> = MENU_ITEMS;
   sideBarOpened: boolean = true;
 
@@ -93,5 +93,9 @@ export class SidebarComponent implements OnInit {
       utils.setPageTitle(this.menuItems[currentItemIndex].title);
       this.menuItems[currentItemIndex].isActive = true;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
   }
 }
