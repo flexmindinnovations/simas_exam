@@ -1,3 +1,6 @@
+@import "../../../constants.scss";
+
+
 .layout-container {
     // display: grid;
     // grid-template-areas: 'sidebar main';
@@ -7,7 +10,7 @@
         display: grid;
         grid-template-areas: 'header dynamic';
         grid-template-columns: 1fr;
-        grid-template-rows: 64px 1fr;
+        grid-template-rows: $headerHeight 1fr;
 
         .header {
             grid-area: 1;

@@ -21,7 +21,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule, InputTextModule, DropdownModule, CalendarModule, InputSwitchModule, InputTextareaModule, PasswordModule, ImagePickerComponent],
   templateUrl: './add-edit-instructor.component.html',
-  styleUrl: './add-edit-instructor.component.scss'
+  styleUrl: './add-edit-instructor.component.scss',
+  animations: [utils.heightIncrease]
 })
 export class AddEditInstructorComponent implements OnInit, AfterViewInit {
 
@@ -81,7 +82,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
       // franchiseTypeId: ['', [Validators.required]],
       // franchiseId: ['', [Validators.required]],
       address1: ['', [Validators.required]],
-      mobileNo: ['', [Validators.required]],
+      mobileNo: ['', [Validators.required, Validators.pattern(utils.mobileValidationPattern), Validators.maxLength(14)]],
       status: ['', [Validators.required]],
       startDate: ['', [Validators.required]],
       endDate: ['', [Validators.required]]

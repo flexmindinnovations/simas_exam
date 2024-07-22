@@ -1,3 +1,5 @@
+@import '../../../constants.scss';
+
 .hide {
     display: none;
     transition: display .1s ease-in-out;
@@ -8,6 +10,13 @@
     animation: showAnimator 0.3s ease-in-out;
     animation-delay: 0.5s;
     display: flex;
+}
+
+
+.header {
+    .logo {
+        height: $headerHeight;
+    }
 }
 
 .list {

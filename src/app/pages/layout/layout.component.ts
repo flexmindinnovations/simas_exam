@@ -27,7 +27,7 @@ import { UserType, UserTypeObj } from '../../enums/user-types';
   animations: [utils.slideInRouter]
 })
 export class LayoutComponent implements OnInit, AfterViewInit {
-  sideBarOpened: boolean = true;
+  sideBarOpened: boolean = false;
   mobileMode: string = 'portrait';
   tabletMode: string = 'portrait';
   isMobile: boolean = false;

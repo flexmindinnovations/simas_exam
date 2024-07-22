@@ -1,12 +1,12 @@
 <div class="header">
-    <div class="logo w-full h-16 flex items-center justify-center border-0 border-b border-solid border-b-gray-200">
+    <div class="logo w-full flex items-center justify-center border-0 border-b border-solid border-b-gray-200">
         <span
-            class="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-500 via-gray-500 to-zinc-500 shadow-lg text-white flex items-center justify-center tracking-widest">
+            class="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-500 via-gray-500 to-zinc-500 shadow-lg text-white flex items-center justify-center tracking-widest font-bold">
             SA
         </span>
     </div>
 </div>
-<div class="list overflow-auto">
+<div class="list overflow-hidden overflow-y-auto">
     <ul class="p-0" [@listAnimation]>
         @for (item of menuItems; track $index) {
         <li id="menu-item"

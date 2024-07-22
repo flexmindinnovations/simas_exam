@@ -1,4 +1,4 @@
-import { trigger, transition, style, animate, query, group } from "@angular/animations";
+import { trigger, transition, style, animate, query, group, state } from "@angular/animations";
 import { formatDate } from "@angular/common";
 import { signal } from "@angular/core";
 import { Message } from "primeng/api";
@@ -13,6 +13,8 @@ export type SeverityType = 'success' | 'info' | 'warn' | 'secondary' | 'contrast
 const DOMAIN = 'Simas Academy';
 export const utils = {
     domain: DOMAIN,
+    headerHeight: '50px',
+    mobileValidationPattern: '^\\+?[0-9]{10}$',
     apiConfigData: {},
     userType: signal<string>('admin'),
     addButtonTitle: signal<string>(''),
@@ -46,9 +48,9 @@ export const utils = {
     setMessages(message: string, severity: SeverityType) {
         this.messages.update((val: Message[]) => [...val, { detail: message, severity }])
     },
-    alertTimer: 3500,
+    alertTimer: 4000,
     isPageRefreshed: signal<boolean>(false),
-    sideBarOpened: signal<boolean>(true),
+    sideBarOpened: signal<boolean>(false),
     filterDataByColumns(columns: any[], dataList: any[]): any[] {
         return dataList.map(data => {
             const filteredData: any = {};
@@ -77,5 +79,36 @@ export const utils = {
             style({ opacity: 0 }),
             animate('50ms ease-out', style({ opacity: 0 }))
         ])
-    ])
+    ]),
+    heightIncrease: [
+        trigger('grow', [
+            state(
+                "void",
+                style({
+                    height: "0px",
+                    overflow: "hidden"
+                })
+            ),
+            //element being added into DOM.
+            transition(":enter", [
+                animate(
+                    "500ms ease-in-out",
+                    style({
+                        height: "*",
+                        overflow: "hidden"
+                    })
+                )
+            ]),
+            //element being removed from DOM.
+            transition(":leave", [
+                animate(
+                    "500ms ease-in-out",
+                    style({
+                        height: "0px",
+                        overflow: "hidden"
+                    })
+                )
+            ])
+        ])
+    ]
 }

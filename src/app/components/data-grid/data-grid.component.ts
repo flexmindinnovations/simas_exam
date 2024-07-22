@@ -41,7 +41,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
-  paginatorPosition = [125, 220];
+  paginatorPosition = [125, 190];
   isMobile: boolean = false;
   dialogRef: DynamicDialogRef | undefined;
 

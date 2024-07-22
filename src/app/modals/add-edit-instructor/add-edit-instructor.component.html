@@ -1,4 +1,4 @@
-<div class="dialog-body">
+<div class="dialog-body" [@grow]>
     <div class="form-container">
         <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
 
@@ -9,7 +9,15 @@
 
             <div class="flex flex-col items-start w-full gap-2">
                 <label for="instructorName">Instructor Name</label>
-                <input type="text" pInputText formControlName="instructorName" />
+                <input type="text" pInputText formControlName="instructorName"
+                    [ngClass]="formGroup.get('instructorName')?.touched || formGroup.get('instructorName')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                @if (formGroup.get('instructorName')?.touched || formGroup.get('instructorName')?.dirty) {
+                @if (formGroup.get('instructorName')?.errors?.['required']) {
+                <span class="p-error">
+                    This field is required
+                </span>
+                }
+                }
             </div>
 
             <!-- <div class="flex flex-col items-start w-full gap-2">
@@ -30,12 +38,37 @@
 
             <div class="flex flex-col items-start w-full gap-2">
                 <label for="emailId">Email</label>
-                <input type="email" pInputText formControlName="emailId" />
+                <input type="email" pInputText formControlName="emailId"
+                    [ngClass]="formGroup.get('emailId')?.touched || formGroup.get('emailId')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                @if (formGroup.get('emailId')?.touched || formGroup.get('emailId')?.dirty) {
+                @if (formGroup.get('emailId')?.errors?.['required']) {
+                <span class="p-error">
+                    Email is required
+                </span>
+                }
+                @if (formGroup.get('emailId')?.errors?.['email']) {
+                <span class="p-error">
+                    Email is not valid.
+                </span>
+                }
+                }
             </div>
 
             <div class="flex flex-col items-start w-full gap-2">
                 <label for="mobileNo">Mobile Number</label>
-                <input type="tel" pInputText formControlName="mobileNo" />
+                <input type="number" pKeyFilter="int" pInputText formControlName="mobileNo" maxlength="10" [ngClass]="formGroup.get('mobileNo')?.touched || formGroup.get('mobileNo')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+
+                @if (formGroup.get('mobileNo')?.touched || formGroup.get('mobileNo')?.dirty) {
+                @if (formGroup.get('mobileNo')?.errors?.['required']) {
+                <span class="p-error">
+                    This field is required
+                </span>
+                } @else if (formGroup.get('mobileNo')?.errors?.['pattern']) {
+                <span class="p-error">
+                    Mobile number is not valid
+                </span>
+                }
+                }
             </div>
 
             <div class="flex flex-col items-start w-full gap-2">
