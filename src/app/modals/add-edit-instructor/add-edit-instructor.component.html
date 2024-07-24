@@ -1,0 +1,111 @@
+<div class="dialog-body" [@grow]>
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="instructorName">Instructor Name</label>
+                <input type="text" pInputText formControlName="instructorName"
+                    [ngClass]="formGroup.get('instructorName')?.touched || formGroup.get('instructorName')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                @if (formGroup.get('instructorName')?.touched || formGroup.get('instructorName')?.dirty) {
+                @if (formGroup.get('instructorName')?.errors?.['required']) {
+                <span class="p-error">
+                    This field is required
+                </span>
+                }
+                }
+            </div>
+
+            <!-- <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseTypeId">Franchise Type</label>
+                <p-dropdown [options]="franchiseTypeList" appendTo="body" formControlName="franchiseTypeId"
+                    [loading]="isFranchiseTypeNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnFranchiseTypeNameChange($event)" optionLabel="franchiseTypeId"
+                    [filter]="true"></p-dropdown>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseName">Franchise Name</label>
+                <p-dropdown [options]="franchiseListByType" appendTo="body" formControlName="franchiseName"
+                    [loading]="isFranchiseNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnFranchiseNameChange($event)" optionLabel="franchiseTypeId"
+                    [filter]="true"></p-dropdown>
+            </div> -->
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="emailId">Email</label>
+                <input type="email" pInputText formControlName="emailId"
+                    [ngClass]="formGroup.get('emailId')?.touched || formGroup.get('emailId')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                @if (formGroup.get('emailId')?.touched || formGroup.get('emailId')?.dirty) {
+                @if (formGroup.get('emailId')?.errors?.['required']) {
+                <span class="p-error">
+                    Email is required
+                </span>
+                }
+                @if (formGroup.get('emailId')?.errors?.['email']) {
+                <span class="p-error">
+                    Email is not valid.
+                </span>
+                }
+                }
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="mobileNo">Mobile Number</label>
+                <input type="number" pKeyFilter="int" pInputText formControlName="mobileNo" maxlength="10" [ngClass]="formGroup.get('mobileNo')?.touched || formGroup.get('mobileNo')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+
+                @if (formGroup.get('mobileNo')?.touched || formGroup.get('mobileNo')?.dirty) {
+                @if (formGroup.get('mobileNo')?.errors?.['required']) {
+                <span class="p-error">
+                    This field is required
+                </span>
+                } @else if (formGroup.get('mobileNo')?.errors?.['pattern']) {
+                <span class="p-error">
+                    Mobile number is not valid
+                </span>
+                }
+                }
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="instructorPassword">Instructor Password</label>
+                <p-password formControlName="instructorPassword" [feedback]="false" [toggleMask]="true" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="userPassword">User Password</label>
+                <p-password formControlName="userPassword" [feedback]="false" [toggleMask]="true" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="startDate">Start Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="startDate" formControlName="startDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="endDate">End Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="endDate" formControlName="endDate" [showButtonBar]="true"
+                    [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="address1">Address</label>
+                <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
+            </textarea>
+            </div>
+        </form>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary" [loading]="isSubmitActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

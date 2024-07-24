@@ -1,0 +1,19 @@
+::ng-deep .delete-confirm-dialog {
+    .p-dialog-header {
+        @apply pt-4 pb-0;
+        .p-dialog-title {
+            @apply text-base font-semibold;
+        }
+
+        .p-dialog-header-icons {
+
+            button {
+                @apply min-w-6 w-8;
+            }
+        }
+    }
+
+    .p-dialog-content {
+        @apply pt-0 pb-4;
+    }
+}

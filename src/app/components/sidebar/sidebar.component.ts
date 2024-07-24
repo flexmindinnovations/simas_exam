@@ -1,4 +1,4 @@
-import { Component, effect, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { MenuItem } from '../../interfaces/menu-item';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -35,7 +35,7 @@ import { TooltipModule } from 'primeng/tooltip';
     ])
   ]
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   menuItems: Array<MenuItem> = MENU_ITEMS;
   sideBarOpened: boolean = true;
 
@@ -47,10 +47,13 @@ export class SidebarComponent implements OnInit {
       if (isPageRefreshed) {
         const currentUrl = this.router.url.split('/')[2];
         if (currentUrl) this.setActiveMenuItem(currentUrl);
-        else
+        else {
+          utils.activeItem.set(this.menuItems[0]);
+          utils.setPageTitle(this.menuItems[0].title);
           this.menuItems[0].isActive = true;
+        }
       }
-    })
+    }, { allowSignalWrites: true })
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
@@ -70,6 +73,8 @@ export class SidebarComponent implements OnInit {
   }
 
   handleItemClick(item: MenuItem) {
+    utils.activeItem.set(item);
+    utils.setPageTitle(item?.title);
     this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
     if (item?.id === 1) {
       this.router.navigateByUrl('app');
@@ -84,7 +89,13 @@ export class SidebarComponent implements OnInit {
     this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
     const currentItemIndex = this.menuItems.findIndex((item) => item?.route === route);
     if (currentItemIndex > -1) {
+      utils.activeItem.set(this.menuItems[currentItemIndex]);
+      utils.setPageTitle(this.menuItems[currentItemIndex].title);
       this.menuItems[currentItemIndex].isActive = true;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
   }
 }

@@ -1,0 +1,13 @@
+<div class="dialog-body">
+    <div class="message">
+        <p>
+            Are you sure you want to continue with the delete operation? This will permanently remove the record.
+        </p>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3">
+        <p-button label="Cancel" severity="secondary" [disabled]="isDeleteActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button label="Delete" (onClick)="handleDeleteAction()" icon="pi pi-trash" severity="danger"
+            [loading]="isDeleteActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

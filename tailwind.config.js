@@ -3,6 +3,7 @@
 // pg: persian_green
 // sb: sandy_brown
 // bs: burnt_sienna
+// br: blue-ribbon
 
 module.exports = {
   content: [
@@ -82,7 +83,21 @@ module.exports = {
           700: '#f1a896',
           800: '#f5c5b9',
           900: '#fae2dc'
-        }
+        },
+        'br': {
+          '50': '#eff4ff',
+          '100': '#dbe6fe',
+          '200': '#bfd3fe',
+          '300': '#93b4fd',
+          '400': '#6090fa',
+          '500': '#3b76f6',
+          '600': '#2563eb',
+          '700': '#1d58d8',
+          '800': '#1e4baf',
+          '900': '#1e408a',
+          '950': '#172a54',
+        },
+
       }
     },
   },

@@ -23,63 +23,78 @@ export const layoutRoutes: Routes = [
         children: [
             {
                 path: '',
-                component: HomeComponent
+                component: HomeComponent,
+                data: { animation: 'HomeComponent' }
             },
             {
                 path: 'exam',
-                component: ExamComponent
+                component: ExamComponent,
+                data: { animation: 'ExamComponent' }
             },
             {
                 path: 'exam-type',
-                component: ExamTypeComponent
+                component: ExamTypeComponent,
+                data: { animation: 'ExamTypeComponent' }
             },
             {
                 path: 'exam-report',
-                component: ExamReportComponent
+                component: ExamReportComponent,
+                data: { animation: 'ExamReportComponent' }
             },
             {
                 path: 'franchise',
-                component: FranchiseComponent
+                component: FranchiseComponent,
+                data: { animation: 'FranchiseComponent' }
             },
             {
                 path: 'instructor',
-                component: InstructorComponent
+                component: InstructorComponent,
+                data: { animation: 'InstructorComponent' }
             },
             {
                 path: 'activation',
-                component: ActivationComponent
+                component: ActivationComponent,
+                data: { animation: 'ActivationComponent' }
             },
             {
                 path: 'students',
-                component: StudentsComponent
+                component: StudentsComponent,
+                data: { animation: 'StudentsComponent' }
             },
             {
                 path: 'level',
-                component: LevelComponent
+                component: LevelComponent,
+                data: { animation: 'LevelComponent' }
             },
             {
                 path: 'lesson',
-                component: LessonComponent
+                component: LessonComponent,
+                data: { animation: 'LessonComponent' }
             },
             {
                 path: 'question-paper',
-                component: QuestionPaperComponent
+                component: QuestionPaperComponent,
+                data: { animation: 'QuestionPaperComponent' }
             },
             {
                 path: 'question-bank',
-                component: QuestionBankComponent
+                component: QuestionBankComponent,
+                data: { animation: 'QuestionBankComponent' }
             },
             {
                 path: 'student-exam',
-                component: StudentExamComponent
+                component: StudentExamComponent,
+                data: { animation: 'StudentExamComponent' }
             },
             {
                 path: 'reports',
-                component: ReportsComponent
+                component: ReportsComponent,
+                data: { animation: 'ReportsComponent' }
             },
             {
                 path: '**',
-                component: NotFoundComponent
+                component: NotFoundComponent,
+                data: { animation: 'NotFoundComponent' }
             }
         ]
     }

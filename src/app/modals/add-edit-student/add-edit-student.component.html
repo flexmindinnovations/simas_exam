@@ -1,0 +1,107 @@
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
+                    (uploadFile)="handleUploadFile($event)"></image-picker>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label>First Name</label>
+                <input type="text" class="form-control" pInputText maxlength="100" formControlName="studentFirstName"
+                    name="studentFirstName" required />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label>Last Name</label>
+                <input type="text" class="form-control" pInputText maxlength="100" formControlName="studentLastName"
+                    name="studentLastName" required />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="emailId">Email</label>
+                <input type="email" pInputText formControlName="emailId" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="mobileNo">Mobile Number</label>
+                <input type="text" pInputText formControlName="mobileNo" maxlength="12"
+                    (keypress)="isNumberKey($event)" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="dob">Date Of Birth</label>
+                <p-calendar appendTo="body" ariaLabelledBy="dob" formControlName="dob" [showButtonBar]="true"
+                    [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd-mm-yy" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="standard">Standard</label>
+                <input type="text" class="form-control" pInputText maxlength="100" formControlName="standard"
+                    name="standard" required />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="schoolName">School Name</label>
+                <input type="text" class="form-control" pInputText maxlength="100" formControlName="schoolName"
+                    name="schoolName" required />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="levelName">Level</label>
+                <p-dropdown [options]="levelList" appendTo="body" placeholder="Select" name="levelName"
+                    formControlName="levelName" ariaLabelledBy="countryId" [loading]="levelListLoading"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnLevelChange($event)" optionValue="countryId"
+                    optionLabel="countryName" [filter]="true" filterBy="countryName" [showClear]="false"></p-dropdown>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseTypeName">Franchise Type Name</label>
+                <p-dropdown [options]="levelList" appendTo="body" placeholder="Select" name="franchiseTypeName"
+                    formControlName="franchiseTypeName" ariaLabelledBy="franchiseTypeName"
+                    [loading]="franchiseTypeNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnFranchiseTypeNameChange($event)" optionValue="countryId"
+                    optionLabel="franchiseTypeName" [filter]="true" filterBy="franchiseTypeName"
+                    [showClear]="false"></p-dropdown>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseName">Franchise Name</label>
+                <p-dropdown [options]="levelList" appendTo="body" placeholder="Select" name="franchiseName"
+                    formControlName="franchiseName" ariaLabelledBy="franchiseName" [loading]="franchiseNameListLoading"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnFranchiseNameChange($event)"
+                    optionValue="countryId" optionLabel="franchiseName" [filter]="true" filterBy="franchiseName"
+                    [showClear]="false"></p-dropdown>
+            </div>
+
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="instructorName">Instructor Name</label>
+                <p-dropdown appendTo="body" formControlName="instructorName" [options]="instructorList"
+                    ariaLabelledBy="instructorName" [loading]="instructorListLoading" placeholder="Select"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnInstructorNameChange($event)"
+                    optionValue="countryId" optionLabel="instructorName" [filter]="true" filterBy="instructorName"
+                    [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="address1">Address</label>
+                <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
+            </textarea>
+            </div>
+        </form>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary" [loading]="isSubmitActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

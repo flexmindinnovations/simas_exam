@@ -1,0 +1,145 @@
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
+                    (uploadFile)="handleUploadFile($event)"></image-picker>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseName">Franchise Name</label>
+                <input type="text" pInputText formControlName="franchiseName" />
+                <div *ngIf="formGroup.get('franchiseName')?.invalid && (formGroup.get('franchiseName')?.dirty || formGroup.get('franchiseName')?.touched)">
+                    <small *ngIf="formGroup.get('franchiseName')?.errors?.['required']" class="p-error">Franchise Name is required.</small>
+                </div>
+            </div>
+            
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="ownerName">Owner Name</label>
+                <input type="text" pInputText formControlName="ownerName" />
+                <div *ngIf="formGroup.get('ownerName')?.invalid && (formGroup.get('ownerName')?.dirty || formGroup.get('ownerName')?.touched)">
+                    <small *ngIf="formGroup.get('ownerName')?.errors?.['required']" class="p-error">Owner Name is required.</small>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="emailId">Email</label>
+                <input type="text" pInputText formControlName="emailId" />
+                <div *ngIf="formGroup.get('emailId')?.invalid && (formGroup.get('emailId')?.dirty || formGroup.get('emailId')?.touched)">
+                    <small *ngIf="formGroup.get('emailId')?.errors?.['required']" class="p-error">Email is required.</small>
+                    <small *ngIf="formGroup.get('emailId')?.errors?.['email']" class="p-error">Email is not valid.</small>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="mobileNo">Mobile Number</label>
+                <input type="text" maxlength="14" pInputText formControlName="mobileNo" />
+                <div *ngIf="formGroup.get('mobileNo')?.invalid && (formGroup.get('mobileNo')?.dirty || formGroup.get('mobileNo')?.touched)">
+                    <small *ngIf="formGroup.get('mobileNo')?.errors?.['required']" class="p-error">Mobile Number is required.</small>
+                    <small *ngIf="formGroup.get('mobileNo')?.errors?.['pattern']" class="p-error">Mobile Number is not valid.</small>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="franchiseePassword">Franchise Password</label>
+                <p-password formControlName="franchiseePassword" [feedback]="false" [toggleMask]="true" />
+                <div *ngIf="formGroup.get('franchiseePassword')?.invalid && (formGroup.get('franchiseePassword')?.dirty || formGroup.get('franchiseePassword')?.touched)">
+                    <small *ngIf="formGroup.get('franchiseePassword')?.errors?.['required']" class="p-error">Franchise Password is required.</small>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="userPassword">User Password</label>
+                <p-password formControlName="userPassword" [feedback]="false" [toggleMask]="true" />
+                <div *ngIf="formGroup.get('userPassword')?.invalid && (formGroup.get('userPassword')?.dirty || formGroup.get('userPassword')?.touched)">
+                    <small *ngIf="formGroup.get('userPassword')?.errors?.['required']" class="p-error">User Password is required.</small>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="joiningDate">Joining Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="joiningDate" formControlName="joiningDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+                <div *ngIf="formGroup.get('joiningDate')?.invalid && (formGroup.get('joiningDate')?.dirty || formGroup.get('joiningDate')?.touched)">
+                     <small *ngIf="formGroup.get('joiningDate')?.errors?.['required']" class="p-error">Joining Date is required.</small>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="startDate">Start Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="startDate" formControlName="startDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+                    <div *ngIf="formGroup.get('startDate')?.invalid && (formGroup.get('startDate')?.dirty || formGroup.get('startDate')?.touched)">
+                        <small *ngIf="formGroup.get('startDate')?.errors?.['required']" class="p-error">Start Date is required.</small>
+                   </div>
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="endDate">End Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="endDate" formControlName="endDate" [showButtonBar]="true"
+                    [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd-mm-yy" />
+                    <div *ngIf="formGroup.get('endDate')?.invalid && (formGroup.get('endDate')?.dirty || formGroup.get('endDate')?.touched)">
+                        <small *ngIf="formGroup.get('endDate')?.errors?.['required']" class="p-error">End Date is required.</small>
+                   </div>    
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="countryId">Country</label>
+                <p-dropdown appendTo="body" formControlName="countryId" [options]="countryList"
+                    ariaLabelledBy="countryId" [loading]="countryListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnCountryListChange($event)" optionValue="countryId" optionLabel="countryName"
+                    [filter]="true" filterBy="countryName" [showClear]="false" />
+                    <div *ngIf="formGroup.get('countryId')?.invalid && (formGroup.get('countryId')?.dirty || formGroup.get('countryId')?.touched)">
+                        <small *ngIf="formGroup.get('countryId')?.errors?.['required']" class="p-error">Country is required.</small>
+                    </div>    
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="stateId">State</label>
+                <p-dropdown appendTo="body" [loading]="stateListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    formControlName="stateId" [options]="stateList" (onChange)="handleOnStateListChange($event)"
+                    optionLabel="stateName" optionValue="stateId" [filter]="true" filterBy="stateName"
+                    [showClear]="false" />
+                    <div *ngIf="formGroup.get('stateId')?.invalid && (formGroup.get('stateId')?.dirty || formGroup.get('stateId')?.touched)">
+                        <small *ngIf="formGroup.get('stateId')?.errors?.['required']" class="p-error">State is required.</small>
+                    </div>   
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2">
+                <label for="cityId">City</label>
+                <p-dropdown appendTo="body" [loading]="cityListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    formControlName="cityId" [options]="cityList" (onChange)="handleOnCityListChange($event)"
+                    optionLabel="cityName" optionValue="cityId" [filter]="true" filterBy="cityName"
+                    [showClear]="false" />
+                    <div *ngIf="formGroup.get('cityId')?.invalid && (formGroup.get('cityId')?.dirty || formGroup.get('cityId')?.touched)">
+                        <small *ngIf="formGroup.get('cityId')?.errors?.['required']" class="p-error">City is required.</small>
+                    </div>  
+            </div>
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="address1">Address</label>
+                <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
+            </textarea>
+            <div *ngIf="formGroup.get('address1')?.invalid && (formGroup.get('address1')?.dirty || formGroup.get('address1')?.touched)">
+                <small *ngIf="formGroup.get('address1')?.errors?.['required']" class="p-error">Address is required.</small>
+            </div>
+            </div>
+        </form>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()" [disabled]="formGroup.invalid" 
+            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary" [loading]="isSubmitActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>
