@@ -3,6 +3,7 @@ import { formatDate } from "@angular/common";
 import { signal } from "@angular/core";
 import { Message } from "primeng/api";
 import crypto from 'crypto-js';
+import { AbstractControl, FormArray, FormGroup, ValidatorFn } from "@angular/forms";
 
 export interface TableDeleteAction {
     isDeleteActionFired: boolean;
@@ -30,7 +31,7 @@ export const utils = {
     countryData: signal<any>({}),
     stateData: signal<any>({}),
     cityData: signal<any>({}),
-    messages: signal<Message[]>([]),
+    messages: signal<Message[]>([], ),
     activeItem: signal<any>({}),
     pageTitle: signal<string>(DOMAIN),
     getRandomNumber(min = 100001, max = 5000001) {
@@ -45,10 +46,16 @@ export const utils = {
     setPageTitle(title: string) {
         this.pageTitle.set(this.domain + ` | ${title ? title : this.activeItem()}`);
     },
-    setMessages(message: string, severity: SeverityType) {
-        this.messages.update((val: Message[]) => [...val, { detail: message, severity }])
-    },
     alertTimer: 4000,
+    setMessages(message: string, severity: SeverityType) {
+        this.messages.update(val => [...val, { detail: message, severity }]);
+    },
+    clearMessage(index: number = -1) {
+        this.messages.update((messages: any[]) => {
+            if (index === 0 || index > -1) return messages.filter((_, i) => i !== index);
+            else return [];
+        })
+    },
     isPageRefreshed: signal<boolean>(false),
     sideBarOpened: signal<boolean>(false),
     filterDataByColumns(columns: any[], dataList: any[]): any[] {
@@ -69,6 +76,31 @@ export const utils = {
             });
             return filteredData;
         });
+    },
+    rangeValidator(min: number, max: number): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: any } | null => {
+            const value = control.value;
+            if (value < min || value > max) {
+                return { rangeError: true };
+            }
+            return null;
+        }
+    },
+    getInvalidControls(form: FormGroup | FormArray): any {
+        const invalidControls: any[] = [];
+        const recursiveFunc = (form: FormGroup | FormArray) => {
+            Object.keys(form.controls).forEach(field => {
+                const control = form.get(field);
+
+                if (control instanceof FormGroup || control instanceof FormArray) {
+                    recursiveFunc(control);
+                } else if (control && control.invalid) {
+                    invalidControls.push({ control: control, name: field });
+                }
+            });
+        };
+        recursiveFunc(form);
+        return invalidControls;
     },
     slideInRouter: trigger('routeAnimations', [
         transition(':enter', [

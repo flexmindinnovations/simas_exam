@@ -11,9 +11,6 @@
             </span>
         </div>
         <div class="options flex items-center justify-end w-full">
-            <p-button [ngClass]="dataSource?.length ? 'mr-4' : ''" [label]="addButtonTitle" icon="pi 
-                pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                [pTooltip]="'Add ' + addButtonTitle" (onClick)="handleAddAction()"></p-button>
             <div class="export-option">
                 @if (dataSource?.length) {
                 <p-button icon="pi pi-download" [loading]="isExportActionLoading" loadingIcon="pi pi-spin pi-spinner"
@@ -21,6 +18,9 @@
                 <p-tieredMenu #downloadOptionsMenu [popup]="true" [model]="downloadOptions" />
                 }
             </div>
+            <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
+            pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
+            [pTooltip]="'Add ' + addButtonTitle" (onClick)="handleAddAction()"></p-button>
         </div>
     </div>
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"

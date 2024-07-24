@@ -1,0 +1,95 @@
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+
+            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="levelName">Level Name</label>
+                <input type="text"
+                    [ngClass]="formGroup.get('levelName')?.touched || formGroup.get('levelName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    pInputText formControlName="levelName" />
+                <div
+                    *ngIf="formGroup.get('levelName')?.invalid && (formGroup.get('levelName')?.dirty || formGroup.get('levelName')?.touched)">
+                    <small *ngIf="formGroup.get('levelName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="noOfQuestions">Total Questions</label>
+                <input type="number" pK
+                    [ngClass]="formGroup.get('noOfQuestions')?.touched || formGroup.get('noOfQuestions')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    pKeyFilter="int" pInputText formControlName="noOfQuestions" />
+                <div
+                    *ngIf="formGroup.get('noOfQuestions')?.invalid && (formGroup.get('noOfQuestions')?.dirty || formGroup.get('noOfQuestions')?.touched)">
+                    <small *ngIf="formGroup.get('noOfQuestions')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+            <div class="dynamic-section col-span-2 flex items-center justify-end flex-col gap-4"
+                formArrayName="questions">
+                <div class="add-action w-full flex items-center justify-between">
+                    <p class="text-xs lg:xl:text-sm select-none opacity-60">
+                        Question time (in seconds or milliseconds): {{formGroup.valid}} </p>
+                    <p-button [text]="true" styleClass="action" [ngStyle]="{width: '3.5rem'}" class="w-full"
+                        icon="pi pi-plus" pTooltip="Add New Item" [loading]="isAddLoading"
+                        [disabled]="isSubmitActionLoading"
+                        loadingIcon="pi pi-spin pi-spinner" [disabled]="isAddLoading" iconPos="right"
+                        (onClick)="handleAddItem()" />
+                </div>
+                @for (question of questions.controls; track $index) {
+                <div class="wrapper w-full flex items-center justify-between gap-4" [formGroupName]="$index">
+                    <div class="flex form-input flex-col items-start w-full">
+                        <label for="questionTimeInSeconds">Seconds</label>
+                        <input type="number" pInputText inputmode="tel" pKeyFilter="int"
+                            [ngClass]="question.get('questionTimeInSeconds')?.touched || question.get('questionTimeInSeconds')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                            maxlength="60" formControlName="questionTimeInSeconds" />
+                        <div
+                            *ngIf="question.get('questionTimeInSeconds')?.invalid && (question.get('questionTimeInSeconds')?.dirty || question.get('questionTimeInSeconds')?.touched)">
+                            <small *ngIf="question.get('questionTimeInSeconds')?.errors?.['required']"
+                                class="p-error">This
+                                field is
+                                required.</small>
+                            <small *ngIf="question.get('questionTimeInSeconds')?.errors?.['rangeError']"
+                                class="p-error">Value must be between 0 and 60.</small>
+
+                        </div>
+                    </div>
+                    <div class="flex form-input flex-col items-start w-full">
+                        <label for="questionTimeInMS">MS</label>
+                        <input type="number" pInputText pKeyFilter="int" maxlength="60"
+                            [ngClass]="question.get('questionTimeInMS')?.touched || question.get('questionTimeInMS')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                            formControlName="questionTimeInMS" />
+                        <div
+                            *ngIf="question.get('questionTimeInMS')?.invalid && (question.get('questionTimeInMS')?.dirty || question.get('questionTimeInMS')?.touched)">
+                            <small *ngIf="question.get('questionTimeInMS')?.errors?.['required']" class="p-error">This
+                                field is
+                                required.</small>
+                            <small *ngIf="question.get('questionTimeInMS')?.errors?.['rangeError']"
+                                class="p-error">Value must be between 0 and 60.</small>
+                        </div>
+                    </div>
+
+                    <div class="actions array-actions flex items-center justify-center gap-4 mt-2">
+                        <p-button [text]="true" styleClass="action" class="w-full" icon="pi pi-times" severity="danger"
+                            [loading]="isRemoveLoading" loadingIcon="pi pi-spin pi-spinner"
+                            [pTooltip]="questions.controls.length === 1 ? 'At least one item is required.' : 'Remove this item'"
+                            [disabled]="isSubmitActionLoading || isRemoveLoading || questions.controls.length === 1" iconPos="right"
+                            (onClick)="handleRemoveItem($index)" />
+                    </div>
+                </div>
+                }
+
+            </div>
+        </form>
+    </div>
+    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

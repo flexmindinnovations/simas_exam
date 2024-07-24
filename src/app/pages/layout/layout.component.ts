@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit, SimpleChanges } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
@@ -56,16 +56,13 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       }
     })
 
-    effect(() => {
+    effect((onCleanup) => {
       this.messages = utils.messages();
+      const itemIndex = utils.messages().length > 0 ? utils.messages().length - 1 : 0;
       setTimeout(() => {
-        const closeButtonEl = document.getElementsByClassName('p-message-close')[0] as HTMLButtonElement;
-        if (closeButtonEl) {
-          closeButtonEl.click();
-          utils.messages.set([]);
-        }
+        utils.clearMessage(itemIndex);
       }, utils.alertTimer);
-    })
+    }, {allowSignalWrites: true})
 
     effect(() => {
       this.isMobile = utils.isMobile();

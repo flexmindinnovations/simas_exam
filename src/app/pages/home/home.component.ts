@@ -15,6 +15,8 @@ export class HomeComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  userName: string = 'Imran';
+
   ngOnInit(): void {
     // if (!this.authService.isLoggedIn()) {
     //   this.router.navigateByUrl(`login?userType=${UserType.ADMIN}`);
