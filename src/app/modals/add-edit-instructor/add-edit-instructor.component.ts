@@ -54,22 +54,25 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dialogData = this.config.data;
     this.isEditMode = this.dialogData?.isEditMode;
+
     setTimeout(() => {
       utils.isAddActionLoading.set(false);
       utils.isTableEditAction.set(false);
     })
     this.initFormGroup();
-    // this.getFranchiseTypes();
+    const selectedFranchise = 1;
+    this.getFranchiseListByType(selectedFranchise);
   }
 
   ngAfterViewInit(): void {
     if (this.isEditMode && this.dialogData) {
       const formData = JSON.parse(JSON.stringify(this.dialogData));
       formData['status'] = formData['status'] === '1' ? true : false;
+      formData['startDate'] = new Date(formData['startDate']);
+      formData['endDate'] = new Date(formData['endDate']);
       this.formGroup.patchValue(formData);
       this.cdref.detectChanges();
     }
-
   }
 
   initFormGroup() {
@@ -80,7 +83,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
       userPassword: ['', [Validators.required]],
       instructorPassword: ['', [Validators.required]],
       // franchiseTypeId: ['', [Validators.required]],
-      // franchiseId: ['', [Validators.required]],
+      franchiseId: ['', [Validators.required]],
       address1: ['', [Validators.required]],
       mobileNo: ['', [Validators.required, Validators.pattern(utils.mobileValidationPattern), Validators.maxLength(14)]],
       status: ['', [Validators.required]],
@@ -89,12 +92,14 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getFranchiseTypes() {
+  getFranchiseList() {
     this.isFranchiseTypeNameListLoading = true;
     this.sharedService.getFranchiseTypeList().subscribe({
       next: (respones) => {
         if (respones) {
-          this.franchiseTypeList = respones;
+          this.franchiseListByType = respones;
+          console.log('franchiseListByType: ', this.franchiseListByType);
+
           this.isFranchiseTypeNameListLoading = false;
         }
       },
@@ -137,7 +142,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
     this.isSubmitActionLoading = true;
     this.formGroup.disable();
     const formVal = this.formGroup.getRawValue();
-    if (this.isEditMode) formVal['instructorId'] = this.dialogData?.instructorId;
+    formVal['instructorId'] = this.isEditMode ? this.dialogData?.instructorId : 0;
     const formData = new FormData();
     const startDate = new Date(formVal['startDate']).toISOString();
     const endDate = new Date(formVal['endDate']).toISOString();
@@ -146,7 +151,10 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
     formVal['endDate'] = endDate;
     formVal['franchiseTypeId'] = 1;
     formVal['franchiseTypeName'] = '';
+    formVal['mobileNo'] = formVal['mobileNo'].toString();
     formVal['status'] = status === true ? '1' : '0';
+    console.log('formVal: ', formVal);
+
     formData.append('instructorModel', JSON.stringify(formVal));
     let apiCall = this.instructorService.saveInstructor(formVal);
     if (this.isEditMode) {
@@ -157,15 +165,17 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
         const res: any = response?.apiCall;
         this.isSubmitActionLoading = false;
         utils.setMessages('Instructor added successfully', 'success');
+        utils.isAddActionLoading.set(false);
         setTimeout(() => {
           this.dialogRef.close(res);
         })
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitActionLoading = false;
+        utils.isAddActionLoading.set(false);
         utils.setMessages(error.message, 'error');
         this.dialogRef.close(false);
       }
-    })
+    });
   }
 }

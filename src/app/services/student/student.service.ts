@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Student } from '../../interfaces/Student';
-import { Student as StudentApiPath } from '../../interfaces/api-call';
-import { AppConfigService } from '../config/app-config.service';
+import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -10,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class StudentService {
 
-  private studentPath: StudentApiPath;
+  private studentPath: ApiCallConfig['student'];
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient
@@ -31,8 +30,16 @@ export class StudentService {
     return this.http.post<Student>(this.studentPath.savetStudent, payload);
   }
 
+  uploadStudentDetails(payload: any): Observable<any> {
+    return this.http.post<any>(this.studentPath.upload, payload);
+  }
+
   updateStudent(payload: any): Observable<any> {
     return this.http.post(this.studentPath.updateStudent, payload);
+  }
+
+  uploadAndUpdateStudent(payload: any): Observable<any> {
+    return this.http.post(this.studentPath.uploadandUpdateStudent, payload);
   }
 
   deleteStudent(instructorId: number | string): Observable<any> {

@@ -1,8 +1,8 @@
 ::ng-deep .data-grid-container {
-    @apply w-[100dvw] lg:xl:w-full;
+    @apply w-[100dvw] lg:xl:max-w-full lg:xl:w-full;
 
     .search-input {
-        @apply flex items-center justify-start gap-4 rounded-none;
+        @apply flex items-center justify-start rounded-2xl gap-4;
         border: 1px solid #d1d5db;
 
         input {
@@ -14,4 +14,19 @@
 
     .p-datatable-sm {}
 
+}
+
+.active {
+    @apply bg-green-100 border-solid border rounded-2xl border-green-950 text-green-950;
+}
+
+.inactive {
+    @apply bg-red-200 border-solid border rounded-2xl border-red-950 text-red-900;
+}
+
+@media screen and (min-width: 960px) and (max-width: 1023px) {
+    .data-grid-container {
+        max-width: 100%;
+        padding: 1rem;
+    }
 }

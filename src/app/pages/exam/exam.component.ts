@@ -106,7 +106,7 @@ export class ExamComponent implements OnInit {
       data: this.isEditMode ? this.filterExamInfo(data?.examId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '95%' : '87%',
+      height: 'auto',
       width: utils.isMobile() ? '95%' : '42%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Exam' : 'Add New Exam',

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Login } from '../../interfaces/api-call';
-import { AppConfigService } from '../config/app-config.service';
+import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -9,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  tokenPath: Login;
+  tokenPath: ApiCallConfig['login'];
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient

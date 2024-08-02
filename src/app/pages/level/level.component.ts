@@ -12,6 +12,7 @@ import { DataGridComponent } from '../../components/data-grid/data-grid.componen
 import { ExamService } from '../../services/exam/exam.service';
 import { utils } from '../../utils';
 import { AddEditLevelComponent } from '../../modals/add-edit-level/add-edit-level.component';
+import { LevelService } from '../../services/level/level.service';
 
 @Component({
   selector: 'app-level',
@@ -23,22 +24,23 @@ import { AddEditLevelComponent } from '../../modals/add-edit-level/add-edit-leve
 })
 export class LevelComponent {
   colDefs: any[] = [];
-  examList: any[] = [];
+  childColDefs: any[] = [];
+  levelList: any[] = [];
   tableDataSource: any[] = [];
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
   editModeData: any;
   searchValue: string = '';
-  @ViewChild('examListTable', { static: false }) examListTable!: Table;
+  isTreeList: boolean = true;
 
   constructor(
-    private examService: ExamService,
+    private levelService: LevelService,
     private dialogService: DialogService
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
       if (isDeleteAction) {
-        this.deleteExamRow(utils.tableDeleteRowData());
+        this.deleteTableRow(utils.tableDeleteRowData());
       }
     })
 
@@ -53,7 +55,7 @@ export class LevelComponent {
   ngOnInit(): void {
     utils.addButtonTitle.set('Level');
     this.setTableColumns();
-    this.getExamList();
+    this.getLevelList();
   }
 
   setTableColumns() {
@@ -61,12 +63,12 @@ export class LevelComponent {
       {
         field: 'levelId',
         header: 'Id',
-        width: '5%',
+        width: '8%',
         styleClass: 'levelId'
       },
       {
-        field: 'LevelName',
-        header: 'level Name',
+        field: 'levelName',
+        header: 'Level Name',
         width: '100%',
         styleClass: 'levelName'
       },
@@ -79,15 +81,21 @@ export class LevelComponent {
     ];
   }
 
-  getExamList() {
-    utils.isTableLoading.update(val => !val);
-    this.examService.getExamList().subscribe({
+  getLevelList() {
+    utils.isTableLoading.set(true);
+    this.levelService.getLevelList().subscribe({
       next: (response) => {
         if (response) {
-          this.examList = response;
-          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examList)
+          this.levelList = response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.levelList);
+          this.tableDataSource = response.map((item: any) => {
+            const children = item?.examRoundList.filter((child: any) => child.levelId === item?.levelId);
+            item['children'] = children;
+            delete item['examRoundList'];
+            return item;
+          })
+          this.setChildColDefs();
           utils.isTableLoading.update(val => !val);
-          utils.setMessages(response.message, 'success');
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -97,11 +105,40 @@ export class LevelComponent {
     })
   }
 
+  setChildColDefs() {
+    this.childColDefs = [
+      {
+        field: 'roundId',
+        header: 'Round Id',
+        width: '10%',
+        styleClass: 'levelId'
+      },
+      {
+        field: 'roundName',
+        header: 'Round Name',
+        width: '50%',
+        styleClass: 'roundName'
+      },
+      {
+        field: 'numberOfQuestion',
+        header: 'Total Questions',
+        width: '200%',
+        styleClass: 'numberOfQuestion'
+      },
+      {
+        field: 'examRoundTime',
+        header: 'Round Time',
+        width: '20%',
+        styleClass: 'examRoundTime'
+      },
+    ];
+  }
+
   handleAddEditAction(data?: any) {
     if (this.isEditMode) utils.isTableEditAction.set(true);
     else utils.isAddActionLoading.set(true);
     this.dialogRef = this.dialogService.open(AddEditLevelComponent, {
-      data: this.isEditMode ? this.filterExamInfo(data?.examId) : { isEditMode: this.isEditMode },
+      data: this.isEditMode ? this.filterExamInfo(data?.levelId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
       height: 'auto',
@@ -114,7 +151,7 @@ export class LevelComponent {
       if (res) {
         if (res?.status) {
           utils.setMessages(res.message, 'success');
-          this.getExamList();
+          this.getLevelList();
           utils.isTableEditAction.set(false);
         } else {
           utils.isTableEditAction.set(false);
@@ -126,15 +163,10 @@ export class LevelComponent {
       }
     })
   }
-  filterExamInfo(examId: number) {
-    const franchiseItem = this.examList.filter((item) => item.examId
-      === examId)[0];
-    return { ...franchiseItem, isEditMode: this.isEditMode };
-  }
-
-  filterGlobal(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.examListTable.filterGlobal(input.value, 'contains');
+  filterExamInfo(rowId: number) {
+    const filteredItem = this.levelList.filter((item) => item.levelId
+      === rowId)[0];
+    return { ...filteredItem, isEditMode: this.isEditMode };
   }
 
   clear(table: Table) {
@@ -143,16 +175,16 @@ export class LevelComponent {
   }
 
   handleRowDelet(event: any) {
-    const deleteItemIndex = this.examList.findIndex((item) => item?.id === event?.id);
+    const deleteItemIndex = this.levelList.findIndex((item) => item?.id === event?.id);
     if (deleteItemIndex > -1) {
-      this.examList.splice(deleteItemIndex, 1);
+      this.levelList.splice(deleteItemIndex, 1);
       this.tableDataSource.splice(deleteItemIndex, 1);
       const deleteMessageObj = { detail: 'Record deleted successsfully', severity: 'success', closable: true };
       utils.messages.update((val: Message[]) => [...val, deleteMessageObj]);
     }
   }
 
-  deleteExamRow(data: any) {
+  deleteTableRow(data: any) {
     console.log('data deleteExamRow: ', data);
     setTimeout(() => {
       utils.isTableDeleteAction.set(false);

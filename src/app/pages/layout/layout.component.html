@@ -2,27 +2,31 @@
 <!-- <ng-http-loader [spinner]="spinkit.skWave"></ng-http-loader> -->
 @if (messages.length) {
 <div class="message-container absolute top-0 w-full h-12">
-    <p-messages styleClass="alert-message"
-        [ngStyle]="{'z-index': '10000111'}" [(value)]="messages" [enableService]="false" />
+    <p-messages styleClass="alert-message" [ngStyle]="{'z-index': '1104'}" [(value)]="messages"
+        [enableService]="false" />
 </div>
 }
-<div class="layout-container h-full w-full flex transition delay-500 duration-1000 ease-in-out lg:xl:grid"
-    [ngClass]="sideBarOpened ? ' lg:xl:grid-cols-[15%_1fr]' : 'lg:xl:grid-cols-[5%_1fr]'">
-    <div class="sidebar border-0 border-r border-solid border-gray-200">
-        @if (!isMobile) {
-        <app-sidebar></app-sidebar>
-        } @else {
-        <p-sidebar [(visible)]="sideBarOpened" (onHide)="handleSidebarOnHide()">
+<div class="layout-container h-full w-full">
+    <!-- <div class="sidebar border-0 border-r border-solid border-gray-200"> -->
+    <div class="layout-wrapper h-full flex transition delay-500 duration-1000 ease-in-out lg:p-4 xl:p-4 lg:xl:grid"
+    [ngClass]="sideBarOpened ? 'md:grid-cols-[16%_1fr] lg:xl:grid-cols-[15%_1fr]' : 'md:grid-cols-[6%_1fr] lg:grid-cols-[6%_1fr] xl:grid-cols-[5%_1fr]'">
+        <div class="sidebar">
+            @if (!isMobile) {
             <app-sidebar></app-sidebar>
-        </p-sidebar>
-        }
-    </div>
-    <main class="bg-red-400 main-content w-full lg:xl:w-auto">
-        <header class="header bg-white px-3 border-0 border-b border-solid border-gray-200">
-            <app-header></app-header>
-        </header>
-        <div class="dynamic bg-white px-0 lg:xl:px-4 py-4" [@routeAnimations]="prepareRoute(outlet)">
-            <router-outlet #outlet="outlet"></router-outlet>
+            } @else {
+            <p-sidebar [(visible)]="sideBarOpened" (onHide)="handleSidebarOnHide()">
+                <app-sidebar></app-sidebar>
+            </p-sidebar>
+            }
         </div>
-    </main>
+        <main class="main-content w-full lg:xl:w-auto rounded-2xl shadow-2xl">
+            <header class="header bg-white border-0 border-b border-solid border-gray-200 rounded-t-2xl">
+                <app-header></app-header>
+            </header>
+            <div class="dynamic rounded-b-2xl bg-white h-full w-full px-0 lg:xl:px-4 py-4 z-10"
+                [@routeAnimations]="prepareRoute(outlet)">
+                <router-outlet #outlet="outlet"></router-outlet>
+            </div>
+        </main>
+    </div>
 </div>

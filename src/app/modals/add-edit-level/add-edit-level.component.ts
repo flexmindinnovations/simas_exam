@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,6 +11,9 @@ import { FormBuilder, FormGroup, FormsModule, FormArray, ReactiveFormsModule, Va
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { SharedService } from '../../services/shared/shared.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { LevelService } from '../../services/level/level.service';
+import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -20,7 +23,7 @@ import { TooltipModule } from 'primeng/tooltip';
   templateUrl: './add-edit-level.component.html',
   styleUrl: './add-edit-level.component.scss'
 })
-export class AddEditLevelComponent implements OnInit {
+export class AddEditLevelComponent implements OnInit, AfterViewInit {
 
   dialogData: any;
   formGroup!: FormGroup;
@@ -35,19 +38,33 @@ export class AddEditLevelComponent implements OnInit {
     private config: DynamicDialogConfig,
     private fb: FormBuilder,
     private sharedService: SharedService,
+    private levelService: LevelService,
     private cdref: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
+    this.dialogData = this.config.data;
+    this.isEditMode = this.dialogData?.isEditMode;
+
+    console.log('dialogData: ', this.dialogData);
+
     this.initFormGroup();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isEditMode && this.dialogData) {
+      const formData = JSON.parse(JSON.stringify(this.dialogData));
+      formData['status'] = formData['status'] === '1' ? true : false;
+      this.formGroup.patchValue(formData);
+      this.cdref.detectChanges();
+    }
   }
 
   initFormGroup() {
     this.formGroup = this.fb.group({
       status: [true, ![Validators.required]],
       levelName: ['', [Validators.required]],
-      noOfQuestions: ['', [Validators.required]],
-      questions: this.fb.array(
+      examRoundList: this.fb.array(
         [
           this.addFormArrayControl()
         ]
@@ -56,11 +73,13 @@ export class AddEditLevelComponent implements OnInit {
   }
 
   get questions(): FormArray {
-    return this.formGroup.get('questions') as FormArray;
+    return this.formGroup.get('examRoundList') as FormArray;
   }
 
   addFormArrayControl() {
     return this.fb.group({
+      roundName: ['', [Validators.required]],
+      numberOfQuestion: ['', [Validators.required]],
       questionTimeInSeconds: ['', [Validators.required, utils.rangeValidator(0, 60)]],
       questionTimeInMS: ['', [Validators.required, utils.rangeValidator(0, 60)]]
     })
@@ -79,17 +98,47 @@ export class AddEditLevelComponent implements OnInit {
   }
 
   handleSubmitAction() {
-    if(this.formGroup.invalid) {
+    if (this.formGroup.invalid) {
       const invalidControls = utils.getInvalidControls(this.formGroup);
       return;
     }
     this.isSubmitActionLoading = true;
     this.formGroup.disable();
     const formVal = this.formGroup.getRawValue();
+    formVal['levelId'] = this.isEditMode ? this.dialogData?.levelId : 0;
+    const examRoundList = formVal['examRoundList'].map((item: any) => {
+      item['examRoundTime'] = `${item['questionTimeInSeconds']}:${item['questionTimeInMS']}`;
+      item['levelId'] = formVal['levelId'];
+      item['roundId'] = item['roundId'] ? item['roundId'] : 0;
+      delete item['questionTimeInSeconds'];
+      delete item['questionTimeInMS'];
+      return item;
+    });
+    formVal['examRoundList'] = examRoundList;
+    delete formVal['status'];
 
-    console.log('formVal: ', formVal);
-    
+    let apiCall = this.levelService.saveLevel(formVal);
+    if (this.isEditMode) {
+      apiCall = this.levelService.updateLevel(formVal);
+    }
 
+    forkJoin({ apiCall }).subscribe({
+      next: (response) => {
+        const res: any = response?.apiCall;
+        this.isSubmitActionLoading = false;
+        utils.setMessages('Level added successfully', 'success');
+        setTimeout(() => {
+          this.dialogRef.close(res);
+          utils.isAddActionLoading.set(false);
+        })
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isSubmitActionLoading = false;
+        utils.isAddActionLoading.set(false);
+        utils.setMessages(error.message, 'error');
+        this.dialogRef.close(false);
+      }
+    });
   }
 
 }

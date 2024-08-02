@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppConfigService } from '../config/app-config.service';
-import { Franchise } from '../../interfaces/api-call';
+import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -10,7 +9,7 @@ import { Observable } from 'rxjs';
 export class FranchiseService {
 
 
-  private franchisePath: Franchise;
+  private franchisePath: ApiCallConfig['franchise'];
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient
@@ -18,12 +17,17 @@ export class FranchiseService {
     this.franchisePath = this.appConfig.get('franchise');
   }
 
-  getFranchiseList(): Observable<any> {
+  getFranchiseTypeList(): Observable<any> {
     return this.http.get(this.franchisePath.franchiseList);
   }
 
-  saveFranchinse(payload: Franchise): Observable<Franchise> {
-    return this.http.post<Franchise>(this.franchisePath.saveFranchise, payload);
+  getFranchiseByTypeList(franchiseTypeId: string): Observable<any> {
+    const listApiPath = this.franchisePath.franchiseListByType.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', franchiseTypeId);
+    return this.http.get(listApiPath);
+  }
+
+  saveFranchinse(payload: any): Observable<any> {
+    return this.http.post<any>(this.franchisePath.saveFranchise, payload);
   }
 
   updateFranchinse(payload: any): Observable<any> {

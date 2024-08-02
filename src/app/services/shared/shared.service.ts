@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Country } from '../../interfaces/Country';
 import { HttpClient } from '@angular/common/http';
-import { AppConfigService } from '../config/app-config.service';
-import { Franchise, Location } from '../../interfaces/api-call';
+import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { State } from '../../interfaces/State';
 import { City } from '../../interfaces/City';
 
@@ -12,8 +11,8 @@ import { City } from '../../interfaces/City';
 })
 export class SharedService {
 
-  locationPath: Location;
-  franchisePath: Franchise;
+  locationPath: ApiCallConfig['location'];
+  franchisePath: ApiCallConfig['franchise'];
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient

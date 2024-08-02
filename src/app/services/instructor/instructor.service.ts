@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Instructor as InstructorApiPath } from '../../interfaces/api-call';
-import { AppConfigService } from '../config/app-config.service';
+import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -9,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class InstructorService {
 
-  private instructorPath: InstructorApiPath;
+  private instructorPath: ApiCallConfig['instructor'];
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient
@@ -18,7 +17,7 @@ export class InstructorService {
   }
 
   getInstructorList(): Observable<any> {
-    return this.http.get(this.instructorPath.instructorList);
+    return this.http.get<any>(this.instructorPath.instructorList);
   }
 
   getInstructorById(instructorId: number): Observable<any> {

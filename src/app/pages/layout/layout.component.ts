@@ -47,7 +47,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
-
       if (this.isMobile) {
         setTimeout(() => {
           const mobileSidebar = document.getElementsByClassName('p-sidebar')[0];
@@ -59,9 +58,11 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     effect((onCleanup) => {
       this.messages = utils.messages();
       const itemIndex = utils.messages().length > 0 ? utils.messages().length - 1 : 0;
-      setTimeout(() => {
-        utils.clearMessage(itemIndex);
-      }, utils.alertTimer);
+      if(this.messages.length) {
+        setTimeout(() => {
+          utils.clearMessage(itemIndex);
+        }, utils.alertTimer);
+      }
     }, {allowSignalWrites: true})
 
     effect(() => {
@@ -102,7 +103,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
   handleSidebarOnHide() {
     if (this.isMobile) {
-      utils.sideBarOpened.update(val => !val);
+      if(this.sideBarOpened) {
+        utils.sideBarOpened.update(val => !val);
+      }
     }
   }
 

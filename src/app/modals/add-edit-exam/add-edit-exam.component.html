@@ -1,1 +1,34 @@
-<p>add-edit-exam works!</p>
+<div class="dialog-body" [@grow]>
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 lg:xl:gap-x-2 lg:xl:gap-y-1 gap-2">
+
+            <div class="flex flex-col items-start w-full col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex form-input flex-col col-span-2 items-start w-full">
+                <label for="examName">Exam Name</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-pencil"></i>
+                    <input type="text" pInputText formControlName="examName"
+                        [ngClass]="formGroup.get('examName')?.touched || formGroup.get('examName')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                </span>
+                @if (formGroup.get('examName')?.touched || formGroup.get('examName')?.dirty) {
+                @if (formGroup.get('examName')?.errors?.['required']) {
+                <span class="p-error">
+                    This field is required
+                </span>
+                }
+                }
+            </div>
+        </form>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

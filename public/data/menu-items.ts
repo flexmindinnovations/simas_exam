@@ -6,13 +6,13 @@ export const MENU_ITEMS = [
         isActive: false,
         route: 'home'
     },
-    {
-        id: 2,
-        title: 'Exam',
-        icon: 'pi pi-pencil',
-        isActive: false,
-        route: 'exam'
-    },
+    // {
+    //     id: 2,
+    //     title: 'Exam',
+    //     icon: 'pi pi-pencil',
+    //     isActive: false,
+    //     route: 'exam'
+    // },
     {
         id: 3,
         title: 'Exam Type',

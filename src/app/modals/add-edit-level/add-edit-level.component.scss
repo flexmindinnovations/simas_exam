@@ -1,0 +1,7 @@
+.form-container {
+    @apply overflow-hidden;
+
+    .form-array-wrapper {
+        @apply w-full max-h-72 overflow-y-auto;
+    }
+}
