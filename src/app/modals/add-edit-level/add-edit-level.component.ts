@@ -45,9 +45,6 @@ export class AddEditLevelComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dialogData = this.config.data;
     this.isEditMode = this.dialogData?.isEditMode;
-
-    console.log('dialogData: ', this.dialogData);
-
     this.initFormGroup();
   }
 
@@ -55,7 +52,27 @@ export class AddEditLevelComponent implements OnInit, AfterViewInit {
     if (this.isEditMode && this.dialogData) {
       const formData = JSON.parse(JSON.stringify(this.dialogData));
       formData['status'] = formData['status'] === '1' ? true : false;
+      const children = this.dialogData?.children.map((item: any) => {
+        const roundTime = item?.examRoundTime?.split(':');
+        const obj = {
+          roundName: item?.roundName,
+          numberOfQuestion: item?.numberOfQuestion,
+          questionTimeInSeconds: roundTime.length ? roundTime[0] : 0,
+          questionTimeInMS: roundTime.length ? roundTime[1] : 0
+        }
+        return obj;
+      });
+      delete formData.children;
       this.formGroup.patchValue(formData);
+      setTimeout(() => {
+        this.questions.clear();
+        children.forEach((item: any) => {
+          const control = this.addFormArrayControl();
+          control.patchValue(item);
+          this.questions.push(control);
+        })
+
+      })
       this.cdref.detectChanges();
     }
   }
@@ -64,7 +81,7 @@ export class AddEditLevelComponent implements OnInit, AfterViewInit {
     this.formGroup = this.fb.group({
       status: [true, ![Validators.required]],
       levelName: ['', [Validators.required]],
-      examRoundList: this.fb.array(
+      examRoundList: this.isEditMode ? this.fb.array([]) : this.fb.array(
         [
           this.addFormArrayControl()
         ]
@@ -126,7 +143,6 @@ export class AddEditLevelComponent implements OnInit, AfterViewInit {
       next: (response) => {
         const res: any = response?.apiCall;
         this.isSubmitActionLoading = false;
-        utils.setMessages('Level added successfully', 'success');
         setTimeout(() => {
           this.dialogRef.close(res);
           utils.isAddActionLoading.set(false);
@@ -135,7 +151,6 @@ export class AddEditLevelComponent implements OnInit, AfterViewInit {
       error: (error: HttpErrorResponse) => {
         this.isSubmitActionLoading = false;
         utils.isAddActionLoading.set(false);
-        utils.setMessages(error.message, 'error');
         this.dialogRef.close(false);
       }
     });
