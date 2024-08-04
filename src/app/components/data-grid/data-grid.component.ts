@@ -16,6 +16,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
+import { db } from '../../../db';
 
 @Component({
   selector: 'app-data-grid',
@@ -51,7 +52,8 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   dialogRef: DynamicDialogRef | undefined;
 
   downloadOptions: MenuItem[] = [];
-  nestedRowData: any;
+  permissionList: any[] = [];
+  currentModule: any;
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -73,6 +75,10 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     this.getScreenSize();
     effect(() => {
       this.isMobile = utils.isMobile();
+    })
+
+    effect(() => {
+      this.permissionList = utils.permissionList();
     })
 
     effect(() => {
@@ -99,7 +105,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
     if (this.isTreeList()) {
       this.dataSource = this.transformDataToTreeNodes(this.dataSource);
     }
@@ -123,6 +128,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
       { label: 'XLSX', icon: 'pi pi-file-excel', command: () => { this.downloadxlxs(); } },
       { label: 'PDF', icon: 'pi pi-file-pdf', command: () => { this.downloadPdf(); } }
     ];
+    this.setModulePermissions();
     this.cdref.detectChanges();
   }
 
@@ -137,9 +143,24 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     });
   }
 
+  async setModulePermissions() {
+    let activeModule: any;
+    const permissionList = await db.permissiontem.toArray();
+    let currentRoute = window.location.href;
+    currentRoute = currentRoute.substring(currentRoute.lastIndexOf('/') + 1, currentRoute.length);
+    if (currentRoute.includes('-')) {
+      currentRoute = currentRoute.split('-')
+        .map((char) => char.charAt(0)?.toUpperCase() + char.slice(1))
+        .join('');
+    } else {
+      currentRoute = currentRoute.charAt(0).toUpperCase() + currentRoute.slice(1);
+    }
+    activeModule = permissionList.find((item: any) => item.moduleName === currentRoute);
+    this.currentModule = activeModule;
+  }
+
   toggleRow(rowData: any) {
     rowData.expanded = !rowData.expanded;
-    this.nestedRowData = rowData;
   }
 
   logd(data: any): any {
@@ -214,24 +235,19 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   }
 
-  handleEditOperation(rowData: any) {
+  handleEditOperation(rowData: any, index: number) {
     this.isEditActionLoading = true;
     this.dataSource.forEach((item: any) => item['isEditActionLoading'] = false);
-    const rowIndex = this.dataSource.findIndex((row: any) => row.franchiseId === rowData.franchiseId);
-    if (rowIndex > -1) {
-      this.dataSource[rowIndex]['isEditActionLoading'] = true;
-    }
+    this.dataSource[index]['isEditActionLoading'] = true;
     utils.isTableEditAction.set(true);
     utils.tableEditRowData.set(rowData);
   }
 
-  handleDeleteOperation(rowData: any) {
+  handleDeleteOperation(rowData: any, index: number) {
     this.isDeleteActionLoading = true;
     this.dataSource.forEach((item: any) => item['isDeleteActionLoading'] = false);
-    const rowIndex = this.dataSource.findIndex((row: any) => row.franchiseId === rowData.franchiseId);
-    if (rowIndex > -1) {
-      this.dataSource[rowIndex]['isDeleteActionLoading'] = true;
-    }
+    this.dataSource[index]['isDeleteActionLoading'] = true;
+    this.cdref.detectChanges();
     this.dialogRef = this.dialogService.open(DeleteConfirmComponent, {
       data: rowData,
       closable: false,
@@ -288,3 +304,4 @@ export interface TreeNode {
   droppable?: boolean;
   selectable?: boolean;
 }
+

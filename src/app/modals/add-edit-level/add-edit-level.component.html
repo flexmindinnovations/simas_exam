@@ -21,13 +21,15 @@
                 <div class="add-action w-full flex items-center justify-between">
                     <p class="text-xs lg:xl:text-sm select-none opacity-60">
                         Question time (in seconds or milliseconds): </p>
-                    <p-button styleClass="action" iconPos="left" class="w-auto" icon="pi pi-plus"
+                    <p-button styleClass="action" iconPos="left" class="w-auto" 
+                    styleClass="add-row-btn" icon="pi pi-plus"
                         pTooltip="Add new row below" [loading]="isAddLoading" [disabled]="isSubmitActionLoading"
                         loadingIcon="pi pi-spin pi-spinner" [disabled]="isAddLoading" (onClick)="handleAddItem()" />
                 </div>
                 <div class="form-array-wrapper">
                     @for (question of questions.controls; track $index) {
-                    <div class="wrapper flex lg:xl:items-center lg:xl:justify-center gap-3" [ngClass]="questions.controls.length > 2 ? ' last:pb-16' : 'pb-4'" [formGroupName]="$index">
+                    <div class="wrapper flex lg:xl:items-center lg:xl:justify-center gap-3"
+                        [ngClass]="questions.controls.length > 2 ? ' last:pb-4' : 'pb-4'" [formGroupName]="$index">
                         <div class="flex form-input flex-col items-start lg:xl:flex-1">
                             <label for="roundName">Round Name</label>
                             <input type="text" class="lg:xl:!w-full"

@@ -1,4 +1,4 @@
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { MenuItem } from '../../interfaces/menu-item';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -35,9 +35,13 @@ import { TooltipModule } from 'primeng/tooltip';
     ])
   ]
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   menuItems: Array<MenuItem> = MENU_ITEMS;
   sideBarOpened: boolean = true;
+  logoSrc: string = '/images/logo1.png';
+  isLoading: boolean = true;
+
+  @Input({ required: true }) permissionList: any[] = [];
 
   constructor(
     private router: Router
@@ -61,6 +65,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.router.events.subscribe((router) => {
       if (router instanceof NavigationEnd) {
         const currentUrl = router.url.split('/')[2];
@@ -70,6 +75,25 @@ export class SidebarComponent implements OnInit, OnDestroy {
         }
       }
     })
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const data = changes['permissionList'].currentValue;
+    if (data) {
+      const menuItems = MENU_ITEMS;
+      const filteredMenuItems = menuItems.filter((menuItem: MenuItem) => {
+        const matchedItem = data.find((item: any) => item.moduleName === menuItem.moduleName && item.canView);
+        return matchedItem !== undefined;
+      })
+      if (filteredMenuItems.length) {
+        this.menuItems = filteredMenuItems;
+        const currentUrl = this.router.url.split('/')[2];
+        if (currentUrl) this.setActiveMenuItem(currentUrl);
+        else {
+          this.menuItems[0].isActive = true;
+        }
+      }
+    }
   }
 
   handleItemClick(item: MenuItem) {

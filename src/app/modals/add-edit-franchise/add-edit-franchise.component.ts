@@ -169,7 +169,7 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
       franchiseName: ['', [Validators.required]],
       ownerName: ['', [Validators.required]],
       emailId: ['', [Validators.required, Validators.email]],
-      userPassword: ['', [Validators.required]],
+      // userPassword: ['', [Validators.required]],
       franchiseePassword: ['', [Validators.required]],
       countryId: ['', [Validators.required]],
       stateId: ['', [Validators.required]],
@@ -178,8 +178,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
       joiningDate: ['', [Validators.required]],
       mobileNo: ['', [Validators.required, Validators.pattern(utils.mobileValidationPattern), Validators.maxLength(14)]],
       status: !['', [Validators.required]],
-      startDate: ['', [Validators.required]],
-      endDate: ['', [Validators.required]]
+      // startDate: ['', [Validators.required]],
+      // endDate: ['', [Validators.required]]
     });
   }
 
@@ -223,16 +223,17 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
     const formData = new FormData();
     if (this.isEditMode) formVal['franchiseId'] = this.dialogData?.franchiseId;
     const joiningDate = new Date(formVal['joiningDate']).toISOString();
-    const startDate = new Date(formVal['startDate']).toISOString();
-    const endDate = new Date(formVal['endDate']).toISOString();
+    // const startDate = new Date(formVal['startDate']).toISOString();
+    // const endDate = new Date(formVal['endDate']).toISOString();
     const status = formVal['status'];
     formVal['franchiseTypeId'] = 1;
     formVal['joiningDate'] = joiningDate;
-    formVal['startDate'] = startDate;
-    formVal['endDate'] = endDate;
+    // formVal['startDate'] = startDate;
+    // formVal['endDate'] = endDate;
     formVal['countryId'] = countryId;
     formVal['stateId'] = stateId;
     formVal['cityId'] = cityId;
+    formVal['userPassword'] = formVal['franchiseePassword'];
     formVal['logoPath'] = this.dialogData?.logoPath;
     formVal['status'] = status === true ? '1' : '0';
     formData.append('franchiseModel', JSON.stringify(formVal));

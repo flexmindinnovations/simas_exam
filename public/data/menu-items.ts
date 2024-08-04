@@ -1,7 +1,10 @@
-export const MENU_ITEMS = [
+import { MenuItem } from "../../src/app/interfaces/menu-item";
+
+export const MENU_ITEMS: Array<MenuItem> = [
     {
         id: 1,
         title: 'Dashboard',
+        moduleName: 'Dashboard',
         icon: 'pi pi-th-large',
         isActive: false,
         route: 'home'
@@ -9,6 +12,7 @@ export const MENU_ITEMS = [
     // {
     //     id: 2,
     //     title: 'Exam',
+    //     moduleName: 'Exam',
     //     icon: 'pi pi-pencil',
     //     isActive: false,
     //     route: 'exam'
@@ -16,6 +20,7 @@ export const MENU_ITEMS = [
     {
         id: 3,
         title: 'Exam Type',
+        moduleName: 'ExamType',
         icon: 'pi pi-list',
         isActive: false,
         route: 'exam-type'
@@ -23,6 +28,7 @@ export const MENU_ITEMS = [
     {
         id: 4,
         title: 'Exam Report',
+        moduleName: 'ExamReport',
         icon: 'pi pi-chart-line',
         isActive: false,
         route: 'exam-report'
@@ -30,6 +36,7 @@ export const MENU_ITEMS = [
     {
         id: 5,
         title: 'Franchise',
+        moduleName: 'Franchise',
         icon: 'pi pi-briefcase',
         isActive: false,
         route: 'franchise'
@@ -37,6 +44,7 @@ export const MENU_ITEMS = [
     {
         id: 6,
         title: 'Instructor',
+        moduleName: 'Instructor',
         icon: 'pi pi-user',
         isActive: false,
         route: 'instructor'
@@ -44,6 +52,7 @@ export const MENU_ITEMS = [
     {
         id: 7,
         title: 'Activation',
+        moduleName: 'Activation',
         icon: 'pi pi-key',
         isActive: false,
         route: 'activation'
@@ -51,6 +60,7 @@ export const MENU_ITEMS = [
     {
         id: 8,
         title: 'Students',
+        moduleName: 'Students',
         icon: 'pi pi-users',
         isActive: false,
         route: 'students'
@@ -58,6 +68,7 @@ export const MENU_ITEMS = [
     {
         id: 9,
         title: 'Level',
+        moduleName: 'Level',
         icon: 'pi pi-sitemap',
         isActive: false,
         route: 'level'
@@ -65,6 +76,7 @@ export const MENU_ITEMS = [
     {
         id: 10,
         title: 'Lesson',
+        moduleName: 'Lesson',
         icon: 'pi pi-book',
         isActive: false,
         route: 'lesson'
@@ -72,6 +84,7 @@ export const MENU_ITEMS = [
     {
         id: 11,
         title: 'Question Paper',
+        moduleName: 'QuestionPaper',
         icon: 'pi pi-file',
         isActive: false,
         route: 'question-paper'
@@ -79,6 +92,7 @@ export const MENU_ITEMS = [
     {
         id: 12,
         title: 'Question Bank',
+        moduleName: 'QuestionBank',
         icon: 'pi pi-database',
         isActive: false,
         route: 'question-bank'
@@ -86,6 +100,7 @@ export const MENU_ITEMS = [
     {
         id: 13,
         title: 'Student Exam',
+        moduleName: 'StudentExam',
         icon: 'pi pi-file-edit',
         isActive: false,
         route: 'student-exam'
@@ -93,12 +108,25 @@ export const MENU_ITEMS = [
     {
         id: 14,
         title: 'Reports',
+        moduleName: 'Reports',
         icon: 'pi pi-chart-bar',
         isActive: false,
         route: 'reports'
+    },
+    {
+        id: 15,
+        title: 'Competition',
+        moduleName: 'Competition',
+        icon: 'pi pi-trophy',
+        isActive: false,
+        route: 'competition'
+    },
+    {
+        id: 16,
+        title: 'Roles',
+        moduleName: 'Roles',
+        icon: 'pi pi-shield',
+        isActive: false,
+        route: 'roles'
     }
 ]
-
-export const STUDENT_PERMISSIONS = [1, 2, 4, 13, 14];
-export const INSTRUCTOR_PERMISSIONS = [1, 2, 4, 6, 8, 13, 14];
-export const FRANCHISE_PERMISSIONS = [1, 14]; 

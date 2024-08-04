@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { db } from '../../../db';
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +32,11 @@ export class AuthService {
 
   getAuthToken(): string {
     return sessionStorage.getItem('token') || '';
+  }
+
+
+  signOutUser() {
+    sessionStorage.clear();
+    db.permissiontem.clear();
   }
 }

@@ -43,7 +43,8 @@ export type ApiCallConfig = {
   };
   role: {
     roleList: string;
-    permissionRoleListByRoleId: string;
+    moduleList: string;
+    rolePermissionsByRoleId: string;
     saveRoleMaster: string;
     updateRoleMaster: string;
   };
@@ -148,7 +149,8 @@ export class AppConfigService {
     },
     role: {
       roleList: `${this.hostUrl}/Role/GetRoleList`,
-      permissionRoleListByRoleId: `${this.hostUrl}/Role/GetPermissionListByRoleId`,
+      moduleList: `${this.hostUrl}/Role/getModuleList`,
+      rolePermissionsByRoleId: `${this.hostUrl}/Role/GetPermissionListByRoleId?roleId={{id}}`,
       saveRoleMaster: `${this.hostUrl}/Role/saveRoleMaster`,
       updateRoleMaster: `${this.hostUrl}/Role/updateRoleMaster`,
     },

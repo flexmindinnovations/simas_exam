@@ -15,6 +15,8 @@ import { QuestionPaperComponent } from "../question-paper/question-paper.compone
 import { QuestionBankComponent } from "../question-bank/question-bank.component";
 import { StudentExamComponent } from "../student-exam/student-exam.component";
 import { ReportsComponent } from "../reports/reports.component";
+import { RolesComponent } from "../roles/roles.component";
+import { CompetitionComponent } from "../competition/competition.component";
 
 export const layoutRoutes: Routes = [
     {
@@ -90,6 +92,16 @@ export const layoutRoutes: Routes = [
                 path: 'reports',
                 component: ReportsComponent,
                 data: { animation: 'ReportsComponent' }
+            },
+            {
+                path: 'competition',
+                component: CompetitionComponent,
+                data: { animation: 'CompetitionComponent' }
+            },
+            {
+                path: 'roles',
+                component: RolesComponent,
+                data: { animation: 'RolesComponent' }
             },
             {
                 path: '**',

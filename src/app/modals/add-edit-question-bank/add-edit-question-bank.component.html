@@ -112,6 +112,7 @@
                         </span>
                         <input type="text" pInputText (onClick)="excelFileChooser.click()" [readOnly]="true"
                             [placeholder]="selectedFileName" formControlName="file"
+                            style="width: 80%;border-top-left-radius: 0;border-bottom-left-radius: 0;"
                             [ngClass]="formGroup.get('file')?.touched || formGroup.get('file')?.dirty ? 'ng-invalid ng-dirty' : ''" />
                     </span>
                     <div

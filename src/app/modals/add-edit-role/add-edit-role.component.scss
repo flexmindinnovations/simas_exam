@@ -1,0 +1,33 @@
+::ng-deep .roles-modal::part(content) {
+    min-width: 50%;
+    min-height: 60%;
+    height: auto;
+    border-radius: 6px;
+}
+
+::ng-deep [type='checkbox']:focus,
+[type='radio']:focus {
+    outline: none;
+    /* outline-offset: 2px; */
+    /* --tw-ring-inset: var(--tw-empty, ); */
+    --tw-ring-offset-width: 0;
+    --tw-ring-offset-color: #fff;
+    /* --tw-ring-color: #1C64F2; */
+}
+
+.roles-modal {
+
+    .body {
+
+        .access-roles-container {
+            max-height: 25rem;
+            width: 100%;
+            overflow: auto;
+
+            ul.parent-wrapper {
+                width: 95%;
+                margin: 0 auto;
+            }
+        }
+    }
+}

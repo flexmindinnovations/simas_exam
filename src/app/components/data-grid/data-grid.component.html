@@ -7,20 +7,23 @@
             <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
                 <i class="pi pi-search"></i>
                 <input type="text" class="w-96" pInputText placeholder="Enter text to filter grid" type="text"
-                    (input)="onFilterValueChange($event)" [(ngModel)]="searchValue" pInputText/>
+                    (input)="onFilterValueChange($event)" [(ngModel)]="searchValue" pInputText />
             </span>
         </div>
         <div class="options flex items-center justify-end w-full">
             <div class="export-option">
                 @if (dataSource?.length) {
-                <p-button label="Download Data" icon="pi pi-download" [loading]="isExportActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                    pTooltip="Export table data" (onClick)="downloadOptionsMenu.toggle($event)" />
+                <p-button label="Download Data" icon="pi pi-download" [loading]="isExportActionLoading"
+                    loadingIcon="pi pi-spin pi-spinner" pTooltip="Export table data" tooltipPosition="left"
+                    (onClick)="downloadOptionsMenu.toggle($event)" />
                 <p-tieredMenu #downloadOptionsMenu [popup]="true" [model]="downloadOptions" />
                 }
             </div>
+            @if (currentModule?.canAdd) {
             <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
             pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
-            [pTooltip]="'Add ' + addButtonTitle" (onClick)="handleAddAction()"></p-button>
+                [pTooltip]="'Add ' + addButtonTitle" tooltipPosition="left" (onClick)="handleAddAction()"></p-button>
+            }
         </div>
     </div>
     @if(isTreeList()) {
@@ -53,14 +56,15 @@
                     </th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                 <tr class="w-full h-10">
                     @for (item of colDefs; track $index) {
                     <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
                         @if($index === 0) {
                         <div class="flex items-center justify-start gap-5">
-                            <p-button [text]="true" [pTooltip]="rowData?.expanded ? 'Collapse Row' : 'Expand Row'" styleClass="toggleRowButton"
-                                [icon]="rowData.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" 
+                            <p-button [text]="true" [pTooltip]="rowData?.expanded ? 'Collapse Row' : 'Expand Row'"
+                                styleClass="toggleRowButton"
+                                [icon]="rowData.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                                 (onClick)="toggleRow(rowData)" />
                             <p class="m-0">{{rowData[item.field]}}</p>
                         </div>
@@ -71,13 +75,17 @@
                         </p>
                         }@else if(item.field === 'action') {
                         <div class="w-full flex items-center justify-center gap-1">
+                            @if (currentModule?.canEdit) {
                             <p-button [text]="true" icon="pi
-                                    pi-pen-to-square" [loading]="rowData.isEditActionLoading"
-                                loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit"
-                                (onClick)="handleEditOperation(rowData)" />
+                                        pi-pen-to-square" [loading]="rowData.isEditActionLoading"
+                                loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit" tooltipPosition="bottom"
+                                (onClick)="handleEditOperation(rowData, rowIndex)" />
+                            }
+                            @if (currentModule?.canDelete) {
                             <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                            loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData)" pTooltip="Delete"
-                            [text]="true" icon="pi pi-trash" /> -->
+                                loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
+                                [text]="true" icon="pi pi-trash" /> -->
+                            }
                         </div>
                         } @else {
                         <p class="m-0 w-fit">{{rowData[item.field]}}</p>
@@ -90,10 +98,10 @@
                     <td [attr.colspan]="colDefs.length" class="bg-gray-50">
                         <div class="w-full max-w-5xl mx-auto">
                             <p-table class="w-full max-w-5xl mx-auto overflow-auto " [loading]="isLoading"
-                                loadingIcon="pi pi-spin pi-spinner"
-                                (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true"
-                                [columns]="childColDefs" [value]="rowData?.children" sortMode="multiple"
-                                [scrollHeight]="scrollHeight + 'px'" styleClass="p-datatable-sm child-table">
+                                loadingIcon="pi pi-spin pi-spinner" (onRowSelect)="handleRowSelect($event)"
+                                [resizableColumns]="true" [columns]="childColDefs" [value]="rowData?.children"
+                                sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
+                                styleClass="p-datatable-sm child-table">
                                 <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns; let i=index" [pSortableColumn]="col.field"
@@ -152,7 +160,7 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
             <tr class="w-full h-10">
                 @for (item of colDefs; track $index) {
                 <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
@@ -163,13 +171,17 @@
                     </p>
                     }@else if(item.field === 'action') {
                     <div class="w-full flex items-center justify-center gap-1">
+                        @if (currentModule?.canEdit) {
                         <p-button [text]="true" icon="pi 
-                                pi-pen-to-square" [loading]="rowData.isEditActionLoading"
+                                    pi-pen-to-square" [loading]="rowData.isEditActionLoading" tooltipPosition="bottom"
                             loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit"
-                            (onClick)="handleEditOperation(rowData)" />
+                            (onClick)="handleEditOperation(rowData, rowIndex)" />
+                        }
+                        @if (currentModule?.canDelete) {
                         <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData)" pTooltip="Delete"
-                [text]="true" icon="pi pi-trash" /> -->
+                    loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
+                    [text]="true" icon="pi pi-trash" /> -->
+                        }
                     </div>
                     } @else {
                     {{rowData[item.field]}}

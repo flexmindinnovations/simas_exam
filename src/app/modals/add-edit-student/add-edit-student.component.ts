@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
@@ -27,7 +27,7 @@ import { InstructorService } from '../../services/instructor/instructor.service'
   templateUrl: './add-edit-student.component.html',
   styleUrl: './add-edit-student.component.scss'
 })
-export class AddEditStudentComponent implements OnInit {
+export class AddEditStudentComponent implements OnInit, AfterViewInit {
 
   dialogData: any;
   formGroup!: FormGroup;
@@ -67,6 +67,17 @@ export class AddEditStudentComponent implements OnInit {
     this.getPopupData();
   }
 
+  ngAfterViewInit(): void {
+    this.dialogData = this.config.data;
+    this.isEditMode = this.dialogData?.isEditMode;
+    if (this.isEditMode) {
+      this.selectedImagePath = this.dialogData['studentPhoto'];
+      this.dialogData['dob'] = new Date(this.dialogData['dob']);
+      this.dialogData['status'] = this.dialogData['status'] === '1' ? true : false;
+      this.formGroup.patchValue(this.dialogData);
+    }
+  }
+
   initFormGroup() {
     const uniquePassword = utils.generatePassword(6);
     this.formGroup = this.fb.group({
@@ -90,8 +101,8 @@ export class AddEditStudentComponent implements OnInit {
       // franchiseTypeName: ['', [Validators.required]],
       franchiseName: ['', ![Validators.required]],
       instructorName: ['', ![Validators.required]],
-      startDate: ['', [Validators.required]],
-      endDate: ['', [Validators.required]]
+      // startDate: ['', [Validators.required]],
+      // endDate: ['', [Validators.required]]
     });
   }
 
@@ -163,13 +174,13 @@ export class AddEditStudentComponent implements OnInit {
     const formVal = this.formGroup.getRawValue();
     const formData = new FormData();
     if (this.isEditMode) formVal['studentId'] = this.dialogData?.studentId;
-    const startDate = new Date(formVal['startDate']).toISOString();
-    const endDate = new Date(formVal['endDate']).toISOString();
+    // const startDate = new Date(formVal['startDate']).toISOString();
+    // const endDate = new Date(formVal['endDate']).toISOString();
     const dob = new Date(formVal['dob']).toISOString();
     const status = formVal['status'];
-    formVal['franchiseTypeId'] = 1;
-    formVal['startDate'] = startDate;
-    formVal['endDate'] = endDate;
+    // formVal['franchiseTypeId'] = 1;
+    // formVal['startDate'] = startDate;
+    // formVal['endDate'] = endDate;
     formVal['dob'] = dob;
     formVal['userPassword'] = formVal['stuPass'];
     formVal['status'] = status === true ? '1' : '0';
@@ -187,18 +198,23 @@ export class AddEditStudentComponent implements OnInit {
       apiCall = this.studentService.uploadAndUpdateStudent(formData);
     }
     if (this.isEditMode && !this.selectedFiles?.length) {
+      formVal['studentPhoto'] = this.selectedImagePath;
       apiCall = this.studentService.updateStudent(formVal);
     }
     forkJoin({ apiCall }).subscribe({
       next: (response) => {
         const res: any = response?.apiCall;
         this.isSubmitActionLoading = false;
+        utils.isAddActionLoading.set(false);
+        utils.isTableEditAction.set(false);
         setTimeout(() => {
           this.dialogRef.close(res);
         })
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitActionLoading = false;
+        utils.isAddActionLoading.set(false);
+        utils.isTableEditAction.set(false);
         utils.setMessages(error.message, 'error');
         this.dialogRef.close(false);
       }

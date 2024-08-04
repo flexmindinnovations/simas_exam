@@ -2,15 +2,17 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
+import { Router } from '@angular/router';
 
 export const customInterceptor: HttpInterceptorFn = (req, next) => {
 
   const authService = inject(AuthService);
+  const router = inject(Router);
   const authToken = authService.getAuthToken();
   let authReq = req;
   const publicRoutes = ['login', 'createToken', 'register'];
-
-  if (authService.isLoggedIn()) {
+  const requestEndpoint = req.url.substring(req.url.lastIndexOf('/') + 1, req.url.length);
+  if (authService.isLoggedIn() && !publicRoutes.includes(requestEndpoint)) {
     authReq = authReq.clone(
       {
         setHeaders: {

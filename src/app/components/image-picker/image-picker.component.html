@@ -4,14 +4,14 @@
         <div *ngFor="let file of files; let i = index"
             class="card w-full m-0 px-6 flex border-1 surface-border items-center justify-between gap-5">
             <div class="flex items-center justify-center gap-3">
-                <div>
-                    <img role="presentation" [alt]="'Uploaded file'" [src]="file" width="100" height="50" />
+                <div class="h-32 w-40">
+                    <img role="presentation" [alt]="'Uploaded file'" [src]="file" class="w-full h-full object-fill" />
                 </div>
             </div>
             <div class="flex flex-col items-center justify-start gap-4">
                 <span class="font-normal text-xs">{{ imageName }}</span>
-                <p-button icon="pi pi-image" label="Change Image" (onClick)="handleChangeImage()" [text]="true"
-                    [rounded]="false" severity="primary" />
+                <p-button icon="pi pi-image" label="Change Image" (onClick)="handleChangeImage()"
+                    [rounded]="false" />
             </div>
         </div>
     </div>

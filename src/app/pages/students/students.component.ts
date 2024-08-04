@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Student } from '../../interfaces/Student';
 import { DataGridComponent, TableColumn } from '../../components/data-grid/data-grid.component';
@@ -30,7 +30,22 @@ export class StudentsComponent implements OnInit {
   constructor(
     private studentService: StudentService,
     private dialogService: DialogService
-  ) { }
+  ) {
+    effect(() => {
+      const isDeleteAction = utils.isTableDeleteAction();
+      if (isDeleteAction) {
+        this.deleteTableRow(utils.tableDeleteRowData());
+      }
+    })
+
+    effect(() => {
+      this.isEditMode = utils.isTableEditAction();
+      if (this.isEditMode) {
+        this.editModeData = utils.tableEditRowData();
+        this.handleAddEditAction(this.editModeData);
+      }
+    }, { allowSignalWrites: true })
+  }
 
   ngOnInit(): void {
     utils.addButtonTitle.set('Student');
@@ -47,11 +62,12 @@ export class StudentsComponent implements OnInit {
       { field: 'emailId', header: 'Email', width: '15%', styleClass: 'emailId' },
       { field: 'dob', header: 'DOB', width: '10%', styleClass: 'dob' },
       { field: 'schoolName', header: 'School Name', width: '20%', styleClass: 'schoolName' },
-      { field: 'standard', header: 'Standard', width: '20%', styleClass: 'Standard' },
-      { field: 'levelName', header: 'Level', width: '10%', styleClass: 'levelName' },
+      // { field: 'standard', header: 'Standard', width: '20%', styleClass: 'Standard' },
+      // { field: 'levelName', header: 'Level', width: '10%', styleClass: 'levelName' },
       // { field: 'franchiseTypeName', header: 'Franchise Type', width: '15%', styleClass: 'franchiseTypeName' },
-      { field: 'franchiseName', header: 'Franchise', width: '15%', styleClass: 'franchiseName' },
-      { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
+      // { field: 'franchiseName', header: 'Franchise', width: '15%', styleClass: 'franchiseName' },
+      // { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
+      { field: 'status', header: 'Status', width: '20%', styleClass: 'status' },
       { field: 'action', header: 'Action', width: '10%', styleClass: 'action' },
     ];
   }
@@ -61,7 +77,13 @@ export class StudentsComponent implements OnInit {
     this.studentService.getStudentList().subscribe({
       next: (response) => {
         if (response) {
-          this.studentList = response;
+          console.log('response: ', JSON.parse(JSON.stringify(response)));
+          this.studentList = response.map((item: any) => {
+            item['studentPhoto'] = item['studentPhoto']?.replace('webapi', 'comp');
+            return item;
+          });
+          console.log('this.studentList: ', JSON.parse(JSON.stringify(this.studentList)));
+
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
           utils.isTableLoading.update(val => !val);
         }
@@ -77,7 +99,7 @@ export class StudentsComponent implements OnInit {
     if (this.isEditMode) utils.isTableEditAction.set(true);
     else utils.isAddActionLoading.set(true);
     this.dialogRef = this.dialogService.open(AddEditStudentComponent, {
-      data: this.isEditMode ? this.filterFranchiseInfo(data?.franchiseId) : { isEditMode: this.isEditMode },
+      data: this.isEditMode ? this.filterStudentInfo(data?.studentId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
       height: 'auto',
@@ -91,9 +113,7 @@ export class StudentsComponent implements OnInit {
         if (res?.status) {
           utils.setMessages(res.message, 'success');
           this.getStudentList();
-          utils.isTableEditAction.set(false);
         } else {
-          utils.isTableEditAction.set(false);
           utils.setMessages(res.message, 'error');
         }
       } else {
@@ -103,9 +123,33 @@ export class StudentsComponent implements OnInit {
     })
   }
 
-  filterFranchiseInfo(studentId: number) {
+  filterStudentInfo(studentId: number) {
     const studentItem = this.studentList.filter((item) => item.studentId
       === studentId)[0];
     return { ...studentItem, isEditMode: this.isEditMode };
+  }
+
+  deleteTableRow(rowData: any) {
+    const studentId = rowData?.studentId;
+    this.studentService.deleteStudent(studentId).subscribe({
+      next: (response) => {
+        if (response?.status) {
+          utils.setMessages('Record deleted successfully', 'success');
+          const rowIndex = this.studentList.findIndex((item) => item?.studentId === studentId);
+          if (rowIndex > -1) {
+            this.studentList.splice(rowIndex, 1);
+            this.tableDataSource.splice(rowIndex, 1);
+          }
+        } else {
+          utils.setMessages('Record could not be deleted', 'error');
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        utils.setMessages('Error while deleting record', 'error');
+      }
+    })
+    setTimeout(() => {
+      utils.isTableDeleteAction.set(false);
+    }, 2000);
   }
 }

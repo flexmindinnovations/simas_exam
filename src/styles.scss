@@ -106,11 +106,12 @@
     }
 
     p-messages {
+        @apply w-full;
         .p-message {
-            @apply m-0 rounded-none;
+            @apply m-0 rounded-none first:rounded-t-2xl pl-4;
 
             .p-message-wrapper {
-                @apply py-1 flex items-center justify-between px-0 pr-3 flex-wrap;
+                @apply py-1 flex items-center justify-between px-0 pr-3 flex-wrap w-full h-full;
 
                 button {
                     @apply min-w-4 w-10 flex items-center justify-center;
@@ -271,6 +272,8 @@
     }
 
     .alert-message {
+        @apply w-full h-full;
+
         .p-message {
             .p-message-wrapper {
                 .p-message-icon {
@@ -339,11 +342,11 @@ p-tieredmenusub ul li .p-menuitem-content a {
 }
 
 .p-message-success {
-    @apply bg-green-700 text-white border-0 border-l-8 border-solid border-green-800;
+    @apply bg-green-700 h-full text-white border-none;
 }
 
 .p-message-error {
-    @apply bg-red-700 text-white border-0 border-l-8 border-solid border-red-800;
+    @apply bg-red-700 h-full text-white border-none;
 }
 
 .p-dropdown-items-wrapper {
@@ -429,6 +432,16 @@ label {
 
     .table-container {
         @apply h-full w-full;
+    }
+}
+
+.toggleRowButton, .add-row-btn {
+    @apply text-ph-700;
+    .p-button-icon {
+
+        &::before {
+            font-size: 12px !important;
+        }
     }
 }
 

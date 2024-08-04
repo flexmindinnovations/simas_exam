@@ -80,15 +80,15 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
       // franchiseName: ['', [Validators.required]],
       instructorName: ['', [Validators.required]],
       emailId: ['', [Validators.required, Validators.email]],
-      userPassword: ['', [Validators.required]],
+      // userPassword: ['', [Validators.required]],
       instructorPassword: ['', [Validators.required]],
       // franchiseTypeId: ['', [Validators.required]],
       franchiseId: ['', [Validators.required]],
       address1: ['', [Validators.required]],
       mobileNo: ['', [Validators.required, Validators.pattern(utils.mobileValidationPattern), Validators.maxLength(14)]],
       status: ['', [Validators.required]],
-      startDate: ['', [Validators.required]],
-      endDate: ['', [Validators.required]]
+      // startDate: ['', [Validators.required]],
+      // endDate: ['', [Validators.required]]
     });
   }
 
@@ -144,13 +144,14 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
     const formVal = this.formGroup.getRawValue();
     formVal['instructorId'] = this.isEditMode ? this.dialogData?.instructorId : 0;
     const formData = new FormData();
-    const startDate = new Date(formVal['startDate']).toISOString();
-    const endDate = new Date(formVal['endDate']).toISOString();
+    // const startDate = new Date(formVal['startDate']).toISOString();
+    // const endDate = new Date(formVal['endDate']).toISOString();
     const status = formVal['status'];
-    formVal['startDate'] = startDate;
-    formVal['endDate'] = endDate;
+    // formVal['startDate'] = startDate;
+    // formVal['endDate'] = endDate;
     formVal['franchiseTypeId'] = 1;
     formVal['franchiseTypeName'] = '';
+    formVal['userPassword'] = formVal['instructorPassword'];
     formVal['mobileNo'] = formVal['mobileNo'].toString();
     formVal['status'] = status === true ? '1' : '0';
     console.log('formVal: ', formVal);

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
@@ -10,7 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ExamService } from '../../services/exam/exam.service';
 import { utils } from '../../utils';
 import { HttpErrorResponse } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { debounceTime, forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-add-edit-exam',
@@ -25,7 +25,6 @@ export class AddEditExamComponent implements OnInit {
 
   isEditMode: boolean = false;
   isSubmitActionLoading: boolean = false;
-
   constructor(
     private dialogRef: DynamicDialogRef,
     private config: DynamicDialogConfig,
@@ -38,18 +37,19 @@ export class AddEditExamComponent implements OnInit {
     this.dialogData = this.config.data;
     this.isEditMode = this.dialogData?.isEditMode;
 
-    setTimeout(() => {
-      utils.isAddActionLoading.set(false);
-      utils.isTableEditAction.set(false);
-    })
     this.initFormGroup();
   }
 
+
+
   initFormGroup() {
     this.formGroup = this.fb.group({
-      status: [true, ![Validators.required]],
-      examName: ['', [Validators.required]],
-    });
+      roleName: ['', [Validators.required]],
+    })
+  }
+
+  get formGroupControl(): { [key: string]: FormControl } {
+    return this.formGroup.controls as { [key: string]: FormControl };
   }
 
   handleDialogCancel() {

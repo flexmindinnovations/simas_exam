@@ -6,13 +6,18 @@
 
 .header {
     @apply w-full;
-    
-    h3, p {
+
+    h3 {
         @apply text-transparent bg-clip-text;
         background-image: conic-gradient(from var(--angle), #F9A8D4, #C084FC, #818CF8, #F9A8D4);
         animation: 5s spin linear infinite;
     }
+
+    p {
+        @apply text-ph-500
+    }
 }
+
 .banner {
     @apply h-40 bg-no-repeat bg-right bg-contain;
     position: relative;

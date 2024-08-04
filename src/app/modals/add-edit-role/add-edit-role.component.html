@@ -1,0 +1,83 @@
+<div class="dialog-body" @grow>
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 lg:xl:gap-x-2 lg:xl:gap-y-1 gap-2">
+
+            <div class="flex flex-col items-start w-full col-span-2 mb-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex form-input flex-col col-span-2 items-start w-full">
+                <label for="roleName">Role Name</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-shield"></i>
+                    <input type="text" pInputText formControlName="roleName"
+                        [ngClass]="formGroup.get('roleName')?.touched || formGroup.get('roleName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        (keyup)="handleInputChange($event)" />
+                </span>
+                @if (formGroup.get('roleName')?.touched || formGroup.get('roleName')?.dirty) {
+                @if (formGroup.get('roleName')?.errors?.['required']) {
+                <span class="p-error">
+                    This field is required
+                </span>
+                } @else if (!isEditMode && formGroup.get('roleName')?.errors?.['duplicateRole']) {
+                <span class="p-error">
+                    Role name already exists
+                </span>
+                }
+                }
+            </div>
+            <div class="roles-permission-list w-full col-span-2">
+                @if (moduleList.length && formGroup.valid) {
+                <p class="block m-0 w-full">
+                    Select permissions for <b>{{roleName}}</b>:
+                </p>
+                <div class="controles-container">
+                    <ul class="parent-wrapper grid w-full gap-6 md:grid-cols-3 list-none pl-0 ml-0">
+                        @for (item of moduleList; track item?.id) {
+                        <li
+                            class="flex flex-col items-start gap-2 justify-start w-full p-3 text-gray-500 bg-white border-2 border-gray-200 rounded-2xl cursor-pointer">
+                            <div class="form-group flex items-center justify-center gap-1">
+                                <p-checkbox class="flex items-center justify-start gap-2" binary="true"
+                                    [inputId]="item.moduleId" [(ngModel)]="item.enabled" #parentCheckBox
+                                    (onChange)="handleParentStateChange($event, item)"
+                                    [ngModelOptions]="{standalone: true}"></p-checkbox>
+                                <label [for]="item.moduleId" (click)="parentCheckBox.handleChange($event)"
+                                    class="!mb-0 font-semibold cursor-pointer">{{item.moduleTitle}}</label>
+                            </div>
+                            <ul class="flex flex-col items-start gap-1 justify-start w-full list-none pl-0 ml-4">
+                                @for (access of item?.actions; track $index) {
+                                <li>
+                                    <div class="form-group flex items-center justify-center gap-1">
+                                        <p-checkbox [inputId]="access.action+'-'+access.id"
+                                            class="flex items-center justify-start gap-2" #childCheckBox binary="true"
+                                            [(ngModel)]="access.enabled"
+                                            (onChange)="handleChildStateChange($event, access, item)"
+                                            [ngModelOptions]="{standalone: true}"></p-checkbox>
+                                        <label (click)="childCheckBox.handleChange($event)"
+                                            [for]="access.action+'-'+access.id"
+                                            class="!mb-0 cursor-pointer">{{access.title}}</label>
+                                    </div>
+                                </li>
+                                }
+                            </ul>
+                        </li>
+                        }
+                    </ul>
+                </div>
+                } @else {
+                <div class="w-full min-h-32 flex items-center justify-center">
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+                </div>
+                }
+            </div>
+        </form>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>
