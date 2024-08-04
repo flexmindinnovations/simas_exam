@@ -29,7 +29,7 @@
                 <div class="form-array-wrapper">
                     @for (question of questions.controls; track $index) {
                     <div class="wrapper flex lg:xl:items-center lg:xl:justify-center gap-3"
-                        [ngClass]="questions.controls.length > 2 ? ' last:pb-4' : 'pb-4'" [formGroupName]="$index">
+                        [ngClass]="questions.controls.length > 2 ? ' last:pb-16' : 'pb-4'" [formGroupName]="$index">
                         <div class="flex form-input flex-col items-start lg:xl:flex-1">
                             <label for="roundName">Round Name</label>
                             <input type="text" class="lg:xl:!w-full"
