@@ -76,7 +76,6 @@ export class AddEditExamTypeComponent implements OnInit {
       next: (response) => {
         const res: any = response?.apiCall;
         this.isSubmitActionLoading = false;
-        utils.setMessages('Exam type added successfully', 'success');
         utils.isAddActionLoading.set(false);
         setTimeout(() => {
           this.dialogRef.close(res);
@@ -85,7 +84,6 @@ export class AddEditExamTypeComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.isSubmitActionLoading = false;
         utils.isAddActionLoading.set(false);
-        utils.setMessages(error.message, 'error');
         this.dialogRef.close(false);
       }
     });

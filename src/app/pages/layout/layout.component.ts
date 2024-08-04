@@ -53,14 +53,11 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       if (this.isMobile) {
         setTimeout(() => {
           const mobileSidebar = document.getElementsByClassName('p-sidebar')[0];
-          const pSidebarMask = document.getElementsByClassName('p-sidebar-mask');
+          const pSidebarMask = document.querySelector('.p-component-overlay.p-sidebar-mask');
           mobileSidebar?.removeChild(mobileSidebar?.children[0]);
-          console.log('pSidebarMask: ', pSidebarMask);
-          // if (pSidebarMask) {
-          //   while (pSidebarMask.length > 0) {
-          //     pSidebarMask[0].parentNode.removeChild(pSidebarMask[0]);
-          //   }
-          // }
+          if (pSidebarMask) {
+            pSidebarMask.remove();
+          }
         })
       }
     })

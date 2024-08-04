@@ -33,10 +33,10 @@
                     Select permissions for <b>{{roleName}}</b>:
                 </p>
                 <div class="controles-container">
-                    <ul class="parent-wrapper grid w-full gap-6 md:grid-cols-3 list-none pl-0 ml-0">
+                    <ul class="parent-wrapper grid w-full gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 list-none pl-0 ml-0">
                         @for (item of moduleList; track item?.id) {
                         <li
-                            class="flex flex-col items-start gap-2 justify-start w-full p-3 text-gray-500 bg-white border-2 border-gray-200 rounded-2xl cursor-pointer">
+                            class="flex flex-col items-start gap-2 justify-start w-full p-0 md:p-3 lg:p-3 xl:p-3 text-gray-500 bg-white border-2 border-gray-200 rounded-2xl cursor-pointer">
                             <div class="form-group flex items-center justify-center gap-1">
                                 <p-checkbox class="flex items-center justify-start gap-2" binary="true"
                                     [inputId]="item.moduleId" [(ngModel)]="item.enabled" #parentCheckBox
