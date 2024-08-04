@@ -9,13 +9,19 @@
     @tailwind utilities;
 }
 
-// @import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/themes/lara-light-purple/theme.css";
 // @import "primeng/resources/themes/viva-light/theme.css";
-@import "primeng/resources/themes/fluent-light/theme.css";
+// @import "primeng/resources/themes/fluent-light/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
 @import "constants.scss";
+
+@property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
 
 
 .pi {
@@ -52,10 +58,11 @@
 
     button,
     input {
-        @apply px-2 py-1.5 text-sm min-w-20;
-        box-shadow: none;
+        @apply px-3 py-2 text-sm min-w-20 rounded-2xl shadow-2xl;
+        // box-shadow: none;
 
         .p-button-label {
+            @apply text-xs;
             font-weight: normal;
         }
 
@@ -75,11 +82,12 @@
     }
 
     p-dropdown {
+        @apply p-0;
         box-shadow: none;
         outline: none;
 
         .p-inputtext {
-            @apply px-2 py-1.5 text-sm min-w-20;
+            @apply px-2 py-2 text-sm min-w-20;
             box-shadow: none;
             outline: none;
         }
@@ -98,11 +106,12 @@
     }
 
     p-messages {
+        @apply w-full;
         .p-message {
-            @apply m-0 rounded-none;
+            @apply m-0 rounded-none first:rounded-t-2xl pl-4;
 
             .p-message-wrapper {
-                @apply py-1 flex items-center justify-between px-0 pr-3;
+                @apply py-1 flex items-center justify-between px-0 pr-3 flex-wrap w-full h-full;
 
                 button {
                     @apply min-w-4 w-10 flex items-center justify-center;
@@ -112,25 +121,32 @@
     }
 
     button {
-        @apply px-2 py-1.5 outline-none;
-        letter-spacing: 1px;
+        @apply px-3 py-2 outline-none text-sm shadow-2xl rounded-2xl;
+
+        &.p-button-primary {
+            @apply bg-ph-600;
+        }
 
         &.p-button-icon-only {
-            @apply w-8 min-w-8 p-1.5 flex flex-row items-center justify-center;
+            @apply w-8 min-w-8 p-1 flex flex-row items-center bg-transparent justify-center;
+
+            span {
+                font-size: 18px !important;
+            }
         }
 
         &.action {
-            @apply w-full;
+            @apply w-full p-2.5;
         }
     }
 
     p-fileupload {
         .p-fileupload {
             .p-fileupload-buttonbar {
-                @apply p-3;
+                @apply p-3 rounded-t-2xl;
 
                 .p-button {
-                    @apply w-full h-8 p-0 rounded-none;
+                    @apply w-full h-8 p-0 rounded-2xl;
                 }
             }
 
@@ -151,7 +167,7 @@
             }
 
             .p-fileupload-content {
-                @apply p-2;
+                @apply p-2 rounded-b-2xl;
 
                 h5 {
                     @apply m-1;
@@ -197,10 +213,10 @@
                 }
 
                 td {
-                    @apply text-sm px-1 py-[3px];
+                    @apply text-sm px-1 py-[3px] h-10;
 
                     &.action-cell {
-                        @apply flex items-center justify-start;
+                        @apply flex items-center h-10 justify-start;
                     }
                 }
             }
@@ -214,7 +230,7 @@
     input,
     .p-inputwrapper,
     .p-password {
-        @apply w-full;
+        @apply w-full rounded-2xl;
     }
 
     .p-paginator-rpp-options {
@@ -234,7 +250,7 @@
         }
 
         button {
-            @apply p-1 h-10 w-auto lg:xl:w-10 rounded-full;
+            @apply p-1 h-10 w-auto lg:xl:w-10;
 
             &.p-paginator-first {
                 @apply hidden lg:xl:flex;
@@ -252,10 +268,12 @@
 
     p,
     label {
-        @apply text-sm select-none;
+        @apply text-xs select-none;
     }
 
     .alert-message {
+        @apply w-full h-full;
+
         .p-message {
             .p-message-wrapper {
                 .p-message-icon {
@@ -263,7 +281,7 @@
                 }
 
                 .p-message-detail {
-                    @apply text-sm;
+                    @apply text-sm text-wrap overflow-auto;
                 }
             }
 
@@ -286,7 +304,7 @@
     }
 
     .p-inputtextarea {
-        @apply w-full text-xs;
+        @apply w-full text-xs rounded-2xl;
         box-shadow: none;
     }
 
@@ -297,7 +315,11 @@
 
 
 .p-error {
-    @apply text-xs;
+    @apply text-xs mt-[0.2rem] ml-[0.8rem];
+}
+
+#username-help {
+    @apply mt-0.5 select-none opacity-70;
 }
 
 html,
@@ -305,8 +327,13 @@ body {
     @apply m-0 p-0 overflow-hidden box-border;
     height: 100vh;
     height: 100dvh;
-    width: 100vw;
-    width: 100dvw;
+    width: 100%;
+    // width: 100dvw;
+}
+
+p-tieredmenusub ul li .p-menuitem-content a {
+    padding: 0.6rem !important;
+    font-size: 0.75rem;
 }
 
 .p-inputwrapper-focus {
@@ -315,11 +342,11 @@ body {
 }
 
 .p-message-success {
-    @apply bg-green-700 text-white border-0 border-l-8 border-solid border-green-800;
+    @apply bg-green-700 h-full text-white border-none;
 }
 
 .p-message-error {
-    @apply bg-red-700 text-white border-0 border-l-8 border-solid border-red-800;
+    @apply bg-red-700 h-full text-white border-none;
 }
 
 .p-dropdown-items-wrapper {
@@ -340,8 +367,8 @@ body {
 
 .p-focus {
     outline: none;
-    border: none;
-    box-shadow: none;
+    // border: none;
+    // box-shadow: none;
 }
 
 input::-webkit-outer-spin-button,
@@ -351,7 +378,19 @@ input::-webkit-inner-spin-button {
 }
 
 .form-input {
-    @apply min-h-[5.5rem];
+    @apply min-h-20;
+}
+
+.p-button-icon {
+    @apply text-xs;
+}
+
+.p-sidebar {
+    @apply bg-ph-500;
+}
+
+.p-dropdown-panel {
+    @apply rounded-2xl;
 }
 
 h1,
@@ -361,13 +400,18 @@ h4,
 h5,
 h6,
 p,
+a,
 span,
 label {
     // font-family: "Montserrat", sans-serif;
-    font-family: "Lato", sans-serif;
+    // font-family: "Lato", sans-serif;
+    font-family: "Poppins", serif;
     font-optical-sizing: auto;
 }
 
+.p-menuitem-link {
+    @apply text-sm;
+}
 
 .data-filter {
     .p-icon-field {
@@ -380,7 +424,7 @@ label {
 }
 
 .form-container {
-    @apply p-4 overflow-auto max-h-[70dvh];
+    @apply p-4 overflow-auto max-h-[64dvh];
 }
 
 .page-container {
@@ -391,9 +435,21 @@ label {
     }
 }
 
+.toggleRowButton, .add-row-btn {
+    @apply text-ph-700;
+    .p-button-icon {
+
+        &::before {
+            font-size: 12px !important;
+        }
+    }
+}
+
 .add-edit-dialog {
+    @apply rounded-2xl shadow-2xl;
+
     .p-dialog-header {
-        @apply px-4 pt-4 pb-2;
+        @apply px-4 pt-4 pb-2 rounded-t-2xl;
 
         .p-dialog-title {
             @apply text-base font-semibold;
@@ -408,6 +464,85 @@ label {
     }
 
     .p-dialog-content {
-        @apply p-0;
+        @apply p-0 rounded-b-2xl;
+    }
+}
+
+@layer components {
+    .banner::after {
+        @apply p-0 rounded-2xl;
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        height: 100%;
+        width: 100%;
+        transform: translate(-50%, -50%);
+        background-image: conic-gradient(from var(--angle), #F9A8D4, #C084FC, #818CF8, #F9A8D4);
+        z-index: -1;
+        animation: spin 3s linear infinite;
+    }
+
+    .banner::before {
+        filter: blur(1.5rem);
+        opacity: 0.5;
+    }
+}
+
+.child-table {
+    .p-datatable-wrapper {
+        table {
+            @apply bg-gray-50;
+
+            thead {
+                tr>th {
+                    @apply bg-gray-50;
+                }
+            }
+
+            tbody {
+                tr {
+                    td {
+                        @apply border-none bg-gray-50;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.toggleRowButton {
+    @apply hover:bg-transparent text-gray-400 font-normal text-xs;
+}
+
+image-picker {
+    @apply my-2;
+}
+
+.layout-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 100%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    background-image: conic-gradient(from var(--angle), #8b5cf6, #C084FC, #818CF8, #8b5cf6);
+    z-index: -1;
+    animation: spin 15s linear infinite;
+}
+
+.layout-wrapper::before {
+    filter: blur(1.5rem);
+    opacity: 0.5;
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg;
     }
 }

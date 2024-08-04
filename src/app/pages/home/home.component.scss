@@ -1,0 +1,35 @@
+@property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.header {
+    @apply w-full;
+
+    h3 {
+        @apply text-transparent bg-clip-text;
+        background-image: conic-gradient(from var(--angle), #F9A8D4, #C084FC, #818CF8, #F9A8D4);
+        animation: 5s spin linear infinite;
+    }
+
+    p {
+        @apply text-ph-500
+    }
+}
+
+.banner {
+    @apply h-40 bg-no-repeat bg-right bg-contain;
+    position: relative;
+
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg;
+    }
+}

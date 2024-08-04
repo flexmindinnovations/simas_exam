@@ -1,6 +1,6 @@
 @if (!isLoading) {
 <div class="data-grid-container flex flex-col items-start justify-start gap-5 w-full"
-    [ngClass]="isMobile ? 'px-3' : ''">
+    [ngClass]="isMobile ? 'px-3' : 'lg:max-w-[100%] lg:p-4 xl:max-w-[92%]'">
     <div
         class="grid-options flex flex-col lg:xl:flex-row items-start justify-end lg:xl:justify-between w-full gap-4 lg:xl:gap-0">
         <div class="search w-[100%] lg:xl:w-[30%]">
@@ -13,19 +13,135 @@
         <div class="options flex items-center justify-end w-full">
             <div class="export-option">
                 @if (dataSource?.length) {
-                <p-button icon="pi pi-download" [loading]="isExportActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                    pTooltip="Export table data" (onClick)="downloadOptionsMenu.toggle($event)" />
+                <p-button label="Download Data" icon="pi pi-download" [loading]="isExportActionLoading"
+                    loadingIcon="pi pi-spin pi-spinner" pTooltip="Export table data" tooltipPosition="left"
+                    (onClick)="downloadOptionsMenu.toggle($event)" />
                 <p-tieredMenu #downloadOptionsMenu [popup]="true" [model]="downloadOptions" />
                 }
             </div>
+            @if (currentModule?.canAdd) {
             <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
             pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
-            [pTooltip]="'Add ' + addButtonTitle" (onClick)="handleAddAction()"></p-button>
+                [pTooltip]="'Add ' + addButtonTitle" tooltipPosition="left" (onClick)="handleAddAction()"></p-button>
+            }
         </div>
     </div>
+    @if(isTreeList()) {
+    <div class="card w-full">
+        <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
+            (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
+            [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
+            [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
+            [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
+            [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : screenHeight - paginatorPosition[1]  + 'px'}">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns; let i=index" [pSortableColumn]="col.field"
+                        [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
+                        @if (i === 0) {
+                        <div class="w-full flex items-center justify-center gap-1">
+                            <p class="m-0">{{col.header}}</p>
+                        </div>
+
+                        } @else if(col.field === 'action') {
+                        <div class="w-full flex items-center justify-center gap-1">
+                            <p class="m-0">{{col.header}}</p>
+                        </div>
+                        } @else {
+                        <p class="m-0 flex items-center justify-start ">
+                            <span>{{col.header}}</span>
+                            <p-sortIcon [field]="col.field" />
+                        </p>
+                        }
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                <tr class="w-full h-10">
+                    @for (item of colDefs; track $index) {
+                    <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
+                        @if($index === 0) {
+                        <div class="flex items-center justify-start gap-5">
+                            <p-button [text]="true" [pTooltip]="rowData?.expanded ? 'Collapse Row' : 'Expand Row'"
+                                styleClass="toggleRowButton"
+                                [icon]="rowData.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                                (onClick)="toggleRow(rowData)" />
+                            <p class="m-0">{{rowData[item.field]}}</p>
+                        </div>
+                        } @else if(item.field === 'status') {
+                        <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5"
+                            [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'">
+                            {{rowData[item.field] === '1' ? 'Active' : 'Inactive'}}
+                        </p>
+                        }@else if(item.field === 'action') {
+                        <div class="w-full flex items-center justify-center gap-1">
+                            @if (currentModule?.canEdit) {
+                            <p-button [text]="true" icon="pi
+                                        pi-pen-to-square" [loading]="rowData.isEditActionLoading"
+                                loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit" tooltipPosition="bottom"
+                                (onClick)="handleEditOperation(rowData, rowIndex)" />
+                            }
+                            @if (currentModule?.canDelete) {
+                            <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
+                                loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
+                                [text]="true" icon="pi pi-trash" /> -->
+                            }
+                        </div>
+                        } @else {
+                        <p class="m-0 w-fit">{{rowData[item.field]}}</p>
+                        }
+                    </td>
+                    }
+                </tr>
+                @if (rowData.expanded) {
+                <tr>
+                    <td [attr.colspan]="colDefs.length" class="bg-gray-50">
+                        <div class="w-full max-w-5xl mx-auto">
+                            <p-table class="w-full max-w-5xl mx-auto overflow-auto " [loading]="isLoading"
+                                loadingIcon="pi pi-spin pi-spinner" (onRowSelect)="handleRowSelect($event)"
+                                [resizableColumns]="true" [columns]="childColDefs" [value]="rowData?.children"
+                                sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
+                                styleClass="p-datatable-sm child-table">
+                                <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns; let i=index" [pSortableColumn]="col.field"
+                        [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
+                        <p class="m-0 flex items-center justify-start ">
+                            <span>{{col.header}}</span>
+                            <p-sortIcon [field]="col.field" />
+                        </p>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr class="w-full h-10">
+                    @for (col of columns; track $index) {
+                    <td>
+                        <p class="m-0 w-fit">{{rowData[col.field]}}</p>
+                    </td>
+                    }
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    </td>
+    </tr>
+    }
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td [attr.colspan]="colDefs.length" [attr.rowspan]="1" class="text-center py-3">No records found.
+            </td>
+        </tr>
+    </ng-template>
+    </p-table>
+</div>
+}
+@else {
+<div class="card w-full">
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
         (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
-        [value]="dataSource" [rows]="15" [paginator]="true" [scrollable]="true" [autoLayout]="true"
+        [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
         [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
         [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
         [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : screenHeight - paginatorPosition[1]  + 'px'}">
@@ -44,18 +160,28 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
             <tr class="w-full h-10">
                 @for (item of colDefs; track $index) {
                 <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
-                    @if(item.field === 'action') {
+                    @if(item.field === 'status') {
+                    <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5"
+                        [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'">
+                        {{rowData[item.field] === '1' ? 'Active' : 'Inactive'}}
+                    </p>
+                    }@else if(item.field === 'action') {
                     <div class="w-full flex items-center justify-center gap-1">
+                        @if (currentModule?.canEdit) {
                         <p-button [text]="true" icon="pi 
-                        pi-pen-to-square" [loading]="rowData.isEditActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                            pTooltip="Edit" (onClick)="handleEditOperation(rowData)" />
+                                    pi-pen-to-square" [loading]="rowData.isEditActionLoading" tooltipPosition="bottom"
+                            loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit"
+                            (onClick)="handleEditOperation(rowData, rowIndex)" />
+                        }
+                        @if (currentModule?.canDelete) {
                         <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData)" pTooltip="Delete"
-                [text]="true" icon="pi pi-trash" /> -->
+                    loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
+                    [text]="true" icon="pi pi-trash" /> -->
+                        }
                     </div>
                     } @else {
                     {{rowData[item.field]}}
@@ -66,10 +192,13 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="colDefs.length" [attr.rowspan]="1" class="text-center py-3">No records found.</td>
+                <td [attr.colspan]="colDefs.length" [attr.rowspan]="1" class="text-center py-3">No records found.
+                </td>
             </tr>
         </ng-template>
     </p-table>
+</div>
+}
 </div>
 } @else {
 <div class="w-full h-full flex items-center justify-center">
@@ -77,9 +206,12 @@
     <div class="select-none flex items-end justify-center">
         <i class="pi pi-spin pi-spinner text-xs space-x-1 mb-1 mr-1"></i> Loading
         <div class="mb-1 flex gap-1 ml-1">
-            <span class='h-[3px] w-[3px] bg-black rounded-full animate-bounce [animation-delay:-0.3s]'></span>
-            <span class='h-[3px] w-[3px] bg-black rounded-full animate-bounce [animation-delay:-0.15s]'></span>
-            <span class='h-[3px] w-[3px] bg-black rounded-full animate-bounce [animation-delay:-0.30s]'></span>
+            <span
+                class='h-[3px] w-[3px] bg-black dark:bg-white rounded-full animate-bounce [animation-delay:-0.3s]'></span>
+            <span
+                class='h-[3px] w-[3px] bg-black dark:bg-white rounded-full animate-bounce [animation-delay:-0.15s]'></span>
+            <span
+                class='h-[3px] w-[3px] bg-black dark:bg-white rounded-full animate-bounce [animation-delay:-0.30s]'></span>
         </div>
     </div>
     } @else {

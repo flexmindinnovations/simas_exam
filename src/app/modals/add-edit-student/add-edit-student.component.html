@@ -1,107 +1,260 @@
 <div class="dialog-body">
     <div class="form-container">
-        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
 
-            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+            <div class="flex flex-col items-start w-full col-span-2">
                 <label for="status">Status</label>
                 <p-inputSwitch formControlName="status" />
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+            <div class="flex form-input flex-col items-start w-full col-span-2 mb-4">
                 <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
                     (uploadFile)="handleUploadFile($event)"></image-picker>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
-                <label>First Name</label>
-                <input type="text" class="form-control" pInputText maxlength="100" formControlName="studentFirstName"
-                    name="studentFirstName" required />
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="studentFirstName">First Name</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-user"></i>
+                    <input type="text"
+                        [ngClass]="formGroup.get('studentFirstName')?.touched || formGroup.get('studentFirstName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        class="form-control" pInputText maxlength="100" formControlName="studentFirstName"
+                        name="studentFirstName" id="studentFirstName" required />
+                </span>
+                <div
+                    *ngIf="formGroup.get('studentFirstName')?.invalid && (formGroup.get('studentFirstName')?.dirty || formGroup.get('studentFirstName')?.touched)">
+                    <small *ngIf="formGroup.get('studentFirstName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
-                <label>Last Name</label>
-                <input type="text" class="form-control" pInputText maxlength="100" formControlName="studentLastName"
-                    name="studentLastName" required />
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="studentMiddleName">Middle Name</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-user"></i>
+                    <input type="text" id="studentMiddleName"
+                        [ngClass]="formGroup.get('studentMiddleName')?.touched || formGroup.get('studentMiddleName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        class="form-control" pInputText maxlength="100" formControlName="studentMiddleName"
+                        name="studentMiddleName" required />
+                </span>
+                <div
+                    *ngIf="formGroup.get('studentMiddleName')?.invalid && (formGroup.get('studentMiddleName')?.dirty || formGroup.get('studentMiddleName')?.touched)">
+                    <small *ngIf="formGroup.get('studentMiddleName')?.errors?.['required']" class="p-error">This field
+                        is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="studentLastName">Last Name</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-user"></i>
+                    <input type="text" id="studentLastName"
+                        [ngClass]="formGroup.get('studentLastName')?.touched || formGroup.get('studentLastName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        class="form-control" pInputText maxlength="100" formControlName="studentLastName"
+                        name="studentLastName" required />
+                </span>
+                <div
+                    *ngIf="formGroup.get('studentLastName')?.invalid && (formGroup.get('studentLastName')?.dirty || formGroup.get('studentLastName')?.touched)">
+                    <small *ngIf="formGroup.get('studentLastName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="emailId">Email</label>
-                <input type="email" pInputText formControlName="emailId" />
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-envelope"></i>
+                    <input type="email" id="emailId"
+                        [ngClass]="formGroup.get('emailId')?.touched || formGroup.get('emailId')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        pInputText formControlName="emailId" />
+                </span>
+                <div
+                    *ngIf="formGroup.get('emailId')?.invalid && (formGroup.get('emailId')?.dirty || formGroup.get('emailId')?.touched)">
+                    <small *ngIf="formGroup.get('emailId')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                    <small *ngIf="formGroup.get('emailId')?.errors?.['email']" class="p-error">Email is not
+                        valid.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="mobileNo">Mobile Number</label>
-                <input type="text" pInputText formControlName="mobileNo" maxlength="12"
-                    (keypress)="isNumberKey($event)" />
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-mobile"></i>
+                    <input type="text" id="mobileNo"
+                        [ngClass]="formGroup.get('mobileNo')?.touched || formGroup.get('mobileNo')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        pInputText formControlName="mobileNo" maxlength="12" (keypress)="isNumberKey($event)" />
+                </span>
+                <div
+                    *ngIf="formGroup.get('mobileNo')?.invalid && (formGroup.get('mobileNo')?.dirty || formGroup.get('mobileNo')?.touched)">
+                    <small *ngIf="formGroup.get('mobileNo')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                    <small *ngIf="formGroup.get('mobileNo')?.errors?.['pattern']" class="p-error">Mobile Number is not
+                        valid.</small>
+                </div>
+
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="dob">Date Of Birth</label>
-                <p-calendar appendTo="body" ariaLabelledBy="dob" formControlName="dob" [showButtonBar]="true"
+                <p-calendar appendTo="body" ariaLabelledBy="dob" id="dob" formControlName="dob" [showButtonBar]="true"
+                    [maxDate]="maxDate"
+                    [ngClass]="formGroup.get('dob')?.touched || formGroup.get('dob')?.dirty ? 'ng-invalid ng-dirty' : ''"
                     [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd-mm-yy" />
+                <div
+                    *ngIf="formGroup.get('dob')?.invalid && (formGroup.get('dob')?.dirty || formGroup.get('dob')?.touched)">
+                    <small *ngIf="formGroup.get('dob')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="standard">Standard</label>
-                <input type="text" class="form-control" pInputText maxlength="100" formControlName="standard"
-                    name="standard" required />
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-graduation-cap"></i>
+                    <input type="text" id="standard"
+                        [ngClass]="formGroup.get('standard')?.touched || formGroup.get('standard')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        class="form-control" pInputText maxlength="100" formControlName="standard" name="standard"
+                        required />
+                </span>
+                <div
+                    *ngIf="formGroup.get('standard')?.invalid && (formGroup.get('standard')?.dirty || formGroup.get('standard')?.touched)">
+                    <small *ngIf="formGroup.get('standard')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="schoolName">School Name</label>
-                <input type="text" class="form-control" pInputText maxlength="100" formControlName="schoolName"
-                    name="schoolName" required />
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-building"></i>
+                    <input type="text" id="schoolName"
+                        [ngClass]="formGroup.get('schoolName')?.touched || formGroup.get('schoolName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        class="form-control" pInputText maxlength="100" formControlName="schoolName" name="schoolName"
+                        required />
+                </span>
+                <div
+                    *ngIf="formGroup.get('schoolName')?.invalid && (formGroup.get('schoolName')?.dirty || formGroup.get('schoolName')?.touched)">
+                    <small *ngIf="formGroup.get('schoolName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
-                <label for="levelName">Level</label>
-                <p-dropdown [options]="levelList" appendTo="body" placeholder="Select" name="levelName"
-                    formControlName="levelName" ariaLabelledBy="countryId" [loading]="levelListLoading"
-                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnLevelChange($event)" optionValue="countryId"
-                    optionLabel="countryName" [filter]="true" filterBy="countryName" [showClear]="false"></p-dropdown>
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="levelId">Level</label>
+                <p-dropdown [options]="levelNameList" appendTo="body" placeholder="Select" name="levelId" id="levelId"
+                    formControlName="levelId" ariaLabelledBy="levelId" [loading]="levelListLoading"
+                    [ngClass]="formGroup.get('levelId')?.touched || formGroup.get('levelId')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnLevelChange($event)" optionValue="levelId"
+                    optionLabel="levelName" [filter]="true" filterBy="levelName" [showClear]="false"></p-dropdown>
+                <div
+                    *ngIf="formGroup.get('levelId')?.invalid && (formGroup.get('levelId')?.dirty || formGroup.get('levelId')?.touched)">
+                    <small *ngIf="formGroup.get('levelId')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <!-- <div class="flex form-input flex-col items-start w-full">
                 <label for="franchiseTypeName">Franchise Type Name</label>
-                <p-dropdown [options]="levelList" appendTo="body" placeholder="Select" name="franchiseTypeName"
-                    formControlName="franchiseTypeName" ariaLabelledBy="franchiseTypeName"
-                    [loading]="franchiseTypeNameListLoading" loadingIcon="pi pi-spin pi-spinner"
-                    (onChange)="handleOnFranchiseTypeNameChange($event)" optionValue="countryId"
-                    optionLabel="franchiseTypeName" [filter]="true" filterBy="franchiseTypeName"
+                <p-dropdown [options]="franchiseTypeNameList" appendTo="body" placeholder="Select" name="franchiseTypeName"
+                    formControlName="franchiseTypeName"
+                    [ngClass]="formGroup.get('franchiseTypeName')?.touched || formGroup.get('franchiseTypeName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    ariaLabelledBy="franchiseTypeName" id="franchiseTypeName" [loading]="franchiseTypeNameListLoading"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnFranchiseTypeNameChange($event)"
+                    optionValue="countryId" optionLabel="franchiseTypeName" [filter]="true" filterBy="franchiseTypeName"
                     [showClear]="false"></p-dropdown>
-            </div>
+                <div
+                    *ngIf="formGroup.get('franchiseTypeName')?.invalid && (formGroup.get('franchiseTypeName')?.dirty || formGroup.get('franchiseTypeName')?.touched)">
+                    <small *ngIf="formGroup.get('franchiseTypeName')?.errors?.['required']" class="p-error">This field
+                        is
+                        required.</small>
+                </div>
+            </div> -->
 
-            <div class="flex flex-col items-start w-full gap-2">
-                <label for="franchiseName">Franchise Name</label>
-                <p-dropdown [options]="levelList" appendTo="body" placeholder="Select" name="franchiseName"
-                    formControlName="franchiseName" ariaLabelledBy="franchiseName" [loading]="franchiseNameListLoading"
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="franchiseId">Franchise Name</label>
+                <p-dropdown [options]="franchiseNameList" appendTo="body" placeholder="Select" name="franchiseId"
+                    id="franchiseId" formControlName="franchiseId"
+                    [ngClass]="formGroup.get('franchiseId')?.touched || formGroup.get('franchiseId')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    ariaLabelledBy="franchiseName" [loading]="franchiseNameListLoading"
                     loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnFranchiseNameChange($event)"
-                    optionValue="countryId" optionLabel="franchiseName" [filter]="true" filterBy="franchiseName"
+                    optionValue="franchiseId" optionLabel="franchiseName" [filter]="true" filterBy="franchiseName"
                     [showClear]="false"></p-dropdown>
+                <div
+                    *ngIf="formGroup.get('franchiseId')?.invalid && (formGroup.get('franchiseId')?.dirty || formGroup.get('franchiseId')?.touched)">
+                    <small *ngIf="formGroup.get('franchiseId')?.errors?.['required']" class="p-error">This field
+                        is
+                        required.</small>
+                </div>
             </div>
 
 
-            <div class="flex flex-col items-start w-full gap-2">
-                <label for="instructorName">Instructor Name</label>
-                <p-dropdown appendTo="body" formControlName="instructorName" [options]="instructorList"
-                    ariaLabelledBy="instructorName" [loading]="instructorListLoading" placeholder="Select"
-                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnInstructorNameChange($event)"
-                    optionValue="countryId" optionLabel="instructorName" [filter]="true" filterBy="instructorName"
-                    [showClear]="false" />
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="instructorId">Instructor Name</label>
+                <p-dropdown appendTo="body" formControlName="instructorId"
+                    [ngClass]="formGroup.get('instructorId')?.touched || formGroup.get('instructorId')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    [options]="instructorList" id="instructorId" ariaLabelledBy="instructorId"
+                    [loading]="instructorListLoading" placeholder="Select" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnInstructorNameChange($event)" optionValue="instructorId"
+                    optionLabel="instructorName" [filter]="true" filterBy="instructorName" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('instructorId')?.invalid && (formGroup.get('instructorId')?.dirty || formGroup.get('instructorId')?.touched)">
+                    <small *ngIf="formGroup.get('instructorId')?.errors?.['required']" class="p-error">This field
+                        is
+                        required.</small>
+                </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="stuPass">Student Password</label>
+                <p-password id="stuPass" formControlName="stuPass" [feedback]="false" [toggleMask]="true" />
+                <div
+                    *ngIf="formGroup.get('stuPass')?.invalid && (formGroup.get('stuPass')?.dirty || formGroup.get('stuPass')?.touched)">
+                    <small *ngIf="formGroup.get('stuPass')?.errors?.['required']" class="p-error">This field
+                        is
+                        required.</small>
+                </div>
+            </div>
+
+            <!-- <div class="flex form-input flex-col items-start w-full">
+                <label for="startDate">Start Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="startDate" id="startDate" formControlName="startDate"
+                    [maxDate]="maxDate" [showButtonBar]="true"
+                    [ngClass]="formGroup.get('startDate')?.touched || formGroup.get('startDate')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd-mm-yy" />
+                <div
+                    *ngIf="formGroup.get('startDate')?.invalid && (formGroup.get('startDate')?.dirty || formGroup.get('startDate')?.touched)">
+                    <small *ngIf="formGroup.get('startDate')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="endDate">End Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="endDate" id="endDate" formControlName="endDate"
+                    [showButtonBar]="true"
+                    [ngClass]="formGroup.get('endDate')?.touched || formGroup.get('endDate')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd-mm-yy" />
+                <div
+                    *ngIf="formGroup.get('endDate')?.invalid && (formGroup.get('endDate')?.dirty || formGroup.get('endDate')?.touched)">
+                    <small *ngIf="formGroup.get('endDate')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div> -->
+
+            <div class="flex form-input flex-col items-start w-full col-span-2">
                 <label for="address1">Address</label>
                 <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
             </textarea>
             </div>
         </form>
     </div>
-    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
         <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
             (onClick)="handleDialogCancel()"></p-button>
         <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
-            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary" [loading]="isSubmitActionLoading"
-            loadingIcon="pi pi-spin pi-spinner"></p-button>
+            [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" [disabled]="formGroup.invalid || isSubmitActionLoading"
+            severity="primary" [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
     </div>
 </div>

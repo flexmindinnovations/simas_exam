@@ -1,0 +1,134 @@
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="examTypeName">Exam Type Name</label>
+                <p-dropdown appendTo="body" formControlName="examTypeName" [options]="examTypeNameList"
+                    ariaLabelledBy="examTypeName" [loading]="isExamTypeNameListLoading"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnExamTypeListChange($event)"
+                    optionValue="examTypeId" optionLabel="examTypeName" [filter]="true" filterBy="examTypeName"
+                    [ngClass]="formGroup.get('examTypeName')?.touched || formGroup.get('examTypeName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('examTypeName')?.invalid && (formGroup.get('examTypeName')?.dirty || formGroup.get('examTypeName')?.touched)">
+                    <small *ngIf="formGroup.get('examTypeName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="levelName">Level Name</label>
+                <p-dropdown appendTo="body" formControlName="levelName" [options]="levelNameList"
+                    ariaLabelledBy="levelName" [loading]="levelNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnLevelListChange($event)" optionValue="levelId" optionLabel="levelName"
+                    [ngClass]="formGroup.get('levelName')?.touched || formGroup.get('levelName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    [filter]="true" filterBy="levelName" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('levelName')?.invalid && (formGroup.get('levelName')?.dirty || formGroup.get('levelName')?.touched)">
+                    <small *ngIf="formGroup.get('levelName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="roundName">Round Name</label>
+                <p-dropdown appendTo="body" formControlName="roundName" [options]="roundNameList"
+                    ariaLabelledBy="roundName" [loading]="roundNameListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnRoundListChange($event)" optionValue="roundId" optionLabel="roundName"
+                    [ngClass]="formGroup.get('roundName')?.touched || formGroup.get('roundName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    [filter]="true" filterBy="roundName" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('roundName')?.invalid && (formGroup.get('roundName')?.dirty || formGroup.get('roundName')?.touched)">
+                    <small *ngIf="formGroup.get('roundName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="questionType">Question Type</label>
+                <p-dropdown appendTo="body" formControlName="questionType" [options]="questionTypeList"
+                    ariaLabelledBy="questionType" [loading]="questionTypeListLoading"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnQuestionTypeListChange($event)"
+                    [ngClass]="formGroup.get('questionType')?.touched || formGroup.get('questionType')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    optionValue="id" optionLabel="title" [filter]="true" filterBy="title" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('questionType')?.invalid && (formGroup.get('questionType')?.dirty || formGroup.get('questionType')?.touched)">
+                    <small *ngIf="formGroup.get('questionType')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <!-- <div class="flex form-input flex-col items-start w-full">
+                <label for="typeName">Type</label>
+                <p-dropdown appendTo="body" formControlName="typeName" [options]="typeList" ariaLabelledBy="typeName"
+                    [loading]="typeListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnTypeListChange($event)" optionValue="id" optionLabel="title" [filter]="true"
+                    filterBy="title" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('typeName')?.invalid && (formGroup.get('typeName')?.dirty || formGroup.get('typeName')?.touched)">
+                    <small *ngIf="formGroup.get('typeName')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div> -->
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="noOfRows">No Of Rows</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-arrows-v"></i>
+                    <input type="text" pInputText formControlName="noOfRows"
+                        [ngClass]="formGroup.get('noOfRows')?.touched || formGroup.get('noOfRows')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                </span>
+                <div
+                    *ngIf="formGroup.get('noOfRows')?.invalid && (formGroup.get('noOfRows')?.dirty || formGroup.get('noOfRows')?.touched)">
+                    <small *ngIf="formGroup.get('noOfRows')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="noOfColumns">No Of Columns</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-objects-column"></i>
+                    <input type="text" pInputText formControlName="noOfColumns"
+                        [ngClass]="formGroup.get('noOfColumns')?.touched || formGroup.get('noOfColumns')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                </span>
+                <div
+                    *ngIf="formGroup.get('noOfColumns')?.invalid && (formGroup.get('noOfColumns')?.dirty || formGroup.get('noOfColumns')?.touched)">
+                    <small *ngIf="formGroup.get('noOfColumns')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+            <div class="flex form-input flex-col items-start w-full col-span-2 gap-2">
+                <input #excelFileChooser type="file" (change)="handleFileChange($event)" accept=".xlsx"
+                    class="hidden" />
+                <div class="file-wrapper w-full" (onClick)="excelFileChooser.click()">
+                    <span class="p-input-icon-right w-full flex items-start justify-start">
+                        <span class="min-w-28 -mr-[2px]">
+                            <p-button label="Choose File" (onClick)="excelFileChooser.click()" styleClass="file-chooser"
+                                [disabled]="isSubmitActionLoading" icon="pi pi-cloud-upload" severity="primary"
+                                [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+                        </span>
+                        <input type="text" pInputText (onClick)="excelFileChooser.click()" [readOnly]="true"
+                            [placeholder]="selectedFileName" formControlName="file"
+                            style="width: 80%;border-top-left-radius: 0;border-bottom-left-radius: 0;"
+                            [ngClass]="formGroup.get('file')?.touched || formGroup.get('file')?.dirty ? 'ng-invalid ng-dirty' : ''" />
+                    </span>
+                    <div
+                        *ngIf="formGroup.get('file')?.invalid && (formGroup.get('file')?.dirty || formGroup.get('file')?.touched)">
+                        <small *ngIf="formGroup.get('file')?.errors?.['required']" class="p-error">This field is
+                            required.</small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

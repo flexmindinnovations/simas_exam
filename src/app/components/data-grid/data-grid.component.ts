@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, effect, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, effect, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, OnChanges, SimpleChanges, input, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -14,11 +14,14 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { MenuItem } from 'primeng/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { TreeTableModule } from 'primeng/treetable';
+import { TreeNodeExpandEvent } from 'primeng/tree';
+import { db } from '../../../db';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
   styleUrl: './data-grid.component.scss'
@@ -34,19 +37,23 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   isEditActionLoading: boolean = false;
   isAddActionLoading: boolean = false;
   isExportActionLoading: boolean = false;
+  showPaginator: boolean = false;
+  isMobile: boolean = false;
+  isTreeList = input<boolean>(false);
 
   @ViewChild('dataGrid', { static: false }) dataGrid!: Table;
   @Input({ required: true }) colDefs: any;
+  @Input({ required: false }) childColDefs: any;
   @Input({ required: true }) dataSource: any;
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
-  paginatorPosition = [125, 190];
-  isMobile: boolean = false;
+  paginatorPosition = [100, 250];
   dialogRef: DynamicDialogRef | undefined;
 
-
   downloadOptions: MenuItem[] = [];
+  permissionList: any[] = [];
+  currentModule: any;
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -62,11 +69,16 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   }
 
   constructor(
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private cdref: ChangeDetectorRef
   ) {
     this.getScreenSize();
     effect(() => {
       this.isMobile = utils.isMobile();
+    })
+
+    effect(() => {
+      this.permissionList = utils.permissionList();
     })
 
     effect(() => {
@@ -93,12 +105,16 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.isTreeList()) {
+      this.dataSource = this.transformDataToTreeNodes(this.dataSource);
+    }
     const dataSource = this.dataSource.map((item: any) => {
       item['isEditActionLoading'] = false;
       item['isDeleteActionLoading'] = false;
       return item;
     });
     this.dataSource = dataSource;
+    this.showPaginator = this.dataSource.length > 15 ? true : false;
   }
 
   ngAfterViewInit(): void {
@@ -112,6 +128,44 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
       { label: 'XLSX', icon: 'pi pi-file-excel', command: () => { this.downloadxlxs(); } },
       { label: 'PDF', icon: 'pi pi-file-pdf', command: () => { this.downloadPdf(); } }
     ];
+    this.setModulePermissions();
+    this.cdref.detectChanges();
+  }
+
+  transformDataToTreeNodes(data: any[]): TreeNode[] {
+    return data.map(item => {
+      const { children, ...rest } = item;
+      return {
+        ...rest,
+        expanded: false,
+        children: children ? this.transformDataToTreeNodes(children) : []
+      };
+    });
+  }
+
+  async setModulePermissions() {
+    let activeModule: any;
+    const permissionList = await db.permissiontem.toArray();
+    let currentRoute = window.location.href;
+    currentRoute = currentRoute.substring(currentRoute.lastIndexOf('/') + 1, currentRoute.length);
+    if (currentRoute.includes('-')) {
+      currentRoute = currentRoute.split('-')
+        .map((char) => char.charAt(0)?.toUpperCase() + char.slice(1))
+        .join('');
+    } else {
+      currentRoute = currentRoute.charAt(0).toUpperCase() + currentRoute.slice(1);
+    }
+    activeModule = permissionList.find((item: any) => item.moduleName === currentRoute);
+    this.currentModule = activeModule;
+  }
+
+  toggleRow(rowData: any) {
+    rowData.expanded = !rowData.expanded;
+  }
+
+  logd(data: any): any {
+    console.log('data: ', data);
+
   }
 
   downloadCsv() {
@@ -181,24 +235,19 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   }
 
-  handleEditOperation(rowData: any) {
+  handleEditOperation(rowData: any, index: number) {
     this.isEditActionLoading = true;
     this.dataSource.forEach((item: any) => item['isEditActionLoading'] = false);
-    const rowIndex = this.dataSource.findIndex((row: any) => row.franchiseId === rowData.franchiseId);
-    if (rowIndex > -1) {
-      this.dataSource[rowIndex]['isEditActionLoading'] = true;
-    }
+    this.dataSource[index]['isEditActionLoading'] = true;
     utils.isTableEditAction.set(true);
     utils.tableEditRowData.set(rowData);
   }
 
-  handleDeleteOperation(rowData: any) {
+  handleDeleteOperation(rowData: any, index: number) {
     this.isDeleteActionLoading = true;
     this.dataSource.forEach((item: any) => item['isDeleteActionLoading'] = false);
-    const rowIndex = this.dataSource.findIndex((row: any) => row.franchiseId === rowData.franchiseId);
-    if (rowIndex > -1) {
-      this.dataSource[rowIndex]['isDeleteActionLoading'] = true;
-    }
+    this.dataSource[index]['isDeleteActionLoading'] = true;
+    this.cdref.detectChanges();
     this.dialogRef = this.dialogService.open(DeleteConfirmComponent, {
       data: rowData,
       closable: false,
@@ -237,3 +286,22 @@ export interface TableColumn {
   width: string;
   styleClass: string;
 }
+
+export interface TreeNode {
+  label?: string;
+  data?: any;
+  icon?: string;
+  expandedIcon?: string;
+  collapsedIcon?: string;
+  children?: TreeNode[];
+  leaf?: boolean;
+  expanded?: boolean;
+  type?: string;
+  parent?: TreeNode;
+  partialSelected?: boolean;
+  styleClass?: string;
+  draggable?: boolean;
+  droppable?: boolean;
+  selectable?: boolean;
+}
+

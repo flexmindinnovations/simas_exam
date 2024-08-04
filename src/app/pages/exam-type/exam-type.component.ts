@@ -12,6 +12,8 @@ import { AddEditExamComponent } from '../../modals/add-edit-exam/add-edit-exam.c
 import { utils } from '../../utils';
 import { Message } from 'primeng/api';
 import { ExamService } from '../../services/exam/exam.service';
+import { AddEditExamTypeComponent } from '../../modals/add-edit-exam-type/add-edit-exam-type.component';
+import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 
 @Component({
   selector: 'app-exam-type',
@@ -24,7 +26,7 @@ import { ExamService } from '../../services/exam/exam.service';
 export class ExamTypeComponent {
 
   colDefs: any[] = [];
-  examList: any[] = [];
+  examTypeList: any[] = [];
   tableDataSource: any[] = [];
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
@@ -33,13 +35,13 @@ export class ExamTypeComponent {
   @ViewChild('examListTable', { static: false }) examListTable!: Table;
 
   constructor(
-    private examService: ExamService,
+    private examTypeService: ExamTypeService,
     private dialogService: DialogService
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
       if (isDeleteAction) {
-        this.deleteExamRow(utils.tableDeleteRowData());
+        this.deleteExamTypeRow(utils.tableDeleteRowData());
       }
     })
 
@@ -82,13 +84,12 @@ setTableColumns() {
 
 getExamList() {
   utils.isTableLoading.update(val => !val);
-  this.examService.getExamList().subscribe({
+  this.examTypeService.getExamTypeList().subscribe({
     next: (response) => {
       if (response) {
-        this.examList = response;
-        this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examList)
+        this.examTypeList = response;
+        this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examTypeList)
         utils.isTableLoading.update(val => !val);
-        utils.setMessages(response.message, 'success');
       }
     },
     error: (error: HttpErrorResponse) => {
@@ -100,11 +101,11 @@ getExamList() {
 handleAddEditAction(data?: any) {
   if (this.isEditMode) utils.isTableEditAction.set(true);
   else utils.isAddActionLoading.set(true);
-  this.dialogRef = this.dialogService.open(AddEditExamComponent, {
+  this.dialogRef = this.dialogService.open(AddEditExamTypeComponent, {
     data: this.isEditMode ? this.filterExamInfo(data?.examId) : { isEditMode: this.isEditMode },
     closable: false,
     modal: true,
-    height: utils.isMobile() ? '95%' : '87%',
+    height: 'auto',
     width: utils.isMobile() ? '95%' : '42%',
     styleClass: 'add-edit-dialog',
     header: this.isEditMode ? 'Edit Exam Type' : 'Add New Exam Type',
@@ -125,10 +126,10 @@ handleAddEditAction(data?: any) {
     }
   })
 }
-filterExamInfo(examId: number) {
-  const franchiseItem = this.examList.filter((item) => item.examId
-    === examId)[0];
-  return { ...franchiseItem, isEditMode: this.isEditMode };
+filterExamInfo(examTypeId: number) {
+  const examTypeItem = this.examTypeList.filter((item) => item.examTypeId
+    === examTypeId)[0];
+  return { ...examTypeItem, isEditMode: this.isEditMode };
 }
 
 filterGlobal(event: Event) {
@@ -142,16 +143,16 @@ clear(table: Table) {
 }
 
 handleRowDelet(event: any) {
-  const deleteItemIndex = this.examList.findIndex((item) => item?.id === event?.id);
+  const deleteItemIndex = this.examTypeList.findIndex((item) => item?.id === event?.id);
   if (deleteItemIndex > -1) {
-    this.examList.splice(deleteItemIndex, 1);
+    this.examTypeList.splice(deleteItemIndex, 1);
     this.tableDataSource.splice(deleteItemIndex, 1);
     const deleteMessageObj = { detail: 'Record deleted successsfully', severity: 'success', closable: true };
     utils.messages.update((val: Message[]) => [...val, deleteMessageObj]);
   }
 }
 
-deleteExamRow(data: any) {
+deleteExamTypeRow(data: any) {
   console.log('data deleteExamRow: ', data);
   setTimeout(() => {
     utils.isTableDeleteAction.set(false);

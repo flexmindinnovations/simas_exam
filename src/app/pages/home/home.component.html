@@ -1,11 +1,25 @@
-<div class="home-container flex items-start justify-start">
-    <div
-        class="banner bg-gradient-to-tr from-pink-300/70 via-purple-400/70 to-indigo-400/70 p-3 max-w-5xl rounded-xl shadow-xl">
-        <p class="text-xl font-semibold tracking-wider text-white select-none">
-            Welcome Back {{userName}},
-        </p>
-        <p>
-
-        </p>
+<div class="home-container flex flex-col gap-4 items-start justify-start">
+    <div class="header flex items-center justify-between px-5">
+        <h3 class="text-2xl">{{greetMessage}},</h3>
+        <div class="dateTime flex flex-col items-end">
+            <p class="m-0">{{currentTime}}</p>
+            <p class="m-0">{{currentDate}}</p>
+        </div>
+    </div>
+    <div class="content-wrapper px-5 w-full flex items-center justify-center">
+        <!-- <div
+            class="banner min-h-28 w-full bg-gradient-to-tr bg-botticelli-200 p-3 max-w-5xl rounded-2xl flex items-start justify-between">
+            <div class="text-space flex-[1_0_auto]">
+                <h3 class="text-2xl tracking-wider text-botticelli-600 font-bolder select-none">
+                    Welcome Back {{userName}},
+                </h3>
+                <p class="text-botticelli-950 !text-lg m-0">
+                    keep it up and improve yourself.
+                </p>
+            </div>
+            <div class="image-container h-full w-full relative">
+                <img class="h-60 w-auto absolute right-[5%] -bottom-3 rounded-full" src="/images/bts.jpg" alt="bg-image"/>
+            </div>
+        </div> -->
     </div>
 </div>

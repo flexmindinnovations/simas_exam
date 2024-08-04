@@ -24,19 +24,20 @@ before:z-[-5]
             <div class="body w-full my-4 max-w-[80%]">
                 <form [formGroup]="formGroup" class="w-full">
                     <div class="form-group flex flex-col items-end justify-end gap-4">
-                        <div class="flex flex-col items-start w-full gap-2">
+                        <div class="flex form-input flex-col items-start w-full">
                             <label class="text-white" for="userName">Username</label>
                             <span class="p-input-icon-right w-full">
                                 <i class="pi pi-user"></i>
                                 <input type="text" pInputText formControlName="userName" />
                             </span>
                         </div>
-                        <div class="flex flex-col items-start w-full gap-2">
+                        <div class="flex form-input flex-col items-start w-full">
                             <label class="text-white" for="userPassword">Password</label>
                             <p-password formControlName="userPassword" [toggleMask]="true" [feedback]="false" />
                         </div>
                         <div class="action w-full my-5 flex flex-col items-center justify-center gap-5">
                             <p-button label="Submit" styleClass="action" class="w-full" icon="pi pi-lock"
+                            [ngStyle]="{'min-height': '1.5rem'}"
                                 [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isLoading"
                                 iconPos="right" (onClick)="handleSignIn()" />
                             @if (userType !== UserTypes.STUDENT) {

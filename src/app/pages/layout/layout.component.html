@@ -1,28 +1,32 @@
-<ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
 <!-- <ng-http-loader [spinner]="spinkit.skWave"></ng-http-loader> -->
-@if (messages.length) {
-<div class="message-container absolute top-0 w-full h-12">
-    <p-messages styleClass="alert-message"
-        [ngStyle]="{'z-index': '10000111'}" [(value)]="messages" [enableService]="false" />
-</div>
-}
-<div class="layout-container h-full w-full flex transition delay-500 duration-1000 ease-in-out lg:xl:grid"
-    [ngClass]="sideBarOpened ? ' lg:xl:grid-cols-[15%_1fr]' : 'lg:xl:grid-cols-[5%_1fr]'">
-    <div class="sidebar border-0 border-r border-solid border-gray-200">
-        @if (!isMobile) {
-        <app-sidebar></app-sidebar>
-        } @else {
-        <p-sidebar [(visible)]="sideBarOpened" (onHide)="handleSidebarOnHide()">
-            <app-sidebar></app-sidebar>
-        </p-sidebar>
-        }
-    </div>
-    <main class="bg-red-400 main-content w-full lg:xl:w-auto">
-        <header class="header bg-white px-3 border-0 border-b border-solid border-gray-200">
-            <app-header></app-header>
-        </header>
-        <div class="dynamic bg-white px-0 lg:xl:px-4 py-4" [@routeAnimations]="prepareRoute(outlet)">
-            <router-outlet #outlet="outlet"></router-outlet>
+<div class="layout-container h-full w-full">
+    <!-- <div class="sidebar border-0 border-r border-solid border-gray-200"> -->
+    <div class="layout-wrapper h-full flex transition delay-500 duration-1000 ease-in-out lg:p-4 xl:p-4 lg:xl:grid"
+        [ngClass]="sideBarOpened ? 'md:grid-cols-[16%_1fr] lg:xl:grid-cols-[15%_1fr]' : 'md:grid-cols-[6%_1fr] lg:grid-cols-[6%_1fr] xl:grid-cols-[5%_1fr] 2xl:[4%_1fr]'">
+        <div class="sidebar">
+            @if (!isMobile) {
+            <app-sidebar [permissionList]="permissionList"></app-sidebar>
+            } @else {
+            <p-sidebar [(visible)]="sideBarOpened" position="left" styleClass="w-full" (onHide)="handleSidebarOnHide()">
+                <app-sidebar [permissionList]="permissionList"></app-sidebar>
+            </p-sidebar>
+            }
         </div>
-    </main>
+        <main class="main-content relative w-full lg:xl:w-auto rounded-2xl shadow-2xl">
+            <ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
+            @if (messages.length) {
+            <div class="message-container absolute top-0 left-0 right-0 w-full h-full max-h-[50px] flex">
+                <p-messages styleClass="alert-message" [ngStyle]="{'z-index': '1104'}" [(value)]="messages"
+                    [enableService]="false" />
+            </div>
+            }
+            <header class="header bg-white border-0 border-b border-solid border-gray-200 sm:rounded-none md:rounded-none lg:rounded-t-2xl xl:rounded-t-2xl">
+                <app-header></app-header>
+            </header>
+            <div class="dynamic sm:rounded-none md:rounded-none lg:rounded-b-2xl xl:rounded-b-2xl bg-white h-full w-full px-0 lg:xl:px-4 py-4 z-10"
+                [@routeAnimations]="prepareRoute(outlet)">
+                <router-outlet #outlet="outlet"></router-outlet>
+            </div>
+        </main>
+    </div>
 </div>

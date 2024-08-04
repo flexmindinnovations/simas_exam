@@ -12,6 +12,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { AuthService } from '../../services/auth/auth.service';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import crypto from 'crypto-js';
+import { RoleService } from '../../services/role/role.service';
+import { db } from '../../../db';
 
 @Component({
   selector: 'app-login',
@@ -47,6 +49,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private roleService: RoleService,
     private router: Router
   ) { }
 
@@ -65,7 +68,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     })
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     utils.setPageTitle('Login');
   }
 
@@ -107,12 +110,28 @@ export class LoginComponent implements OnInit, AfterViewInit {
           const userRoleEnc = utils.encryptString(roleName, token);
           sessionStorage.setItem('token', token);
           sessionStorage.setItem('role', userRoleEnc);
-          this.isLoading = false;
+          this.getUserRoles(roleId);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        this.formGroup.enable();
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
+  getUserRoles(roleId: any) {
+    this.roleService.getRolePermissionsById(roleId).subscribe({
+      next: (response: any) => {
+        if (response) {
+          db.permissiontem.bulkAdd(response);
           this.formGroup.enable();
           this.router.navigateByUrl('app');
           setTimeout(() => {
             utils.setMessages('You\'re successfully logged in.', 'success');
           }, 1000);
+          this.isLoading = false;
         }
       },
       error: (error: HttpErrorResponse) => {

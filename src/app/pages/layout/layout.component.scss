@@ -1,12 +1,32 @@
 @import "../../../constants.scss";
 
+:root {
+    --color1: #8b5cf6;
+    --color2: #3096c7;
+    --color3: #3b76f6;
+    --color4: #e76f51;
+    --color5: #f4a261;
+    --color6: #e9c46a;
+    --color7: #2a9d8f;
+    --color8: #264653;
+}
+
 
 .layout-container {
     // display: grid;
     // grid-template-areas: 'sidebar main';
     transition: all 0.5s ease-in-out;
+    // @apply bg-ph-500;
+    @apply relative;
+
+    .layout-wrapper {
+        transition: all 0.5s ease-in-out;
+        mix-blend-mode: multiply;
+
+    }
 
     .main-content {
+        max-width: 100%;
         display: grid;
         grid-template-areas: 'header dynamic';
         grid-template-columns: 1fr;
@@ -20,4 +40,28 @@
             grid-area: 2 / 1 / 2 / 1;
         }
     }
+
+    @media screen and (min-width: 960px) and (max-width: 1280px) {
+        .main-content {
+            max-width: 92.8%;
+
+            header,
+            .dynamic {
+                max-width: 90%;
+                max-width: -webkit-fill-available;
+            }
+        }
+    }
+
+    @media screen and (min-width: 960px) and (max-width: 1023px) {
+        .layout-wrapper {
+            max-width: 100%;
+            padding: 1rem;
+            mix-blend-mode: multiply;
+        }
+    }
+}
+
+.p-sidebar-mask {
+    @apply hidden;
 }

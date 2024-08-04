@@ -65,13 +65,13 @@ export class FranchiseComponent implements OnInit {
       {
         field: 'franchiseName',
         header: 'Franchise Name',
-        width: '20%',
+        width: '25%',
         styleClass: 'franchiseName'
       },
       {
         field: 'ownerName',
         header: 'Owner Name',
-        width: '20%',
+        width: '25%',
         styleClass: 'ownerName'
       },
       {
@@ -109,7 +109,7 @@ export class FranchiseComponent implements OnInit {
 
   getFranchiseList() {
     utils.isTableLoading.update(val => !val);
-    this.franchiseService.getFranchiseList().subscribe({
+    this.franchiseService.getFranchiseByTypeList('1').subscribe({
       next: (response) => {
         if (response) {
           this.franshiseList = response;
@@ -135,7 +135,7 @@ export class FranchiseComponent implements OnInit {
       data: this.isEditMode ? this.filterFranchiseInfo(data?.franchiseId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '88%' : '87%',
+      height: 'auto',
       width: utils.isMobile() ? '95%' : '42%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Franchise' : 'Add New Franchise',

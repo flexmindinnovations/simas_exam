@@ -17,6 +17,7 @@ import { Message, MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserType, UserTypeObj } from '../../enums/user-types';
+import { db } from '../../../db';
 
 @Component({
   selector: 'app-layout',
@@ -35,6 +36,8 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isMenuItemClicked: boolean = false;
   messages: any[] = [];
 
+  permissionList: any[] = [];
+
   public spinkit = Spinkit;
   userType: string = 'admin';
 
@@ -47,11 +50,17 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
-
       if (this.isMobile) {
         setTimeout(() => {
           const mobileSidebar = document.getElementsByClassName('p-sidebar')[0];
+          const pSidebarMask = document.getElementsByClassName('p-sidebar-mask');
           mobileSidebar?.removeChild(mobileSidebar?.children[0]);
+          console.log('pSidebarMask: ', pSidebarMask);
+          // if (pSidebarMask) {
+          //   while (pSidebarMask.length > 0) {
+          //     pSidebarMask[0].parentNode.removeChild(pSidebarMask[0]);
+          //   }
+          // }
         })
       }
     })
@@ -59,10 +68,12 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     effect((onCleanup) => {
       this.messages = utils.messages();
       const itemIndex = utils.messages().length > 0 ? utils.messages().length - 1 : 0;
-      setTimeout(() => {
-        utils.clearMessage(itemIndex);
-      }, utils.alertTimer);
-    }, {allowSignalWrites: true})
+      if (this.messages.length) {
+        setTimeout(() => {
+          utils.clearMessage(itemIndex);
+        }, utils.alertTimer);
+      }
+    }, { allowSignalWrites: true })
 
     effect(() => {
       this.isMobile = utils.isMobile();
@@ -96,13 +107,24 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     })
   }
 
+  async getPermissionList() {
+    const permissionList = await db.permissiontem.toArray();
+    if (permissionList.length) {
+      this.permissionList = permissionList;
+      utils.permissionList.set(permissionList);
+    }
+  }
+
   ngAfterViewInit(): void {
+    this.getPermissionList();
     this.cdref.detectChanges();
   }
 
   handleSidebarOnHide() {
     if (this.isMobile) {
-      utils.sideBarOpened.update(val => !val);
+      if (this.sideBarOpened) {
+        utils.sideBarOpened.update(val => !val);
+      }
     }
   }
 

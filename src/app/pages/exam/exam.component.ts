@@ -28,8 +28,6 @@ export class ExamComponent implements OnInit {
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
   editModeData: any;
-  searchValue: string = '';
-  @ViewChild('examListTable', { static: false }) examListTable!: Table;
 
   constructor(
     private examService: ExamService,
@@ -49,7 +47,6 @@ export class ExamComponent implements OnInit {
         this.handleAddEditAction(this.editModeData);
       }
     }, { allowSignalWrites: true })
-
   }
 
   ngOnInit(): void {
@@ -106,7 +103,7 @@ export class ExamComponent implements OnInit {
       data: this.isEditMode ? this.filterExamInfo(data?.examId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
-      height: utils.isMobile() ? '95%' : '87%',
+      height: 'auto',
       width: utils.isMobile() ? '95%' : '42%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Exam' : 'Add New Exam',
@@ -132,16 +129,6 @@ export class ExamComponent implements OnInit {
     const franchiseItem = this.examList.filter((item) => item.examId
       === examId)[0];
     return { ...franchiseItem, isEditMode: this.isEditMode };
-  }
-
-  filterGlobal(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.examListTable.filterGlobal(input.value, 'contains');
-  }
-
-  clear(table: Table) {
-    table.clear();
-    this.searchValue = ''
   }
 
   handleRowDelet(event: any) {

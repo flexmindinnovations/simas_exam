@@ -1,18 +1,18 @@
 <div class="dialog-body">
     <div class="form-container">
-        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-4">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
 
-            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+            <div class="flex flex-col items-start w-full col-span-2">
                 <label for="status">Status</label>
                 <p-inputSwitch formControlName="status" />
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+            <div class="flex form-input flex-col items-start w-full col-span-2">
                 <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
                     (uploadFile)="handleUploadFile($event)"></image-picker>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="franchiseName">Franchise Name</label>
                 <input type="text" pInputText formControlName="franchiseName" />
                 <div *ngIf="formGroup.get('franchiseName')?.invalid && (formGroup.get('franchiseName')?.dirty || formGroup.get('franchiseName')?.touched)">
@@ -21,7 +21,7 @@
             </div>
             
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="ownerName">Owner Name</label>
                 <input type="text" pInputText formControlName="ownerName" />
                 <div *ngIf="formGroup.get('ownerName')?.invalid && (formGroup.get('ownerName')?.dirty || formGroup.get('ownerName')?.touched)">
@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="emailId">Email</label>
                 <input type="text" pInputText formControlName="emailId" />
                 <div *ngIf="formGroup.get('emailId')?.invalid && (formGroup.get('emailId')?.dirty || formGroup.get('emailId')?.touched)">
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="mobileNo">Mobile Number</label>
                 <input type="text" maxlength="14" pInputText formControlName="mobileNo" />
                 <div *ngIf="formGroup.get('mobileNo')?.invalid && (formGroup.get('mobileNo')?.dirty || formGroup.get('mobileNo')?.touched)">
@@ -47,7 +47,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="franchiseePassword">Franchise Password</label>
                 <p-password formControlName="franchiseePassword" [feedback]="false" [toggleMask]="true" />
                 <div *ngIf="formGroup.get('franchiseePassword')?.invalid && (formGroup.get('franchiseePassword')?.dirty || formGroup.get('franchiseePassword')?.touched)">
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="userPassword">User Password</label>
                 <p-password formControlName="userPassword" [feedback]="false" [toggleMask]="true" />
                 <div *ngIf="formGroup.get('userPassword')?.invalid && (formGroup.get('userPassword')?.dirty || formGroup.get('userPassword')?.touched)">
@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="joiningDate">Joining Date</label>
                 <p-calendar appendTo="body" ariaLabelledBy="joiningDate" formControlName="joiningDate"
                     [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <!-- <div class="flex form-input flex-col items-start w-full">
                 <label for="startDate">Start Date</label>
                 <p-calendar appendTo="body" ariaLabelledBy="startDate" formControlName="startDate"
                     [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
@@ -83,16 +83,16 @@
                    </div>
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="endDate">End Date</label>
                 <p-calendar appendTo="body" ariaLabelledBy="endDate" formControlName="endDate" [showButtonBar]="true"
                     [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" dateFormat="dd-mm-yy" />
                     <div *ngIf="formGroup.get('endDate')?.invalid && (formGroup.get('endDate')?.dirty || formGroup.get('endDate')?.touched)">
                         <small *ngIf="formGroup.get('endDate')?.errors?.['required']" class="p-error">End Date is required.</small>
                    </div>    
-            </div>
+            </div> -->
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="countryId">Country</label>
                 <p-dropdown appendTo="body" formControlName="countryId" [options]="countryList"
                     ariaLabelledBy="countryId" [loading]="countryListLoading" loadingIcon="pi pi-spin pi-spinner"
@@ -103,7 +103,7 @@
                     </div>    
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="stateId">State</label>
                 <p-dropdown appendTo="body" [loading]="stateListLoading" loadingIcon="pi pi-spin pi-spinner"
                     formControlName="stateId" [options]="stateList" (onChange)="handleOnStateListChange($event)"
@@ -114,7 +114,7 @@
                     </div>   
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2">
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="cityId">City</label>
                 <p-dropdown appendTo="body" [loading]="cityListLoading" loadingIcon="pi pi-spin pi-spinner"
                     formControlName="cityId" [options]="cityList" (onChange)="handleOnCityListChange($event)"
@@ -125,7 +125,7 @@
                     </div>  
             </div>
 
-            <div class="flex flex-col items-start w-full gap-2 col-span-2">
+            <div class="flex form-input flex-col items-start w-full col-span-2">
                 <label for="address1">Address</label>
                 <textarea rows="5" ariaLabelledBy="address1" cols="30" pInputTextarea formControlName="address1">
             </textarea>
@@ -135,7 +135,7 @@
             </div>
         </form>
     </div>
-    <div class="action mt-5 w-full flex items-center justify-end gap-3 p-4">
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
         <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
             (onClick)="handleDialogCancel()"></p-button>
         <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()" [disabled]="formGroup.invalid" 

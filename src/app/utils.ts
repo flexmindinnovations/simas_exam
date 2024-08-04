@@ -31,8 +31,9 @@ export const utils = {
     countryData: signal<any>({}),
     stateData: signal<any>({}),
     cityData: signal<any>({}),
-    messages: signal<Message[]>([], ),
+    messages: signal<Message[]>([],),
     activeItem: signal<any>({}),
+    permissionList: signal<any>([]),
     pageTitle: signal<string>(DOMAIN),
     getRandomNumber(min = 100001, max = 5000001) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -49,6 +50,7 @@ export const utils = {
     alertTimer: 4000,
     setMessages(message: string, severity: SeverityType) {
         this.messages.update(val => [...val, { detail: message, severity }]);
+        // this.messages.set([{ detail: message, severity }]);
     },
     clearMessage(index: number = -1) {
         this.messages.update((messages: any[]) => {
@@ -86,6 +88,17 @@ export const utils = {
             return null;
         }
     },
+    generatePassword(length: number) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789';
+        let password = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            password += characters[randomIndex];
+        }
+
+        return password;
+    },
     getInvalidControls(form: FormGroup | FormArray): any {
         const invalidControls: any[] = [];
         const recursiveFunc = (form: FormGroup | FormArray) => {
@@ -102,6 +115,41 @@ export const utils = {
         recursiveFunc(form);
         return invalidControls;
     },
+    getDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(now.getDate()).padStart(2, '0');
+        let hours: any = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = String(hours).padStart(2, '0'); // Pad with zero if needed
+
+        const formattedDate = `${day}-${month}-${year}`;
+        const formattedTime = `${hours}:${minutes}:${seconds} ${ampm}`;
+
+        return `${formattedDate}/ ${formattedTime}`;
+    },
+    getGreeting() {
+        const now = new Date();
+        const hours = now.getHours();
+        if (hours >= 5 && hours < 12) {
+            return "Good Morning";
+        } else if (hours >= 12 && hours < 17) {
+            return "Good Afternoon";
+        } else if (hours >= 17 && hours < 21) {
+            return "Good Evening";
+        } else {
+            return "Good Night";
+        }
+    },
+    addSpaceBetweenWords(str: string) {
+        return str.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+    },
     slideInRouter: trigger('routeAnimations', [
         transition(':enter', [
             style({ opacity: 0 }),
@@ -112,35 +160,24 @@ export const utils = {
             animate('50ms ease-out', style({ opacity: 0 }))
         ])
     ]),
-    heightIncrease: [
-        trigger('grow', [
-            state(
-                "void",
-                style({
-                    height: "0px",
-                    overflow: "hidden"
-                })
-            ),
-            //element being added into DOM.
-            transition(":enter", [
-                animate(
-                    "500ms ease-in-out",
-                    style({
-                        height: "*",
-                        overflow: "hidden"
-                    })
-                )
-            ]),
-            //element being removed from DOM.
-            transition(":leave", [
-                animate(
-                    "500ms ease-in-out",
-                    style({
-                        height: "0px",
-                        overflow: "hidden"
-                    })
-                )
-            ])
+    heightIncrease: trigger('grow', [
+        state('void', style({
+            height: '0px',
+            opacity: 0,
+            padding: '0px'
+        })),
+        state('*', style({
+            height: '*',
+            opacity: 1,
+            padding: '*'
+        })),
+        transition('void => *', [
+            animate('0.5s ease-out')
+        ]),
+        transition('* => void', [
+            animate('0.5s ease-in')
         ])
-    ]
+    ])
 }
+
+export const base64Logo = `/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAACUklEQVR4nO3SMQ0AAAjDMO5f6dcVYQcCFnVuEoEA6EA5UB8UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UB4UB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UBwUB4UB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UBwUB4UB4UBwUB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB4UBwUB4UB4UB`;
