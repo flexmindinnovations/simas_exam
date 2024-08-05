@@ -2,7 +2,7 @@
 <div class="layout-container h-full w-full">
     <!-- <div class="sidebar border-0 border-r border-solid border-gray-200"> -->
     <div class="layout-wrapper h-full flex transition delay-500 duration-1000 ease-in-out lg:p-4 xl:p-4 lg:xl:grid"
-        [ngClass]="sideBarOpened ? 'md:grid-cols-[16%_1fr] lg:xl:grid-cols-[15%_1fr]' : 'md:grid-cols-[6%_1fr] lg:grid-cols-[6%_1fr] xl:grid-cols-[5%_1fr] 2xl:[4%_1fr]'">
+        [ngClass]="sideBarOpened ? 'md:grid-cols-[16%_1fr] lg:xl:grid-cols-[15%_1fr]' : 'md:grid-cols-[6%_1fr] lg:grid-cols-[6%_1fr] xl:grid-cols-[6%_1fr] 2xl:[4%_1fr] 2x:grid-cols-[6%_1fr]'">
         <div class="sidebar">
             @if (!isMobile) {
             <app-sidebar [permissionList]="permissionList"></app-sidebar>
@@ -20,7 +20,8 @@
                     [enableService]="false" />
             </div>
             }
-            <header class="header bg-white border-0 border-b border-solid border-gray-200 sm:rounded-none md:rounded-none lg:rounded-t-2xl xl:rounded-t-2xl">
+            <header
+                class="header bg-white border-0 border-b border-solid border-gray-200 sm:rounded-none md:rounded-none lg:rounded-t-2xl xl:rounded-t-2xl">
                 <app-header></app-header>
             </header>
             <div class="dynamic sm:rounded-none md:rounded-none lg:rounded-b-2xl xl:rounded-b-2xl bg-white h-full w-full px-0 lg:xl:px-4 py-4 z-10"

@@ -19,7 +19,7 @@
                 <p-tieredMenu #downloadOptionsMenu [popup]="true" [model]="downloadOptions" />
                 }
             </div>
-            @if (currentModule?.canAdd) {
+            @if (showAddButton && currentModule?.canAdd) {
             <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
             pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
                 [pTooltip]="'Add ' + addButtonTitle" tooltipPosition="left" (onClick)="handleAddAction()"></p-button>
@@ -31,7 +31,7 @@
         <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
             (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
             [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-            [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
+            [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'"
             [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
             [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : screenHeight - paginatorPosition[1]  + 'px'}">
             <ng-template pTemplate="header" let-columns>
@@ -69,7 +69,7 @@
                             <p class="m-0">{{rowData[item.field]}}</p>
                         </div>
                         } @else if(item.field === 'status') {
-                        <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5"
+                        <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
                             [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'">
                             {{rowData[item.field] === '1' ? 'Active' : 'Inactive'}}
                         </p>
@@ -142,9 +142,9 @@
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
         (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
         [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
+        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight - 100 + 'px'"
         [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
-        [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : screenHeight - paginatorPosition[1]  + 'px'}">
+        [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : '100%'}">
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th *ngFor="let col of columns" [pSortableColumn]="col.field"
@@ -165,7 +165,7 @@
                 @for (item of colDefs; track $index) {
                 <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
                     @if(item.field === 'status') {
-                    <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5"
+                    <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
                         [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'">
                         {{rowData[item.field] === '1' ? 'Active' : 'Inactive'}}
                     </p>
@@ -192,7 +192,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="colDefs.length" [attr.rowspan]="1" class="text-center py-3">No records found.
+                <td [attr.colspan]="colDefs.length ?? 5" [attr.rowspan]="colDefs.length ?? 5" class="text-center py-3">No records found.
                 </td>
             </tr>
         </ng-template>
@@ -215,9 +215,11 @@
         </div>
     </div>
     } @else {
-    <p class="select-none opacity-80">
-        No records found
-    </p>
+    <div class="w-full h-full flex items-center justify-center">
+        <p class="select-none opacity-80">
+            No records found
+        </p>
+    </div>
     }
 </div>
 }

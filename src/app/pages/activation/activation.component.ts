@@ -12,29 +12,45 @@ import { DataGridComponent } from '../../components/data-grid/data-grid.componen
 import { AddEditExamComponent } from '../../modals/add-edit-exam/add-edit-exam.component';
 import { ExamService } from '../../services/exam/exam.service';
 import { utils } from '../../utils';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { FranchiseService } from '../../services/franchise/franchise.service';
+import { StudentService } from '../../services/student/student.service';
+import { InstructorService } from '../../services/instructor/instructor.service';
+import { AddEditActivationComponent } from '../../modals/add-edit-activation/add-edit-activation.component';
 
 @Component({
   selector: 'app-activation',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, DataGridComponent],
   providers: [DialogService],
   templateUrl: './activation.component.html',
   styleUrl: './activation.component.scss'
 })
 export class ActivationComponent {
   colDefs: any[] = [];
-  examList: any[] = [];
+  activationList: any[] = [];
   tableDataSource: any[] = [];
+  activationType = ActivationType;
+  activationTypeList: any[] = [];
+  franchiseList: any[] = [];
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
+  isSearchActionLoading: boolean = false;
+  isSearchDisabled: boolean = true;
+  isFranchiseListLoading: boolean = false;
   editModeData: any;
-  searchValue: string = '';
-  @ViewChild('examListTable', { static: false }) examListTable!: Table;
+  selectedActivationType: string = '';
+  selectedFranchise: string = '';
+  apiResponse: any;
 
   constructor(
     private examService: ExamService,
+    private franchiseService: FranchiseService,
+    private studentService: StudentService,
+    private instructorService: InstructorService,
     private dialogService: DialogService
   ) {
+
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
       if (isDeleteAction) {
@@ -49,111 +65,335 @@ export class ActivationComponent {
         this.handleAddEditAction(this.editModeData);
       }
     }, { allowSignalWrites: true })
-}
-ngOnInit(): void {
-  utils.addButtonTitle.set('Activation');
-  this.setTableColumns();
-  this.getExamList();
-}
+  }
+  ngOnInit(): void {
+    utils.addButtonTitle.set('Activation');
+    this.setActivationTypeList();
+    this.getFranchiseList();
+  }
 
-setTableColumns() {
-  this.colDefs = [
-    {
-      field: 'ActivationId',
-      header: 'Id',
-      width: '5%',
-      styleClass: 'ActivationId'
-    },
-    {
-      field: 'ActivationName',
-      header: 'Activation Name',
-      width: '100%',
-      styleClass: 'ActivationName'
-    },
-    {
-      field: 'action',
-      header: 'Action',
-      width: '10%',
-      styleClass: 'action'
-    }
-  ];
-}
-
-getExamList() {
-  utils.isTableLoading.update(val => !val);
-  this.examService.getExamList().subscribe({
-    next: (response) => {
-      if (response) {
-        this.examList = response;
-        this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examList)
-        utils.isTableLoading.update(val => !val);
-        utils.setMessages(response.message, 'success');
+  getFranchiseList() {
+    this.isFranchiseListLoading = true;
+    this.franchiseService.getFranchiseByTypeList('1').subscribe({
+      next: (response) => {
+        if (response) {
+          this.franchiseList = response;
+          this.isFranchiseListLoading = false;
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isFranchiseListLoading = false;
+        utils.setMessages(error.message, 'error');
       }
-    },
-    error: (error: HttpErrorResponse) => {
-      utils.isTableLoading.update(val => !val);
-      utils.setMessages(error.message, 'error');
-    }
-  })
-}
-handleAddEditAction(data?: any) {
-  if (this.isEditMode) utils.isTableEditAction.set(true);
-  else utils.isAddActionLoading.set(true);
-  this.dialogRef = this.dialogService.open(AddEditExamComponent, {
-    data: this.isEditMode ? this.filterExamInfo(data?.examId) : { isEditMode: this.isEditMode },
-    closable: false,
-    modal: true,
-    height: 'auto',
-    width: utils.isMobile() ? '95%' : '42%',
-    styleClass: 'add-edit-dialog',
-    header: this.isEditMode ? 'Edit Activation' : 'Add New Activation',
-  });
+    })
 
-  this.dialogRef.onClose.subscribe((res) => {
-    if (res) {
-      if (res?.status) {
-        utils.setMessages(res.message, 'success');
-        this.getExamList();
-        utils.isTableEditAction.set(false);
-      } else {
-        utils.isTableEditAction.set(false);
-        utils.setMessages(res.message, 'error');
-      }
+  }
+
+  setActivationTypeList() {
+    this.activationTypeList = [
+      { id: 1, title: 'Franchise', value: 'franchise' },
+      { id: 2, title: 'Student', value: 'student' },
+      { id: 3, title: 'Instructor', value: 'instructor' }
+    ]
+  }
+
+  handleOnActivationTypeChange(event: DropdownChangeEvent) {
+    this.selectedFranchise = '';
+    this.colDefs = [];
+    this.tableDataSource = [];
+    if (this.selectedActivationType === this.activationType.Franchise)
+      this.isSearchDisabled = false;
+    else
+      this.isSearchDisabled = true;
+  }
+
+  handleOnFranchiseChange(event: DropdownChangeEvent) {
+    this.colDefs = [];
+    this.tableDataSource = [];
+    if (this.selectedActivationType !== this.activationType.Franchise && this.selectedFranchise !== '') {
+      this.isSearchDisabled = false;
     } else {
-      utils.isTableEditAction.set(false);
+      this.isSearchDisabled = true;
     }
-  })
-}
-filterExamInfo(examId: number) {
-  const franchiseItem = this.examList.filter((item) => item.examId
-    === examId)[0];
-  return { ...franchiseItem, isEditMode: this.isEditMode };
-}
+  }
 
-filterGlobal(event: Event) {
-  const input = event.target as HTMLInputElement;
-  this.examListTable.filterGlobal(input.value, 'contains');
-}
+  handleSearchAction() {
+    utils.isTableLoading.set(true);
+    let isFranchiseListCall: boolean = true;
+    let isStudentListCall: boolean = false;
+    let isInstructorListCall: boolean = false;
+    let apiCall = this.franchiseService.getFranchiseByTypeList('1');
+    this.setTableColumns('franchise');
+    if (this.selectedActivationType === this.activationType.Student) {
+      this.setTableColumns('student');
+      isFranchiseListCall = false;
+      isStudentListCall = true;
+      apiCall = this.studentService.getStudentListByFranchiseId(this.selectedFranchise.toString());
+    } else if (this.selectedActivationType === this.activationType.Instructor) {
+      this.setTableColumns('instructor');
+      isFranchiseListCall = false;
+      isInstructorListCall = true;
+      apiCall = this.instructorService.getInstructorListByFranchiseId(this.selectedFranchise.toString());
+    }
+    apiCall.subscribe({
+      next: (response) => {
+        if (response) {
+          this.createTableDataSource(response);
+          utils.isTableLoading.set(false);
+          this.apiResponse = response;
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        utils.isTableLoading.set(false);
+        utils.setMessages(error.message, 'error');
+      }
+    })
 
-clear(table: Table) {
-  table.clear();
-  this.searchValue = ''
-}
+  }
 
-handleRowDelet(event: any) {
-  const deleteItemIndex = this.examList.findIndex((item) => item?.id === event?.id);
-  if (deleteItemIndex > -1) {
-    this.examList.splice(deleteItemIndex, 1);
-    this.tableDataSource.splice(deleteItemIndex, 1);
-    const deleteMessageObj = { detail: 'Record deleted successsfully', severity: 'success', closable: true };
-    utils.messages.update((val: Message[]) => [...val, deleteMessageObj]);
+  createTableDataSource(response: any) {
+    this.tableDataSource = utils.filterDataByColumns(this.colDefs, response);
+  }
+
+
+  setTableColumns(entity: 'franchise' | 'student' | 'instructor') {
+    let colDefs: any;
+    switch (entity) {
+      case 'franchise':
+        colDefs = this.createFranchiseTableColumns();
+        break;
+      case 'student':
+        colDefs = this.createStudentTableColumns();
+        break;
+      case 'instructor':
+        colDefs = this.createInstructorTableColumns();
+        break;
+    }
+    this.colDefs = colDefs;
+  }
+
+  createFranchiseTableColumns() {
+    return [
+      {
+        field: 'franchiseId',
+        header: '#Id',
+        width: '10%',
+        styleClass: 'franchiseId'
+      },
+      {
+        field: 'ownerName',
+        header: 'Owner',
+        width: '40%',
+        styleClass: 'ownerName'
+      },
+      {
+        field: 'franchiseName',
+        header: 'Franchise',
+        width: '40%',
+        styleClass: 'franchiseName'
+      },
+      {
+        field: 'startDate',
+        header: 'Start Date',
+        width: '20%',
+        styleClass: 'startDate'
+      },
+      {
+        field: 'endDate',
+        header: 'End Date',
+        width: '20%',
+        styleClass: 'endDate'
+      },
+      {
+        field: 'status',
+        header: 'Status',
+        width: '10%',
+        styleClass: 'status'
+      },
+      {
+        field: 'action',
+        header: 'Action',
+        width: '10%',
+        styleClass: 'action'
+      }
+    ];
+  }
+
+  createStudentTableColumns() {
+    return [
+      {
+        field: 'studentId',
+        header: '#Id',
+        width: '10%',
+        styleClass: 'studentId'
+      },
+      {
+        field: 'studentFirstName',
+        header: 'First Name',
+        width: '20%',
+        styleClass: 'studentFirstName'
+      },
+      {
+        field: 'studentLastName',
+        header: 'Last Name',
+        width: '20%',
+        styleClass: 'studentLastName'
+      },
+      {
+        field: 'franchiseName',
+        header: 'Franchise',
+        width: '20%',
+        styleClass: 'franchiseName'
+      },
+      {
+        field: 'startDate',
+        header: 'Start Date',
+        width: '20%',
+        styleClass: 'startDate'
+      },
+      {
+        field: 'endDate',
+        header: 'End Date',
+        width: '20%',
+        styleClass: 'endDate'
+      },
+      {
+        field: 'status',
+        header: 'Status',
+        width: '10%',
+        styleClass: 'status'
+      },
+      {
+        field: 'action',
+        header: 'Action',
+        width: '10%',
+        styleClass: 'action'
+      }
+    ];
+  }
+
+  createInstructorTableColumns() {
+    return [
+      {
+        field: 'instructorId',
+        header: '#Id',
+        width: '10%',
+        styleClass: 'instructorId'
+      },
+      {
+        field: 'instructorName',
+        header: 'Instructor',
+        width: '40%',
+        styleClass: 'instructorName'
+      },
+      {
+        field: 'franchiseName',
+        header: 'Franchise',
+        width: '40%',
+        styleClass: 'franchiseName'
+      },
+      {
+        field: 'startDate',
+        header: 'Start Date',
+        width: '20%',
+        styleClass: 'startDate'
+      },
+      {
+        field: 'endDate',
+        header: 'End Date',
+        width: '20%',
+        styleClass: 'endDate'
+      },
+      {
+        field: 'status',
+        header: 'Status',
+        width: '10%',
+        styleClass: 'status'
+      },
+      {
+        field: 'action',
+        header: 'Action',
+        width: '10%',
+        styleClass: 'action'
+      }
+    ];
+  }
+
+  handleAddEditAction(data?: any) {
+    if (this.selectedActivationType) {
+      if (data?.isEditActionLoading || data?.isDeleteActionLoading) {
+        if (data.hasOwnProperty('isEditActionLoading')) {
+          delete data.isEditActionLoading;
+        }
+        if (data.hasOwnProperty('isDeleteActionLoading')) {
+          delete data.isDeleteActionLoading;
+        }
+      }
+      let rowData: any;
+      if (this.selectedActivationType === this.activationType.Franchise && this.apiResponse?.length) {
+        rowData = this.apiResponse?.find((item: any) => item.franchiseId === data?.franchiseId);
+      } else if (this.selectedActivationType === this.activationType.Student) {
+        rowData = this.apiResponse?.find((item: any) => item.studentId === data?.studentId);
+      } else {
+        rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
+      }
+      // if (this.isEditMode) utils.isTableEditAction.set(true);
+      // else utils.isAddActionLoading.set(true);
+      this.dialogRef = this.dialogService.open(AddEditActivationComponent, {
+        data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
+        closable: false,
+        modal: true,
+        height: 'auto',
+        width: utils.isMobile() ? '95%' : '42%',
+        styleClass: 'add-edit-dialog',
+        header: this.isEditMode ? `Update Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}` : `Add Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}`,
+      });
+
+      this.dialogRef.onClose.subscribe((res) => {
+        if (res) {
+          if (res?.status) {
+            utils.setMessages(res.message, 'success');
+            utils.isTableEditAction.set(false);
+            this.handleSearchAction();
+          } else {
+            utils.isTableEditAction.set(false);
+            utils.setMessages(res.message, 'error');
+          }
+        } else {
+          utils.isTableEditAction.set(false);
+        }
+      })
+    } else {
+      utils.setMessages('Please Select Activation Type', 'info');
+    }
+  }
+
+  // filterExamInfo(examId: number) {
+  //   const franchiseItem = this.activationList.filter((item) => item.examId
+  //     === examId)[0];
+  //   return { ...franchiseItem, isEditMode: this.isEditMode };
+  // }
+
+  handleRowDelet(event: any) {
+    const deleteItemIndex = this.activationList.findIndex((item) => item?.id === event?.id);
+    if (deleteItemIndex > -1) {
+      this.activationList.splice(deleteItemIndex, 1);
+      this.tableDataSource.splice(deleteItemIndex, 1);
+      const deleteMessageObj = { detail: 'Record deleted successsfully', severity: 'success', closable: true };
+      utils.messages.update((val: Message[]) => [...val, deleteMessageObj]);
+    }
+  }
+
+  deleteExamRow(data: any) {
+    this.handleRowDelet(data);
+    setTimeout(() => {
+      utils.isTableDeleteAction.set(false);
+    }, 2000)
   }
 }
 
-deleteExamRow(data: any) {
-  console.log('data deleteExamRow: ', data);
-  setTimeout(() => {
-    utils.isTableDeleteAction.set(false);
-  }, 2000)
-}
+export enum ActivationType {
+  Franchise = 'franchise',
+  Student = 'student',
+  Instructor = 'instructor'
 }

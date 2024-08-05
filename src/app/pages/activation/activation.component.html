@@ -1,5 +1,35 @@
-<div class="franchise-container page-container">
+<div class="activation-container page-container">
+
+    <div class="criteria-container flex items-center justify-start gap-5 max-w-72 px-5">
+        <div class="flex form-input flex-col items-start w-full">
+            <label for="activationType">Activation Type</label>
+            <p-dropdown appendTo="body" inputId="activationType" [options]="activationTypeList" ariaLabelledBy="value"
+                [disabled]="isSearchActionLoading" [(ngModel)]="selectedActivationType" placeholder="Select"
+                (onChange)="handleOnActivationTypeChange($event)" optionValue="value" optionLabel="title"
+                [filter]="true" filterBy="value" [showClear]="false" />
+        </div>
+
+        @if (
+        selectedActivationType === activationType.Student ||
+        selectedActivationType === activationType.Instructor
+        ) {
+        <div class="flex form-input flex-col items-start w-full max-w-72">
+            <label for="franchiseList">Franchise</label>
+            <p-dropdown appendTo="body" inputId="franchiseList" [options]="franchiseList"
+                [loading]="isFranchiseListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedFranchise"
+                [disabled]="isSearchActionLoading" ariaLabelledBy="franchiseName" placeholder="Select"
+                (onChange)="handleOnFranchiseChange($event)" optionValue="franchiseId" optionLabel="franchiseName"
+                [filter]="true" filterBy="franchiseName" [showClear]="false" />
+        </div>
+        }
+
+        <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="isSearchDisabled || isSearchActionLoading"
+            icon="pi pi-search" styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+
     <div class="table-container">
-        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource" (onAddAction)="handleAddEditAction()"></app-data-grid>
+        <app-data-grid [colDefs]="colDefs" [showAddButton]="true" [dataSource]="tableDataSource"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
     </div>
 </div>

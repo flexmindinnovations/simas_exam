@@ -28,7 +28,8 @@ import { db } from '../../../db';
 })
 export class DataGridComponent implements OnChanges, AfterViewInit {
   scrollHeight: any = '450px';
-  screenHeight: any;
+  screenHeight: any = window.screen.availHeight;
+  screenWidth: any = window.screen.availWidth;
   searchValue: string = '';
   addButtonTitle: string = '';
 
@@ -43,11 +44,13 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   @ViewChild('dataGrid', { static: false }) dataGrid!: Table;
   @Input({ required: true }) colDefs: any;
+  @Input() showAddButton: boolean = true;
   @Input({ required: false }) childColDefs: any;
   @Input({ required: true }) dataSource: any;
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
+
   paginatorPosition = [100, 250];
   dialogRef: DynamicDialogRef | undefined;
 
@@ -58,6 +61,8 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
     if (event) {
+      this.screenHeight = window.screen.availHeight;
+      this.screenWidth = window.screen.availWidth;
       const position = utils.isMobile() ? this.paginatorPosition[0] : this.paginatorPosition[1];
       this.screenHeight = window.innerHeight;
       this.scrollHeight = this.screenHeight - position;
