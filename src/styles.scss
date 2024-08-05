@@ -121,7 +121,7 @@
     }
 
     button {
-        @apply px-3 py-2 outline-none text-sm shadow-2xl rounded-2xl;
+        @apply px-3 py-2 outline-none text-sm shadow-2xl rounded-2xl min-h-9;
 
         &.p-button-primary {
             @apply bg-ph-600;
@@ -435,7 +435,7 @@ label {
     @apply h-full w-full;
 
     .table-container {
-        @apply h-full w-full;
+        @apply h-[87%] w-full;
     }
 }
 

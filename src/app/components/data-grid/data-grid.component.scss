@@ -14,9 +14,13 @@
 
     .p-datatable-sm {}
 
-    tbody {
-        @apply w-full table;
+    .empty {
+
+        tbody {
+            @apply w-full table;
+        }
     }
+
 }
 
 .active {

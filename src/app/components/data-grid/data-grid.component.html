@@ -144,6 +144,7 @@
         [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
         [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight - 100 + 'px'"
         [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
+        [ngClass]="dataSource?.length > 0 ? 'full' : 'empty'"
         [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : '100%'}">
         <ng-template pTemplate="header" let-columns>
             <tr>
