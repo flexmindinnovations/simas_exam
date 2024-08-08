@@ -14,6 +14,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      screens: {
+        '2x': { 'raw': '(min-width: 1366px) and (min-height: 768px) and (-webkit-min-device-pixel-ratio: 2), (min-width: 1366px) and (min-height: 768px) and (min-resolution: 192dpi), (min-width: 1366px) and (min-height: 768px) and (min-resolution: 2dppx)' }
+      },
       keyframes: {
         slideIn: {
           "0%": { opacity: 0, transform: "translateX(100%)" },

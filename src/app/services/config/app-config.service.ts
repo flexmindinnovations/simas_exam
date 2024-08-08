@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'questionBank' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'questionBank' | 'questionPaper';
 
 export type ApiCallConfig = {
   settings: {};
@@ -15,6 +15,7 @@ export type ApiCallConfig = {
   register: {};
   instructor: {
     instructorList: string;
+    instructorListByFranchiseId: string;
     instructorById: string;
     savetInstructor: string;
     updateInstructor: string;
@@ -22,6 +23,7 @@ export type ApiCallConfig = {
   };
   student: {
     studentList: string;
+    studentListByFranchiseId: string;
     studentListInstructorWise: string;
     studentById: string;
     savetStudent: string;
@@ -93,6 +95,11 @@ export type ApiCallConfig = {
     updateQuestionPaper: string;
     deleteQuestionPaper: string;
   }
+  activation: {
+    saveActivation: string;
+    saveMultipleActivation: string;
+    updateActivation: string;
+  }
 }
 @Injectable({
   providedIn: 'root'
@@ -114,6 +121,7 @@ export class AppConfigService {
     register: {},
     instructor: {
       instructorList: `${this.hostUrl}/Instructor/GetInstructorList`,
+      instructorListByFranchiseId: `${this.hostUrl}/Instructor/GetInstructorList?franchiseId={{id}}`,
       instructorById: `${this.hostUrl}/Instructor/GetInstructorById?instructorId={{id}}`,
       savetInstructor: `${this.hostUrl}/Instructor/SavetInstructor`,
       updateInstructor: `${this.hostUrl}/Instructor/UpdateInstructor`,
@@ -121,6 +129,7 @@ export class AppConfigService {
     },
     student: {
       studentList: `${this.hostUrl}/Student/GetStudentList`,
+      studentListByFranchiseId: `${this.hostUrl}/Student/GetStudentList?franchiseId={{id}}`,
       studentListInstructorWise: `${this.hostUrl}/Student/GetStudentListInstructorWise`,
       studentById: `${this.hostUrl}/Student/GetStudentById?studentId={{id}}`,
       savetStudent: `${this.hostUrl}/Student/SavetStudent`,
@@ -191,6 +200,11 @@ export class AppConfigService {
       saveQuestionPaper: `${this.hostUrl}/QuestionPaper/saveQuestionPaper`,
       updateQuestionPaper: `${this.hostUrl}/QuestionPaper/updateQuestionPaper`,
       deleteQuestionPaper: `${this.hostUrl}/QuestionPaper/Delete/{{id}}`
+    },
+    activation: {
+      saveActivation: `${this.hostUrl}/Activation/SaveActivation`,
+      updateActivation: `${this.hostUrl}/Activation/UpdateActivation`,
+      saveMultipleActivation: `${this.hostUrl}/Activation/SaveMultipleActivation`
     }
 
   }

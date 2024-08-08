@@ -1,19 +1,27 @@
 <div class="header">
-    <div class="logo w-full flex items-center justify-center border-0 border-b border-solid border-b-transparent">
+    <div
+        class="logo w-full flex items-center justify-center border-0 border-b border-solid border-b-transparent relative">
         <span
             class="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-500 via-gray-500 to-zinc-500 shadow-lg text-white flex items-center justify-center tracking-widest font-bold">
             <img [src]="logoSrc" alt="Logo" class="shadow-2xl h-full w-full object-fill rounded-full" />
         </span>
+        <div class="actions array-actions flex items-center justify-center gap-4 absolute -top-4 -right-5">
+            <p-button [text]="true" styleClass="action lg:hidden xl:hidden 2xl:hidden 2x:hidden" class="w-full" icon="pi pi-times" severity="warning"
+                [pTooltip]="'Close Sidebar'"
+                [ngClass]="isMobile || isTablet ? 'flex' : 'hidden'"
+                iconPos="right"
+                (onClick)="closeSidebar($event)" />
+        </div>
     </div>
 </div>
-<div class="list overflow-hidden overflow-y-auto">
-    <ul class="p-0" [@listAnimation]>
+<div class="list overflow-hidden flex items-start overflow-y-auto">
+    <ul class="p-0 w-full flex flex-col items-start justify-center" [@listAnimation]>
         @for (item of menuItems; track $index) {
         <li id="menu-item"
-            class="flex items-center justify-start list-none gap-6 my-1 cursor-pointer py-1.5 mx-3.5 min-h-9 max-h-9 min-w-12 pl-4 pr-3.5 text-white rounded-full"
+            class="w-full flex items-center justify-start list-none gap-6 my-1 cursor-pointer py-1.5 min-h-9 max-h-9 min-w-12 pl-4 pr-3.5 text-white rounded-full"
             [ngClass]="[item?.isActive ? 'border-l-white text-white opacity-100 bg-white/30' : 'text-white/80 hover:bg-ph-300']"
             (click)="handleItemClick(item)" [pTooltip]="item?.title">
-            <i class="{{item?.icon}} text-base"
+            <i class="{{item?.icon}} text-base transition-all duration-200 ease-in-out"
                 style="position: relative; display: flex; align-items: center; justify-content: center;"></i>
             @if (sideBarOpened) {
             <p class="m-0 text-xs tracking-wider" @titleAnimation>

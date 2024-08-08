@@ -128,9 +128,6 @@ export class AddEditRoleComponent implements OnInit, AfterViewInit {
     this.isSubmitActionLoading = true;
     this.roleService.getRolePermissionsById(roleId).subscribe({
       next: (response) => {
-        console.log('response: ', response);
-        console.log('moduleList: ', this.moduleList);
-
         if (response?.length) {
           response.forEach((item: any) => {
             const itemIndex = this.moduleList.findIndex((row) => row.id === item?.moduleId);

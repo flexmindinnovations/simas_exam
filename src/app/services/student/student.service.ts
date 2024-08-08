@@ -21,6 +21,11 @@ export class StudentService {
     return this.http.get(this.studentPath.studentList);
   }
 
+  getStudentListByFranchiseId(franchiseId: string): Observable<any> {
+    const getByIdApiPath = this.studentPath.studentListByFranchiseId.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', franchiseId);
+    return this.http.get<any>(getByIdApiPath);
+  }
+
   getStudentById(studentId: number): Observable<any> {
     const getByIdApiPath = this.studentPath.studentById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', studentId.toString());
     return this.http.get(getByIdApiPath);

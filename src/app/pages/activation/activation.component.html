@@ -1,5 +1,36 @@
-<div class="franchise-container page-container">
+<div class="activation-container page-container">
+
+    <div
+        class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5">
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="activationType">Activation Type</label>
+            <p-dropdown appendTo="body" inputId="activationType" [options]="activationTypeList" ariaLabelledBy="value"
+                [disabled]="isSearchActionLoading" [(ngModel)]="selectedActivationType" placeholder="Select"
+                (onChange)="handleOnActivationTypeChange($event)" optionValue="value" optionLabel="title"
+                [filter]="true" filterBy="value" [showClear]="false" />
+        </div>
+
+        @if (
+        selectedActivationType === activationType.Student ||
+        selectedActivationType === activationType.Instructor
+        ) {
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="franchiseList">Franchise</label>
+            <p-dropdown appendTo="body" inputId="franchiseList" [options]="franchiseList"
+                [loading]="isFranchiseListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedFranchise"
+                [disabled]="isSearchActionLoading" ariaLabelledBy="franchiseName" placeholder="Select"
+                (onChange)="handleOnFranchiseChange($event)" optionValue="franchiseId" optionLabel="franchiseName"
+                [filter]="true" filterBy="franchiseName" [showClear]="false" />
+        </div>
+        }
+
+        <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="isSearchDisabled || isSearchActionLoading"
+            icon="pi pi-search" styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+
     <div class="table-container">
-        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource" (onAddAction)="handleAddEditAction()"></app-data-grid>
+        <app-data-grid [colDefs]="colDefs" [showAddButton]="true" [dataSource]="tableDataSource"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
     </div>
 </div>

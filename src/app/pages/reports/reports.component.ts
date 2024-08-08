@@ -117,12 +117,13 @@ export class ReportsComponent {
         if (res?.status) {
           utils.setMessages(res.message, 'success');
           this.getExamList();
-          utils.isTableEditAction.set(false);
         } else {
-          utils.isTableEditAction.set(false);
           utils.setMessages(res.message, 'error');
         }
+        utils.isAddActionLoading.set(false);
+        utils.isTableEditAction.set(false);
       } else {
+        utils.isAddActionLoading.set(false);
         utils.isTableEditAction.set(false);
       }
     })
@@ -159,5 +160,5 @@ export class ReportsComponent {
     setTimeout(() => {
       utils.isTableDeleteAction.set(false);
     }, 2000)
-}
+  }
 }

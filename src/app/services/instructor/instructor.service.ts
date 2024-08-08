@@ -20,6 +20,11 @@ export class InstructorService {
     return this.http.get<any>(this.instructorPath.instructorList);
   }
 
+  getInstructorListByFranchiseId(franchiseId: string): Observable<any> {
+    const getByIdApiPath = this.instructorPath.instructorListByFranchiseId.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', franchiseId);
+    return this.http.get<any>(getByIdApiPath);
+  }
+
   getInstructorById(instructorId: number): Observable<any> {
     const getByIdApiPath = this.instructorPath.instructorById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', instructorId.toString());
     return this.http.get(getByIdApiPath);
