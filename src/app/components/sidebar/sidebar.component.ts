@@ -6,11 +6,12 @@ import { utils } from '../../utils';
 import { MENU_ITEMS } from '../../../../public/data/menu-items';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 import { TooltipModule } from 'primeng/tooltip';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, TooltipModule],
+  imports: [CommonModule, TooltipModule, ButtonModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   animations: [
@@ -40,12 +41,22 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   sideBarOpened: boolean = true;
   logoSrc: string = '/images/logo1.png';
   isLoading: boolean = true;
+  isMobile: boolean = false;
+  isTablet: boolean = false;
 
   @Input({ required: true }) permissionList: any[] = [];
 
   constructor(
     private router: Router
   ) {
+
+    effect(() => {
+      this.isMobile = utils.isMobile();
+    })
+    effect(() => {
+      this.isTablet = utils.isTablet();
+    })
+
     effect(() => {
       const isPageRefreshed = utils.isPageRefreshed();
       if (isPageRefreshed) {
@@ -117,6 +128,10 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       utils.setPageTitle(this.menuItems[currentItemIndex].title);
       this.menuItems[currentItemIndex].isActive = true;
     }
+  }
+
+  closeSidebar(event: any) {
+    utils.sideBarOpened.update(val => !val);
   }
 
   ngOnDestroy(): void {

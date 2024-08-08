@@ -114,13 +114,14 @@ export class ExamComponent implements OnInit {
         if (res?.status) {
           utils.setMessages(res.message, 'success');
           this.getExamList();
-          utils.isTableEditAction.set(false);
         } else {
-          utils.isTableEditAction.set(false);
           utils.setMessages(res.message, 'error');
         }
+        utils.isAddActionLoading.set(false);
+        utils.isTableEditAction.set(false);
       } else {
         utils.isTableEditAction.set(false);
+        utils.isAddActionLoading.set(false);
       }
     })
   }

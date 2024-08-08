@@ -23,6 +23,17 @@
     inherits: false;
 }
 
+:root {
+    --color1: #8b5cf6;
+    --color2: #3096c7;
+    --color3: #3b76f6;
+    --color4: #e76f51;
+    --color5: #f4a261;
+    --color6: #e9c46a;
+    --color7: #2a9d8f;
+    --color8: #264653;
+}
+
 
 .pi {
     font-family: 'primeicons' !important;
@@ -107,8 +118,9 @@
 
     p-messages {
         @apply w-full;
+
         .p-message {
-            @apply m-0 rounded-none first:rounded-t-2xl pl-4;
+            @apply m-0 rounded-none lg:first:rounded-t-2xl xl:first:rounded-t-2xl 2xl:first:rounded-t-2xl pl-4;
 
             .p-message-wrapper {
                 @apply py-1 flex items-center justify-between px-0 pr-3 flex-wrap w-full h-full;
@@ -121,14 +133,14 @@
     }
 
     button {
-        @apply px-3 py-2 outline-none text-sm shadow-2xl rounded-2xl min-h-9;
+        @apply px-3 py-2 outline-none text-sm shadow-2xl rounded-2xl min-h-[2.4rem];
 
         &.p-button-primary {
             @apply bg-ph-600;
         }
 
         &.p-button-icon-only {
-            @apply w-8 min-w-8 p-1 flex flex-row items-center bg-transparent justify-center;
+            @apply w-8 min-w-8 min-h-8 p-1 flex flex-row items-center bg-transparent justify-center;
 
             span {
                 font-size: 18px !important;
@@ -324,10 +336,12 @@
 
 html,
 body {
-    @apply m-0 p-0 overflow-hidden box-border;
+    @apply m-0 p-0 overflow-hidden;
     height: 100vh;
     height: 100dvh;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     // width: 100dvw;
 }
 
@@ -439,8 +453,10 @@ label {
     }
 }
 
-.toggleRowButton, .add-row-btn {
+.toggleRowButton,
+.add-row-btn {
     @apply text-ph-700;
+
     .p-button-icon {
 
         &::before {
@@ -482,7 +498,7 @@ label {
         height: 100%;
         width: 100%;
         transform: translate(-50%, -50%);
-        background-image: conic-gradient(from var(--angle), #F9A8D4, #C084FC, #818CF8, #F9A8D4);
+        background-image: conic-gradient(from var(--angle), var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color6), var(--color7), var(--color8), var(--color1));
         z-index: -1;
         animation: spin 3s linear infinite;
     }
@@ -531,9 +547,9 @@ image-picker {
     height: 100%;
     width: 100%;
     transform: translate(-50%, -50%);
-    background-image: conic-gradient(from var(--angle), #8b5cf6, #C084FC, #818CF8, #8b5cf6);
+    background-image: conic-gradient(from var(--angle), var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color7), var(--color8), var(--color1));
     z-index: -1;
-    animation: spin 15s linear infinite;
+    animation: spin 60s linear infinite;
 }
 
 .layout-wrapper::before {

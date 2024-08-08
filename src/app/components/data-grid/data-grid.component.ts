@@ -51,12 +51,14 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
 
-  paginatorPosition = [100, 250];
+  paginatorPosition = [100, 180];
   dialogRef: DynamicDialogRef | undefined;
 
   downloadOptions: MenuItem[] = [];
   permissionList: any[] = [];
   currentModule: any;
+
+  downloadMenuId = new Date().getTime();
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {

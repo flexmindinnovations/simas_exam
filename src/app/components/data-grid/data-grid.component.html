@@ -1,9 +1,9 @@
 @if (!isLoading) {
 <div class="data-grid-container flex flex-col items-start justify-start gap-5 w-full"
-    [ngClass]="isMobile ? 'px-3' : 'lg:max-w-[100%] lg:p-4 xl:max-w-[92%]'">
+    [ngClass]="isMobile ? 'px-3' : 'lg:max-w-[100%] lg:p-4 xl:max-w-[100%]'">
     <div
-        class="grid-options flex flex-col lg:xl:flex-row items-start justify-end lg:xl:justify-between w-full gap-4 lg:xl:gap-0">
-        <div class="search w-[100%] lg:xl:w-[30%]">
+        class="grid-options flex flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row 2x:flex-row items-start justify-end lg:xl:justify-between w-full gap-4 lg:xl:gap-0">
+        <div class="search w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[30%] 2x:w-[30%]">
             <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
                 <i class="pi pi-search"></i>
                 <input type="text" class="w-96" pInputText placeholder="Enter text to filter grid" type="text"
@@ -15,8 +15,9 @@
                 @if (dataSource?.length) {
                 <p-button label="Download Data" icon="pi pi-download" [loading]="isExportActionLoading"
                     loadingIcon="pi pi-spin pi-spinner" pTooltip="Export table data" tooltipPosition="left"
-                    (onClick)="downloadOptionsMenu.toggle($event)" />
-                <p-tieredMenu #downloadOptionsMenu [popup]="true" [model]="downloadOptions" />
+                    appendTo="body" [id]="downloadMenuId" (onClick)="downloadOptionsMenu.toggle($event)" />
+                <p-tieredMenu [attr.target]="'#'+ downloadMenuId" #downloadOptionsMenu [popup]="true"
+                    [model]="downloadOptions" />
                 }
             </div>
             @if (showAddButton && currentModule?.canAdd) {
@@ -31,9 +32,9 @@
         <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
             (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
             [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-            [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'"
-            [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
-            [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : screenHeight - paginatorPosition[1]  + 'px'}">
+            [globalFilterFields]="getGlobalFilters()" sortMode="multiple"
+            [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'" [rowsPerPageOptions]="[15, 30, 50]"
+            styleClass="p-datatable-sm" [tableStyle]="{'min-width': isMobile ? '50%' : '80%'}">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns; let i=index" [pSortableColumn]="col.field"
@@ -144,8 +145,7 @@
         [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
         [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight - 100 + 'px'"
         [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
-        [ngClass]="dataSource?.length > 0 ? 'full' : 'empty'"
-        [tableStyle]="{'min-width': isMobile ? '50%' : '50rem', 'height': isMobile ? scrollHeight - paginatorPosition[0] + 'px' : '100%'}">
+        [ngClass]="dataSource?.length > 0 ? 'full' : 'empty'" [tableStyle]="{'min-width': isMobile ? '50%' : '50rem'}">
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th *ngFor="let col of columns" [pSortableColumn]="col.field"
@@ -174,9 +174,9 @@
                     <div class="w-full flex items-center justify-center gap-1">
                         @if (currentModule?.canEdit) {
                         <p-button [text]="true" icon="pi 
-                                    pi-pen-to-square" [loading]="rowData.isEditActionLoading" tooltipPosition="bottom"
-                            loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit"
-                            (onClick)="handleEditOperation(rowData, rowIndex)" />
+                                    pi-pen-to-square" [loading]="rowData.isEditActionLoading"
+                            styleClass="table-action-btn" tooltipPosition="bottom" loadingIcon="pi pi-spin pi-spinner"
+                            pTooltip="Edit" (onClick)="handleEditOperation(rowData, rowIndex)" />
                         }
                         @if (currentModule?.canDelete) {
                         <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
@@ -193,7 +193,8 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="colDefs.length ?? 5" [attr.rowspan]="colDefs.length ?? 5" class="text-center py-3">No records found.
+                <td [attr.colspan]="colDefs.length ?? 5" [attr.rowspan]="colDefs.length ?? 5" class="text-center py-3">
+                    No records found.
                 </td>
             </tr>
         </ng-template>
