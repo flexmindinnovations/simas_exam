@@ -498,7 +498,7 @@ label {
         height: 100%;
         width: 100%;
         transform: translate(-50%, -50%);
-        background-image: conic-gradient(from var(--angle), var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color6), var(--color7), var(--color8), var(--color1));
+        background-image: conic-gradient(from var(--angle), var(--color1), var(--color2), var(--color3), var(--color6), var(--color7), var(--color8), var(--color1));
         z-index: -1;
         animation: spin 3s linear infinite;
     }
@@ -547,7 +547,7 @@ image-picker {
     height: 100%;
     width: 100%;
     transform: translate(-50%, -50%);
-    background-image: conic-gradient(from var(--angle), var(--color1), var(--color2), var(--color3), var(--color4), var(--color5), var(--color7), var(--color8), var(--color1));
+    background-image: conic-gradient(from var(--angle), var(--color1), var(--color2), var(--color3), var(--color4), var(--color7), var(--color8), var(--color1));
     z-index: -1;
     animation: spin 60s linear infinite;
 }

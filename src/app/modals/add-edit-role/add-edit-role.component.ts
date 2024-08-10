@@ -45,7 +45,7 @@ export class AddEditRoleComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dialogData = this.config.data;
     this.isEditMode = this.dialogData?.isEditMode;
-    this.savedRoles = this.dialogData?.savedRoles;
+    this.savedRoles = this.dialogData?.savedItems;
     this.initFormGroup();
     this.getMduleList();
   }

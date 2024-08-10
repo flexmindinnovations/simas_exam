@@ -12,6 +12,8 @@ import { DataGridComponent } from '../../components/data-grid/data-grid.componen
 import { AddEditExamComponent } from '../../modals/add-edit-exam/add-edit-exam.component';
 import { ExamService } from '../../services/exam/exam.service';
 import { utils } from '../../utils';
+import { QuestionPaperService } from '../../services/question-paper/question-paper.service';
+import { AddEditQuestionPaperComponent } from '../../modals/add-edit-question-paper/add-edit-question-paper.component';
 
 @Component({
   selector: 'app-question-paper',
@@ -23,22 +25,20 @@ import { utils } from '../../utils';
 })
 export class QuestionPaperComponent {
   colDefs: any[] = [];
-  examList: any[] = [];
+  questionPaperList: any[] = [];
   tableDataSource: any[] = [];
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
   editModeData: any;
-  searchValue: string = '';
-  @ViewChild('examListTable', { static: false }) examListTable!: Table;
 
   constructor(
-    private examService: ExamService,
+    private questionPaperService: QuestionPaperService,
     private dialogService: DialogService
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
       if (isDeleteAction) {
-        this.deleteExamRow(utils.tableDeleteRowData());
+        this.deleteTableRow(utils.tableDeleteRowData());
       }
     })
 
@@ -53,7 +53,7 @@ export class QuestionPaperComponent {
   ngOnInit(): void {
     utils.addButtonTitle.set('Question Paper');
     this.setTableColumns();
-    this.getExamList();
+    this.getQuestionPaperList();
   }
 
   setTableColumns() {
@@ -79,13 +79,13 @@ export class QuestionPaperComponent {
     ];
   }
 
-  getExamList() {
+  getQuestionPaperList() {
     utils.isTableLoading.update(val => !val);
-    this.examService.getExamList().subscribe({
+    this.questionPaperService.getQuestionPaperList().subscribe({
       next: (response) => {
         if (response) {
-          this.examList = response;
-          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examList)
+          this.questionPaperList = response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionPaperList)
           utils.isTableLoading.update(val => !val);
           utils.setMessages(response.message, 'success');
         }
@@ -96,15 +96,14 @@ export class QuestionPaperComponent {
       }
     })
   }
+
   handleAddEditAction(data?: any) {
-    if (this.isEditMode) utils.isTableEditAction.set(true);
-    else utils.isAddActionLoading.set(true);
-    this.dialogRef = this.dialogService.open(AddEditExamComponent, {
-      data: this.isEditMode ? this.filterExamInfo(data?.examId) : { isEditMode: this.isEditMode },
+    this.dialogRef = this.dialogService.open(AddEditQuestionPaperComponent, {
+      data: this.isEditMode ? this.filterTableData(data?.questionPaperId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
       height: 'auto',
-      width: utils.isMobile() ? '95%' : '42%',
+      width: utils.isMobile() ? '95%' : '60%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Question Paper' : 'Add New Question Paper',
     });
@@ -113,7 +112,7 @@ export class QuestionPaperComponent {
       if (res) {
         if (res?.status) {
           utils.setMessages(res.message, 'success');
-          this.getExamList();
+          this.getQuestionPaperList();
         } else {
           utils.setMessages(res.message, 'error');
         }
@@ -125,37 +124,23 @@ export class QuestionPaperComponent {
       }
     })
   }
-  filterExamInfo(examId: number) {
-    const franchiseItem = this.examList.filter((item) => item.examId
-      === examId)[0];
-    return { ...franchiseItem, isEditMode: this.isEditMode };
+  filterTableData(questionPaperId: number) {
+    const questionPaperItem = this.questionPaperList.filter((item) => item.questionPaperId
+      === questionPaperId)[0];
+    return { ...questionPaperItem, isEditMode: this.isEditMode };
   }
 
-  filterGlobal(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.examListTable.filterGlobal(input.value, 'contains');
-  }
-
-  clear(table: Table) {
-    table.clear();
-    this.searchValue = ''
-  }
-
-  handleRowDelet(event: any) {
-    const deleteItemIndex = this.examList.findIndex((item) => item?.id === event?.id);
+  deleteTableRow(event: any) {
+    const deleteItemIndex = this.questionPaperList.findIndex((item) => item?.id === event?.id);
     if (deleteItemIndex > -1) {
-      this.examList.splice(deleteItemIndex, 1);
+      this.questionPaperList.splice(deleteItemIndex, 1);
       this.tableDataSource.splice(deleteItemIndex, 1);
       const deleteMessageObj = { detail: 'Record deleted successsfully', severity: 'success', closable: true };
       utils.messages.update((val: Message[]) => [...val, deleteMessageObj]);
+      setTimeout(() => {
+        utils.isTableDeleteAction.set(false);
+      }, 2000);
     }
-  }
-
-  deleteExamRow(data: any) {
-    console.log('data deleteExamRow: ', data);
-    setTimeout(() => {
-      utils.isTableDeleteAction.set(false);
-    }, 2000)
   }
 }
 

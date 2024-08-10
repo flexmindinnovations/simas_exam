@@ -166,6 +166,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
         const res: any = response?.apiCall;
         this.isSubmitActionLoading = false;
         utils.isAddActionLoading.set(false);
+        utils.isTableEditAction.set(false);
         setTimeout(() => {
           this.dialogRef.close(res);
         })
@@ -173,6 +174,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
       error: (error: HttpErrorResponse) => {
         this.isSubmitActionLoading = false;
         utils.isAddActionLoading.set(false);
+        utils.isTableEditAction.set(false);
         this.dialogRef.close(false);
       }
     });

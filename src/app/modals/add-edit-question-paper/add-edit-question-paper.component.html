@@ -1,0 +1,144 @@
+<div class="dialog-body">
+    <div class="form-container overflow-hidden">
+        <form [formGroup]="formGroup" class="grid grid-cols-3 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
+            <div class="flex form-input flex-col items-start w-full col-span-3">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="levelId">Level</label>
+                <p-dropdown appendTo="body" formControlName="levelId" [options]="levelList" ariaLabelledBy="levelId"
+                    [loading]="levelListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnDropdownValueChange($event, 'level')" optionValue="levelId"
+                    optionLabel="levelName" [filter]="true" filterBy="levelName" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('levelId')?.invalid && (formGroup.get('levelId')?.dirty || formGroup.get('levelId')?.touched)">
+                    <small *ngIf="formGroup.get('levelId')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="roundId">Round</label>
+                <p-dropdown appendTo="body" formControlName="roundId" [options]="roundList" ariaLabelledBy="roundId"
+                    [loading]="roundListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnDropdownValueChange($event, 'round')" optionValue="roundId"
+                    optionLabel="roundName" [filter]="true" filterBy="roundName" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('roundId')?.invalid && (formGroup.get('roundId')?.dirty || formGroup.get('roundId')?.touched)">
+                    <small *ngIf="formGroup.get('roundId')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="examTypeId">Exam Type Name</label>
+                <p-dropdown appendTo="body" formControlName="examTypeId" [options]="examTypeList"
+                    ariaLabelledBy="examTypeId" [loading]="examTypeListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    (onChange)="handleOnDropdownValueChange($event, 'examType')" optionValue="examTypeId"
+                    optionLabel="examTypeName" [filter]="true" filterBy="examTypeName" [showClear]="false" />
+                <div
+                    *ngIf="formGroup.get('examTypeId')?.invalid && (formGroup.get('examTypeId')?.dirty || formGroup.get('examTypeId')?.touched)">
+                    <small *ngIf="formGroup.get('examTypeId')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="dynamic-section col-span-3 flex items-center justify-end flex-col gap-4"
+                formArrayName="questionPaperDetailsModels">
+                <div class="add-action w-full flex items-center justify-between">
+                    <p class="text-xs lg:xl:text-sm select-none opacity-60">
+                        Question Paper Details: </p>
+                    <p-button styleClass="action" iconPos="left" class="w-auto" styleClass="add-row-btn"
+                        icon="pi pi-plus" pTooltip="Add new row below" [loading]="isAddLoading"
+                        [disabled]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isAddLoading"
+                        (onClick)="handleAddItem()" />
+                </div>
+                <div class="form-array-wrapper w-full">
+                    @for (question of questionPapers.controls; track $index) {
+                    <div class="wrapper w-full flex items-center justify-start lg:justify-center xl:justify-center md:justify-center gap-3"
+                        [ngClass]="questionPapers.controls.length > 2 ? ' last:pb-16' : 'pb-4'"
+                        [formGroupName]="$index">
+                        <div class="flex form-input max-w-[33%] flex-col items-start w-full">
+                            <label for="questionType">Question Type</label>
+                            <p-dropdown appendTo="body" formControlName="questionType" [options]="questionTypeList"
+                                ariaLabelledBy="questionType"
+                                (onChange)="handleOnDropdownValueChange($event, 'questionType')" optionValue="value"
+                                optionLabel="title" [filter]="true" filterBy="value" [showClear]="false" />
+                            <div
+                                *ngIf="formGroup.get('questionType')?.invalid && (formGroup.get('questionType')?.dirty || formGroup.get('questionType')?.touched)">
+                                <small *ngIf="formGroup.get('questionType')?.errors?.['required']" class="p-error">This
+                                    field
+                                    is
+                                    required.</small>
+                            </div>
+                        </div>
+                        <div class="flex form-input flex-col items-start">
+                            <label for="columns">Columns</label>
+
+                            <span class="p-input-icon-right w-full">
+                                <i class="pi pi-objects-column"></i>
+                                <input type="number" pKeyFilter="int" style="width: 6rem !important"
+                                    [ngClass]="question.get('columns')?.touched || question.get('columns')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                                    pKeyFilter="int" pInputText formControlName="columns" />
+                            </span>
+                        </div>
+                        <div class="flex form-input flex-col items-start">
+                            <label for="rows">Rows</label>
+                            <span class="p-input-icon-right w-full">
+                                <i class="pi pi-arrows-v"></i>
+                                <input type="number" pKeyFilter="int" style="width: 6rem !important"
+                                    [ngClass]="question.get('rows')?.touched || question.get('rows')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                                    pKeyFilter="int" pInputText formControlName="rows" />
+                            </span>
+                        </div>
+                        <div class="flex form-input flex-col items-start">
+                            <label for="noOfQuestion" class="flex items-center justify-start gap-1">Questions
+                                <i class="pi pi-info-circle
+                                " pTooltip="No Of Questions"></i>
+                            </label>
+
+                            <span class="p-input-icon-right w-full">
+                                <i class="pi pi-question-circle"></i>
+                                <input type="number" pKeyFilter="int" style="width: 6rem !important"
+                                    [ngClass]="question.get('noOfQuestion')?.touched || question.get('noOfQuestion')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                                    pKeyFilter="int" pInputText formControlName="noOfQuestion" />
+                            </span>
+                        </div>
+                        <div class="flex form-input flex-col items-start">
+                            <label for="markPerQuestion" class="flex items-center justify-start gap-1">
+                                Mark
+                                <i class="pi pi-info-circle
+                                " pTooltip="Total Marks For Question."></i>
+                            </label>
+
+                            <span class="p-input-icon-right w-full">
+                                <i class="pi pi-sort-numeric-up-alt"></i>
+                                <input type="number" pKeyFilter="int" style="width: 6rem !important"
+                                    [ngClass]="question.get('markPerQuestion')?.touched || question.get('markPerQuestion')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                                    pKeyFilter="int" pInputText formControlName="markPerQuestion" />
+                            </span>
+
+                        </div>
+                        <div class="actions array-actions flex items-center justify-center gap-4">
+                            <p-button [text]="true" styleClass="action" class="w-full" icon="pi pi-times"
+                                severity="danger" [loading]="isRemoveLoading" loadingIcon="pi pi-spin pi-spinner"
+                                [pTooltip]="questionPapers.controls.length === 1 ? 'At least one item is required.' : 'Remove this item'"
+                                [disabled]="isSubmitActionLoading || isRemoveLoading || questionPapers.controls.length === 1"
+                                iconPos="right" (onClick)="handleRemoveItem($index)" />
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

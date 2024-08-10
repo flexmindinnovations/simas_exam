@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { utils } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,8 @@ export class QuestionBankService {
   }
 
   getQuestionBankById(questionBankId: string): Observable<any> {
-    const getByIdApiPath = this.questionBankApiPath.questionBankById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', questionBankId);
-    return this.http.get(getByIdApiPath);
+    const cleanPath = utils.getCleanPath(this.questionBankApiPath.questionBankById, questionBankId);
+    return this.http.get(cleanPath);
   }
 
   questionBankListExamTypeAndLessonWise({ levelId, examTypeId, lessonId }: { levelId: string, examTypeId: string, lessonId: string }): Observable<any> {
@@ -53,7 +54,7 @@ export class QuestionBankService {
   }
 
   deleteQuestionBank(questionBankId: string): Observable<any> {
-    const getByIdApiPath = this.questionBankApiPath.deleteQuestionBank.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', questionBankId);
-    return this.http.delete<any>(getByIdApiPath);
+    const cleanPath = utils.getCleanPath(this.questionBankApiPath.deleteQuestionBank, questionBankId);
+    return this.http.delete<any>(cleanPath);
   }
 }

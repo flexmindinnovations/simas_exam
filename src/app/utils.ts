@@ -35,6 +35,9 @@ export const utils = {
     activeItem: signal<any>({}),
     permissionList: signal<any>([]),
     pageTitle: signal<string>(DOMAIN),
+    getCleanPath(urlPath: string, pathId: string) {
+        return urlPath.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', pathId);;
+    },
     getRandomNumber(min = 100001, max = 5000001) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     },

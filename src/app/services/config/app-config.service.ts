@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'questionBank' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'questionBank' | 'questionPaper';
 
 export type ApiCallConfig = {
   settings: {};
@@ -94,11 +94,17 @@ export type ApiCallConfig = {
     saveQuestionPaper: string;
     updateQuestionPaper: string;
     deleteQuestionPaper: string;
-  }
+  };
   activation: {
     saveActivation: string;
     saveMultipleActivation: string;
     updateActivation: string;
+  };
+  competition: {
+    competitionList: string;
+    competitionById: string;
+    saveCompetition: string;
+    updateCompetition: string;
   }
 }
 @Injectable({
@@ -205,6 +211,12 @@ export class AppConfigService {
       saveActivation: `${this.hostUrl}/Activation/SaveActivation`,
       updateActivation: `${this.hostUrl}/Activation/UpdateActivation`,
       saveMultipleActivation: `${this.hostUrl}/Activation/SaveMultipleActivation`
+    },
+    competition: {
+      competitionList: `${this.hostUrl}/Compitition/getCompititionList`,
+      competitionById: `${this.hostUrl}/Compitition/getCompititionById/{{id}}`,
+      saveCompetition: `${this.hostUrl}/Compitition/SaveCompititionMaster`,
+      updateCompetition: `${this.hostUrl}/Compitition/updateCompititionMaster`,
     }
 
   }

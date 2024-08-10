@@ -97,7 +97,7 @@ export class RolesComponent implements OnInit {
 
   handleAddEditAction(data?: any) {
     this.dialogRef = this.dialogService.open(AddEditRoleComponent, {
-      data: this.isEditMode ? this.filterRoleInfo(data?.roleId) : { isEditMode: this.isEditMode, savedRoles: this.roleList },
+      data: this.isEditMode ? this.filterRoleInfo(data?.roleId) : { isEditMode: this.isEditMode, savedItems: this.roleList },
       closable: false,
       modal: true,
       height: 'auto',
@@ -124,7 +124,7 @@ export class RolesComponent implements OnInit {
   filterRoleInfo(roleId: number) {
     const roleItem = this.roleList.filter((item) => item.roleId
       === roleId)[0];
-    return { ...roleItem, savedRoles: this.roleList, isEditMode: this.isEditMode };
+    return { ...roleItem, savedItems: this.roleList, isEditMode: this.isEditMode };
   }
 
   deleteTableRow(data: any) {
