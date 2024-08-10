@@ -1,1 +1,45 @@
-<p>add-edit-competition works!</p>
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
+
+            <div class="flex flex-col items-start w-full col-span-2">
+                <label for="status">Status</label>
+                <p-inputSwitch formControlName="status" />
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="compititionName">Competition Name</label>
+                <span class="p-input-icon-right w-full">
+                    <i class="pi pi-trophy"></i>
+                    <input type="text" pInputText id="compititionName"
+                        [ngClass]="formGroup.get('compititionName')?.touched || formGroup.get('compititionName')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                        formControlName="compititionName" />
+                </span>
+                <div
+                    *ngIf="formGroup.get('compititionName')?.invalid && (formGroup.get('compititionName')?.dirty || formGroup.get('compititionName')?.touched)">
+                    <small *ngIf="formGroup.get('compititionName')?.errors?.['required']" class="p-error">This field
+                        is required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
+                <label for="compititionDate">Competition Date</label>
+                <p-calendar appendTo="body" ariaLabelledBy="compititionDate" formControlName="compititionDate"
+                    [showButtonBar]="true" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                    dateFormat="dd-mm-yy" />
+                <div
+                    *ngIf="formGroup.get('compititionDate')?.invalid && (formGroup.get('compititionDate')?.dirty || formGroup.get('compititionDate')?.touched)">
+                    <small *ngIf="formGroup.get('compititionDate')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

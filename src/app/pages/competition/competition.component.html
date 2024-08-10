@@ -1,1 +1,6 @@
-<p>competition works!</p>
+<div class="competition-container page-container">
+    <div class="table-container">
+        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
+    </div>
+</div>
