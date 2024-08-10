@@ -139,12 +139,11 @@ export class AddEditLevelComponent implements OnInit, AfterViewInit {
       apiCall = this.levelService.updateLevel(formVal);
     }
 
-    forkJoin({ apiCall }).subscribe({
+    apiCall.subscribe({
       next: (response) => {
-        const res: any = response?.apiCall;
         this.isSubmitActionLoading = false;
         setTimeout(() => {
-          this.dialogRef.close(res);
+          this.dialogRef.close(response);
           utils.isAddActionLoading.set(false);
         })
       },
