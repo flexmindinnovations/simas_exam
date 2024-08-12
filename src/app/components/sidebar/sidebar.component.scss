@@ -24,33 +24,33 @@
 
     .large {
 
-        &::after {
-            @apply rounded-t-full shadow-[24px_-24px_0px_10px_ph-500];
-            content: '';
-            position: absolute;
-            height: 36px;
-            width: 36px;
-            bottom: -36px;
-            right: 0;
-            background-color: transparent;
-            box-shadow: 24px -24px 0px 10px white;
-            pointer-events: none;
-            z-index: -1;
-        }
+        // &::after {
+        //     @apply rounded-t-full shadow-[24px_-24px_0px_10px_ph-500];
+        //     content: '';
+        //     position: absolute;
+        //     height: 36px;
+        //     width: 36px;
+        //     bottom: -36px;
+        //     right: 1px;
+        //     background-color: transparent;
+        //     box-shadow: 24px -24px 0px 10px white;
+        //     pointer-events: none;
+        //     z-index: -1;
+        // }
     }
 }
 
 .active {
     @apply relative bg-white rounded-none rounded-l-3xl text-ph-500;
 
-    &::before {
+    &:not(.first):before {
         @apply rounded-b-full;
         content: '';
         position: absolute;
         height: 36px;
         width: 36px;
         top: -35px;
-        right: 0;
+        right: 1px;
         background-color: transparent;
         box-shadow: 24px 24px 0px 10px white;
         pointer-events: none;
@@ -63,7 +63,7 @@
         height: 36px;
         width: 36px;
         bottom: -35px;
-        right: 0;
+        right: 1px;
         background-color: transparent;
         box-shadow: 24px -24px 0px 10px white;
         pointer-events: none;

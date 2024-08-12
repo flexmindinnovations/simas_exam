@@ -20,12 +20,12 @@
         </div>
     </div>
 </div>
-<div class="list mt-[18px] overflow-hidden flex items-start overflow-y-auto">
+<div class="list overflow-hidden flex items-start overflow-y-auto">
     <ul class="p-0 w-full flex flex-col items-start justify-center" [@listAnimation]>
         @for (item of menuItems; track $index) {
         <li id="menu-item"
-            class="w-full flex items-center justify-start list-none gap-6 my-1 cursor-pointer py-1.5 min-h-10 max-h-10 min-w-12 pl-4 pr-3.5 text-white rounded-full"
-            [ngClass]="[item?.isActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', item?.isActive && isMobile ? 'active-mobile' : '']" (click)="handleItemClick(item)"
+            class="w-full flex items-center justify-start list-none gap-6 my-1 cursor-pointer py-1.5 min-h-9 max-h-10 min-w-12 pl-4 pr-3.5 text-white rounded-full"
+            [ngClass]="[item?.isActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', item?.isActive && isMobile ? 'active-mobile' : '', $index=== 0 ? 'first' : '']" (click)="handleItemClick(item)"
             [pTooltip]="item?.title">
             <i class="{{item?.icon}} text-base transition-all duration-200 ease-in-out z-10"
                 style="position: relative; display: flex; align-items: center; justify-content: center;"></i>

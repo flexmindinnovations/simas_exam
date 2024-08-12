@@ -93,7 +93,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     if (data) {
       const menuItems = MENU_ITEMS;
       const filteredMenuItems = menuItems.filter((menuItem: MenuItem) => {
-        const matchedItem = data.find((item: any) => item.moduleName === menuItem.moduleName && item.canView);
+        const matchedItem = data.find((item: any) => item.moduleName.trim().replace(/\s/g, '').toLowerCase() === menuItem.moduleName.trim().replace(/\s/g, '').toLowerCase() && item.canView);
         return matchedItem !== undefined;
       })
       if (filteredMenuItems.length) {

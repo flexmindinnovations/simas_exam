@@ -1,5 +1,11 @@
-<div class="franchise-container page-container">
-    <div class="table-container">
-        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource" (onAddAction)="handleAddEditAction()"></app-data-grid>
+<div class="student-exam-container page-container">
+    <div class="wrapper h-full w-full grid gap-2">
+        <div class="exam-container h-full flex-1 bg-green-200">
+
+        </div>
+        <div class="right-timer flex flex-col gap-5 items-center justify-start p-5 flex-auto">
+            <app-timer></app-timer>
+        </div>
+
     </div>
 </div>

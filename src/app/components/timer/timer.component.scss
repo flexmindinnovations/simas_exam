@@ -1,0 +1,78 @@
+.timer {
+    @apply relative w-40 h-40 flex items-center justify-center;
+
+    .outer {
+        @apply relative w-full h-full bg-gray-300 rounded-full p-4 flex items-center justify-center;
+        box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+            -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+
+        .dot {
+            @apply absolute;
+            inset: 5px;
+            z-index: 1;
+            transform: rotate(calc(360deg * (var(--progress))));
+
+            &::before {
+                @apply rounded-full w-4 h-4 -rotate-90;
+                content: '';
+                position: absolute;
+                top: -5px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: white;
+                box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+                    -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+            }
+        }
+
+        .inner {
+            @apply bg-white flex items-center justify-center rounded-full h-32 w-32;
+            box-shadow: inset 4px 4px 6px -1px rgba(0, 0, 0, 0.2),
+                inset -4px -4px 6px -1px rgba(255, 255, 255, 0.7),
+                -0.5px -0.5px 0px rgb(255, 255, 255, 1),
+                0.5px 0.5px 0 rgba(0, 0, 0, 0.15),
+                0px 12px 10px -10px rgba(0, 0, 0, 0.5);
+
+
+            #number {
+                @apply flex flex-col items-center justify-center;
+
+                .icon-container {
+                    i {
+                        @apply text-lg;
+                    }
+                }
+
+                .text-container {
+                    @apply flex  items-center justify-center;
+
+                    p {
+                        @apply relative min-w-4 m-0;
+
+                        .counter {
+                            @apply font-semibold text-xl min-w-8 text-center;
+                        }
+                        .counter:not(.last)::after {
+                            content: ':';
+                            position: absolute;
+                            top: -1px;
+                            left: 1.8rem;
+                        }
+    
+                    }
+                }
+            }
+        }
+    }
+
+    svg {
+        @apply absolute top-0 left-0 -rotate-90;
+
+        circle {
+            fill: none;
+            stroke: url(#dynamicGradient);
+            stroke-dasharray: var(--circumference);
+            stroke-dashoffset: calc(var(--circumference) * var(--progress));
+        }
+    }
+}

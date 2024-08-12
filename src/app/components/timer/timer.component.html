@@ -1,0 +1,42 @@
+<div class="timer">
+    <div class="outer"
+        [ngStyle]="{'--offsetVal': offset, '--secondsLeft': secondsLeft + 's', '--circumference': circumference, '--progress': progress}">
+        <div class="dot"></div>
+        <div class="inner">
+            <div id="number">
+                <div class="icon-container">
+                    <i class="pi pi-stopwatch"></i>
+                </div>
+
+                <div class="text-container">
+                    <p class="flex flex-col items-center justify-between">
+                        <span class="m-0 counter">{{hoursLeft}}</span>
+                        <span>H</span>
+                    </p>
+                    <p class="flex flex-col items-center justify-center">
+                        <span class="m-0 counter">{{minutesLeft}}</span>
+                        <span>M</span>
+                    </p>
+                    <p class="flex flex-col items-center justify-center">
+                        <span class="m-0 counter last">{{secondsLeft}}</span>
+                        <span>S</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <svg viewBox="0 0 100 100" class="absolute" viewBox="0 0 100 100">
+        <!-- Gradient Definition -->
+        <defs>
+            <defs>
+                <linearGradient id="dynamicGradient">
+                    <stop offset="0%" stop-color="#34D399" />
+                    <stop offset="100%" stop-color="#3B82F6" />
+                </linearGradient>
+            </defs>
+        </defs>
+        <!-- Progress Circle -->
+        <circle #progressCircle cx="50" cy="50" r="45" stroke-width="10" stroke-linecap="round" />
+    </svg>
+</div>
