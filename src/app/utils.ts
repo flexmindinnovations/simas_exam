@@ -14,6 +14,7 @@ export type SeverityType = 'success' | 'info' | 'warn' | 'secondary' | 'contrast
 const DOMAIN = 'Simas Academy';
 export const utils = {
     domain: DOMAIN,
+    audioVolume: 0.8,
     headerHeight: '50px',
     mobileValidationPattern: '^\\+?[0-9]{10}$',
     apiConfigData: {},

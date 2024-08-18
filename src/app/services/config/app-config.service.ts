@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'questionBank' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'examPaper' | 'questionBank' | 'questionPaper';
 
 export type ApiCallConfig = {
   settings: {};
@@ -77,13 +77,19 @@ export type ApiCallConfig = {
     updateExamType: string;
     deleteExamType: string;
   };
+  examPaper: {
+    examPaperList: string;
+    SaveExamPaper: string;
+    SaveExamPaperList: string;
+  };
   questionBank: {
     questionBankList: string;
     questionBankById: string;
-    questionBankListExamTypeAndLessonWise: string;
-    questionBankListExamTypeAndTypeWise: string;
-    questionBankListExamTypeAndLessonORTypeWise: string;
-    flashAnzanQuestionBankListExamTypeAndLevelWise: string;
+    // questionBankListExamTypeAndLessonWise: string;
+    // questionBankListExamTypeAndTypeWise: string;
+    // questionBankListExamTypeAndLessonORTypeWise: string;
+    // flashAnzanQuestionBankListExamTypeAndLevelWise: string;
+    flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise: string;
     updateQuestionBank: string;
     uploadFile: string;
     deleteQuestionBank: string;
@@ -189,13 +195,19 @@ export class AppConfigService {
       updateExamType: `${this.hostUrl}/ExamType/updateExamType`,
       deleteExamType: `${this.hostUrl}/ExamType/Delete/{{id}}`,
     },
+    examPaper: {
+      examPaperList: `${this.hostUrl}/ExamPaper/getExamPaper`,
+      SaveExamPaper: `${this.hostUrl}/ExamPaper/SaveExamPaper`,
+      SaveExamPaperList: `${this.hostUrl}/ExamPaper/SaveExamPaperList`
+    },
     questionBank: {
       questionBankList: `${this.hostUrl}/QuestionBank/getQuestionBankList`,
       questionBankById: `${this.hostUrl}/QuestionBank/getQuestionBankById/{{id}}`,
-      questionBankListExamTypeAndLessonWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndLessonWise`,
-      questionBankListExamTypeAndTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndTypeWise`,
-      questionBankListExamTypeAndLessonORTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndLessonORTypeWise`,
-      flashAnzanQuestionBankListExamTypeAndLevelWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelWise`,
+      // questionBankListExamTypeAndLessonWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndLessonWise`,
+      // questionBankListExamTypeAndTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndTypeWise`,
+      // questionBankListExamTypeAndLessonORTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndLessonORTypeWise`,
+      // flashAnzanQuestionBankListExamTypeAndLevelWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelWise`,
+      flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelAndRoundWise`,
       updateQuestionBank: `${this.hostUrl}/QuestionBank/updateQuestionBank`,
       uploadFile: `${this.hostUrl}/QuestionBank/uploadFile`,
       deleteQuestionBank: `${this.hostUrl}/QuestionBank/Delete/{{id}}`

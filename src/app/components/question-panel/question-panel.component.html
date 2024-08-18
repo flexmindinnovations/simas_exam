@@ -1,0 +1,30 @@
+<div class="question-panel-container w-full h-full">
+    <!-- <div class="header w-full flex items-center justify-center">
+        <h3 class="md:mt-0 lg:m-0 lg:font-normal">
+            Question Panel
+        </h3>
+    </div> -->
+    <div class="question-count relative w-full">
+        <ul class="question-list">
+            @for (item of questionsList; track $index) {
+            <li (click)="handleQuestionClick(item, $index)" [ngClass]="item.isActive ? 'active' : ''">
+                <div class="outer"
+                    [ngClass]="[item?.isActive ? 'outer-active' : '', item?.isCompleted ? 'completed' : '', item?.isSkipped ? 'bg-red-500' : '']">
+                    <div class="inner"
+                        [ngClass]="[item?.isActive ? 'bg-ph-100' : 'bg-white', item?.isCompleted ? 'shadow-none text-green-600 bg-green-200' : '', item?.isSkipped ? 'shadow-none bg-red-200 text-red-600' : '']">
+                        @if (item?.isCompleted) {
+                        <i class="pi pi-check
+                                "></i>
+                        } @else if (item?.isSkipped) {
+                        <i class="pi pi-times
+                                "></i>
+                        } @else {
+                        {{$index + 1}}
+                        }
+                    </div>
+                </div>
+            </li>
+            }
+        </ul>
+    </div>
+</div>

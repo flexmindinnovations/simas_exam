@@ -1,42 +1,89 @@
-<div class="timer">
-    <div class="outer"
-        [ngStyle]="{'--offsetVal': offset, '--secondsLeft': secondsLeft + 's', '--circumference': circumference, '--progress': progress}">
-        <div class="dot"></div>
-        <div class="inner">
-            <div id="number">
-                <div class="icon-container">
-                    <i class="pi pi-stopwatch"></i>
-                </div>
+<div class="timer w-full h-full">
+    <div class="circle !hidden">
+        <div class="outer w-full"
+            [ngStyle]="{'--offsetVal': offset, '--secondsLeft': secondsLeft + 's', '--circumference': circumference, '--progress': progress}">
+            <div class="dot"></div>
+            <div class="inner">
+                <div id="number">
+                    <div class="icon-container">
+                        <i class="pi pi-stopwatch"></i>
+                    </div>
 
-                <div class="text-container">
-                    <p class="flex flex-col items-center justify-between">
-                        <span class="m-0 counter">{{hoursLeft}}</span>
-                        <span>H</span>
-                    </p>
-                    <p class="flex flex-col items-center justify-center">
-                        <span class="m-0 counter">{{minutesLeft}}</span>
-                        <span>M</span>
-                    </p>
-                    <p class="flex flex-col items-center justify-center">
-                        <span class="m-0 counter last">{{secondsLeft}}</span>
-                        <span>S</span>
-                    </p>
+                    <div class="text-container">
+                        <p class="flex flex-col items-center justify-between">
+                            <span class="m-0 counter">{{hoursLeft}}</span>
+                            <span class="counter-text">{{hoursLeft > 1 ? 'HOURS' : 'HOUR'}}</span>
+                        </p>
+                        <p class="flex flex-col items-center justify-center">
+                            <span class="m-0 counter">{{minutesLeft}}</span>
+                            <span class="counter-text">{{minutesLeft > 1 ? 'MINUTES' : 'MINUTE'}}</span>
+                        </p>
+                        <p class="flex flex-col items-center justify-center">
+                            <span class="m-0 counter last">{{secondsLeft}}</span>
+                            <span class="counter-text">{{secondsLeft > 1 ? 'SECONDS' : 'SECOND'}}</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <svg class="absolute" viewBox="0 0 100 100">
+            <!-- Gradient Definition -->
+            <defs>
+                <defs>
+                    <linearGradient id="dynamicGradient">
+                        <stop offset="0%" stop-color="#34D399" />
+                        <stop offset="100%" stop-color="#3B82F6" />
+                    </linearGradient>
+                </defs>
+            </defs>
+            <!-- Progress Circle -->
+            <circle #progressCircle cx="50" cy="50" r="45" stroke-width="10" stroke-linecap="round" />
+        </svg>
     </div>
 
-    <svg viewBox="0 0 100 100" class="absolute" viewBox="0 0 100 100">
-        <!-- Gradient Definition -->
-        <defs>
-            <defs>
-                <linearGradient id="dynamicGradient">
-                    <stop offset="0%" stop-color="#34D399" />
-                    <stop offset="100%" stop-color="#3B82F6" />
-                </linearGradient>
-            </defs>
-        </defs>
-        <!-- Progress Circle -->
-        <circle #progressCircle cx="50" cy="50" r="45" stroke-width="10" stroke-linecap="round" />
-    </svg>
+    <div class="rect">
+        <div #outerElement class="outer relative outerCard" [ngStyle]="{'--progress': progress}">
+            <div class="progress-wrapper">
+                <div id="progressbar" class="progressbar">
+                    <p-progressBar id="timerProgress" styleClass="timerProgress" [value]="questionTimer" />
+                </div>
+                <div #innerCard class="inner innerCard">
+                    <div id="number">
+                        <div class="show-timer flex items-center justify-end gap-2">
+                            <div class="icon-container">
+                                <i class="pi pi-stopwatch"></i>
+                            </div>
+                            <div class="text-container">
+                                <p class="flex flex-col items-center justify-between">
+                                    <span class="m-0 counter">{{hoursLeft}}</span>
+                                    <span class="counter-text">{{hoursLeft > 1 ? 'HOURS' : 'HOUR'}}</span>
+                                    <span class="saperator first">
+                                        :
+                                    </span>
+                                </p>
+                                <p class="flex flex-col items-center justify-center">
+                                    <span class="m-0 counter">{{minutesLeft}}</span>
+                                    <span class="counter-text">{{minutesLeft > 1 ? 'MINUTES' : 'MINUTE'}}</span>
+                                    <span class="saperator last">
+                                        :
+                                    </span>
+                                </p>
+                                <p class="flex flex-col items-center justify-center">
+                                    <span class="m-0 counter last">{{secondsLeft}}</span>
+                                    <span class="counter-text">{{secondsLeft > 1 ? 'SECONDS' : 'SECOND'}}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="question-panel w-full h-full flex items-center justify-center">
+                            <app-question-panel [examStarted]="examStarted" [questionsList]="questionsList"
+                                [activeQuestion]="activeQuestion" [activeQuestionIndex]="activeQuestionIndex"
+                                (selectedQuestion)="selectedQuestionAction($event)"></app-question-panel>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>

@@ -43,7 +43,8 @@
 .active {
     @apply relative bg-white rounded-none rounded-l-3xl text-ph-500;
 
-    &:not(.first):before {
+    // &:not(.first):before {
+    &::before {
         @apply rounded-b-full;
         content: '';
         position: absolute;

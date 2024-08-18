@@ -3,7 +3,7 @@
     bg-white/20 backdrop-brightness-100 h-screen w-screen backdrop-blur-3xl isolate aspect-video ring-1 ring-black/5
  flex transition delay-500 duration-1000 ease-in-out lg:p-4 xl:p-4 lg:grid xl:grid"
         [ngClass]="sideBarOpened ? 'lg:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] 2x:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]' : 'lg:grid-cols-[repeat(auto-fill,minmax(3rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(3rem,1fr))] 2xl:[repeat(auto-fill,minmax(3rem,1fr))] 2x:grid-cols-[repeat(auto-fill,minmax(3rem,1fr))]'">
-        <div class="sidebar md:-mr-[1px] lg:-mr-[1px] xl:-mr-[1px] 2xl:-mr-[1px] 2x:-mr-[1px] rounded-l-2xl col-span-1">
+        <div class="sidebar md:mr-0 lg:-mr-[1px] xl:-mr-[1px] 2xl:-mr-[1px] 2x:-mr-[1px] rounded-l-2xl col-span-1">
             @if (!isMobile) {
             <app-sidebar [permissionList]="permissionList"></app-sidebar>
             } @else {
@@ -24,7 +24,7 @@
             }
             <header class="header md:-mb-[1px] lg:-mb-[1px] xl:-mb-[1px] 2xl:-mb-[1px] 2x:-mb-[1px] bg-white sm:rounded-none md:rounded-none 
                 max-w-[100vw]
-                lg:rounded-tr-2xl xl:rounded-tr-2xl" [ngClass]="sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': ''">
+                lg:rounded-t-2xl xl:rounded-t-2xl" [ngClass]="sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': ''">
                 <app-header></app-header>
             </header>
             <div class="dynamic sm:rounded-none md:rounded-none 

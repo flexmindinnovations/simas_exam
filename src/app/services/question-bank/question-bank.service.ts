@@ -25,8 +25,8 @@ export class QuestionBankService {
     return this.http.get(cleanPath);
   }
 
-  questionBankListExamTypeAndLessonWise({ levelId, examTypeId, lessonId }: { levelId: string, examTypeId: string, lessonId: string }): Observable<any> {
-    const searchParams = new URLSearchParams({ levelId, examTypeId, lessonId });
+  questionBankListExamTypeAndLessonWise({ examTypeId, levelId, roundId }: { examTypeId: string, levelId: string, roundId: string }): Observable<any> {
+    const searchParams = new URLSearchParams({ examTypeId, levelId, roundId });
     return this.http.get(`${this.questionBankApiPath.questionBankList}?${searchParams}`);
   }
 
@@ -40,9 +40,9 @@ export class QuestionBankService {
     return this.http.get(`${this.questionBankApiPath.questionBankList}?${searchParams}`);
   }
 
-  flashAnzanQuestionBankListExamTypeAndLevelWise({ levelId, examTypeId, noOfColumn, noOfRow }: { levelId: string, examTypeId: string, noOfColumn: string, noOfRow: string }): Observable<any> {
-    const searchParams = new URLSearchParams({ levelId, examTypeId, noOfColumn, noOfRow });
-    return this.http.get(`${this.questionBankApiPath.questionBankList}?${searchParams}`);
+  flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise(payload: { levelId: string, roundId: string, examTypeId: string, noOfColumn: string, noOfRow: string }): Observable<any> {
+    const searchParams = new URLSearchParams(payload);
+    return this.http.get(`${this.questionBankApiPath.flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise}?${searchParams}`);
   }
 
   updateQuestionBank(payload: string): Observable<any> {

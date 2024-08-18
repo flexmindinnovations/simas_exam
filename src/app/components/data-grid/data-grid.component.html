@@ -22,7 +22,7 @@
             </div>
             @if (showAddButton && currentModule?.canAdd) {
             <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
-            pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
+                pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
                 [pTooltip]="'Add ' + addButtonTitle" tooltipPosition="left" (onClick)="handleAddAction()"></p-button>
             }
         </div>
@@ -78,14 +78,14 @@
                         <div class="w-full flex items-center justify-center gap-1">
                             @if (currentModule?.canEdit) {
                             <p-button [text]="true" icon="pi
-                                        pi-pen-to-square" [loading]="rowData.isEditActionLoading"
+                                            pi-pen-to-square" [loading]="rowData.isEditActionLoading"
                                 loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit" tooltipPosition="bottom"
                                 (onClick)="handleEditOperation(rowData, rowIndex)" />
                             }
                             @if (currentModule?.canDelete) {
                             <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                                loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
-                                [text]="true" icon="pi pi-trash" /> -->
+                                    loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
+                                    [text]="true" icon="pi pi-trash" /> -->
                             }
                         </div>
                         } @else {
@@ -137,8 +137,7 @@
     </ng-template>
     </p-table>
 </div>
-}
-@else {
+} @else {
 <div class="card w-full">
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
         (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
@@ -174,14 +173,14 @@
                     <div class="w-full flex items-center justify-center gap-1">
                         @if (currentModule?.canEdit) {
                         <p-button [text]="true" icon="pi 
-                                    pi-pen-to-square" [loading]="rowData.isEditActionLoading"
+                                        pi-pen-to-square" [loading]="rowData.isEditActionLoading"
                             styleClass="table-action-btn" tooltipPosition="bottom" loadingIcon="pi pi-spin pi-spinner"
                             pTooltip="Edit" (onClick)="handleEditOperation(rowData, rowIndex)" />
                         }
                         @if (currentModule?.canDelete) {
                         <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                    loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
-                    [text]="true" icon="pi pi-trash" /> -->
+                        loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
+                        [text]="true" icon="pi pi-trash" /> -->
                         }
                     </div>
                     } @else {

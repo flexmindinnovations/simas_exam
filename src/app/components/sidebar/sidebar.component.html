@@ -1,10 +1,10 @@
 <div class="header">
     <div
-        class="md:logo lg:large xl:large 2xl:large w-full flex items-center justify-center border-0 border-b border-solid border-b-transparent relative lg:bg-white xl:bg-white 2xl:bg-whites lg:rounded-l-2xl xl:rounded-l-2xl 2xl:rounded-l-2xl"
+        class="md:logo lg:large xl:large 2xl:large w-full flex items-center justify-center border-0 border-b border-solid border-b-transparent relative lg:rounded-l-2xl xl:rounded-l-2xl 2xl:rounded-l-2xl"
         [ngClass]="isMobile ? 'logo' : 'large'"
         >
         <p
-            class="h-9 w-max bg-transparent text-white lg:text-ph-500 xl:text-ph-500 2xl:text-ph-500 flex items-center justify-center tracking-widest font-bold">
+            class="h-9 w-max bg-transparent text-white flex items-center justify-center tracking-widest font-bold">
             <img [src]="logoSrc" alt="Logo" class="shadow-2xl h-full w-full object-fill rounded-full" />
 
             @if (sideBarOpened) {
@@ -13,7 +13,7 @@
             </span>
             }
         </p>
-        <div class="actions array-actions flex items-center justify-center gap-4 absolute -top-4 -right-5">
+        <div class="actions array-actions flex items-center justify-center gap-4 absolute -top-4 md:-top-12 md:-right-4 -right-5">
             <p-button [text]="true" styleClass="action lg:hidden xl:hidden 2xl:hidden 2x:hidden" class="w-full"
                 icon="pi pi-times" severity="warning" [pTooltip]="'Close Sidebar'"
                 [ngClass]="isMobile || isTablet ? 'flex' : 'hidden'" iconPos="right" (onClick)="closeSidebar($event)" />
@@ -24,7 +24,7 @@
     <ul class="p-0 w-full flex flex-col items-start justify-center" [@listAnimation]>
         @for (item of menuItems; track $index) {
         <li id="menu-item"
-            class="w-full flex items-center justify-start list-none gap-6 my-1 cursor-pointer py-1.5 min-h-9 max-h-10 min-w-12 pl-4 pr-3.5 text-white rounded-full"
+            class="w-full flex items-center justify-start list-none gap-6 my-1 cursor-pointer py-1.5 min-h-10 max-h-10 min-w-12 pl-4 pr-3.5 text-white rounded-full"
             [ngClass]="[item?.isActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', item?.isActive && isMobile ? 'active-mobile' : '', $index=== 0 ? 'first' : '']" (click)="handleItemClick(item)"
             [pTooltip]="item?.title">
             <i class="{{item?.icon}} text-base transition-all duration-200 ease-in-out z-10"
