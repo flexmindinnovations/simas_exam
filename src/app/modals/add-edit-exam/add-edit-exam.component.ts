@@ -17,7 +17,8 @@ import { debounceTime, forkJoin, of } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule, InputTextModule, DropdownModule, CalendarModule, InputSwitchModule],
   templateUrl: './add-edit-exam.component.html',
-  styleUrl: './add-edit-exam.component.scss'
+  styleUrl: './add-edit-exam.component.scss',
+  animations: [utils.heightIncrease]
 })
 export class AddEditExamComponent implements OnInit {
   dialogData: any;

@@ -28,6 +28,8 @@ export const utils = {
     isTableDeleteAction: signal<boolean>(false),
     tableDeleteRowData: signal<any>({}),
     isTableEditAction: signal<boolean>(false),
+    isWarningPhase: signal<boolean>(false),
+    isDangerPhase: signal<boolean>(false),
     tableEditRowData: signal<any>({}),
     countryData: signal<any>({}),
     stateData: signal<any>({}),

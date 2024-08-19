@@ -1,8 +1,8 @@
 <div class="layout-wrapper h-full w-full">
     <div class="layout-container
     bg-white/20 backdrop-brightness-100 h-screen w-screen backdrop-blur-3xl isolate aspect-video ring-1 ring-black/5
- flex transition delay-500 duration-1000 ease-in-out lg:p-4 xl:p-4 lg:grid xl:grid"
-        [ngClass]="sideBarOpened ? 'lg:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] 2x:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]' : 'lg:grid-cols-[repeat(auto-fill,minmax(3rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(3rem,1fr))] 2xl:[repeat(auto-fill,minmax(3rem,1fr))] 2x:grid-cols-[repeat(auto-fill,minmax(3rem,1fr))]'">
+ flex transition delay-500 duration-1000 ease-in-out lg:pl-4 xl:pl-4 2xl:pl-4 lg:grid xl:grid"
+        [ngClass]="sideBarOpened ? 'lg:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] 2x:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]' : 'lg:grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] 2xl:[repeat(auto-fill,minmax(6rem,1fr))] 2x:grid-cols-[repeat(auto-fill,minmax(6rem,1fr))]'">
         <div class="sidebar md:mr-0 lg:-mr-[1px] xl:-mr-[1px] 2xl:-mr-[1px] 2x:-mr-[1px] rounded-l-2xl col-span-1">
             @if (!isMobile) {
             <app-sidebar [permissionList]="permissionList"></app-sidebar>
@@ -14,7 +14,7 @@
             }
         </div>
         <main
-            class="main-content md:col-[2/-1] lg:col-[2/-1] xl:col-[2/-1] 2xl:col-[2/-1] 2x:col-[2/-1] relative w-full lg:w-auto xl:w-auto rounded-2xl">
+            class="main-content md:col-[2/-1] lg:col-[2/-1] xl:col-[2/-1] 2xl:col-[2/-1] 2x:col-[2/-1] relative w-full lg:w-auto xl:w-auto">
             <ngx-loading-bar [includeSpinner]="false"></ngx-loading-bar>
             @if (messages.length) {
             <div class="message-container absolute top-0 left-0 right-0 w-full h-full max-h-[50px] flex">
@@ -23,15 +23,13 @@
             </div>
             }
             <header class="header md:-mb-[1px] lg:-mb-[1px] xl:-mb-[1px] 2xl:-mb-[1px] 2x:-mb-[1px] bg-white sm:rounded-none md:rounded-none 
-                max-w-[100vw]
-                lg:rounded-t-2xl xl:rounded-t-2xl" [ngClass]="sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': ''">
+                max-w-[100vw]" [ngClass]="sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': ''">
                 <app-header></app-header>
             </header>
             <div class="dynamic sm:rounded-none md:rounded-none 
             max-w-[100vw]
-            lg:rounded-b-2xl xl:rounded-b-2xl bg-white h-full w-full px-0 lg:xl:px-4 py-4 z-10"
-                [ngClass]="sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': ''"
-                [@routeAnimations]="prepareRoute(outlet)">
+             bg-white h-full w-full px-0 lg:xl:px-4 py-4 z-10" [ngClass]="[sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': '', isWarningPhase ? 'warning' : '', isDangerPhase ? 'danger': ''
+                ]" [@routeAnimations]="prepareRoute(outlet)">
                 <router-outlet #outlet="outlet"></router-outlet>
             </div>
         </main>

@@ -1,7 +1,16 @@
 <nav class="flex items-center justify-between w-full h-full px-5">
-    <div class="left">
-        <i class="pi select-none cursor-pointer" [ngClass]="sideBarOpened ? 'pi-align-right' : 'pi-align-left'"
-            (click)="toggleSidebar()"></i>
+    <div class="left flex items-center justify-center">
+        <i class="pi select-none cursor-pointer lg:hidden xl:hidden 2xl:hidden 2x:hidden"
+            [ngClass]="sideBarOpened ? 'pi-align-right' : 'pi-align-left'" (click)="toggleSidebar()"></i>
+
+        <p class="h-9 hidden lg:flex xl:flex 2xl:flex 2x:flex w-max bg-transparent text-black items-center justify-center tracking-widest font-bold">
+            <img [src]="logoSrc" alt="Logo" class="shadow-2xl h-full w-full object-fill rounded-full" />
+
+            <span class="min-w-32 uppercase text-center delay-500 opacity-1">
+                Simas Academy
+            </span>
+        </p>
+
     </div>
     <div class="center flex items-center justify-center">
         <p class="p-0 m-0 !text-sm font-semibold uppercase">
