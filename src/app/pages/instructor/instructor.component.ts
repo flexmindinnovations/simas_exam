@@ -136,8 +136,6 @@ export class InstructorComponent implements OnInit {
   }
 
   handleAddEditAction(data?: any) {
-    console.log('data: ', data);
-    
     if (this.isEditMode) utils.isTableEditAction.set(true);
     else utils.isAddActionLoading.set(true);
     this.dialogRef = this.dialogService.open(AddEditInstructorComponent, {
@@ -167,12 +165,8 @@ export class InstructorComponent implements OnInit {
   }
 
   filterInstructorInfo(instructorId: number) {
-    console.log('instructorId: ', instructorId);
-    
     const instructorIdItem = this.instructorList.filter((item) => item.instructorId
       === instructorId)[0];
-      console.log('instructorIdItem: ', instructorIdItem);
-      
     return { ...instructorIdItem, isEditMode: this.isEditMode };
   }
 

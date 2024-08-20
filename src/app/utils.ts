@@ -14,6 +14,7 @@ export type SeverityType = 'success' | 'info' | 'warn' | 'secondary' | 'contrast
 const DOMAIN = 'Simas Academy';
 export const utils = {
     domain: DOMAIN,
+    audioVolume: 0.8,
     headerHeight: '50px',
     mobileValidationPattern: '^\\+?[0-9]{10}$',
     apiConfigData: {},
@@ -27,6 +28,8 @@ export const utils = {
     isTableDeleteAction: signal<boolean>(false),
     tableDeleteRowData: signal<any>({}),
     isTableEditAction: signal<boolean>(false),
+    isWarningPhase: signal<boolean>(false),
+    isDangerPhase: signal<boolean>(false),
     tableEditRowData: signal<any>({}),
     countryData: signal<any>({}),
     stateData: signal<any>({}),

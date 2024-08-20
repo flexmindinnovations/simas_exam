@@ -17,7 +17,8 @@ import { debounceTime, forkJoin, of } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule, InputTextModule, DropdownModule, CalendarModule, InputSwitchModule],
   templateUrl: './add-edit-exam.component.html',
-  styleUrl: './add-edit-exam.component.scss'
+  styleUrl: './add-edit-exam.component.scss',
+  animations: [utils.heightIncrease]
 })
 export class AddEditExamComponent implements OnInit {
   dialogData: any;
@@ -64,8 +65,6 @@ export class AddEditExamComponent implements OnInit {
     const formData = new FormData();
     const status = formVal['status'];
     formVal['status'] = status === true ? '1' : '0';
-    console.log('formVal: ', formVal);
-
     formData.append('examModel', JSON.stringify(formVal));
     let apiCall = this.examService.saveExam(formVal);
     if (this.isEditMode) {

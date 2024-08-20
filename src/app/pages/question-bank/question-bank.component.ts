@@ -159,7 +159,6 @@ export class QuestionBankComponent {
   }
 
   deleteTableRow(data: any) {
-    console.log('data deleteTableRow: ', data);
     setTimeout(() => {
       utils.isTableDeleteAction.set(false);
     }, 2000)

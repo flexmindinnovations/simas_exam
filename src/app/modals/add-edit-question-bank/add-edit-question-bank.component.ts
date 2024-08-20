@@ -153,33 +153,21 @@ export class AddEditQuestionBankComponent implements OnInit {
   }
 
   handleOnExamTypeListChange(event: DropdownChangeEvent) {
-    console.log('event: ', event.value);
-
   }
 
   handleOnLevelListChange(event: DropdownChangeEvent) {
-    console.log('event: ', event.value);
     const levelId = event.value;
     let roundList = this.levelNameList.filter((item: any) => item?.levelId === levelId)[0];
-    console.log('roundList: ', roundList);
     if (roundList) {
       roundList = roundList?.examRoundList;
-      console.log('roundList: ', roundList);
-
       this.roundNameList = roundList;
     }
   }
   handleOnRoundListChange(event: DropdownChangeEvent) {
-    console.log('event: ', event.value);
-
   }
   handleOnQuestionTypeListChange(event: DropdownChangeEvent) {
-    console.log('event: ', event.value);
-
   }
   handleOnTypeListChange(event: DropdownChangeEvent) {
-    console.log('event: ', event.value);
-
   }
 }
 

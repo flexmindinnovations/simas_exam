@@ -151,7 +151,6 @@ handleRowDelet(event: any) {
 }
 
 deleteExamRow(data: any) {
-  console.log('data deleteExamRow: ', data);
   setTimeout(() => {
     utils.isTableDeleteAction.set(false);
   }, 2000)

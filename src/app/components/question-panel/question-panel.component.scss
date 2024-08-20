@@ -1,0 +1,34 @@
+.question-list {
+    @apply relative w-full h-full max-h-48 list-none m-0 p-0 flex items-center justify-start flex-wrap gap-2 overflow-auto;
+
+    li {
+        @apply relative cursor-pointer text-base font-semibold select-none h-12 w-12 rounded-full flex items-center justify-center;
+
+        .outer {
+            @apply h-full w-full rounded-full flex items-center justify-center border-solid border-gray-50;
+            // box-shadow: 6px 6px 10px -1px rgba(0, 0, 0, 0.15),
+            //     -6px -6px 10px -1px rgba(255, 255, 255, 0.7);
+
+            .inner {
+                @apply h-8 w-8 rounded-full flex items-center justify-center;
+                box-shadow: inset 4px 4px 6px -1px rgba(0, 0, 0, 0.2),
+                    inset -4px -4px 6px -1px rgba(255, 255, 255, 0.7),
+                    -0.5px -0.5px 0px rgb(255, 255, 255, 1),
+                    0.5px 0.5px 0 rgba(0, 0, 0, 0.15),
+                    0px 12px 10px -10px rgba(0, 0, 0, 0.5);
+
+            }
+        }
+    }
+}
+
+.outer-active {
+    @apply backdrop-brightness-100 backdrop-blur-3xl isolate aspect-video ring-1 ring-black/5 bg-ph-500;
+    // background-image: conic-gradient(from var(--angle), #34D399, #3B82F6, #34D399);
+    z-index: -1;
+    animation: spin 10s linear infinite;
+}
+
+.completed {
+    @apply bg-green-600 text-white;
+}

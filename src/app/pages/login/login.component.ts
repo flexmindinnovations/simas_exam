@@ -54,6 +54,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
+    this.authService.signOutUser();
     this.initFormGroup();
     this.activatedRoute.queryParams.subscribe((params: any) => {
       const userType = params['userType'];

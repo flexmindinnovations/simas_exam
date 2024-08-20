@@ -1,5 +1,163 @@
-<div class="franchise-container page-container">
-    <div class="table-container">
-        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource" (onAddAction)="handleAddEditAction()"></app-data-grid>
+<div class="student-exam-container page-container">
+    <div
+        class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full py-4 border-0 border-b border-solid border-b-gray-200">
+        <div class="flex flex-col items-start w-full max-w-52 md:max-w-44">
+            <label for="examType">Exam Type <span class="text-red-500">*</span></label>
+            <p-dropdown appendTo="body" inputId="examType" [options]="examTypeList" ariaLabelledBy="value"
+                [loading]="isExamTypeListLoading" loadingIcon="pi pi-spin pi-spinner"
+                [disabled]="isSearchActionLoading || isSearchDisabled" [(ngModel)]="selectedExamType"
+                placeholder="Select" (onChange)="handleOnDropdownValueChange($event, 'examType')"
+                optionValue="examTypeId" optionLabel="examTypeName" [filter]="true" filterBy="value"
+                [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-32">
+            <label for="levelList">Level <span class="text-red-500">*</span></label>
+            <p-dropdown appendTo="body" inputId="levelList" [options]="levelList" [loading]="isLevelListLoading"
+                loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedLevel"
+                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="levelName" placeholder="Select"
+                (onChange)="handleOnDropdownValueChange($event, 'level')" optionValue="levelId" optionLabel="levelName"
+                [filter]="true" filterBy="levelName" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-32">
+            <label for="roundList">Round <span class="text-red-500">*</span></label>
+            <p-dropdown appendTo="body" inputId="roundList" [options]="roundList"
+                [loading]="isLevelListLoading || isRoundListLoading" loadingIcon="pi pi-spin pi-spinner"
+                [(ngModel)]="selectedRound" [disabled]="isSearchActionLoading || isSearchDisabled"
+                ariaLabelledBy="roundName" placeholder="Select"
+                (onChange)="handleOnDropdownValueChange($event, 'round')" optionValue="roundId" optionLabel="roundName"
+                [filter]="true" filterBy="roundName" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-32">
+            <label for="noOfColumnList">Digit Per Number <span class="text-red-500">*</span></label>
+            <p-dropdown appendTo="body" inputId="noOfColumnList" [options]="noOfColumnList"
+                [loading]="isColumnListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfColumn"
+                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
+                (onChange)="handleOnDropdownValueChange($event, 'columns')" optionValue="value" optionLabel="title"
+                [filter]="true" filterBy="title" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-32">
+            <label for="noOfRowsList">Numbers to Display <span class="text-red-500">*</span></label>
+            <p-dropdown appendTo="body" inputId="noOfRowsList" [options]="noOfRowsList" [loading]="isRowsListLoading"
+                loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfRows"
+                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
+                (onChange)="handleOnDropdownValueChange($event, 'rows')" optionValue="value" optionLabel="title"
+                [filter]="true" filterBy="title" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-32">
+            <label for="roundList">Speed</label>
+            <p-dropdown appendTo="body" inputId="roundList" [options]="questionSpeedList" [loading]="isSpeedListLoading"
+                loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedSpeedOfQuestion"
+                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
+                (onChange)="handleOnDropdownValueChange($event, 'speed')" optionValue="value" optionLabel="title"
+                [filter]="true" filterBy="title" [showClear]="false" />
+        </div>
+
+        <p-button label="Start" (onClick)="handleSearchAction()"
+            [disabled]="!canStartExam() || isSearchDisabled || isSearchActionLoading" icon="pi pi-play"
+            styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+
+    <div class="wrapper p-4 h-full w-full grid gap-2">
+        @if (examStarted && !quizCompleted) {
+        <div
+            class="exam-container h-full col-start-1 row-start-2 md:col-start-1 lg:col-start-1 lg:row-start-1 md:row-start-2 md:row-end-2 flex flex-col md:min-h-72">
+            <div class="flex flex-col items-start justify-center w-full h-full">
+                <div #exampOptionsCard class="exampOptionsCard card flex justify-center">
+                    <p-selectButton [options]="examOptions" (onChange)="handleExamOptionChange($event)"
+                        [(ngModel)]="selectedExamOption" optionLabel="label" optionValue="value" />
+                </div>
+
+                <div id="questionCard" class="question-container w-full flex-1">
+                    <div class="card w-full p-0 pb-2">
+                        <p-progressBar [value]="questionTimer" />
+                    </div>
+                    @if(isFlashEnded) {
+                    <div class="checkbox-container w-full card flex flex-col items-start justify-center gap-2"
+                        [@scaleUpQuestion]="checkBoxstate">
+                        <p class="text-lg font-semibold mb-0">
+                            Choose the correct answer:
+                        </p>
+                        <div class="checkboxes flex flex-col items-start justify-start gap-2">
+                            @for (item of options; track $index) {
+                            <div class="flex items-center justify-start gap-4 h-8">
+                                <p-radioButton [inputId]="item" name="question" [value]="item"
+                                    (ngModelChange)="onCheckboxChange($event)" [(ngModel)]="selectedAnswer" />
+                                <label [for]="item"
+                                    class="mb-0 text-base sm:text-base md:!text-lg lg:!text-xl xl:!text-2xl 2xl:!text-2xl font-semibold"
+                                    style="margin-bottom: 0;">
+                                    {{ item }}
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    } @else if(isLoadingQuestion && !quizCompleted) {
+                    <div class="flex w-full my-3 py-3 items-center justify-center gap-3">
+                        <i class="pi pi-spin pi-spinner"></i>
+                        Loading question...
+                    </div>
+                    }@else {
+                    <div class="flash-container">
+                        @if(currentItem) {
+                        <div class="flash-item" [@scaleUp]="state">
+                            {{ currentItem }}
+                        </div>
+                        }
+                    </div>
+                    }
+
+                </div>
+
+                <div class="questionResultContainer" id="questionResultContainer">
+                    @if (showAnswer && submitedlashQuestionsIndex > -1) {
+                    <div class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
+                        [ngClass]="questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'bg-red-500' : 'bg-green-500'">
+                        <p class="m-0 font-semibold">{{questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'Wrong
+                            Answer' : 'Correct Answer'}}</p>
+                        <p class="m-0 tracking-wider">{{modifiedFlashQuestionsString}} = {{correctAnswer}}</p>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div
+            class="right-timer flex flex-col gap-2 items-end justify-center lg:justify-end flex-auto row-start-1 md:row-start-1 md:row-end-2 md:col-start-2 md:col-span-1 md:flex-row lg:col-start-2">
+            <app-timer [questionDuration]="questionDuration" (timeEnded)="OnTimerFinished($event)"
+                (timeLeft)="handleTimer($event)"
+                class="max-w-lg lg:max-w-lg xl:max-w-lg 2xl:max-w-lg md:min-w-[40%] md:flex md:items-start md:justify-center h-full w-full"
+                [examStarted]="examStarted" [questionsList]="questionList" [activeQuestion]="activeQuestion"
+                [activeQuestionIndex]="activeQuestionIndex" (selectedQuestion)="selectedQuestion($event)"></app-timer>
+        </div>
+        <div class="card flex-1 col-span-2 flex items-center justify-center">
+            <p-selectButton [disabled]="!isFlashEnded" [options]="examControls"
+                (onChange)="handleExamControlOptionChange($event)" [styleClass]="'examControls'"
+                [(ngModel)]="selectedExamControlOption" optionLabel="label" optionValue="value" />
+        </div>
+        } @else {
+        <div class="col-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
+            <p class="opacity-70 select-none md:!text-sm lg:!text-sm xl:!text-lg 2xl:!text-lg">
+                Choose the exam data from the available options and then press the 'Start' button to initiate the
+                exam.
+            </p>
+        </div>
+        }
     </div>
 </div>
+
+<p-confirmPopup>
+    <ng-template pTemplate="content" let-message>
+        <div
+            class="flex flex-col items-center justify-center w-full gap-3 border-bottom-1 surface-border p-3 my-2 max-w-xs">
+            <i [class]="message.icon" class="text-6xl text-primary-500"></i>
+            <p class="select-none !text-base">
+                Are you sure you want to end the exam? You still have {{timeLeft}} left.
+            </p>
+        </div>
+    </ng-template>
+</p-confirmPopup>
