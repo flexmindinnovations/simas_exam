@@ -118,7 +118,8 @@
                     @if (showAnswer && submitedlashQuestionsIndex > -1) {
                     <div class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
                         [ngClass]="questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'bg-red-500' : 'bg-green-500'">
-                        <p class="m-0 font-semibold">{{questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'Wrong Answer' : 'Correct Answer'}}</p>
+                        <p class="m-0 font-semibold">{{questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'Wrong
+                            Answer' : 'Correct Answer'}}</p>
                         <p class="m-0 tracking-wider">{{modifiedFlashQuestionsString}} = {{correctAnswer}}</p>
                     </div>
                     }
@@ -128,6 +129,7 @@
         <div
             class="right-timer flex flex-col gap-2 items-end justify-center lg:justify-end flex-auto row-start-1 md:row-start-1 md:row-end-2 md:col-start-2 md:col-span-1 md:flex-row lg:col-start-2">
             <app-timer [questionDuration]="questionDuration" (timeEnded)="OnTimerFinished($event)"
+                (timeLeft)="handleTimer($event)"
                 class="max-w-lg lg:max-w-lg xl:max-w-lg 2xl:max-w-lg md:min-w-[40%] md:flex md:items-start md:justify-center h-full w-full"
                 [examStarted]="examStarted" [questionsList]="questionList" [activeQuestion]="activeQuestion"
                 [activeQuestionIndex]="activeQuestionIndex" (selectedQuestion)="selectedQuestion($event)"></app-timer>
@@ -147,3 +149,15 @@
         }
     </div>
 </div>
+
+<p-confirmPopup>
+    <ng-template pTemplate="content" let-message>
+        <div
+            class="flex flex-col items-center justify-center w-full gap-3 border-bottom-1 surface-border p-3 my-2 max-w-xs">
+            <i [class]="message.icon" class="text-6xl text-primary-500"></i>
+            <p class="select-none !text-base">
+                Are you sure you want to end the exam? You still have {{timeLeft}} left.
+            </p>
+        </div>
+    </ng-template>
+</p-confirmPopup>

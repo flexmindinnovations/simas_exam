@@ -29,20 +29,11 @@ export class ExamResultComponent implements OnInit {
 
   ngOnInit(): void {
     this.dialogData = this.config.data;
-    console.log('dialogData: ', this.dialogData);
     if (this.dialogData?.length) {
       this.attemptedQuestions = this.dialogData.filter((item: any) => item.isAttempted === true);
       this.skippedQuestions = this.dialogData.filter((item: any) => item.isSkipped === true);
       this.wrongQuestions = this.dialogData.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === true);
       this.correctQuestions = this.dialogData.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
-
-      console.log({
-        attemptedQuestions: this.attemptedQuestions,
-        skippedQuestions: this.skippedQuestions,
-        correctQuestions: this.correctQuestions,
-        wrongQuestions: this.wrongQuestions
-      });
-
     }
   }
 

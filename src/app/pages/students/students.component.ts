@@ -77,20 +77,17 @@ export class StudentsComponent implements OnInit {
     this.studentService.getStudentList().subscribe({
       next: (response) => {
         if (response) {
-          console.log('response: ', JSON.parse(JSON.stringify(response)));
           this.studentList = response.map((item: any) => {
             item['studentPhoto'] = item['studentPhoto']?.replace('webapi', 'comp');
             return item;
           });
-          console.log('this.studentList: ', JSON.parse(JSON.stringify(this.studentList)));
-
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
           utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         utils.isTableLoading.update(val => !val);
-        console.log('error: ', error);
+        utils.setMessages(error.message, 'error');
       }
     })
   }

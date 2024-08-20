@@ -13,7 +13,7 @@ import { QuestionItem, QuestionPanelComponent } from '../../components/question-
 import { ExamPaperService } from '../../services/exam-paper/exam-paper.service';
 import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 import { LevelService } from '../../services/level/level.service';
-import { concatMap, delay, forkJoin, from, interval, last, map, of, Subscription, switchMap, take, takeLast, tap, timer } from 'rxjs';
+import { concatMap, delay, finalize, forkJoin, from, interval, last, map, of, Subscription, switchMap, take, takeLast, tap, timer } from 'rxjs';
 import { utils } from '../../utils';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -21,12 +21,14 @@ import { QuestionBankService } from '../../services/question-bank/question-bank.
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ExamResultComponent } from '../../modals/exam-result/exam-result.component';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-student-exam',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule],
-  providers: [DialogService],
+  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule, ConfirmPopupModule],
+  providers: [DialogService, ConfirmationService],
   templateUrl: './student-exam.component.html',
   styleUrl: './student-exam.component.scss',
   animations: [
@@ -126,6 +128,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isSidebarOpened: boolean = false;
   resizeObserver: any;
   resizeListener: any;
+  timeLeft: any;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
@@ -136,7 +139,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     private questionBankService: QuestionBankService,
     private renderer: Renderer2,
     private cdref: ChangeDetectorRef,
-    private host: ElementRef
+    private host: ElementRef,
+    private confirmationService: ConfirmationService
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -152,6 +156,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.setTimerWidth();
+  }
+
+  setTimerWidth() {
     const observer = new MutationObserver((mutationsList, observer) => {
       for (let mutation of mutationsList) {
         if (mutation.type === 'childList') {
@@ -322,6 +330,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isEndClicked = true;
         sound = this.sounds['error'];
         this.playSound(sound);
+        this.confirm(event?.originalEvent);
         break;
     }
   }
@@ -425,6 +434,71 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdref.detectChanges();
   }
 
+  endExam() {
+    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
+    if (!isLastQuestion) {
+      const currentQuestionIndex = this.activeQuestionIndex;
+      const totalQuestions = this.questionList.length;
+      for (let i = currentQuestionIndex; i < totalQuestions; i++) {
+        this.questionList[i].isAttempted = false;
+        this.questionList[i].isSkipped = true;
+        this.questionList[i].isWrongAnswer = false;
+      }
+    }
+    timer(1000).pipe(
+      tap(() => {
+        this.isSearchDisabled = false;
+        this.isFlashEnded = true;
+        this.quizCompleted = true;
+        this.examStarted = false;
+        this.showAnswer = false;
+        this.resetTimer();
+      }),
+      switchMap(() => timer(500))
+    ).subscribe(() => {
+      this.showExamResults();
+    })
+  }
+
+  confirm(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      icon: 'pi pi-exclamation-circle',
+      acceptIcon: 'pi pi-check mr-1',
+      rejectIcon: 'pi pi-times mr-1',
+      acceptLabel: 'End Exam',
+      rejectLabel: 'Cancel',
+      rejectButtonStyleClass: 'p-button-outlined p-button-sm',
+      acceptButtonStyleClass: 'p-button-sm p-button-danger',
+      accept: () => {
+        this.endExam();
+      },
+      reject: () => { }
+    });
+  }
+
+  handleTimer(event: any) {
+    const readableTime = ({ hours, minutes, seconds }: { hours: any, minutes: any, seconds: any }) => {
+      const hr = parseInt(hours);
+      const min = minutes;
+      const sec = seconds;
+      let timeString = '';
+      if (hr > 0) {
+        timeString += `${hr} hour${hr > 1 ? 's' : ''}`;
+      }
+      if (min > 0) {
+        if (timeString) timeString += ' ';
+        timeString += `${min} minute${min > 1 ? 's' : ''}`;
+      }
+      if (sec > 0) {
+        if (timeString) timeString += ' and ';
+        timeString += `${sec} second${sec > 1 ? 's' : ''}`;
+      }
+      return timeString;
+    };
+    this.timeLeft = readableTime({ ...event });
+  }
+
   playSound(sound: HTMLAudioElement) {
     sound.volume = utils.audioVolume;
     sound.currentTime = 0;
@@ -462,11 +536,14 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
             this.isLoadingQuestion = true;
             const sound = this.sounds['simple'];
             this.playSound(sound);
+            this.isFlashEnded = false;
+            this.examStarted = true;
+            this.quizCompleted = false;
+            this.isSearchActionLoading = false;
+            this.setTimerWidth();
             timer(500).subscribe(() => {
               this.startFlashing();
             });
-            this.examStarted = true;
-            this.isSearchActionLoading = false;
           }
         },
         error: (error: HttpErrorResponse) => {
@@ -478,77 +555,93 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startFlashing(): void {
-    const selectedTime = (parseFloat(this.selectedSpeedOfQuestion) * 1000);
+    const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
     this.currentItem = null;
     this.currentIndex = 0;
     this.state = 'scaled';
     this.checkBoxstate = 'void';
+    this.isLoadingQuestion = true;
     interval(selectedTime)
       .pipe(
         take(this.flashQuestions.length),
-        tap(index => {
-          this.isLoadingQuestion = false;
-          this.currentIndex = index;
-          this.currentItem = this.flashQuestions[index];
-          this.state = 'scaled';
-          this.cdref.detectChanges();
-          this.playSound(this.sounds['count']);
+        concatMap((index) => {
+          return of(index).pipe(
+            tap(() => {
+              this.state = 'void';
+              this.cdref.detectChanges();
+            }),
+            delay(350),
+            tap(() => {
+              this.isLoadingQuestion = false;
+              this.currentIndex = index;
+              this.currentItem = this.flashQuestions[index];
+              this.state = 'scaled';
+              this.cdref.detectChanges();
+              this.playSound(this.sounds['count']);
+            }),
+          );
         }),
-        concatMap(() => of(null).pipe(delay(selectedTime / 2))),
-        tap(() => {
-          this.state = 'void';
-          this.cdref.detectChanges();
+        finalize(() => {
+          timer(selectedTime).subscribe(() => {
+            this.finalizeFlashing();
+          })
         })
       )
-      .subscribe({
-        complete: () => {
-          this.currentItem = null;
-          if (this.activeQuestionIndex > this.questionList.length) {
-            timer(1500).pipe(
-              tap(() => {
-                this.isFlashEnded = true;
-                this.showAnswer = false;
-                this.resetTimer();
-                this.quizCompleted = true;
-                this.isSearchDisabled = false;
-                this.isSearchActionLoading = false;
-              }),
-              switchMap(() => timer(1500))
-            ).subscribe(() => {
-              this.showExamResults();
-            })
-          } else {
-            this.isFlashEnded = true;
-            timer(1000).subscribe(() => {
-              this.checkBoxstate = 'scaled';
-              this.submitedlashQuestionsIndex = -1;
-              this.questionTimer = '100';
-              this.initQuestionTimer();
-              this.options = [];
-              this.options.push(Number(this.correctAnswer));
-              const isNumberExists: any = (number: number) => {
-                return this.options.indexOf(number) !== -1;
-              }
-              while (this.options.length < 5) {
-                let randomNumber: number;
-                do {
-                  randomNumber = Math.floor(Math.random() * 10) + 1;
-                } while (isNumberExists(randomNumber));
-                this.options.push(randomNumber);
-              }
-              const shuffleArray = (array: any[]) => {
-                for (let i = array.length - 1; i > 0; i--) {
-                  const j = Math.floor(Math.random() * (i + 1));
-                  [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
-              };
-              this.options = shuffleArray(this.options);
-              this.cdref.detectChanges();
-            })
-          }
-        }
+      .subscribe();
+  }
+
+  finalizeFlashing(): void {
+    this.isFlashEnded = true;
+    if (this.activeQuestionIndex >= this.questionList.length) {
+      timer(1000)
+        .pipe(
+          tap(() => {
+            this.showAnswer = false;
+            this.resetTimer();
+            this.quizCompleted = true;
+            this.isSearchDisabled = false;
+            this.isSearchActionLoading = false;
+          }),
+          switchMap(() => timer(1500))
+        )
+        .subscribe(() => {
+          this.showExamResults();
+        });
+    } else {
+      timer(1000).subscribe(() => {
+        this.checkBoxstate = 'scaled';
+        this.submitedlashQuestionsIndex = -1;
+        this.questionTimer = '100';
+        this.initQuestionTimer();
+        this.options = [];
+        this.populateAndShuffleOptions();
+        this.cdref.detectChanges();
       });
+    }
+  }
+
+  populateAndShuffleOptions(): void {
+    this.options = [Number(this.correctAnswer)];
+    const isNumberExists = (number: number) => {
+      return this.options.indexOf(number) !== -1;
+    };
+
+    while (this.options.length < 5) {
+      let randomNumber: number;
+      do {
+        randomNumber = Math.floor(Math.random() * 10) + 1;
+      } while (isNumberExists(randomNumber));
+      this.options.push(randomNumber);
+    }
+    this.options = this.shuffleArray(this.options);
+  }
+
+  shuffleArray(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
   initQuestionTimer() {
@@ -635,11 +728,18 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   OnTimerFinished(timeFinished: boolean) {
     if (timeFinished) {
-      this.isFlashEnded = false;
-      this.showAnswer = false;
-      this.checkBoxstate = 'void';
-      this.quizCompleted = true;
-      this.showExamResults();
+      timer(1000).pipe(
+        tap(() => {
+          this.resetTimer();
+          this.isFlashEnded = false;
+          this.showAnswer = false;
+          this.checkBoxstate = 'void';
+          this.quizCompleted = true;
+        }),
+        switchMap(() => timer(500))
+      ).subscribe(() => {
+        this.showExamResults();
+      })
     }
   }
 
@@ -690,8 +790,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       modifiedSequence.push(element);
     }
-    console.log({ sequence: this.flashQuestionsString, elements, modifiedSequence });
-
     this.modifiedFlashQuestionsString = modifiedSequence.join(' ');
   }
 
@@ -707,7 +805,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.dialogRef.onClose.subscribe((res) => {
-      console.log('res: ', res);
+      // console.log('res: ', res);
     })
   }
 

@@ -142,7 +142,7 @@
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
         (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
         [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight - 100 + 'px'"
+        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
         [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
         [ngClass]="dataSource?.length > 0 ? 'full' : 'empty'" [tableStyle]="{'min-width': isMobile ? '50%' : '50rem'}">
         <ng-template pTemplate="header" let-columns>

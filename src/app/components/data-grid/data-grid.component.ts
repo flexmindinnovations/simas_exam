@@ -170,11 +170,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     rowData.expanded = !rowData.expanded;
   }
 
-  logd(data: any): any {
-    console.log('data: ', data);
-
-  }
-
   downloadCsv() {
     this.isExportActionLoading = true;
     this.dataGrid.exportCSV();
@@ -238,8 +233,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   }
 
   handleRowSelect(event: any) {
-    console.log('event handleRowSelect: ', event);
-
   }
 
   handleEditOperation(rowData: any, index: number) {

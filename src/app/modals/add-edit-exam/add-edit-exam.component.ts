@@ -65,8 +65,6 @@ export class AddEditExamComponent implements OnInit {
     const formData = new FormData();
     const status = formVal['status'];
     formVal['status'] = status === true ? '1' : '0';
-    console.log('formVal: ', formVal);
-
     formData.append('examModel', JSON.stringify(formVal));
     let apiCall = this.examService.saveExam(formVal);
     if (this.isEditMode) {

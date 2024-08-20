@@ -119,7 +119,7 @@ export class FranchiseComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         utils.isTableLoading.update(val => !val);
-        console.log('error: ', error);
+        utils.setMessages(error.message, 'error');
       }
     })
   }

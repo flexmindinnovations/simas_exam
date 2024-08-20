@@ -23,6 +23,8 @@ export class TimerComponent implements AfterViewInit {
   @Input({ required: true }) activeQuestionIndex: any = 0;
   @Input({ required: true }) examStarted: boolean = false;
 
+  @Output() timeLeft: EventEmitter<any> = new EventEmitter();
+
   @Output() selectedQuestion: EventEmitter<QuestionItem> = new EventEmitter();
 
   hoursLeft: any = 0;
@@ -144,7 +146,10 @@ export class TimerComponent implements AfterViewInit {
           if (timeLeft == 0) {
             this.subscription.unsubscribe();
             this.handleTimeUp();
+            this.timeLeft.emit({hours: this.hoursLeft, minutes: this.minutesLeft, seconds: this.secondsLeft});
             return;
+          } else {
+            this.timeLeft.emit({hours: this.hoursLeft, minutes: this.minutesLeft, seconds: this.secondsLeft});
           }
         })
       )
