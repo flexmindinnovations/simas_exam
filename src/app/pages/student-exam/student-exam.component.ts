@@ -13,7 +13,7 @@ import { QuestionItem, QuestionPanelComponent } from '../../components/question-
 import { ExamPaperService } from '../../services/exam-paper/exam-paper.service';
 import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 import { LevelService } from '../../services/level/level.service';
-import { concatMap, delay, finalize, forkJoin, from, interval, last, map, of, Subscription, switchMap, take, takeLast, tap, timer } from 'rxjs';
+import { concatMap, delay, filter, finalize, forkJoin, from, interval, last, map, of, Subscription, switchMap, take, takeLast, tap, timer } from 'rxjs';
 import { utils } from '../../utils';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -23,6 +23,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ExamResultComponent } from '../../modals/exam-result/exam-result.component';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
+import { NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-student-exam',
@@ -140,6 +141,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     private renderer: Renderer2,
     private cdref: ChangeDetectorRef,
     private host: ElementRef,
+    private router: Router,
     private confirmationService: ConfirmationService
   ) {
     effect(() => {
@@ -148,6 +150,13 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationStart)
+    ).subscribe(() => {
+      this.cleanupSounds();
+    });
+
     this.initSound();
     this.getMasterData();
     this.resizeListener = this.renderer.listen('window', 'resize', () => {
@@ -526,7 +535,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               item['isWrongAnswer'] = false;
               return item;
             });
-            this.questionList = this.questionList.slice(0, 5);
+            // this.questionList = this.questionList.slice(0, 5);
             this.activeQuestion = this.questionList[0];
             this.correctAnswer = this.activeQuestion?.answer;
             this.questionType = this.activeQuestion?.questionType;
@@ -609,6 +618,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     } else {
       timer(1000).subscribe(() => {
+        this.state = 'void';
         this.checkBoxstate = 'scaled';
         this.submitedlashQuestionsIndex = -1;
         this.questionTimer = '100';
@@ -809,10 +819,20 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
+  cleanupSounds(): void {
+    Object.keys(this.sounds).forEach((key) => {
+      if (this.sounds[key]) {
+        this.sounds[key].currentTime = 0;
+        this.sounds[key].pause();
+      }
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.resizeListener) {
       this.resizeListener();
     }
+    this.cleanupSounds();
     this.resetTimer();
   }
 
