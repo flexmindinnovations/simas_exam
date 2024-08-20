@@ -526,7 +526,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               item['isWrongAnswer'] = false;
               return item;
             });
-            this.questionList = this.questionList.slice(0, 5);
+            // this.questionList = this.questionList.slice(0, 5);
             this.activeQuestion = this.questionList[0];
             this.correctAnswer = this.activeQuestion?.answer;
             this.questionType = this.activeQuestion?.questionType;
@@ -609,6 +609,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     } else {
       timer(1000).subscribe(() => {
+        this.state = 'void';
         this.checkBoxstate = 'scaled';
         this.submitedlashQuestionsIndex = -1;
         this.questionTimer = '100';
