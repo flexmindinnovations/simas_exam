@@ -13,19 +13,22 @@ import { QuestionItem, QuestionPanelComponent } from '../../components/question-
 import { ExamPaperService } from '../../services/exam-paper/exam-paper.service';
 import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 import { LevelService } from '../../services/level/level.service';
-import { concatMap, delay, forkJoin, from, interval, last, map, of, Subscription, take, takeLast, tap, timer } from 'rxjs';
+import { concatMap, delay, finalize, forkJoin, from, interval, last, map, of, Subscription, switchMap, take, takeLast, tap, timer } from 'rxjs';
 import { utils } from '../../utils';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { QuestionBankService } from '../../services/question-bank/question-bank.service';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ExamResultComponent } from '../../modals/exam-result/exam-result.component';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-student-exam',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule],
-  providers: [DialogService],
+  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule, ConfirmPopupModule],
+  providers: [DialogService, ConfirmationService],
   templateUrl: './student-exam.component.html',
   styleUrl: './student-exam.component.scss',
   animations: [
@@ -39,7 +42,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
       state('void', style({ opacity: '0', transform: 'translateX(-150px)' })),
       state('scaled', style({ opacity: '1', transform: 'translateX(0)' })),
       transition('void => scaled', animate('600ms cubic-bezier(0.25, 0.8, 0.25, 1)')),
-      transition('scaled => void', animate('100ms cubic-bezier(0.25, 0.8, 0.25, 1)'))
+      transition('scaled => void', animate('200ms cubic-bezier(0.25, 0.8, 0.25, 1)'))
     ])
   ]
 })
@@ -91,14 +94,26 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   currentIndex: any;
   currentItem: string | null = null;
   isAnswerSubmitted: boolean = false;
+  isWrongAnswer: boolean = false;
   isFlashEnded: boolean = false;
   isLoadingQuestion: boolean = false;
   quizCompleted: boolean = false;
+
+  isSubmitClicked: boolean = false;
+  isNextClicked: boolean = false;
+  isEndClicked: boolean = false;
+
+
   options: any[] = [];
   selectedOptions: Set<number> = new Set();
   selectedAnswer: any;
+  flashQuestionsString: any;
+  modifiedFlashQuestionsString: any;
+  submitedlashQuestionsIndex: number = 0;
 
   questionInterval: any;
+
+  dialogRef: DynamicDialogRef | undefined;
 
   totalTime: number = 1 * 60; // 3 minutes in seconds
   questionTimer: any = '0';
@@ -108,19 +123,24 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isWarningPhase: boolean = false;
   isDangerPhase: boolean = false;
 
+  showAnswer: boolean = false;
+
   isSidebarOpened: boolean = false;
   resizeObserver: any;
   resizeListener: any;
+  timeLeft: any;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
     private examTypeService: ExamTypeService,
     private levelService: LevelService,
+    private dialogService: DialogService,
     private el: ElementRef,
     private questionBankService: QuestionBankService,
     private renderer: Renderer2,
     private cdref: ChangeDetectorRef,
-    private host: ElementRef
+    private host: ElementRef,
+    private confirmationService: ConfirmationService
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -136,6 +156,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.setTimerWidth();
+  }
+
+  setTimerWidth() {
     const observer = new MutationObserver((mutationsList, observer) => {
       for (let mutation of mutationsList) {
         if (mutation.type === 'childList') {
@@ -143,7 +167,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           if (exampOptionsCard) {
             const siblingWidth = exampOptionsCard.offsetWidth;
             const questionCard: any = document.getElementById('questionCard');
-            questionCard.style.width = siblingWidth - 2 + 'px';
+            const questionResultContainer: any = document.getElementById('questionResultContainer');
+            questionCard.style.width = siblingWidth - 1 + 'px';
+            questionResultContainer.style.width = siblingWidth - 1 + 'px';
             observer.disconnect();
           }
         }
@@ -283,85 +309,194 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     let srcTarget = target.innerText === 'Next/Skip' ? 'next' : target.innerText === 'End Exam' ? 'end' : target?.innerText.toLowerCase();
     const selectedValue = srcTarget ? srcTarget : event.value;
     let sound = this.sounds[selectedValue];
+    this.isSubmitClicked = false;
+    this.isNextClicked = false;
+    this.isEndClicked = false;
+
     switch (selectedValue) {
       case 'submit':
+        this.isSubmitClicked = true;
+        this.showAnswer = true;
         sound = this.sounds['simple'];
-        this.submitQuestion()
+        this.submitQuestion();
         break;
       case 'next':
+        this.isNextClicked = true;
         sound = this.sounds['next1'];
         this.playSound(sound);
         this.newQuestion();
         break;
       case 'end':
+        this.isEndClicked = true;
         sound = this.sounds['error'];
         this.playSound(sound);
+        this.confirm(event?.originalEvent);
         break;
     }
   }
 
   submitQuestion() {
     if (this.isAnswerSubmitted) {
-      if (this.activeQuestionIndex === this.questionList?.length - 1) {
-        utils.setMessages('Questions finished', 'error');
+      const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
+      // Process the current question
+      this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
+      this.formatSequence();
+      this.submitedlashQuestionsIndex = this.activeQuestionIndex;
+      this.correctAnswer = this.activeQuestion?.answer;
+      const userInput = this.questionList[this.activeQuestionIndex].userInput;
+      const isWrongAnswer = String(userInput) != String(this.correctAnswer);
+      this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
+      this.questionList[this.activeQuestionIndex].isAttempted = true;
+      this.questionList[this.activeQuestionIndex].isSkipped = false;
+      this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
+      this.isWrongAnswer = isWrongAnswer;
+      this.cdref.detectChanges();
+      if (isLastQuestion) {
+        timer(1500).pipe(
+          tap(() => {
+            this.resetTimer();
+            this.quizCompleted = true;
+            this.isSearchDisabled = false;
+            this.isSearchActionLoading = false;
+          }),
+          switchMap(() => timer(500))
+        ).subscribe(() => {
+          this.showExamResults();
+        });
       } else {
-        this.resetTimer();
-        setTimeout(() => {
-          this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
-          const nextQuestionIndex = this.activeQuestionIndex + 1;
-          const activeQuestion = this.questionList[nextQuestionIndex];
-          this.activeQuestionIndex = nextQuestionIndex;
-          this.activeQuestion = activeQuestion;
-          this.flashQuestions = this.activeQuestion?.questions.split(',');
-          this.correctAnswer = this.activeQuestion?.answer;
-          const userInput = this.questionList[this.activeQuestionIndex].userInput;
-          const isWrongAnswer = userInput != this.correctAnswer ? true : false;
-          this.questionList[this.activeQuestionIndex].isAttempted = true;
-          this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
-          this.isAnswerSubmitted = false;
-          const sound = this.sounds['simple'];
-          this.isFlashEnded = false;
-          setTimeout(() => {
-            this.isLoadingQuestion = true;
-            this.playSound(sound);
-            this.startFlashing();
-          }, 1000);
-        }, 200);
-
+        this.loadNextQuestion();
       }
     } else {
       const sound = this.sounds['error'];
       this.playSound(sound);
-      setTimeout(() => {
+      timer(200).subscribe(() => {
         utils.setMessages('Please choose the correct answer', 'error');
-      }, 200)
+      });
     }
   }
 
   newQuestion() {
-    if (this.activeQuestionIndex === this.questionList.length - 1) {
+    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
+    if (isLastQuestion) {
+      this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
+      this.correctAnswer = this.activeQuestion?.answer;
+      const userInput = this.questionList[this.activeQuestionIndex].userInput;
+      const isWrongAnswer = userInput !== this.correctAnswer;
+      this.questionList[this.activeQuestionIndex].isAttempted = false;
       this.questionList[this.activeQuestionIndex].isSkipped = true;
-      utils.setMessages('Questions finished', 'error');
+      this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
+      this.isWrongAnswer = isWrongAnswer;
+
+      timer(1500).pipe(
+        tap(() => {
+          this.resetTimer();
+          this.quizCompleted = true;
+          this.isSearchDisabled = false;
+          this.isSearchActionLoading = false;
+        }),
+        switchMap(() => timer(500))
+      ).subscribe(() => {
+        this.showExamResults();
+      })
     } else {
-      this.questionList[this.activeQuestionIndex].isSkipped = true;
-      setTimeout(() => {
+      this.loadNextQuestion();
+    }
+  }
+
+  loadNextQuestion() {
+    this.resetTimer();
+    timer(200).pipe(
+      tap(() => {
+        if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
+          this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
+          this.questionList[this.activeQuestionIndex]['isAttempted'] = false;
+          this.questionList[this.activeQuestionIndex]['isSkipped'] = true;
+        } else {
+          this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
+          this.questionList[this.activeQuestionIndex]['isAttempted'] = true;
+        }
         const nextQuestionIndex = this.activeQuestionIndex + 1;
         const activeQuestion = this.questionList[nextQuestionIndex];
         this.activeQuestionIndex = nextQuestionIndex;
         this.activeQuestion = activeQuestion;
         this.flashQuestions = this.activeQuestion?.questions.split(',');
-        this.correctAnswer = this.activeQuestion?.answer;
         this.isAnswerSubmitted = false;
-        const sound = this.sounds['simple'];
         this.isFlashEnded = false;
-        setTimeout(() => {
-          this.isLoadingQuestion = true;
-          this.playSound(sound);
-          this.startFlashing();
-        }, 1000);
-      }, 200);
-      this.cdref.detectChanges();
+        this.isLoadingQuestion = true;
+      }),
+      switchMap(() => timer(1000))
+    ).subscribe(() => {
+      const sound = this.sounds['simple'];
+      this.playSound(sound);
+      this.startFlashing();
+    });
+
+    this.cdref.detectChanges();
+  }
+
+  endExam() {
+    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
+    if (!isLastQuestion) {
+      const currentQuestionIndex = this.activeQuestionIndex;
+      const totalQuestions = this.questionList.length;
+      for (let i = currentQuestionIndex; i < totalQuestions; i++) {
+        this.questionList[i].isAttempted = false;
+        this.questionList[i].isSkipped = true;
+        this.questionList[i].isWrongAnswer = false;
+      }
     }
+    timer(1000).pipe(
+      tap(() => {
+        this.isSearchDisabled = false;
+        this.isFlashEnded = true;
+        this.quizCompleted = true;
+        this.examStarted = false;
+        this.showAnswer = false;
+        this.resetTimer();
+      }),
+      switchMap(() => timer(500))
+    ).subscribe(() => {
+      this.showExamResults();
+    })
+  }
+
+  confirm(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      icon: 'pi pi-exclamation-circle',
+      acceptIcon: 'pi pi-check mr-1',
+      rejectIcon: 'pi pi-times mr-1',
+      acceptLabel: 'End Exam',
+      rejectLabel: 'Cancel',
+      rejectButtonStyleClass: 'p-button-outlined p-button-sm',
+      acceptButtonStyleClass: 'p-button-sm p-button-danger',
+      accept: () => {
+        this.endExam();
+      },
+      reject: () => { }
+    });
+  }
+
+  handleTimer(event: any) {
+    const readableTime = ({ hours, minutes, seconds }: { hours: any, minutes: any, seconds: any }) => {
+      const hr = parseInt(hours);
+      const min = minutes;
+      const sec = seconds;
+      let timeString = '';
+      if (hr > 0) {
+        timeString += `${hr} hour${hr > 1 ? 's' : ''}`;
+      }
+      if (min > 0) {
+        if (timeString) timeString += ' ';
+        timeString += `${min} minute${min > 1 ? 's' : ''}`;
+      }
+      if (sec > 0) {
+        if (timeString) timeString += ' and ';
+        timeString += `${sec} second${sec > 1 ? 's' : ''}`;
+      }
+      return timeString;
+    };
+    this.timeLeft = readableTime({ ...event });
   }
 
   playSound(sound: HTMLAudioElement) {
@@ -391,19 +526,24 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               item['isWrongAnswer'] = false;
               return item;
             });
+            this.questionList = this.questionList.slice(0, 5);
             this.activeQuestion = this.questionList[0];
             this.correctAnswer = this.activeQuestion?.answer;
             this.questionType = this.activeQuestion?.questionType;
             this.flashQuestions = this.activeQuestion?.questions.split(',');
+            this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
             this.activeQuestionIndex = 0;
             this.isLoadingQuestion = true;
             const sound = this.sounds['simple'];
             this.playSound(sound);
-            setTimeout(() => {
-              this.startFlashing();
-            }, 500);
+            this.isFlashEnded = false;
             this.examStarted = true;
+            this.quizCompleted = false;
             this.isSearchActionLoading = false;
+            this.setTimerWidth();
+            timer(500).subscribe(() => {
+              this.startFlashing();
+            });
           }
         },
         error: (error: HttpErrorResponse) => {
@@ -415,63 +555,93 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startFlashing(): void {
-    const selectedTime = (parseFloat(this.selectedSpeedOfQuestion) * 1000);
+    const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
     this.currentItem = null;
     this.currentIndex = 0;
     this.state = 'scaled';
     this.checkBoxstate = 'void';
+    this.isLoadingQuestion = true;
     interval(selectedTime)
       .pipe(
         take(this.flashQuestions.length),
-        tap(index => {
-          this.isLoadingQuestion = false;
-          this.currentIndex = index;
-          this.currentItem = this.flashQuestions[index];
-          this.state = 'scaled';
-          this.cdref.detectChanges();
-          this.playSound(this.sounds['count']);
+        concatMap((index) => {
+          return of(index).pipe(
+            tap(() => {
+              this.state = 'void';
+              this.cdref.detectChanges();
+            }),
+            delay(350),
+            tap(() => {
+              this.isLoadingQuestion = false;
+              this.currentIndex = index;
+              this.currentItem = this.flashQuestions[index];
+              this.state = 'scaled';
+              this.cdref.detectChanges();
+              this.playSound(this.sounds['count']);
+            }),
+          );
         }),
-        concatMap(() => of(null).pipe(delay(500))),
-        tap(() => {
-          this.state = 'void';
-          this.cdref.detectChanges();
+        finalize(() => {
+          timer(selectedTime).subscribe(() => {
+            this.finalizeFlashing();
+          })
         })
       )
-      .subscribe({
-        complete: () => {
-          this.currentItem = null;
-          setTimeout(() => {
-            this.isFlashEnded = true;
-            this.checkBoxstate = 'scaled';
-          }, 1000);
-          this.questionTimer = '100';
-          this.initQuestionTimer();
-          this.options = [];
-          this.options.push(Number(this.correctAnswer));
-          const isNumberExists: any = (number: number) => {
-            return this.options.indexOf(number) !== -1;
-          }
-          while (this.options.length < 5) {
-            let randomNumber: number;
-            do {
-              randomNumber = Math.floor(Math.random() * 10) + 1;
-            } while (isNumberExists(randomNumber));
-            this.options.push(randomNumber);
-          }
-          const shuffleArray = (array: any[]) => {
-            for (let i = array.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-          };
-          this.options = shuffleArray(this.options);
-          this.cdref.detectChanges();
-          if (this.activeQuestionIndex === this.questionList.length - 1) {
-            setTimeout(() => this.quizCompleted = true, 1500);
-          }
-        }
+      .subscribe();
+  }
+
+  finalizeFlashing(): void {
+    this.isFlashEnded = true;
+    if (this.activeQuestionIndex >= this.questionList.length) {
+      timer(1000)
+        .pipe(
+          tap(() => {
+            this.showAnswer = false;
+            this.resetTimer();
+            this.quizCompleted = true;
+            this.isSearchDisabled = false;
+            this.isSearchActionLoading = false;
+          }),
+          switchMap(() => timer(1500))
+        )
+        .subscribe(() => {
+          this.showExamResults();
+        });
+    } else {
+      timer(1000).subscribe(() => {
+        this.checkBoxstate = 'scaled';
+        this.submitedlashQuestionsIndex = -1;
+        this.questionTimer = '100';
+        this.initQuestionTimer();
+        this.options = [];
+        this.populateAndShuffleOptions();
+        this.cdref.detectChanges();
       });
+    }
+  }
+
+  populateAndShuffleOptions(): void {
+    this.options = [Number(this.correctAnswer)];
+    const isNumberExists = (number: number) => {
+      return this.options.indexOf(number) !== -1;
+    };
+
+    while (this.options.length < 5) {
+      let randomNumber: number;
+      do {
+        randomNumber = Math.floor(Math.random() * 10) + 1;
+      } while (isNumberExists(randomNumber));
+      this.options.push(randomNumber);
+    }
+    this.options = this.shuffleArray(this.options);
+  }
+
+  shuffleArray(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
   initQuestionTimer() {
@@ -479,12 +649,13 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.subscription.unsubscribe();
     }
     const progressbarValue = this.el.nativeElement.querySelector('.p-progressbar .p-progressbar-value');
+    this.showAnswer = false;
     const totalTime = this.totalTime;
     this.remainingTime = totalTime;
     const warningTime = totalTime * 0.4;
     const criticalTime = totalTime * 0.15;
     const startTime = Date.now();
-    setTimeout(() => {
+    timer(1000).subscribe(() => {
       this.subscription = interval(1000)
         .pipe(
           tap(() => {
@@ -506,6 +677,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               this.isWarningPhase = false;
               this.renderer.setStyle(progressbarValue, 'background', '#8b5cf6');
             }
+            utils.isWarningPhase.set(this.isWarningPhase);
+            utils.isDangerPhase.set(this.isDangerPhase);
             if (timeLeft == 0) {
               this.subscription.unsubscribe();
               this.renderer.setStyle(progressbarValue, 'background', '#8b5cf6');
@@ -515,24 +688,25 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           })
         )
         .subscribe();
-    }, 1000);
+    });
   }
 
   handleTimeUp() {
-    this.isLoadingQuestion = true;
     this.isDangerPhase = false;
     this.isWarningPhase = false;
     this.questionTimer = '0';
-    setTimeout(() => {
-      this.resetTimer();
-      if (!this.isAnswerSubmitted) {
-        this.questionList[this.activeQuestionIndex].isSkipped = true;
-        this.questionList[this.activeQuestionIndex].isAttempted = false;
-        this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
-      }
-      this.isFlashEnded = false;
-      this.newQuestion();
-    }, 2000);
+    timer(2000)
+      .subscribe(() => {
+        this.resetTimer();
+        if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
+          this.questionList[this.activeQuestionIndex].isSkipped = true;
+          this.questionList[this.activeQuestionIndex].isAttempted = false;
+          this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
+        }
+        this.isFlashEnded = false;
+        this.showAnswer = false;
+        this.newQuestion();
+      })
   }
 
   resetTimer() {
@@ -541,50 +715,105 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.selectedAnswer = null;
     this.remainingTime = this.totalTime;
+    this.isWrongAnswer = false;
+    this.isWarningPhase = false;
+    this.isDangerPhase = false;
     this.questionTimer = '0';
+    this.flashQuestionsString = '';
     this.checkBoxstate = 'void';
+    utils.isWarningPhase.set(this.isWarningPhase);
+    utils.isDangerPhase.set(this.isDangerPhase);
+    this.isLoadingQuestion = true;
   }
 
   OnTimerFinished(timeFinished: boolean) {
     if (timeFinished) {
-      this.isFlashEnded = false;
-      this.checkBoxstate = 'void';
-      this.quizCompleted = true;
+      timer(1000).pipe(
+        tap(() => {
+          this.resetTimer();
+          this.isFlashEnded = false;
+          this.showAnswer = false;
+          this.checkBoxstate = 'void';
+          this.quizCompleted = true;
+        }),
+        switchMap(() => timer(500))
+      ).subscribe(() => {
+        this.showExamResults();
+      })
     }
   }
 
   onCheckboxChange(event: any): void {
     const input = event;
     if (input) {
-      this.questionList[this.activeQuestionIndex]['userInput'] = input;
+      this.questionList[this.activeQuestionIndex]['userInput'] = input.toString();
       this.isAnswerSubmitted = true;
+      this.isSubmitClicked = false;
+      this.isNextClicked = false;
+      this.isEndClicked = false;
     }
   }
 
   selectedQuestion(question: QuestionItem) {
     this.resetTimer();
-    if (!this.isAnswerSubmitted) {
+    if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
       this.questionList[this.activeQuestionIndex].isSkipped = true;
+      this.isWrongAnswer = true;
     }
     this.activeQuestion = question;
     this.correctAnswer = this.activeQuestion?.answer;
     this.activeQuestionIndex = this.activeQuestion?.questionIndex;
     this.questionType = this.activeQuestion?.questionType;
     this.flashQuestions = this.activeQuestion?.questions.split(',');
+    this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
     this.isAnswerSubmitted = false;
     this.isFlashEnded = false;
+    this.showAnswer = false;
     this.checkBoxstate = 'void';
     const sound = this.sounds['submit'];
-    setTimeout(() => {
+    timer(1500).subscribe(() => {
       this.playSound(sound);
       this.startFlashing();
-    }, 1500);
+    });
+  }
+
+  formatSequence() {
+    const elements = this.flashQuestionsString.split(' ');
+    let modifiedSequence = [];
+    for (let i = 0; i < elements.length; i++) {
+      let element = elements[i];
+      if (element.includes('-')) {
+        element = element.replace('-', '- ');
+      }
+      if (!element.includes('-') && i !== 0) {
+        modifiedSequence.push('+');
+      }
+      modifiedSequence.push(element);
+    }
+    this.modifiedFlashQuestionsString = modifiedSequence.join(' ');
+  }
+
+  showExamResults() {
+    this.dialogRef = this.dialogService.open(ExamResultComponent, {
+      data: this.questionList,
+      closable: true,
+      modal: true,
+      height: 'auto',
+      width: utils.isMobile() ? '95%' : '42%',
+      styleClass: 'add-edit-dialog',
+      header: 'Exam Result',
+    });
+
+    this.dialogRef.onClose.subscribe((res) => {
+      // console.log('res: ', res);
+    })
   }
 
   ngOnDestroy(): void {
     if (this.resizeListener) {
       this.resizeListener();
     }
+    this.resetTimer();
   }
 
 }

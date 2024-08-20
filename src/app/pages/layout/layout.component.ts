@@ -41,6 +41,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   public spinkit = Spinkit;
   userType: string = 'admin';
 
+  isWarningPhase: boolean = false;
+  isDangerPhase: boolean = false;
+
   constructor(
     private breakPointObserver: BreakpointObserver,
     private cdref: ChangeDetectorRef,
@@ -85,6 +88,11 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       this.isMenuItemClicked = utils.menuItemClick();
       if (this.isMenuItemClicked) this.handleSidebarOnHide();
     }, { allowSignalWrites: true })
+
+    effect(() => {
+      this.isWarningPhase = utils.isWarningPhase();
+      this.isDangerPhase = utils.isDangerPhase();
+    })
   }
 
   ngOnInit(): void {

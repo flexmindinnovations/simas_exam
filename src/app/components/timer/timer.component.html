@@ -50,29 +50,36 @@
                 </div>
                 <div #innerCard class="inner innerCard">
                     <div id="number">
-                        <div class="show-timer flex items-center justify-end gap-2">
-                            <div class="icon-container">
-                                <i class="pi pi-stopwatch"></i>
+                        <div class="show-timer w-full flex items-center justify-between">
+                            <div class="title">
+                                <h5 class="m-0">
+                                    Question Panel
+                                </h5>
                             </div>
-                            <div class="text-container">
-                                <p class="flex flex-col items-center justify-between">
-                                    <span class="m-0 counter">{{hoursLeft}}</span>
-                                    <span class="counter-text">{{hoursLeft > 1 ? 'HOURS' : 'HOUR'}}</span>
-                                    <span class="saperator first">
-                                        :
-                                    </span>
-                                </p>
-                                <p class="flex flex-col items-center justify-center">
-                                    <span class="m-0 counter">{{minutesLeft}}</span>
-                                    <span class="counter-text">{{minutesLeft > 1 ? 'MINUTES' : 'MINUTE'}}</span>
-                                    <span class="saperator last">
-                                        :
-                                    </span>
-                                </p>
-                                <p class="flex flex-col items-center justify-center">
-                                    <span class="m-0 counter last">{{secondsLeft}}</span>
-                                    <span class="counter-text">{{secondsLeft > 1 ? 'SECONDS' : 'SECOND'}}</span>
-                                </p>
+                            <div class="watch-timer">
+                                <div class="icon-container">
+                                    <i class="pi pi-stopwatch"></i>
+                                </div>
+                                <div class="text-container">
+                                    <p class="flex flex-col items-center justify-between">
+                                        <span class="m-0 counter">{{hoursLeft}}</span>
+                                        <span class="counter-text">{{hoursLeft > 1 ? 'HOURS' : 'HOUR'}}</span>
+                                        <span class="saperator first">
+                                            :
+                                        </span>
+                                    </p>
+                                    <p class="flex flex-col items-center justify-center">
+                                        <span class="m-0 counter">{{minutesLeft}}</span>
+                                        <span class="counter-text">{{minutesLeft > 1 ? 'MINUTES' : 'MINUTE'}}</span>
+                                        <span class="saperator last">
+                                            :
+                                        </span>
+                                    </p>
+                                    <p class="flex flex-col items-center justify-center">
+                                        <span class="m-0 counter last">{{secondsLeft}}</span>
+                                        <span class="counter-text">{{secondsLeft > 1 ? 'SECONDS' : 'SECOND'}}</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <div class="question-panel w-full h-full flex items-center justify-center">

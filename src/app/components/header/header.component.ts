@@ -17,6 +17,8 @@ export class HeaderComponent {
   isTablet: boolean = false;
   activeItem: any = {};
 
+  logoSrc: string = '/images/logo1.png';
+
   constructor() {
 
     effect(() => {

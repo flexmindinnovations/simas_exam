@@ -1,4 +1,4 @@
-import { Component, effect, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, effect, ElementRef, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MenuItem } from '../../interfaces/menu-item';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -7,11 +7,11 @@ import { MENU_ITEMS } from '../../../../public/data/menu-items';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
-
+import { MenuModule } from 'primeng/menu';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, TooltipModule, ButtonModule],
+  imports: [CommonModule, TooltipModule, ButtonModule, MenuModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   animations: [
@@ -38,11 +38,15 @@ import { ButtonModule } from 'primeng/button';
 })
 export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   menuItems: Array<MenuItem> = MENU_ITEMS;
+  moreMenuItems: Array<any> = [];
   sideBarOpened: boolean = true;
   logoSrc: string = '/images/logo1.png';
-  isLoading: boolean = true;
   isMobile: boolean = false;
+  isLoading: boolean = true;
   isTablet: boolean = false;
+  isMoreMenuVisible: boolean = false;
+
+  @ViewChild('moreMenu', { static: false }) moreMenu!: ElementRef;
 
   @Input({ required: true }) permissionList: any[] = [];
 
@@ -98,6 +102,32 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       })
       if (filteredMenuItems.length) {
         this.menuItems = filteredMenuItems;
+        if (this.menuItems.length > 7) {
+          if (filteredMenuItems.length > 8 && (!this.isMobile || !this.isTablet)) {
+            const superMenuItems = filteredMenuItems.slice(0, 9);
+            const extraMenuItems = filteredMenuItems.slice(9);
+            const moreMenuItem = {
+              id: 17,
+              title: 'More',
+              label: 'More',
+              moduleName: 'more',
+              icon: 'pi pi-ellipsis-h',
+              isActive: false,
+              route: 'more',
+              items: extraMenuItems
+            }
+            this.menuItems = superMenuItems;
+            this.menuItems.push(moreMenuItem);
+            this.moreMenuItems = extraMenuItems.map((item: any) => {
+              item['label'] = item?.title;
+              item['command'] = (event: any) => {
+                this.handleMoreMenuItemClick(item);
+              }
+              return item;
+            });
+          }
+
+        }
         const currentUrl = this.router.url.split('/')[2];
         if (currentUrl) this.setActiveMenuItem(currentUrl);
         else {
@@ -107,17 +137,29 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  toggleMoreMenu() {
+    this.isMoreMenuVisible = !this.isMoreMenuVisible;
+  }
+
   handleItemClick(item: MenuItem) {
-    utils.activeItem.set(item);
-    utils.setPageTitle(item?.title);
-    this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
-    if (item?.id === 1) {
-      this.router.navigateByUrl('app');
+    if (item.moduleName !== 'more') {
+      utils.activeItem.set(item);
+      utils.setPageTitle(item?.title);
+      this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
+      if (item?.id === 1) {
+        this.router.navigateByUrl('app');
+      } else {
+        this.router.navigateByUrl('app/' + item.route);
+      }
+      item.isActive = true;
+      utils.menuItemClick.set(item);
     } else {
-      this.router.navigateByUrl('app/' + item.route);
+      this.toggleMoreMenu();
     }
-    item.isActive = true;
-    utils.menuItemClick.set(item);
+  }
+
+  handleMoreMenuItemClick(item: any) {
+    this.handleItemClick(item);
   }
 
   setActiveMenuItem(route: string) {

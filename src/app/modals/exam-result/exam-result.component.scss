@@ -1,0 +1,5 @@
+.form-container {
+    p {
+        @apply my-2 w-full text-base font-semibold grid grid-cols-[40%_1fr];
+    }
+}

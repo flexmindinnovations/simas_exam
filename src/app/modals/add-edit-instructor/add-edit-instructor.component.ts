@@ -98,8 +98,6 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
       next: (respones) => {
         if (respones) {
           this.franchiseListByType = respones;
-          console.log('franchiseListByType: ', this.franchiseListByType);
-
           this.isFranchiseTypeNameListLoading = false;
         }
       },
@@ -154,8 +152,6 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
     formVal['userPassword'] = formVal['instructorPassword'];
     formVal['mobileNo'] = formVal['mobileNo'].toString();
     formVal['status'] = status === true ? '1' : '0';
-    console.log('formVal: ', formVal);
-
     formData.append('instructorModel', JSON.stringify(formVal));
     let apiCall = this.instructorService.saveInstructor(formVal);
     if (this.isEditMode) {

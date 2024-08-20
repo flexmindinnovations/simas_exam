@@ -115,8 +115,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: HttpErrorResponse) => {
-        console.log('error: ', error);
         this.countryListLoading = false;
+        utils.setMessages(error.message, 'error');
       }
     })
   }
@@ -137,8 +137,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: HttpErrorResponse) => {
-        console.log('error: ', error);
         this.stateListLoading = false;
+        utils.setMessages(error.message, 'error');
       }
     })
   }
@@ -158,8 +158,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: HttpErrorResponse) => {
-        console.log('error: ', error);
         this.cityListLoading = false;
+        utils.setMessages(error.message, 'error');
       }
     })
   }
@@ -205,7 +205,6 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   }
 
   handleOnCityListChange(event: DropdownChangeEvent) {
-    // console.log('event?.value: ', event?.value);
   }
 
   handleDialogCancel() {

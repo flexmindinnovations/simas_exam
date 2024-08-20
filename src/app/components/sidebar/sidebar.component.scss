@@ -91,3 +91,11 @@
         transform: translateX(0px);
     }
 }
+
+.moreMenu {
+    background-color: red;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    translate: -50% -50%;
+}

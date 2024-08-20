@@ -185,7 +185,6 @@ export class LevelComponent {
   }
 
   deleteTableRow(data: any) {
-    console.log('data deleteExamRow: ', data);
     setTimeout(() => {
       utils.isTableDeleteAction.set(false);
     }, 2000)

@@ -133,38 +133,42 @@
                         0px 12px 10px -10px rgba(0, 0, 0, 0.5);
 
                     #number {
-                        @apply w-full h-full flex flex-col items-end justify-start p-4 gap-2;
+                        @apply w-full h-full flex flex-col items-end justify-start p-4 gap-1;
 
                         .show-timer {
-                            .icon-container {
-                                i {
-                                    @apply text-sm md:text-sm lg:text-lg xl:text-lg 2xl:text-lg;
+                            @apply border-0 border-b border-solid border-b-gray-200; 
+                            .watch-timer {
+                                @apply flex flex-row items-center justify-start gap-2;
+                                .icon-container {
+                                    i {
+                                        @apply text-sm md:text-sm lg:text-lg xl:text-lg 2xl:text-lg;
+                                    }
                                 }
-                            }
 
-                            .text-container {
-                                @apply relative flex flex-row w-full items-center justify-center gap-2;
+                                .text-container {
+                                    @apply relative flex flex-row w-full items-center justify-center gap-2;
 
-                                p {
-                                    @apply relative min-w-2 m-0;
+                                    p {
+                                        @apply relative min-w-2 m-0;
 
-                                    .counter {
-                                        @apply text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm min-w-1 text-center;
-                                    }
-
-                                    .counter-text {
-                                        @apply text-[8px];
-                                    }
-
-                                    .saperator {
-                                        @apply flex items-start min-h-8 justify-center font-semibold text-sm md:text-sm lg:text-lg xl:text-xl 2xl:text-xl absolute top-0 sm:-top-1.5 md:-top-1.5 lg:-top-1.5 xl:-top-1.5 2xl:-top-1.5 animate-pulse;
-
-                                        &.first {
-                                            @apply left-6;
+                                        .counter {
+                                            @apply text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm min-w-1 text-center;
                                         }
 
-                                        &.last {
-                                            @apply left-9;
+                                        .counter-text {
+                                            @apply text-[8px];
+                                        }
+
+                                        .saperator {
+                                            @apply flex items-start min-h-8 justify-center font-semibold text-sm md:text-sm lg:text-lg xl:text-xl 2xl:text-xl absolute top-0 sm:-top-1.5 md:-top-1.5 lg:-top-1.5 xl:-top-1.5 2xl:-top-1.5 animate-pulse;
+
+                                            &.first {
+                                                @apply left-6;
+                                            }
+
+                                            &.last {
+                                                @apply left-9;
+                                            }
                                         }
                                     }
                                 }

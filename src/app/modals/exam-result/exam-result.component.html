@@ -1,0 +1,24 @@
+<div class="dialog-body p-2" [@grow]>
+    <div class="form-container w-full flex flex-col items-start justify-center">
+        <p>
+            <span>Attempted Questions:</span>
+            <span>{{attemptedQuestions.length}}</span>
+        </p>
+        <p>
+            <span>Correct Answers:</span>
+            <span class="text-green-500">{{correctQuestions.length}}</span>
+        </p>
+        <p>
+            <span>Skipped Questions:</span>
+            <span class="text-orange-500">{{skippedQuestions.length}}</span>
+        </p>
+        <p>
+            <span>Wrong Answers:</span>
+            <span class="text-red-500">{{wrongQuestions.length}}</span>
+        </p>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="ok" (onClick)="handleSubmitAction()" icon="pi pi-check" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>
