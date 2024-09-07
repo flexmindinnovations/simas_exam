@@ -341,6 +341,10 @@
     .p-inputswitch {
         box-shadow: none;
     }
+
+    .p-menuitem-link {
+        @apply text-xs;
+    }
 }
 
 
@@ -475,10 +479,6 @@ label {
     // font-family: "Lato", sans-serif;
     font-family: "Poppins", serif;
     font-optical-sizing: auto;
-}
-
-.p-menuitem-link {
-    @apply text-sm;
 }
 
 .data-filter {
