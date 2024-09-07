@@ -20,7 +20,7 @@
 </div>
 <div class="list overflow-hidden flex items-start overflow-y-auto lg:mt-8 xl:mt-8 2xl:mt-8 2x:mt-8">
     <ul class="p-0 w-full flex flex-col items-start justify-center" [@listAnimation]>
-        @for (item of menuItems.slice(0, 9); track $index) {
+        @for (item of menuItems.slice(0, 7); track $index) {
         <!-- <li id="menu-item"
             class="w-full flex lg:flex-col xl:flex-col 2xl:flex-col items-start justify-start list-none gap-6 lg:gap-1 xl:gap-1 2xl:gap-1 2x:gap-1 my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:p-0 xl:p-0 2xl:p-0 2x:p-0 lg:min-h-12 xl:min-h-12 2xl:min-h-12 2x:min-h-12 lg:justify-center xl:justify-center 2xl:justify-center 2x:justify-center text-white rounded-full"
             [ngClass]="[item?.isActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', item?.isActive && isMobile ? 'active-mobile' : '', $index=== 0 ? 'first' : '']"
@@ -42,7 +42,7 @@
             </li>
         </ng-container>
         }
-        @if (menuItems.length > 7) {
+        @if (menuItems.length > 8) {
         <ng-container class="relative">
             <li class="w-full flex lg:flex-col xl:flex-col 2xl:flex-col items-start justify-start list-none gap-6 lg:gap-1 xl:gap-1 2xl:gap-1 2x:gap-1 my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:p-0 xl:p-0 2xl:p-0 2x:p-0 lg:min-h-12 xl:min-h-12 2xl:min-h-12 2x:min-h-12 lg:justify-center xl:justify-center 2xl:justify-center 2x:justify-center text-white rounded-full"
                 [ngClass]="[menuItems[menuItems.length - 1].isActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', menuItems[menuItems.length - 1].isActive && isMobile ? 'active-mobile' : '']"

@@ -29,7 +29,7 @@ import { NavigationStart, Router } from '@angular/router';
   selector: 'app-student-exam',
   standalone: true,
   imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule, ConfirmPopupModule],
-  providers: [DialogService, ConfirmationService],
+  providers: [DialogService, ConfirmationService, InputTextModule],
   templateUrl: './student-exam.component.html',
   styleUrl: './student-exam.component.scss',
   animations: [
@@ -43,7 +43,7 @@ import { NavigationStart, Router } from '@angular/router';
       state('void', style({ opacity: '0', transform: 'translateX(-150px)' })),
       state('scaled', style({ opacity: '1', transform: 'translateX(0)' })),
       transition('void => scaled', animate('600ms cubic-bezier(0.25, 0.8, 0.25, 1)')),
-      transition('scaled => void', animate('200ms cubic-bezier(0.25, 0.8, 0.25, 1)'))
+      transition('scaled => void', animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)'))
     ])
   ]
 })
@@ -116,9 +116,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dialogRef: DynamicDialogRef | undefined;
 
-  totalTime: number = 1 * 60; // 3 minutes in seconds
+  totalTime: number = 2 * 60; // 3 minutes in seconds
   questionTimer: any = '0';
   remainingTime: number = this.totalTime;
+  elapsedTime: number = this.remainingTime;
   subscription: Subscription = new Subscription();
 
   isWarningPhase: boolean = false;
@@ -130,6 +131,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   resizeObserver: any;
   resizeListener: any;
   timeLeft: any;
+  totalElapsedTime: any;
+  isMobile: boolean = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
@@ -147,6 +150,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
     })
+
+    effect(() => {
+      this.isMobile = utils.isMobile();
+    })
   }
 
   ngOnInit(): void {
@@ -159,9 +166,11 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initSound();
     this.getMasterData();
-    this.resizeListener = this.renderer.listen('window', 'resize', () => {
-      window.location.reload();
-    })
+    if (!this.isMobile) {
+      this.resizeListener = this.renderer.listen('window', 'resize', () => {
+        window.location.reload();
+      })
+    }
   }
 
   ngAfterViewInit(): void {
@@ -505,6 +514,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       return timeString;
     };
+    this.totalElapsedTime = event?.elapsedTime;
     this.timeLeft = readableTime({ ...event });
   }
 
@@ -564,7 +574,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startFlashing(): void {
-    const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
+    const minTime = 500;
+    const selectedTime = Math.max(minTime, parseFloat(this.selectedSpeedOfQuestion) * 1000);
+    // const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;    
     this.currentItem = null;
     this.currentIndex = 0;
     this.state = 'scaled';
@@ -630,30 +642,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  populateAndShuffleOptions(): void {
-    this.options = [Number(this.correctAnswer)];
-    const isNumberExists = (number: number) => {
-      return this.options.indexOf(number) !== -1;
-    };
-
-    while (this.options.length < 5) {
-      let randomNumber: number;
-      do {
-        randomNumber = Math.floor(Math.random() * 10) + 1;
-      } while (isNumberExists(randomNumber));
-      this.options.push(randomNumber);
-    }
-    this.options = this.shuffleArray(this.options);
-  }
-
-  shuffleArray(array: any[]): any[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
   initQuestionTimer() {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -670,6 +658,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         .pipe(
           tap(() => {
             const elapsedTime = Date.now() - startTime;
+            this.elapsedTime = elapsedTime;
             this.remainingTime = totalTime - Math.floor(elapsedTime / 1000);
             const timeLeft = this.remainingTime;
             const progress = ((this.remainingTime / totalTime)) * 100;
@@ -695,6 +684,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               this.handleTimeUp();
               return;
             }
+            this.questionList[this.activeQuestionIndex]['timeTaken'] = elapsedTime.toString();
           })
         )
         .subscribe();
@@ -753,10 +743,48 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  populateAndShuffleOptions(): void {
+    const correctAnswer = this.calculateAnswer();
+    this.options = [+correctAnswer];
+    const isNumberExists = (number: number) => {
+      return this.options.indexOf(number) !== -1;
+    };
+
+    while (this.options.length < 5) {
+      let randomNumber: number;
+      do {
+        randomNumber = Math.floor(Math.random() * 10) + 1;
+      } while (isNumberExists(randomNumber));
+      this.options.push(randomNumber);
+    }
+    this.options = this.shuffleArray(this.options);
+  }
+
+  shuffleArray(array: any[]): any[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
   onCheckboxChange(event: any): void {
     const input = event;
     if (input) {
       this.questionList[this.activeQuestionIndex]['userInput'] = input.toString();
+      this.isAnswerSubmitted = true;
+      this.isSubmitClicked = false;
+      this.isNextClicked = false;
+      this.isEndClicked = false;
+    }
+  }
+
+  handleKeyValue(event: any): void {
+    const input = event;
+    this.selectedAnswer = input;
+    console.log({ input, selectedAnswer: this.selectedAnswer });
+    if (input) {
+      this.questionList[this.activeQuestionIndex]['userInput'] = input;
       this.isAnswerSubmitted = true;
       this.isSubmitClicked = false;
       this.isNextClicked = false;
@@ -803,9 +831,28 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modifiedFlashQuestionsString = modifiedSequence.join(' ');
   }
 
+  calculateAnswer() {
+    const sequence: any = this.flashQuestions ?? 0;
+    let result: any = 0;
+    if (sequence?.length) {
+      result = sequence.reduce((acc: any, cur: any) => +acc + +cur, 0);
+    }
+    return result;
+  }
+
   showExamResults() {
+    const examInputData = {
+      examPaperId: 0,
+      studentId: 0,
+      levelId: this.selectedLevel,
+      roundId: this.selectedRound,
+      questionId: 0,
+      examTypeId: this.selectedExamType,
+      examPaperDate: new Date().toISOString(),
+      examPaperTime: ""
+    };
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
-      data: this.questionList,
+      data: { questionList: this.questionList, examInputData, totalTime: this.totalTime },
       closable: true,
       modal: true,
       height: 'auto',
@@ -816,6 +863,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dialogRef.onClose.subscribe((res) => {
       // console.log('res: ', res);
+      if (res) {
+        utils.setMessages(res.message, 'success');
+      }
     })
   }
 
