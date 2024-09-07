@@ -105,7 +105,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
         if (this.menuItems.length > 7) {
           if (filteredMenuItems.length > 8 && (!this.isMobile || !this.isTablet)) {
             const superMenuItems = filteredMenuItems.slice(0, 9);
-            const extraMenuItems = filteredMenuItems.slice(9);
+            const extraMenuItems = filteredMenuItems.slice(7);
             const moreMenuItem = {
               id: 17,
               title: 'More',

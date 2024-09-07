@@ -115,18 +115,17 @@ export class TimerComponent implements AfterViewInit {
     const progressbarValue = this.el.nativeElement.querySelector('.p-progressbar .p-progressbar-value');
     const totalTime = this.questionDuration;
     this.remainingTime = totalTime;
-    const warningTime = totalTime * 0.4; // 40% of total time
+    const warningTime = totalTime * 0.4;
     const criticalTime = totalTime * 0.15;
     this.questionTimer = totalTime;
     this.startTime = Date.now();
-
     this.subscription = interval(1000)
       .pipe(
         tap(() => {
           const elapsedTime = Date.now() - this.startTime;
           this.remainingTime = totalTime - Math.floor(elapsedTime / 1000);
           const timeLeft = this.remainingTime;
-          const progress = ((this.remainingTime / totalTime)) * 100;
+          const progress = (this.remainingTime / totalTime) * 100;
           this.questionTimer = progress.toFixed(2);
           const remainingTime = timeLeft * 1000;
           this.hoursLeft = Math.floor(remainingTime / 1000 / 60 / 60);
@@ -146,10 +145,10 @@ export class TimerComponent implements AfterViewInit {
           if (timeLeft == 0) {
             this.subscription.unsubscribe();
             this.handleTimeUp();
-            this.timeLeft.emit({hours: this.hoursLeft, minutes: this.minutesLeft, seconds: this.secondsLeft});
+            this.timeLeft.emit({ hours: this.hoursLeft, minutes: this.minutesLeft, seconds: this.secondsLeft });
             return;
           } else {
-            this.timeLeft.emit({hours: this.hoursLeft, minutes: this.minutesLeft, seconds: this.secondsLeft});
+            this.timeLeft.emit({ hours: this.hoursLeft, minutes: this.minutesLeft, seconds: this.secondsLeft, elapsedTime: elapsedTime });
           }
         })
       )
@@ -168,7 +167,7 @@ export class TimerComponent implements AfterViewInit {
     this.remainingTime = this.questionDuration;
     this.questionTimer = 0;
   }
-  
+
   initTimerCounterClock() {
     const circleRef = this.progressCircle.nativeElement;
     const gradient: any = document.getElementById('dynamicGradient');

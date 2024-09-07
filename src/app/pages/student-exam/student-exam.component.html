@@ -78,13 +78,14 @@
                         <p-progressBar [value]="questionTimer" />
                     </div>
                     @if(isFlashEnded) {
-                    <div class="checkbox-container w-full card flex flex-col items-start justify-center gap-2"
+                    <div class="checkbox-container w-full card flex flex-col items-center justify-center gap-2 py-5"
                         [@scaleUpQuestion]="checkBoxstate">
                         <p class="text-lg font-semibold mb-0">
-                            Choose the correct answer:
+                            <!-- Choose the correct answer: -->
+                            Type correct answer:
                         </p>
-                        <div class="checkboxes flex flex-col items-start justify-start gap-2">
-                            @for (item of options; track $index) {
+                        <div class="checkboxes flex flex-col items-center justify-start gap-2">
+                            <!-- @for (item of options; track $index) {
                             <div class="flex items-center justify-start gap-4 h-8">
                                 <p-radioButton [inputId]="item" name="question" [value]="item"
                                     (ngModelChange)="onCheckboxChange($event)" [(ngModel)]="selectedAnswer" />
@@ -93,8 +94,10 @@
                                     style="margin-bottom: 0;">
                                     {{ item }}
                                 </label>
+
                             </div>
-                            }
+                            } -->
+                            <input type="text" (ngModelChange)="handleKeyValue($event)" pInputText [(ngModel)]="selectedAnswer" />
                         </div>
                     </div>
                     } @else if(isLoadingQuestion && !quizCompleted) {
