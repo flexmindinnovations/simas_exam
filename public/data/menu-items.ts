@@ -83,6 +83,14 @@ export const MENU_ITEMS: Array<MenuItem> = [
     },
     {
         id: 11,
+        title: 'Student Exam',
+        moduleName: 'StudentExam',
+        icon: 'pi pi-file-edit',
+        isActive: false,
+        route: 'student-exam'
+    },
+    {
+        id: 12,
         title: 'Question Paper',
         moduleName: 'QuestionPaper',
         icon: 'pi pi-file',
@@ -90,20 +98,12 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'question-paper'
     },
     {
-        id: 12,
+        id: 13,
         title: 'Question Bank',
         moduleName: 'QuestionBank',
         icon: 'pi pi-database',
         isActive: false,
         route: 'question-bank'
-    },
-    {
-        id: 13,
-        title: 'Student Exam',
-        moduleName: 'StudentExam',
-        icon: 'pi pi-file-edit',
-        isActive: false,
-        route: 'student-exam'
     },
     {
         id: 14,
