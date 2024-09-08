@@ -65,8 +65,6 @@ export class ExamReportComponent {
       next: (response) => {
         if (response) {
           const { examList, levelList } = response;
-          console.log({ examList });
-
           if (levelList?.length) this.levelNameList = levelList;
           if (examList?.length) this.examTypeList = examList;
           this.examTypeListLoading = false;

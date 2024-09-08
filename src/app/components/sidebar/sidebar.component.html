@@ -42,16 +42,29 @@
             </li>
         </ng-container>
         }
-        @if (menuItems.length > 8) {
+        @if (menuItems.length > MENU_THRESHOLD) {
         <ng-container class="relative">
-            <li class="w-full flex lg:flex-col xl:flex-col 2xl:flex-col items-start justify-start list-none gap-6 lg:gap-1 xl:gap-1 2xl:gap-1 2x:gap-1 my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:p-2.5 xl:p-2.5 2xl:p-2.5 2x:p-2.5 lg:min-h-12 xl:min-h-12 2xl:min-h-12 2x:min-h-12 lg:justify-center xl:justify-center 2xl:justify-center 2x:justify-center text-white rounded-full"
-                [ngClass]="[menuItems[menuItems.length - 1].isActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', menuItems[menuItems.length - 1].isActive && isMobile ? 'active-mobile' : '']"
-                (click)="moreMenu.toggle($event);" [pTooltip]="menuItems[menuItems.length - 1].title">
+            <li id="moreMenu"
+                class="w-full flex lg:flex-col xl:flex-col 2xl:flex-col items-start justify-start list-none gap-6 lg:gap-1 xl:gap-1 2xl:gap-1 2x:gap-1 my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:p-2.5 xl:p-2.5 2xl:p-2.5 2x:p-2.5 lg:min-h-12 xl:min-h-12 2xl:min-h-12 2x:min-h-12 lg:justify-center xl:justify-center 2xl:justify-center 2x:justify-center text-white rounded-full"
+                [ngClass]="[isMoreMenuActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', isMoreMenuActive && isMobile ? 'active-mobile' : '']"
+                (click)="moreMenu.toggle($event); handleMoreMenuClick()"
+                [pTooltip]="menuItems[menuItems.length - 1].title">
                 <i class="{{menuItems[menuItems.length - 1].icon}} text-base transition-all duration-200 ease-in-out z-10 self-start"
                     style="position: relative; display: flex; align-items: center; justify-content: center; align-self: center;"></i>
                 <p class="m-0 !text-[10px] tracking-wider self-start z-10" style="align-self: center;">More</p>
             </li>
-            <p-menu #moreMenu [popup]="true" [model]="moreMenuItems"></p-menu>
+            <p-menu #moreMenu [popup]="true" [model]="moreMenuItems" (onShow)="onMoreMenuShow()">
+                <ng-template pTemplate="item" let-item class="overflow-auto">
+                    <ng-container>
+                        <a [routerLink]="item.route" [attr.data-active]="item.isActive"
+                            class="p-menuitem-link rounded-md my-1"
+                            [ngClass]="item?.isActive ? 'bg-ph-100 text-ph-600' : ''">
+                            <span [class]="item.icon"></span>
+                            <span class="ml-2">{{ item.label }}</span>
+                        </a>
+                    </ng-container>
+                </ng-template>
+            </p-menu>
         </ng-container>
         }
     </ul>

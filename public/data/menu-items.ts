@@ -60,13 +60,21 @@ export const MENU_ITEMS: Array<MenuItem> = [
     {
         id: 8,
         title: 'Students',
-        moduleName: 'Students',
+        moduleName: 'Student',
         icon: 'pi pi-users',
         isActive: false,
         route: 'students'
     },
     {
         id: 9,
+        title: 'Student Exam',
+        moduleName: 'StudentExam',
+        icon: 'pi pi-file-edit',
+        isActive: false,
+        route: 'student-exam'
+    },
+    {
+        id: 10,
         title: 'Level',
         moduleName: 'Level',
         icon: 'pi pi-sitemap',
@@ -74,20 +82,12 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'level'
     },
     {
-        id: 10,
+        id: 11,
         title: 'Lesson',
         moduleName: 'Lesson',
         icon: 'pi pi-book',
         isActive: false,
         route: 'lesson'
-    },
-    {
-        id: 11,
-        title: 'Student Exam',
-        moduleName: 'StudentExam',
-        icon: 'pi pi-file-edit',
-        isActive: false,
-        route: 'student-exam'
     },
     {
         id: 12,
