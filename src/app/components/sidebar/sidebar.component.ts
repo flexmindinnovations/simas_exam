@@ -130,7 +130,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   normalizeRoute(route: string): string {
-    return route.toLowerCase().trim().replace(/\s+/g, '');
+    return route?.toLowerCase().trim().replace(/\s+/g, '') ?? '';
   }
 
   resetActiveState(menuItems: MenuItem[]) {
@@ -141,31 +141,35 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     const normalizedRoute = this.normalizeRoute(route);
     this.resetActiveState(this.menuItems);
     this.resetActiveState(this.moreMenuItems);
-    const isMoreMenuItem = this.moreMenuItems.some(item => this.normalizeRoute(item.route) === normalizedRoute);
-    if (isMoreMenuItem) {
-      this.isMoreMenuActive = true;
-      const moreMenuElement = document.getElementById('moreMenu');
-      if (moreMenuElement) {
-        moreMenuElement.classList.add('active');
+    if(normalizedRoute) {
+      const isMoreMenuItem = this.moreMenuItems.some(item => this.normalizeRoute(item.route) === normalizedRoute);
+      if (isMoreMenuItem) {
+        this.isMoreMenuActive = true;
+        const moreMenuElement = document.getElementById('moreMenu');
+        if (moreMenuElement) {
+          moreMenuElement.classList.add('active');
+        }
+  
+        const moreMenuItem = this.moreMenuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
+        if (moreMenuItem) {
+          moreMenuItem.isActive = true;
+        }
+        this.cdref.detectChanges();
+      } else {
+        this.isMoreMenuActive = false;
+        const moreMenuElement = document.getElementById('moreMenu');
+        if (moreMenuElement) {
+          moreMenuElement.classList.remove('active');
+        }
+        const menuItem = this.menuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
+        if (menuItem) {
+          utils.activeItem.set(menuItem);
+          utils.setPageTitle(menuItem.title);
+          menuItem.isActive = true;
+        }
       }
-
-      const moreMenuItem = this.moreMenuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
-      if (moreMenuItem) {
-        moreMenuItem.isActive = true;
-      }
-      this.cdref.detectChanges();
     } else {
-      this.isMoreMenuActive = false;
-      const moreMenuElement = document.getElementById('moreMenu');
-      if (moreMenuElement) {
-        moreMenuElement.classList.remove('active');
-      }
-      const menuItem = this.menuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
-      if (menuItem) {
-        utils.activeItem.set(menuItem);
-        utils.setPageTitle(menuItem.title);
-        menuItem.isActive = true;
-      }
+      this.setDefaultMenuItem();
     }
   }
 
