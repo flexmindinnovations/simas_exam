@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MenuItem } from '../../interfaces/menu-item';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -49,127 +49,174 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('moreMenu', { static: false }) moreMenu!: ElementRef;
 
   @Input({ required: true }) permissionList: any[] = [];
+  readonly MENU_THRESHOLD = 7;
+  isMoreMenuActive: boolean = false;
 
   constructor(
-    private router: Router
+    private router: Router,
+    private cdref: ChangeDetectorRef
   ) {
 
     effect(() => {
       this.isMobile = utils.isMobile();
-    })
-    effect(() => {
       this.isTablet = utils.isTablet();
-    })
-
-    effect(() => {
-      const isPageRefreshed = utils.isPageRefreshed();
-      if (isPageRefreshed) {
-        const currentUrl = this.router.url.split('/')[2];
-        if (currentUrl) this.setActiveMenuItem(currentUrl);
-        else {
-          utils.activeItem.set(this.menuItems[0]);
-          utils.setPageTitle(this.menuItems[0].title);
-          this.menuItems[0].isActive = true;
-        }
+      if (utils.isPageRefreshed()) {
+        const currentUrl = this.getCurrentUrl();
+        currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
       }
-    }, { allowSignalWrites: true })
+    });
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
-    })
+    });
   }
 
   ngOnInit(): void {
     this.isLoading = true;
     this.router.events.subscribe((router) => {
       if (router instanceof NavigationEnd) {
-        const currentUrl = router.url.split('/')[2];
-        if (currentUrl) this.setActiveMenuItem(currentUrl);
-        else {
-          this.menuItems[0].isActive = true;
-        }
+        const currentUrl = this.getCurrentUrl();
+        currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
       }
-    })
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const data = changes['permissionList'].currentValue;
+    const data = changes['permissionList']?.currentValue;
     if (data) {
-      const menuItems = MENU_ITEMS;
-      const filteredMenuItems = menuItems.filter((menuItem: MenuItem) => {
-        const matchedItem = data.find((item: any) => item.moduleName.trim().replace(/\s/g, '').toLowerCase() === menuItem.moduleName.trim().replace(/\s/g, '').toLowerCase() && item.canView);
-        return matchedItem !== undefined;
-      })
-      if (filteredMenuItems.length) {
-        this.menuItems = filteredMenuItems;
-        if (this.menuItems.length > 7) {
-          if (filteredMenuItems.length > 8 && (!this.isMobile || !this.isTablet)) {
-            const superMenuItems = filteredMenuItems.slice(0, 8);
-            const extraMenuItems = filteredMenuItems.slice(7);
-            const moreMenuItem = {
-              id: 17,
-              title: 'More',
-              label: 'More',
-              moduleName: 'more',
-              icon: 'pi pi-ellipsis-h',
-              isActive: false,
-              route: 'more',
-              items: extraMenuItems
-            }
-            this.menuItems = superMenuItems;
-            this.menuItems.push(moreMenuItem);
-            this.moreMenuItems = extraMenuItems.map((item: any) => {
-              item['label'] = item?.title;
-              item['command'] = (event: any) => {
-                this.handleMoreMenuItemClick(item);
-              }
-              return item;
-            });
-          }
+      this.filterMenuItems(data);
+      this.splitMenuItems();
+    }
+  }
 
-        }
-        const currentUrl = this.router.url.split('/')[2];
-        if (currentUrl) this.setActiveMenuItem(currentUrl);
-        else {
-          this.menuItems[0].isActive = true;
-        }
+  filterMenuItems(data: any[]) {
+    const filteredMenuItems = MENU_ITEMS.filter((menuItem: MenuItem) =>
+      data.some(item => this.normalizeRoute(item.moduleName) === this.normalizeRoute(menuItem.moduleName) && item.canView)
+    );
+    this.menuItems = filteredMenuItems;
+  }
+
+  splitMenuItems() {
+    if (this.menuItems.length > this.MENU_THRESHOLD) {
+      const mainMenuItems = this.menuItems.slice(0, this.MENU_THRESHOLD);
+      const moreMenuItems = this.menuItems.slice(this.MENU_THRESHOLD);
+
+      this.moreMenuItems = moreMenuItems.map(item => ({
+        ...item,
+        isActive: false,
+        label: item.title,
+        command: () => this.handleMoreMenuItemClick(item)
+      }));
+
+      mainMenuItems.push(this.createMoreMenuItem(moreMenuItems));
+      this.menuItems = mainMenuItems;
+    }
+
+    const currentUrl = this.getCurrentUrl();
+    this.setActiveMenuItem(currentUrl);
+  }
+
+  createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
+    return {
+      id: 17,
+      title: 'More',
+      label: 'More',
+      moduleName: 'more',
+      icon: 'pi pi-ellipsis-h',
+      isActive: false,
+      route: 'more',
+      items: moreItems
+    };
+  }
+
+  normalizeRoute(route: string): string {
+    return route.toLowerCase().trim().replace(/\s+/g, '');
+  }
+
+  resetActiveState(menuItems: MenuItem[]) {
+    menuItems.forEach(item => item.isActive = false);
+  }
+
+  setActiveMenuItem(route: string) {
+    const normalizedRoute = this.normalizeRoute(route);
+    this.resetActiveState(this.menuItems);
+    this.resetActiveState(this.moreMenuItems);
+    const isMoreMenuItem = this.moreMenuItems.some(item => this.normalizeRoute(item.route) === normalizedRoute);
+    if (isMoreMenuItem) {
+      this.isMoreMenuActive = true;
+      const moreMenuElement = document.getElementById('moreMenu');
+      if (moreMenuElement) {
+        moreMenuElement.classList.add('active');
+      }
+
+      const moreMenuItem = this.moreMenuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
+      if (moreMenuItem) {
+        moreMenuItem.isActive = true;
+      }
+      this.cdref.detectChanges();
+    } else {
+      this.isMoreMenuActive = false;
+      const moreMenuElement = document.getElementById('moreMenu');
+      if (moreMenuElement) {
+        moreMenuElement.classList.remove('active');
+      }
+      const menuItem = this.menuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
+      if (menuItem) {
+        utils.activeItem.set(menuItem);
+        utils.setPageTitle(menuItem.title);
+        menuItem.isActive = true;
       }
     }
+  }
+
+  handleItemClick(item: MenuItem) {
+    if (item.moduleName !== 'more') {
+      this.resetActiveState(this.menuItems);
+      utils.activeItem.set(item);
+      utils.setPageTitle(item.title);
+      item.isActive = true;
+      this.router.navigateByUrl(item.id === 1 ? 'app' : 'app/' + item.route);
+    } else {
+      this.toggleMoreMenu();
+    }
+  }
+
+  handleMoreMenuItemClick(item: MenuItem) {
+    this.resetActiveState(this.moreMenuItems);
+    item.isActive = true;
+    this.cdref.detectChanges();
+    this.router.navigateByUrl('app/' + item.route);
   }
 
   toggleMoreMenu() {
     this.isMoreMenuVisible = !this.isMoreMenuVisible;
   }
 
-  handleItemClick(item: MenuItem) {
-    if (item.moduleName !== 'more') {
-      utils.activeItem.set(item);
-      utils.setPageTitle(item?.title);
-      this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
-      if (item?.id === 1) {
-        this.router.navigateByUrl('app');
-      } else {
-        this.router.navigateByUrl('app/' + item.route);
-      }
-      item.isActive = true;
-      utils.menuItemClick.set(item);
-    } else {
-      this.toggleMoreMenu();
-    }
+  getCurrentUrl(): string {
+    return this.router.url.split('/')[2];
   }
 
-  handleMoreMenuItemClick(item: any) {
-    this.handleItemClick(item);
-  }
-
-  setActiveMenuItem(route: string) {
+  handleMoreMenuClick() {
     this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
-    const currentItemIndex = this.menuItems.findIndex((item) => item?.route === route);
-    if (currentItemIndex > -1) {
-      utils.activeItem.set(this.menuItems[currentItemIndex]);
-      utils.setPageTitle(this.menuItems[currentItemIndex].title);
-      this.menuItems[currentItemIndex].isActive = true;
+    const moreMenu = document.getElementById('moreMenu');
+    const classList = moreMenu?.classList;
+    classList?.add('active');
+  }
+
+  setDefaultMenuItem() {
+    if (this.menuItems.length > 0) {
+      utils.activeItem.set(this.menuItems[0]);
+      utils.setPageTitle(this.menuItems[0].title);
+      this.menuItems[0].isActive = true;
     }
+  }
+
+  onMoreMenuShow() {
+    const currentUrl = this.router.url.split('/')[2];
+    const trimmedRoute = currentUrl.toLowerCase().trim().replace(/\s+/g, '');
+    const moreMenuItem = this.moreMenuItems.find((each: MenuItem) => each.route.toLowerCase().trim().replace(/\s+/g, '') === trimmedRoute) ?? undefined;
+    this.moreMenuItems.forEach((each, index) => each.isActive = false);
+    moreMenuItem.isActive = true;
   }
 
   closeSidebar(event: any) {

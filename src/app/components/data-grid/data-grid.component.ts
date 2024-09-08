@@ -55,8 +55,8 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   dialogRef: DynamicDialogRef | undefined;
 
   downloadOptions: MenuItem[] = [];
-  permissionList: any[] = [];
   currentModule: any;
+  selectedRoute: any;
 
   downloadMenuId = new Date().getTime();
 
@@ -83,11 +83,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     effect(() => {
       this.isMobile = utils.isMobile();
     })
-
-    effect(() => {
-      this.permissionList = utils.permissionList();
-    })
-
     effect(() => {
       this.addButtonTitle = utils.addButtonTitle();
     })
@@ -97,6 +92,10 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     })
     effect(() => {
       this.isAddActionLoading = utils.isAddActionLoading();
+    })
+
+    effect(() => {
+      this.selectedRoute = utils.activeItem();
     })
 
     effect(() => {
@@ -153,16 +152,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   async setModulePermissions() {
     let activeModule: any;
     const permissionList = await db.permissiontem.toArray();
-    let currentRoute = window.location.href;
-    currentRoute = currentRoute.substring(currentRoute.lastIndexOf('/') + 1, currentRoute.length);
-    if (currentRoute.includes('-')) {
-      currentRoute = currentRoute.split('-')
-        .map((char) => char.charAt(0)?.toUpperCase() + char.slice(1))
-        .join('');
-    } else {
-      currentRoute = currentRoute.charAt(0).toUpperCase() + currentRoute.slice(1);
-    }
-    activeModule = permissionList.find((item: any) => item.moduleName === currentRoute);
+    activeModule = permissionList.find((item: any) => item.moduleName === this.selectedRoute?.moduleName);
     this.currentModule = activeModule;
   }
 
