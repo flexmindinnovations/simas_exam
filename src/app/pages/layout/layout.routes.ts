@@ -17,6 +17,7 @@ import { StudentExamComponent } from "../student-exam/student-exam.component";
 import { ReportsComponent } from "../reports/reports.component";
 import { RolesComponent } from "../roles/roles.component";
 import { CompetitionComponent } from "../competition/competition.component";
+import { ExamCenterComponent } from "../exam-center/exam-center.component";
 
 export const layoutRoutes: Routes = [
     {
@@ -32,6 +33,11 @@ export const layoutRoutes: Routes = [
                 path: 'exam',
                 component: ExamComponent,
                 data: { animation: 'ExamComponent' }
+            },
+            {
+                path: 'exam-center',
+                component: ExamCenterComponent,
+                data: { animation: 'ExamCenterComponent' }
             },
             {
                 path: 'exam-type',

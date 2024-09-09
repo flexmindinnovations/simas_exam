@@ -47,7 +47,7 @@
             <li id="moreMenu"
                 class="w-full flex lg:flex-col xl:flex-col 2xl:flex-col items-start justify-start list-none gap-6 lg:gap-1 xl:gap-1 2xl:gap-1 2x:gap-1 my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:p-2.5 xl:p-2.5 2xl:p-2.5 2x:p-2.5 lg:min-h-12 xl:min-h-12 2xl:min-h-12 2x:min-h-12 lg:justify-center xl:justify-center 2xl:justify-center 2x:justify-center text-white rounded-full"
                 [ngClass]="[isMoreMenuActive && !isMobile ? 'active md:active lg:active xl:active: 2xl:active' : 'inactive', isMoreMenuActive && isMobile ? 'active-mobile' : '']"
-                (click)="moreMenu.toggle($event); handleMoreMenuClick()"
+                (click)="moreMenu.toggle($event);"
                 [pTooltip]="menuItems[menuItems.length - 1].title">
                 <i class="{{menuItems[menuItems.length - 1].icon}} text-base transition-all duration-200 ease-in-out z-10 self-start"
                     style="position: relative; display: flex; align-items: center; justify-content: center; align-self: center;"></i>

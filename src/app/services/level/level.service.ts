@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiCallConfig, AppConfigService } from '../config/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { utils } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,8 @@ export class LevelService {
     return this.http.get(this.levelApiPath.levelList);
   }
 
-  getLevelById(levelId: number): Observable<any> {
-    const getByIdApiPath = this.levelApiPath.levelById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', levelId.toString());
+  getLevelById(levelId: string): Observable<any> {
+    const getByIdApiPath = utils.getCleanPath(this.levelApiPath.levelById, levelId);
     return this.http.get(getByIdApiPath);
   }
 
@@ -33,8 +34,8 @@ export class LevelService {
     return this.http.post(this.levelApiPath.updateLevel, payload);
   }
 
-  deleteLevel(levelId: number | string): Observable<any> {
-    const deleteApiPath = this.levelApiPath.deleteLevel.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', levelId.toString());
+  deleteLevel(levelId: string): Observable<any> {
+    const deleteApiPath = utils.getCleanPath(this.levelApiPath.deleteLevel, levelId);
     return this.http.delete(deleteApiPath);
   }
 }

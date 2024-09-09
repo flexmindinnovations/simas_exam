@@ -1,0 +1,8 @@
+<div class="franchise-container page-container">
+    <div class="table-container">
+        @if(tableDataSource.length) {
+        <app-data-grid [colDefs]="colDefs" [isTreeList]="isTreeList" [dataSource]="tableDataSource" [childColDefs]="childColDefs"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
+        }
+    </div>
+</div>
