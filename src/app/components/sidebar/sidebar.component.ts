@@ -221,7 +221,9 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       const trimmedRoute = currentUrl?.toLowerCase().trim().replace(/\s+/g, '');
       const moreMenuItem = this.moreMenuItems.find((each: MenuItem) => each.route.toLowerCase().trim().replace(/\s+/g, '') === trimmedRoute) ?? undefined;
       this.moreMenuItems.forEach((each, index) => each.isActive = false);
-      moreMenuItem.isActive = true;
+      if (moreMenuItem) {
+        moreMenuItem.isActive = true;
+      }
     }
   }
 
