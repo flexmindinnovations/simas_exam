@@ -1,5 +1,65 @@
-<div class="franchise-container page-container">
-    <div class="table-container">
-        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource" (onAddAction)="handleAddEditAction()"></app-data-grid>
+<div class="report-container page-container">
+    <div
+        class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5 border-0 border-b border-solid border-gray-200 py-4">
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="franchise">Franchise</label>
+            <p-dropdown appendTo="body" inputId="franchise" [options]="franchiseList" ariaLabelledBy="value"
+                [loading]="franchiseListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+                [(ngModel)]="selectedFranchise" placeholder="Select"
+                (onChange)="handleListItemChange($event, 'franchise')" optionValue="franchiseId"
+                optionLabel="franchiseName" [filter]="true" filterBy="franchiseName" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="instructor">Instructor</label>
+            <p-dropdown appendTo="body" inputId="instructor" [options]="instructorList" ariaLabelledBy="value"
+                [loading]="instructorListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+                [(ngModel)]="selectedInstructor" placeholder="Select"
+                (onChange)="handleListItemChange($event, 'instructor')" optionValue="instructorId" optionLabel="instructorName"
+                [filter]="true" filterBy="instructorName" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="student">Student</label>
+            <p-dropdown appendTo="body" inputId="student" [options]="studentList" ariaLabelledBy="value"
+                [loading]="studentListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+                [(ngModel)]="selectedStudent" placeholder="Select" (onChange)="handleListItemChange($event, 'student')"
+                optionValue="studentId" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="examType">Exam Type</label>
+            <p-dropdown appendTo="body" inputId="examType" [options]="examTypeList" ariaLabelledBy="value"
+                [loading]="examTypeListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+                [(ngModel)]="selectedExamType" placeholder="Select"
+                (onChange)="handleListItemChange($event, 'examType')" optionValue="examTypeId"
+                optionLabel="examTypeName" [filter]="true" filterBy="examTypeName" [showClear]="false" />
+        </div>
+
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="levelName">Level</label>
+            <p-dropdown appendTo="body" inputId="levelName" [options]="levelNameList" ariaLabelledBy="value"
+                [loading]="levelListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+                [(ngModel)]="selectedLevel" placeholder="Select" (onChange)="handleListItemChange($event, 'level')"
+                optionValue="levelId" optionLabel="levelName" [filter]="true" filterBy="levelName"
+                [showClear]="false" />
+        </div>
+
+        @if(selectedLevel) {
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="roundName">Round</label>
+            <p-dropdown appendTo="body" inputId="roundName" [options]="roundNameList" ariaLabelledBy="value"
+                [loading]="roundListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+                [(ngModel)]="selectedRound" placeholder="Select" (onChange)="handleListItemChange($event, 'round')"
+                optionValue="roundId" optionLabel="roundName" [filter]="true" filterBy="roundName"
+                [showClear]="false" />
+        </div>
+        }
+
+
+        <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="isSearchDisabled || isSearchActionLoading"
+            icon="pi pi-search" styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
     </div>
 </div>

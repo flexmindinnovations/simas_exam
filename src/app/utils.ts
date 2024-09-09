@@ -21,6 +21,7 @@ export const utils = {
     userType: signal<string>('admin'),
     addButtonTitle: signal<string>(''),
     menuItemClick: signal<any>({}),
+    isUserSessionEnded: signal<boolean>(false),
     isMobile: signal<boolean>(false),
     isTablet: signal<boolean>(false),
     isTableLoading: signal<boolean>(false),

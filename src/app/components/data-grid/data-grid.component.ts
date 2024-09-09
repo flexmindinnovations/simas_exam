@@ -17,11 +17,12 @@ import autoTable from 'jspdf-autotable';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
   styleUrl: './data-grid.component.scss'

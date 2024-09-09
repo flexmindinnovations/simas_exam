@@ -159,6 +159,8 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
         if (moreMenuItem) {
           moreMenuItem.isActive = true;
         }
+        utils.activeItem.set(moreMenuItem);
+        utils.setPageTitle(moreMenuItem.title);
         this.cdref.detectChanges();
       } else {
         this.isMoreMenuActive = false;
