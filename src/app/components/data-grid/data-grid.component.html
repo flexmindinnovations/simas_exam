@@ -6,7 +6,7 @@
         <div class="search w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[30%] 2x:w-[30%]">
             <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
                 <i class="pi pi-search"></i>
-                <input type="text" class="w-96" pInputText placeholder="Enter text to filter grid" type="text"
+                <input type="text" class="w-96 focus:outline-none active:outline-none focus:border-none" pInputText placeholder="Enter text to filter grid" type="text"
                     (input)="onFilterValueChange($event)" [(ngModel)]="searchValue" pInputText />
             </span>
         </div>

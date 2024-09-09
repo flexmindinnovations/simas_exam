@@ -133,23 +133,28 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     return route?.toLowerCase().trim().replace(/\s+/g, '') ?? '';
   }
 
-  resetActiveState(menuItems: MenuItem[]) {
-    menuItems.forEach(item => item.isActive = false);
+  resetActiveState(menuItems?: MenuItem[]) {
+    menuItems?.forEach(item => item.isActive = false);
+    const moreMenu = document.getElementById('moreMenu');
+    const classList = moreMenu?.classList;
+    classList?.add('active');
+  }
+
+  removeMoreMenuActiveState() {
+    const moreMenu = document.getElementById('moreMenu');
+    const classList = moreMenu?.classList;
+    classList?.remove('active');
   }
 
   setActiveMenuItem(route: string) {
     const normalizedRoute = this.normalizeRoute(route);
     this.resetActiveState(this.menuItems);
     this.resetActiveState(this.moreMenuItems);
-    if(normalizedRoute) {
+    if (normalizedRoute) {
       const isMoreMenuItem = this.moreMenuItems.some(item => this.normalizeRoute(item.route) === normalizedRoute);
       if (isMoreMenuItem) {
         this.isMoreMenuActive = true;
-        const moreMenuElement = document.getElementById('moreMenu');
-        if (moreMenuElement) {
-          moreMenuElement.classList.add('active');
-        }
-  
+        this.resetActiveState(this.moreMenuItems);
         const moreMenuItem = this.moreMenuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
         if (moreMenuItem) {
           moreMenuItem.isActive = true;
@@ -157,10 +162,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
         this.cdref.detectChanges();
       } else {
         this.isMoreMenuActive = false;
-        const moreMenuElement = document.getElementById('moreMenu');
-        if (moreMenuElement) {
-          moreMenuElement.classList.remove('active');
-        }
+        this.removeMoreMenuActiveState();
         const menuItem = this.menuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
         if (menuItem) {
           utils.activeItem.set(menuItem);
@@ -183,10 +185,13 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.toggleMoreMenu();
     }
+    this.removeMoreMenuActiveState();
   }
 
   handleMoreMenuItemClick(item: MenuItem) {
     this.resetActiveState(this.moreMenuItems);
+    utils.activeItem.set(item);
+    utils.setPageTitle(item.title);
     item.isActive = true;
     this.cdref.detectChanges();
     this.router.navigateByUrl('app/' + item.route);
@@ -200,27 +205,24 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     return this.router.url.split('/')[2];
   }
 
-  handleMoreMenuClick() {
-    this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
-    const moreMenu = document.getElementById('moreMenu');
-    const classList = moreMenu?.classList;
-    classList?.add('active');
-  }
-
   setDefaultMenuItem() {
     if (this.menuItems.length > 0) {
+      this.menuItems.forEach((each) => each.isActive = false);
       utils.activeItem.set(this.menuItems[0]);
       utils.setPageTitle(this.menuItems[0].title);
       this.menuItems[0].isActive = true;
     }
+    this.removeMoreMenuActiveState();
   }
 
   onMoreMenuShow() {
     const currentUrl = this.router.url.split('/')[2];
-    const trimmedRoute = currentUrl.toLowerCase().trim().replace(/\s+/g, '');
-    const moreMenuItem = this.moreMenuItems.find((each: MenuItem) => each.route.toLowerCase().trim().replace(/\s+/g, '') === trimmedRoute) ?? undefined;
-    this.moreMenuItems.forEach((each, index) => each.isActive = false);
-    moreMenuItem.isActive = true;
+    if (currentUrl) {
+      const trimmedRoute = currentUrl?.toLowerCase().trim().replace(/\s+/g, '');
+      const moreMenuItem = this.moreMenuItems.find((each: MenuItem) => each.route.toLowerCase().trim().replace(/\s+/g, '') === trimmedRoute) ?? undefined;
+      this.moreMenuItems.forEach((each, index) => each.isActive = false);
+      moreMenuItem.isActive = true;
+    }
   }
 
   closeSidebar(event: any) {

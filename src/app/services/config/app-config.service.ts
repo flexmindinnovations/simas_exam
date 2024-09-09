@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'examPaper' | 'questionBank' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'questionPaper';
 
 export type ApiCallConfig = {
   settings: {};
@@ -69,6 +69,14 @@ export type ApiCallConfig = {
     saveExam: string;
     updateExam: string;
     deleteExam: string;
+  };
+  examCenter: {
+    examCenterList: string;
+    examCenterById: string;
+    batchTimeSlotListByExamCenterId: string;
+    saveExamCenter: string;
+    updateExamCenter: string;
+    deleteExamCenter: string;
   };
   examType: {
     examTypeList: string;
@@ -187,6 +195,16 @@ export class AppConfigService {
       saveExam: `${this.hostUrl}/Exam/saveExam`,
       updateExam: `${this.hostUrl}/Exam/updateExam`,
       deleteExam: `${this.hostUrl}/Exam/Delete/{{id}}`,
+    },
+    // /api/ExamCenter/getBatchTimeSlotListByExamCenterId/{examCenterId}
+
+    examCenter: {
+      examCenterList: `${this.hostUrl}/ExamCenter/getExamCenterList`,
+      examCenterById: `${this.hostUrl}/ExamCenter/getExamCenterById/{{id}}`,
+      batchTimeSlotListByExamCenterId: `${this.hostUrl}/ExamCenter/getBatchTimeSlotListByExamCenterId/{{id}}`,
+      saveExamCenter: `${this.hostUrl}/ExamCenter/saveExamCenter`,
+      updateExamCenter: `${this.hostUrl}/ExamCenter/updateExamCenter/{{id}}`,
+      deleteExamCenter: `${this.hostUrl}/ExamCenter/Delete/{{id}}`,
     },
     examType: {
       examTypeList: `${this.hostUrl}/ExamType/getExamTypeList`,
