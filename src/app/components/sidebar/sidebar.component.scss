@@ -43,31 +43,24 @@
 .active {
     @apply relative bg-white rounded-none rounded-l-3xl text-ph-500;
 
+    &::before, &::after {
+        @apply absolute h-9 w-9 bg-transparent pointer-events-none;
+        content: '';
+    }
+
     // &:not(.first):before {
     &::before {
         @apply rounded-b-full;
-        content: '';
-        position: absolute;
-        height: 36px;
-        width: 36px;
         top: -35px;
         right: 1px;
-        background-color: transparent;
         box-shadow: 24px 24px 0px 10px white;
-        pointer-events: none;
     }
 
     &::after {
         @apply rounded-t-full;
-        content: '';
-        position: absolute;
-        height: 36px;
-        width: 36px;
         bottom: -35px;
         right: 1px;
-        background-color: transparent;
         box-shadow: 24px -24px 0px 10px white;
-        pointer-events: none;
     }
 }
 

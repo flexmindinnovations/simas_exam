@@ -18,11 +18,12 @@ import { MessagesModule } from 'primeng/messages';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserType, UserTypeObj } from '../../enums/user-types';
 import { db } from '../../../db';
+import { SessionTimeOutComponent } from '../../modals/session-time-out/session-time-out.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule],
+  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   animations: [utils.slideInRouter]
@@ -43,6 +44,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
   isWarningPhase: boolean = false;
   isDangerPhase: boolean = false;
+  isUserSessionEnded: boolean = false;
 
   constructor(
     private breakPointObserver: BreakpointObserver,
@@ -50,6 +52,10 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private router: Router
   ) {
+
+    effect(() => {
+      this.isUserSessionEnded = utils.isUserSessionEnded();
+    })
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();

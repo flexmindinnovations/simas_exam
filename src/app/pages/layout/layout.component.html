@@ -35,3 +35,7 @@
         </main>
     </div>
 </div>
+
+@if (isUserSessionEnded) {
+<app-session-time-out [visible]="isUserSessionEnded"></app-session-time-out>
+}

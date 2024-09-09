@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { utils } from '../utils';
 
 export const customInterceptor: HttpInterceptorFn = (req, next) => {
 
@@ -21,13 +22,11 @@ export const customInterceptor: HttpInterceptorFn = (req, next) => {
       }
     )
   }
-
-
   return next(authReq).pipe(
     catchError((error: any) => {
       if (error instanceof HttpErrorResponse) {
         if (error.status === 401) {
-
+          utils.isUserSessionEnded.set(true);
         } else {
 
         }
