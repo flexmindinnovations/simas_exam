@@ -32,6 +32,10 @@
     --color6: #e9c46a;
     --color7: #2a9d8f;
     --color8: #264653;
+    --color-sf-primary: #0f6cbd;
+    --color-sf-primary-text-color: #fff;
+    --color-sf-primary-light: #b4d6fa;
+    --color-sf-primary-lighter: #ebf3fc;
 }
 
 
@@ -345,6 +349,29 @@
     .p-menuitem-link {
         @apply text-xs;
     }
+
+    .panel-component {
+        .p-panel-toggleable {
+            @apply rounded-none;
+            .p-panel-header {
+                span {
+                    @apply text-xs font-semibold;
+                }
+
+                .p-panel-icons {
+                    button {
+                        @apply text-xs bg-transparent shadow-none;
+                    }
+                }
+            }
+        }
+    }
+
+    .chip-component {
+        .p-chip-text {
+            @apply text-xs font-semibold;
+        }
+    }
 }
 
 
@@ -420,7 +447,7 @@ p-tieredmenusub ul li .p-menuitem-content a {
         }
 
         span {
-            @apply font-normal text-[9px] sm:text-xs lg:text-sm xl:text-sm 2xl:text-sm;
+            @apply font-normal text-xs sm:text-xs lg:text-sm xl:text-sm 2xl:text-sm;
         }
     }
 }
@@ -496,7 +523,11 @@ label {
 }
 
 .page-container {
-    @apply h-full w-full;
+    @apply h-full w-full py-4;
+
+    &.student-exam-container, &.exam-report-container {
+        @apply py-0;
+    }
 
     .table-container {
         @apply h-full w-full;

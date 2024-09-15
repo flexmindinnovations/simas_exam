@@ -13,17 +13,18 @@ import {
   BreakpointObserver, Breakpoints,
   BreakpointState,
 } from '@angular/cdk/layout';
-import { Message, MessageService } from 'primeng/api';
+import { MenubarModule } from 'primeng/menubar';
 import { MessagesModule } from 'primeng/messages';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserType, UserTypeObj } from '../../enums/user-types';
 import { db } from '../../../db';
 import { SessionTimeOutComponent } from '../../modals/session-time-out/session-time-out.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent],
+  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   animations: [utils.slideInRouter]
@@ -49,6 +50,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   constructor(
     private breakPointObserver: BreakpointObserver,
     private cdref: ChangeDetectorRef,
+    private deviceDetector: DeviceDetectorService,
     private authService: AuthService,
     private router: Router
   ) {
@@ -107,15 +109,51 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       const userType = userTypes[this.userType];
       this.router.navigateByUrl(`login?userType=${userType}`);
     }
-    this.breakPointObserver.observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium, Breakpoints.Large, Breakpoints.XLarge]).subscribe((value: BreakpointState) => {
-      if (value.matches && this.breakPointObserver.isMatched(Breakpoints.XSmall) || this.breakPointObserver.isMatched(Breakpoints.Small)) {
+    this.detectCurrentDeviceType();
+  }
+
+  detectCurrentDeviceType() {
+    // Set up matchMedia listeners for each breakpoint
+    const xSmallMediaQuery = window.matchMedia('(max-width: 599px)');
+    const smallMediaQuery = window.matchMedia('(min-width: 600px) and (max-width: 959px)');
+    const mediumMediaQuery = window.matchMedia('(min-width: 960px) and (max-width: 1279px)');
+    const largeMediaQuery = window.matchMedia('(min-width: 1280px) and (max-width: 1919px)');
+    const xLargeMediaQuery = window.matchMedia('(min-width: 1920px)');
+
+    // Function to detect screen size and device type
+    function detectDeviceType() {
+      if (xSmallMediaQuery.matches) {
+        utils.deviceType.set('mobile');
         utils.isMobile.set(true);
         utils.isTablet.set(false);
-      } else if (value.matches && this.breakPointObserver.isMatched(Breakpoints.Medium)) {
-        utils.isMobile.set(false);
+      } else if (smallMediaQuery.matches) {
+        utils.deviceType.set('mobile');
+        utils.isMobile.set(true);
+        utils.isTablet.set(false);
+      } else if (mediumMediaQuery.matches) {
+        utils.deviceType.set('tablet');
         utils.isTablet.set(true);
+        utils.isMobile.set(false);
+      } else if (largeMediaQuery.matches) {
+        utils.deviceType.set('laptop');
+        utils.isMobile.set(false);
+        utils.isTablet.set(false);
+      } else if (xLargeMediaQuery.matches) {
+        utils.deviceType.set('desktop');
+        utils.isMobile.set(false);
+        utils.isTablet.set(false);
       }
-    })
+    }
+
+    // Call the function once to detect the device type initially
+    detectDeviceType();
+
+    // Optionally, add event listeners for changes in screen size
+    xSmallMediaQuery.addEventListener('change', detectDeviceType);
+    smallMediaQuery.addEventListener('change', detectDeviceType);
+    mediumMediaQuery.addEventListener('change', detectDeviceType);
+    largeMediaQuery.addEventListener('change', detectDeviceType);
+    xLargeMediaQuery.addEventListener('change', detectDeviceType);
   }
 
   async getPermissionList() {

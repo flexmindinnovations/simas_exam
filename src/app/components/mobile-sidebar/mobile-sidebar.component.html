@@ -1,0 +1,19 @@
+<div class="menu-bar relative max-h-16 max-w-[100vw]">
+    <p-menubar [model]="menuItems" (onFocus)="handleOnFocus()" class="mobile-menu">
+        <ng-template pTemplate="item" let-item let-root="root" class="overflow-auto">
+            <p class="flex items-center justify-start space-x-4 max-w-[80%] mx-auto p-2 m-1 rounded-full"
+                [ngClass]="item?.isActive ? 'bg-ph-600 text-white' : ''">
+                <i [class]="item.icon"></i>
+                <span>{{item?.label}}</span>
+            </p>
+        </ng-template>
+        <ng-template pTemplate="end">
+            <div class="flex align-items-center gap-2">
+                <app-user-menu></app-user-menu>
+            </div>
+        </ng-template>
+    </p-menubar>
+    <div class="flex items-center justify-center absolute top-[50%] left-[50%] w-[70%] h-full mx-auto" style="translate: -50% -50%;">
+        <p class="m-0 text-sm font-semibold uppercase tracking-wider self-center z-10">{{ activeItem?.title }}</p>
+    </div>
+</div>

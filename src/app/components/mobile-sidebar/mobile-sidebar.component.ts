@@ -1,59 +1,34 @@
-import { Component, effect, ElementRef, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { MenuItem } from '../../interfaces/menu-item';
+import { Component, ChangeDetectorRef, OnChanges, OnDestroy, OnInit, SimpleChanges, effect } from '@angular/core';
+import { BadgeModule } from 'primeng/badge';
+import { AvatarModule } from 'primeng/avatar';
+import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
+import { MenubarModule } from 'primeng/menubar';
+import { UserMenuComponent } from '../user-menu/user-menu.component';
+import { SidebarComponent } from "../sidebar/sidebar.component";
+import { MENU_ITEMS } from '../../../../public/data/menu-items';
 import { NavigationEnd, Router } from '@angular/router';
 import { utils } from '../../utils';
-import { MENU_ITEMS } from '../../../../public/data/menu-items';
-import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
-import { TooltipModule } from 'primeng/tooltip';
-import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
-import { MenubarModule } from 'primeng/menubar';
-import { DesktopSidebarComponent } from '../desktop-sidebar/desktop-sidebar.component';
-import { MobileSidebarComponent } from '../mobile-sidebar/mobile-sidebar.component';
+import { MenuItem } from 'primeng/api';
+
 @Component({
-  selector: 'app-sidebar',
+  selector: 'app-mobile-sidebar',
   standalone: true,
-  imports: [CommonModule, TooltipModule, ButtonModule, MenuModule, MenubarModule, DesktopSidebarComponent, MobileSidebarComponent],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss',
-  animations: [
-    trigger('listAnimation', [
-      transition('* => *', [
-        query(':enter', [
-          style({ transform: 'translateX(-100%)', opacity: 0 }),
-          stagger('0.05s', [
-            animate('0.2s ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-          ])
-        ], { optional: true })
-      ])
-    ]),
-    trigger('titleAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(-10px)' }),
-        animate('0.3s 0.6s ease-out', style({ opacity: 1, transform: 'translateX(0)' }))
-      ]),
-      transition(':leave', [
-        animate('0.15s ease-in', style({ opacity: 0, transform: 'translateX(-10px)' }))
-      ])
-    ])
-  ]
+  imports: [CommonModule, BadgeModule, AvatarModule, InputTextModule, MenubarModule, UserMenuComponent, SidebarComponent],
+  templateUrl: './mobile-sidebar.component.html',
+  styleUrl: './mobile-sidebar.component.scss'
 })
-export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
-  menuItems: Array<MenuItem> = MENU_ITEMS;
+export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
+  menuItems: MenuItem | any = MENU_ITEMS;
   moreMenuItems: Array<any> = [];
-  sideBarOpened: boolean = true;
-  logoSrc: string = '/images/logo1.png';
-  isMobile: boolean = false;
-  isLoading: boolean = true;
-  isTablet: boolean = false;
+
   isMoreMenuVisible: boolean = false;
-
-  @ViewChild('moreMenu', { static: false }) moreMenu!: ElementRef;
-
-  @Input() permissionList: any[] = [];
-  readonly MENU_THRESHOLD = 7;
   isMoreMenuActive: boolean = false;
+  isLoading: boolean = true;
+
+  readonly MENU_THRESHOLD = 7;
+
+  activeItem: any;
 
   constructor(
     private router: Router,
@@ -61,22 +36,9 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   ) {
 
     effect(() => {
-      this.permissionList = utils.permissionList();
+      this.activeItem = utils.activeItem();
     })
-
-    effect(() => {
-      this.isMobile = utils.isMobile();
-      this.isTablet = utils.isTablet();
-      if (utils.isPageRefreshed()) {
-        const currentUrl = this.getCurrentUrl();
-        currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
-      }
-    });
-
-    effect(() => {
-      this.sideBarOpened = utils.sideBarOpened();
-    });
-  }
+   }
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -86,6 +48,18 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
         currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
       }
     });
+
+    this.menuItems = MENU_ITEMS.map((item: any) => {
+      const obj = {
+        ...item,
+        label: item?.title,
+        icon: item?.icon,
+        command: () => {
+          this.handleItemClick(item);
+        }
+      }
+      return obj;
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -97,7 +71,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   filterMenuItems(data: any[]) {
-    const filteredMenuItems = MENU_ITEMS.filter((menuItem: MenuItem) =>
+    const filteredMenuItems = MENU_ITEMS.filter((menuItem: any) =>
       data.some(item => this.normalizeRoute(item.moduleName) === this.normalizeRoute(menuItem.moduleName) && item.canView)
     );
     this.menuItems = filteredMenuItems;
@@ -108,7 +82,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       const mainMenuItems = this.menuItems.slice(0, this.MENU_THRESHOLD);
       const moreMenuItems = this.menuItems.slice(this.MENU_THRESHOLD);
 
-      this.moreMenuItems = moreMenuItems.map(item => ({
+      this.moreMenuItems = moreMenuItems.map((item: any) => ({
         ...item,
         isActive: false,
         label: item.title,
@@ -123,7 +97,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     this.setActiveMenuItem(currentUrl);
   }
 
-  createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
+  createMoreMenuItem(moreItems: any): any {
     return {
       id: 17,
       title: 'More',
@@ -140,7 +114,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     return route?.toLowerCase().trim().replace(/\s+/g, '') ?? '';
   }
 
-  resetActiveState(menuItems?: MenuItem[]) {
+  resetActiveState(menuItems?: any[]) {
     menuItems?.forEach(item => item.isActive = false);
     const moreMenu = document.getElementById('moreMenu');
     const classList = moreMenu?.classList;
@@ -153,10 +127,13 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     classList?.remove('active');
   }
 
+  handleOnFocus() {
+    const currentUrl = this.getCurrentUrl();
+    currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
+  }
+
   setActiveMenuItem(route: string) {
     const normalizedRoute = this.normalizeRoute(route);
-    this.resetActiveState(this.menuItems);
-    this.resetActiveState(this.moreMenuItems);
     if (normalizedRoute) {
       const isMoreMenuItem = this.moreMenuItems.some(item => this.normalizeRoute(item.route) === normalizedRoute);
       if (isMoreMenuItem) {
@@ -172,7 +149,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         this.isMoreMenuActive = false;
         this.removeMoreMenuActiveState();
-        const menuItem = this.menuItems.find(item => this.normalizeRoute(item.route) === normalizedRoute);
+        const menuItem = this.menuItems.find((item: any) => this.normalizeRoute(item.route) === normalizedRoute);
         if (menuItem) {
           utils.activeItem.set(menuItem);
           utils.setPageTitle(menuItem.title);
@@ -184,7 +161,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  handleItemClick(item: MenuItem) {
+  handleItemClick(item: any) {
     if (item.moduleName !== 'more') {
       this.resetActiveState(this.menuItems);
       utils.activeItem.set(item);
@@ -195,9 +172,10 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       this.toggleMoreMenu();
     }
     this.removeMoreMenuActiveState();
+    item.isActive = true;
   }
 
-  handleMoreMenuItemClick(item: MenuItem) {
+  handleMoreMenuItemClick(item: any) {
     this.resetActiveState(this.moreMenuItems);
     utils.activeItem.set(item);
     utils.setPageTitle(item.title);
@@ -216,7 +194,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   setDefaultMenuItem() {
     if (this.menuItems.length > 0) {
-      this.menuItems.forEach((each) => each.isActive = false);
+      this.menuItems.forEach((each: any) => each.isActive = false);
       utils.activeItem.set(this.menuItems[0]);
       utils.setPageTitle(this.menuItems[0].title);
       this.menuItems[0].isActive = true;
@@ -228,7 +206,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     const currentUrl = this.router.url.split('/')[2];
     if (currentUrl) {
       const trimmedRoute = currentUrl?.toLowerCase().trim().replace(/\s+/g, '');
-      const moreMenuItem = this.moreMenuItems.find((each: MenuItem) => each.route.toLowerCase().trim().replace(/\s+/g, '') === trimmedRoute) ?? undefined;
+      const moreMenuItem = this.moreMenuItems.find((each: any) => each.route.toLowerCase().trim().replace(/\s+/g, '') === trimmedRoute) ?? undefined;
       this.moreMenuItems.forEach((each, index) => each.isActive = false);
       if (moreMenuItem) {
         moreMenuItem.isActive = true;
@@ -236,11 +214,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  closeSidebar(event: any) {
-    utils.sideBarOpened.update(val => !val);
-  }
-
   ngOnDestroy(): void {
-    this.menuItems.forEach((menu: MenuItem) => menu.isActive = false);
+    this.menuItems.forEach((menu: any) => menu.isActive = false);
   }
 }

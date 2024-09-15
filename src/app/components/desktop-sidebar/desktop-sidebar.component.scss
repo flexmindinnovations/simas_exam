@@ -1,0 +1,69 @@
+@import '../../../constants.scss';
+
+.hide {
+    display: none;
+    transition: display .1s ease-in-out;
+}
+
+.show {
+    animation: showAnimator 0.3s ease-in-out;
+    animation-delay: 0.5s;
+    display: flex;
+}
+
+
+.header {
+    .logo {
+        height: $headerHeight;
+
+        img {
+            z-index: 1;
+        }
+    }
+}
+
+.active {
+    @apply relative bg-white rounded-none rounded-l-3xl text-ph-500;
+
+    &::before,
+    &::after {
+        @apply absolute h-9 w-9 bg-transparent pointer-events-none;
+        content: '';
+    }
+
+    // &:not(.first):before {
+    &::before {
+        @apply rounded-b-full;
+        top: -35px;
+        right: 1px;
+        box-shadow: 24px 24px 0px 10px white;
+    }
+
+    &::after {
+        @apply rounded-t-full;
+        bottom: -35px;
+        right: 1px;
+        box-shadow: 24px -24px 0px 10px white;
+    }
+}
+
+.active-mobile {
+    @apply relative bg-white rounded-3xl text-ph-500;
+}
+
+.list {
+    max-height: calc(100dvh - 150px);
+    height: 90%;
+}
+
+@keyframes showAnimator {
+    0% {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}

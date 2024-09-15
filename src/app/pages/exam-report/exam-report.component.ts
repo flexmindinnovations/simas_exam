@@ -14,11 +14,13 @@ import { DropdownModule, type DropdownChangeEvent } from 'primeng/dropdown';
 import { forkJoin } from 'rxjs';
 import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 import { LevelService } from '../../services/level/level.service';
+import { PanelModule } from 'primeng/panel';
+import { ChipModule } from 'primeng/chip';
 
 @Component({
   selector: 'app-exam-report',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule],
   providers: [DialogService],
   templateUrl: './exam-report.component.html',
   styleUrl: './exam-report.component.scss'
@@ -37,6 +39,7 @@ export class ExamReportComponent {
   levelListLoading: boolean = false;
   roundListLoading: boolean = false;
   studentListLoading: boolean = false;
+  isPanelCollapsed: boolean = false;
 
   selectedExamType: any = undefined;
   selectedLevel: any = undefined;

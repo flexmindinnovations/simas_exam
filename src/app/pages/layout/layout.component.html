@@ -6,11 +6,6 @@
         <div class="sidebar md:mr-0 lg:-mr-[1px] xl:-mr-[1px] 2xl:-mr-[1px] 2x:-mr-[1px] rounded-l-2xl col-span-1">
             @if (!isMobile) {
             <app-sidebar [permissionList]="permissionList"></app-sidebar>
-            } @else {
-            <p-sidebar [(visible)]="sideBarOpened" position="left" styleClass="w-full md:w-auto"
-                (onHide)="handleSidebarOnHide()">
-                <app-sidebar [permissionList]="permissionList"></app-sidebar>
-            </p-sidebar>
             }
         </div>
         <main
@@ -28,7 +23,7 @@
             </header>
             <div class="dynamic sm:rounded-none md:rounded-none 
             max-w-[100vw]
-             bg-white h-full w-full px-0 lg:xl:px-4 py-4 z-10" [ngClass]="[sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': '', isWarningPhase ? 'warning' : '', isDangerPhase ? 'danger': ''
+             bg-white h-full w-full px-0 lg:px-4 xl:px-4 z-10" [ngClass]="[sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': '', isWarningPhase ? 'warning' : '', isDangerPhase ? 'danger': ''
                 ]" [@routeAnimations]="prepareRoute(outlet)">
                 <router-outlet #outlet="outlet"></router-outlet>
             </div>

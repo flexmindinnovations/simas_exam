@@ -151,7 +151,14 @@ export class ReportsComponent implements OnInit {
   }
 
   handleSearchAction() {
-
+    const payload = {
+      selectedFranchise: this.selectedFranchise ?? 0,
+      selectedInstructor: this.selectedInstructor ?? 0,
+      selectedStudent: this.selectedStudent ?? 0,
+      selectedExamType: this.selectedExamType ?? 0,
+      selectedLevel: this.selectedLevel ?? 0,
+      selectedRound: this.selectedRound ?? 0,
+    }
   }
 
   toggleLoading(listName: ReportCriteria | null = null, isLoading: boolean) {
@@ -170,22 +177,22 @@ export class ReportsComponent implements OnInit {
       this.roundListLoading = isLoading;
     } else {
       switch (listName) {
-        case 'examType':
+        case ReportCriteriaText.EXAM_TYPE:
           this.examTypeListLoading = isLoading;
           break;
-        case 'franchise':
+        case ReportCriteriaText.FRANCHISE:
           this.franchiseListLoading = isLoading;
           break;
-        case 'instructor':
+        case ReportCriteriaText.INSTRUCTOR:
           this.instructorListLoading = isLoading;
           break;
-        case 'student':
+        case ReportCriteriaText.STUDENT:
           this.studentListLoading = isLoading;
           break;
-        case 'level':
+        case ReportCriteriaText.LEVEL:
           this.levelListLoading = isLoading;
           break;
-        case 'round':
+        case ReportCriteriaText.ROUND:
           this.roundListLoading = isLoading;
           break;
         default:
