@@ -1,0 +1,9 @@
+::ng-deep .p-menubar-root-list {
+    @apply overflow-auto max-h-screen;
+}
+
+::ng-deep .mobile-menu {
+    .p-menubar {
+        @apply rounded-none;
+    }
+}

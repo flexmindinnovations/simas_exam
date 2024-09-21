@@ -1,7 +1,7 @@
 import { animate, query, stagger, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectorRef, Component, effect, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -24,12 +24,12 @@ import { ExamResultComponent } from '../../modals/exam-result/exam-result.compon
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
 import { NavigationStart, Router } from '@angular/router';
-
+import { PanelModule } from 'primeng/panel';
 @Component({
   selector: 'app-student-exam',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule, ConfirmPopupModule],
-  providers: [DialogService, ConfirmationService, InputTextModule],
+  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, TimerComponent, QuestionPanelComponent, SelectButtonModule, RadioButtonModule, ProgressBarModule, ConfirmPopupModule, PanelModule, InputTextModule],
+  providers: [DialogService, ConfirmationService],
   templateUrl: './student-exam.component.html',
   styleUrl: './student-exam.component.scss',
   animations: [
@@ -56,6 +56,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isColumnListLoading: boolean = false;
   isRowsListLoading: boolean = false;
   isSpeedListLoading: boolean = false;
+  isPanelCollapsed: boolean = false;
 
   examStarted: boolean = false;
 
@@ -166,11 +167,11 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initSound();
     this.getMasterData();
-    if (!this.isMobile) {
-      this.resizeListener = this.renderer.listen('window', 'resize', () => {
+    this.resizeListener = this.renderer.listen('window', 'resize', () => {
+      if (!this.isMobile) {
         window.location.reload();
-      })
-    }
+      }
+    })
   }
 
   ngAfterViewInit(): void {
@@ -186,7 +187,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
             const siblingWidth = exampOptionsCard.offsetWidth;
             const questionCard: any = document.getElementById('questionCard');
             const questionResultContainer: any = document.getElementById('questionResultContainer');
-            questionCard.style.width = siblingWidth - 1 + 'px';
+            questionCard.style.width = siblingWidth + 'px';
             questionResultContainer.style.width = siblingWidth - 1 + 'px';
             observer.disconnect();
           }
@@ -560,6 +561,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
             this.quizCompleted = false;
             this.isSearchActionLoading = false;
             this.setTimerWidth();
+            this.isPanelCollapsed = true;
             timer(500).subscribe(() => {
               this.startFlashing();
             });

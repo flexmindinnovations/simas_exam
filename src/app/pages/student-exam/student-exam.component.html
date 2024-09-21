@@ -1,73 +1,85 @@
-<div class="student-exam-container page-container">
-    <div
-        class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full py-4 border-0 border-b border-solid border-b-gray-200">
-        <div class="flex flex-col items-start w-full max-w-52 md:max-w-44">
-            <label for="examType">Exam Type <span class="text-red-500">*</span></label>
-            <p-dropdown appendTo="body" inputId="examType" [options]="examTypeList" ariaLabelledBy="value"
-                [loading]="isExamTypeListLoading" loadingIcon="pi pi-spin pi-spinner"
-                [disabled]="isSearchActionLoading || isSearchDisabled" [(ngModel)]="selectedExamType"
-                placeholder="Select" (onChange)="handleOnDropdownValueChange($event, 'examType')"
-                optionValue="examTypeId" optionLabel="examTypeName" [filter]="true" filterBy="value"
-                [showClear]="false" />
+<div class="student-exam-container page-container flex flex-col">
+    <p-panel [toggleable]="true"  [(collapsed)]="isPanelCollapsed" class="panel-component">
+        <ng-template pTemplate="header">
+            <div class="flex items-center justify-start space-x-2">
+                <i class="pi pi-cog"></i>
+                <span>
+                    Exam Options
+                </span>
+            </div>
+
+        </ng-template>
+        <div
+            class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full py-4">
+            <div class="flex flex-col items-start w-full max-w-52 md:max-w-44">
+                <label for="examType">Exam Type <span class="text-red-500">*</span></label>
+                <p-dropdown appendTo="body" inputId="examType" [options]="examTypeList" ariaLabelledBy="value"
+                    [loading]="isExamTypeListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    [disabled]="isSearchActionLoading || isSearchDisabled" [(ngModel)]="selectedExamType"
+                    placeholder="Select" (onChange)="handleOnDropdownValueChange($event, 'examType')"
+                    optionValue="examTypeId" optionLabel="examTypeName" [filter]="true" filterBy="value"
+                    [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full max-w-32">
+                <label for="levelList">Level <span class="text-red-500">*</span></label>
+                <p-dropdown appendTo="body" inputId="levelList" [options]="levelList" [loading]="isLevelListLoading"
+                    loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedLevel"
+                    [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="levelName"
+                    placeholder="Select" (onChange)="handleOnDropdownValueChange($event, 'level')" optionValue="levelId"
+                    optionLabel="levelName" [filter]="true" filterBy="levelName" [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full max-w-32">
+                <label for="roundList">Round <span class="text-red-500">*</span></label>
+                <p-dropdown appendTo="body" inputId="roundList" [options]="roundList"
+                    [loading]="isLevelListLoading || isRoundListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    [(ngModel)]="selectedRound" [disabled]="isSearchActionLoading || isSearchDisabled"
+                    ariaLabelledBy="roundName" placeholder="Select"
+                    (onChange)="handleOnDropdownValueChange($event, 'round')" optionValue="roundId"
+                    optionLabel="roundName" [filter]="true" filterBy="roundName" [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full max-w-32">
+                <label for="noOfColumnList">Digit Per Number <span class="text-red-500">*</span></label>
+                <p-dropdown appendTo="body" inputId="noOfColumnList" [options]="noOfColumnList"
+                    [loading]="isColumnListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfColumn"
+                    [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
+                    (onChange)="handleOnDropdownValueChange($event, 'columns')" optionValue="value" optionLabel="title"
+                    [filter]="true" filterBy="title" [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full max-w-32">
+                <label for="noOfRowsList">Numbers to Display <span class="text-red-500">*</span></label>
+                <p-dropdown appendTo="body" inputId="noOfRowsList" [options]="noOfRowsList"
+                    [loading]="isRowsListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfRows"
+                    [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
+                    (onChange)="handleOnDropdownValueChange($event, 'rows')" optionValue="value" optionLabel="title"
+                    [filter]="true" filterBy="title" [showClear]="false" />
+            </div>
+
+            <div class="flex flex-col items-start w-full max-w-32">
+                <label for="roundList">Speed</label>
+                <p-dropdown appendTo="body" inputId="roundList" [options]="questionSpeedList"
+                    [loading]="isSpeedListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    [(ngModel)]="selectedSpeedOfQuestion" [disabled]="isSearchActionLoading || isSearchDisabled"
+                    ariaLabelledBy="title" placeholder="Select"
+                    (onChange)="handleOnDropdownValueChange($event, 'speed')" optionValue="value" optionLabel="title"
+                    [filter]="true" filterBy="title" [showClear]="false" />
+            </div>
+
+            <p-button label="Start" (onClick)="handleSearchAction()"
+                [disabled]="!canStartExam() || isSearchDisabled || isSearchActionLoading" icon="pi pi-play"
+                styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+                loadingIcon="pi pi-spin pi-spinner"></p-button>
         </div>
+    </p-panel>
 
-        <div class="flex flex-col items-start w-full max-w-32">
-            <label for="levelList">Level <span class="text-red-500">*</span></label>
-            <p-dropdown appendTo="body" inputId="levelList" [options]="levelList" [loading]="isLevelListLoading"
-                loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedLevel"
-                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="levelName" placeholder="Select"
-                (onChange)="handleOnDropdownValueChange($event, 'level')" optionValue="levelId" optionLabel="levelName"
-                [filter]="true" filterBy="levelName" [showClear]="false" />
-        </div>
-
-        <div class="flex flex-col items-start w-full max-w-32">
-            <label for="roundList">Round <span class="text-red-500">*</span></label>
-            <p-dropdown appendTo="body" inputId="roundList" [options]="roundList"
-                [loading]="isLevelListLoading || isRoundListLoading" loadingIcon="pi pi-spin pi-spinner"
-                [(ngModel)]="selectedRound" [disabled]="isSearchActionLoading || isSearchDisabled"
-                ariaLabelledBy="roundName" placeholder="Select"
-                (onChange)="handleOnDropdownValueChange($event, 'round')" optionValue="roundId" optionLabel="roundName"
-                [filter]="true" filterBy="roundName" [showClear]="false" />
-        </div>
-
-        <div class="flex flex-col items-start w-full max-w-32">
-            <label for="noOfColumnList">Digit Per Number <span class="text-red-500">*</span></label>
-            <p-dropdown appendTo="body" inputId="noOfColumnList" [options]="noOfColumnList"
-                [loading]="isColumnListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfColumn"
-                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
-                (onChange)="handleOnDropdownValueChange($event, 'columns')" optionValue="value" optionLabel="title"
-                [filter]="true" filterBy="title" [showClear]="false" />
-        </div>
-
-        <div class="flex flex-col items-start w-full max-w-32">
-            <label for="noOfRowsList">Numbers to Display <span class="text-red-500">*</span></label>
-            <p-dropdown appendTo="body" inputId="noOfRowsList" [options]="noOfRowsList" [loading]="isRowsListLoading"
-                loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfRows"
-                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
-                (onChange)="handleOnDropdownValueChange($event, 'rows')" optionValue="value" optionLabel="title"
-                [filter]="true" filterBy="title" [showClear]="false" />
-        </div>
-
-        <div class="flex flex-col items-start w-full max-w-32">
-            <label for="roundList">Speed</label>
-            <p-dropdown appendTo="body" inputId="roundList" [options]="questionSpeedList" [loading]="isSpeedListLoading"
-                loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedSpeedOfQuestion"
-                [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
-                (onChange)="handleOnDropdownValueChange($event, 'speed')" optionValue="value" optionLabel="title"
-                [filter]="true" filterBy="title" [showClear]="false" />
-        </div>
-
-        <p-button label="Start" (onClick)="handleSearchAction()"
-            [disabled]="!canStartExam() || isSearchDisabled || isSearchActionLoading" icon="pi pi-play"
-            styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
-            loadingIcon="pi pi-spin pi-spinner"></p-button>
-    </div>
-
-    <div class="wrapper p-4 h-full w-full grid gap-2">
+    <div class="wrapper p-4 w-full grid gap-2 flex-grow h-full overflow-auto">
         @if (examStarted && !quizCompleted) {
         <div
-            class="exam-container h-full col-start-1 row-start-2 md:col-start-1 lg:col-start-1 lg:row-start-1 md:row-start-2 md:row-end-2 flex flex-col md:min-h-72">
-            <div class="flex flex-col items-start justify-center w-full h-full">
+            class="exam-container h-full col-start-1 row-start-2 md:col-start-1 lg:col-start-1 lg:row-start-1 md:row-start-2 md:row-end-2 flex flex-col min-h-52">
+            <div class="flex flex-col items-center lg:items-start xl:items-start 2xl:items-start justify-center w-full h-full">
                 <div #exampOptionsCard class="exampOptionsCard card flex justify-center">
                     <p-selectButton [options]="examOptions" (onChange)="handleExamOptionChange($event)"
                         [(ngModel)]="selectedExamOption" optionLabel="label" optionValue="value" />
@@ -97,7 +109,8 @@
 
                             </div>
                             } -->
-                            <input type="text" (ngModelChange)="handleKeyValue($event)" pInputText [(ngModel)]="selectedAnswer" />
+                            <input type="text" (ngModelChange)="handleKeyValue($event)" pInputText
+                                [(ngModel)]="selectedAnswer" />
                         </div>
                     </div>
                     } @else if(isLoadingQuestion && !quizCompleted) {
@@ -143,7 +156,7 @@
                 [(ngModel)]="selectedExamControlOption" optionLabel="label" optionValue="value" />
         </div>
         } @else {
-        <div class="col-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
+        <div class="col-span-2 row-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
             <p class="opacity-70 select-none md:!text-sm lg:!text-sm xl:!text-lg 2xl:!text-lg">
                 Choose the exam data from the available options and then press the 'Start' button to initiate the
                 exam.

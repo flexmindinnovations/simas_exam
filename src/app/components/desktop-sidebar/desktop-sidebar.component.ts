@@ -1,6 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, effect, ElementRef, Input, input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MenuItem } from '../../interfaces/menu-item';
-import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { utils } from '../../utils';
 import { MENU_ITEMS } from '../../../../public/data/menu-items';
@@ -8,15 +8,13 @@ import { trigger, transition, query, style, stagger, animate } from '@angular/an
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { MenubarModule } from 'primeng/menubar';
-import { DesktopSidebarComponent } from '../desktop-sidebar/desktop-sidebar.component';
-import { MobileSidebarComponent } from '../mobile-sidebar/mobile-sidebar.component';
+
 @Component({
-  selector: 'app-sidebar',
+  selector: 'app-desktop-sidebar',
   standalone: true,
-  imports: [CommonModule, TooltipModule, ButtonModule, MenuModule, MenubarModule, DesktopSidebarComponent, MobileSidebarComponent],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss',
+  imports: [CommonModule, TooltipModule, ButtonModule, MenuModule],
+  templateUrl: './desktop-sidebar.component.html',
+  styleUrl: './desktop-sidebar.component.scss',
   animations: [
     trigger('listAnimation', [
       transition('* => *', [
@@ -39,7 +37,7 @@ import { MobileSidebarComponent } from '../mobile-sidebar/mobile-sidebar.compone
     ])
   ]
 })
-export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
+export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
   menuItems: Array<MenuItem> = MENU_ITEMS;
   moreMenuItems: Array<any> = [];
   sideBarOpened: boolean = true;
@@ -51,7 +49,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   @ViewChild('moreMenu', { static: false }) moreMenu!: ElementRef;
 
-  @Input() permissionList: any[] = [];
+  @Input({ required: true }) permissionList: any[] = [];
   readonly MENU_THRESHOLD = 7;
   isMoreMenuActive: boolean = false;
 
@@ -59,10 +57,6 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private cdref: ChangeDetectorRef
   ) {
-
-    effect(() => {
-      this.permissionList = utils.permissionList();
-    })
 
     effect(() => {
       this.isMobile = utils.isMobile();

@@ -20,6 +20,8 @@ export const utils = {
     apiConfigData: {},
     userType: signal<string>('admin'),
     addButtonTitle: signal<string>(''),
+    deviceType: signal<string>(''),
+    screenWidth: signal<number>(0),
     menuItemClick: signal<any>({}),
     isUserSessionEnded: signal<boolean>(false),
     isMobile: signal<boolean>(false),
