@@ -17,6 +17,7 @@ import autoTable from 'jspdf-autotable';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
+import { HallticketComponent } from '../hallticket/hallticket.component';
 
 @Component({
   selector: 'app-data-grid',
@@ -37,6 +38,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   isDeleteActionLoading: boolean = false;
   isEditActionLoading: boolean = false;
   isAddActionLoading: boolean = false;
+  isGenerateActionLoading: boolean = false;
   isExportActionLoading: boolean = false;
   showPaginator: boolean = false;
   isMobile: boolean = false;
@@ -45,11 +47,13 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @ViewChild('dataGrid', { static: false }) dataGrid!: Table;
   @Input({ required: true }) colDefs: any;
   @Input() showAddButton: boolean = true;
+  @Input() isGenerate: boolean = false;
   @Input({ required: false }) childColDefs: any;
   @Input({ required: true }) dataSource: any;
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
+  @Output() onGenerateAction: EventEmitter<any> = new EventEmitter();
 
   paginatorPosition = [100, 180];
   dialogRef: DynamicDialogRef | undefined;
@@ -100,11 +104,19 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     })
 
     effect(() => {
+      const rowIndex = utils.onModalClose();
+      if (rowIndex > -1) {
+        this.dataSource[rowIndex]['isGenerateActionLoading'] = false;
+      }
+    })
+
+    effect(() => {
       this.isEditActionLoading = utils.isTableEditAction();
       if (!this.isAddActionLoading) {
         this.dataSource.forEach((item: any) => {
           item['isEditActionLoading'] = false;
           item['isDeleteActionLoading'] = false;
+          item['isGenerateActionLoading'] = false;
         });
 
       }
@@ -118,6 +130,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     const dataSource = this.dataSource.map((item: any) => {
       item['isEditActionLoading'] = false;
       item['isDeleteActionLoading'] = false;
+      item['isGenerateActionLoading'] = false;
       return item;
     });
     this.dataSource = dataSource;
@@ -271,6 +284,14 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     })
   }
 
+  handleGenerateOperation(rowData: any, rowIndex: any) {
+    this.isGenerateActionLoading = true;
+    this.dataSource.forEach((item: any) => item['isGenerateActionLoading'] = false);
+    this.dataSource[rowIndex]['isGenerateActionLoading'] = true;
+    this.onGenerateAction.emit({ rowData, rowIndex });
+    this.cdref.detectChanges();
+  }
+
   handleAddAction() {
     this.onAddAction.emit(this.addButtonTitle.toLowerCase());
   }
@@ -303,5 +324,9 @@ export interface TreeNode {
   draggable?: boolean;
   droppable?: boolean;
   selectable?: boolean;
+}
+
+function handleGenerateOperation(rowData: any, any: any) {
+  throw new Error('Function not implemented.');
 }
 

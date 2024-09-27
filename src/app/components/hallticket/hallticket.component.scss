@@ -1,0 +1,73 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+
+    td {
+        padding: 5px;
+    }
+}
+
+p-button {
+    font-size: 16px;
+    width: 120px;
+}
+
+@media print {
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #printSection {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box;
+    }
+
+    .print-flex-row {
+        display: flex !important;
+        flex-direction: row !important;
+        /* Ensure row layout */
+        justify-content: space-between !important;
+        /* Adjust spacing if needed */
+    }
+
+    .student-photo {
+        width: 128px !important;
+        /* Adjust to desired width */
+        height: 128px !important;
+        /* Adjust to desired height */
+        object-fit: cover;
+        border: 2px solid #d1d5db;
+        /* Optional border */
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .qr-code {
+        width: 128px !important;
+        /* Consistent size */
+        height: 128px !important;
+        object-fit: cover;
+        border: none !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse;
+    }
+
+    p-button,
+    button {
+        display: none !important;
+    }
+}

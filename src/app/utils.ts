@@ -26,6 +26,7 @@ export const utils = {
     isTableLoading: signal<boolean>(false),
     isAddActionLoading: signal<boolean>(false),
     isTableDeleteAction: signal<boolean>(false),
+    onModalClose: signal<any>(-1),
     tableDeleteRowData: signal<any>({}),
     isTableEditAction: signal<boolean>(false),
     isWarningPhase: signal<boolean>(false),

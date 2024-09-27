@@ -60,7 +60,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
     {
         id: 8,
         title: 'Students',
-        moduleName: 'Students',
+        moduleName: 'Student',
         icon: 'pi pi-users',
         isActive: false,
         route: 'students'
