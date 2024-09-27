@@ -1,6 +1,6 @@
-<div class="dialog-body px-4" #printSection>
-    <h3>Hall Ticket</h3>
-    <div class="flex flex-col md:flex-row justify-between text-center md:text-left mb-2">
+<div class="dialog-body" #printSection>
+    <strong class="text-gray-700 mb-1">Hall Ticket</strong>
+    <div class="flex flex-col md:flex-row justify-between text-center md:text-left mb-1">
         <div>
             <strong class="text-gray-700">Name: </strong>
             <span class="text-gray-600">{{ hallTicketData.studentName }}</span>
@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center md:justify-between mb-6 print-flex-row">
+    <div class="flex flex-col md:flex-row items-center md:justify-between print-flex-row">
         <div class="flex justify-center md:justify-start">
             <img *ngIf="hallTicketData.studentPhoto" [src]="hallTicketData.studentPhoto" alt="Student Photo"
                 class="student-photo w-24 h-24 md:w-32 md:h-32 object-cover border-4 border-blue-600 shadow-md">
@@ -29,18 +29,17 @@
                 <strong class="text-gray-700">Level: </strong>
                 <span class="text-gray-600">{{ hallTicketData.level }}</span>
             </div>
-        </div>
-
-        <div class="flex justify-center md:justify-end mt-4 md:mt-0">
-            <canvas #qrCanvas class="w-24 h-24 border border-gray-200 rounded-md shadow-md"></canvas>
+            <div>
+                <canvas #barcodeCanvas class="barcode"></canvas>
+            </div>
         </div>
     </div>
 
 
 
     <!-- Competition Details -->
-    <div class="border-b border-gray-300">
-        <h4 class="text-lg font-bold text-gray-800 mb-2">Competition Details</h4>
+    <div class="border-b border-gray-300 my-2">
+        <strong class="text-gray-700">Competition Details</strong>
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-300">
                 <tbody>
@@ -73,7 +72,7 @@
         </div>
     </div>
 </div>
-<hr class="my-4 border-gray-300" />
+<!-- <hr class="my-4 border-gray-300" /> -->
 <div class="flex justify-between">
     <div>
         <p-button label="Cancel" severity="secondary" (onClick)="handleDialogCancel()"></p-button>

@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angula
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import QRCode from 'qrcode';
+import JSBarcode from 'jsbarcode';
 
 @Component({
   selector: 'app-hallticket',
@@ -13,8 +13,7 @@ import QRCode from 'qrcode';
   styleUrls: ['./hallticket.component.scss'],
 })
 export class HallticketComponent implements OnInit, AfterViewInit {
-  @ViewChild('qrCanvas', { static: false }) qrCanvas!: ElementRef<HTMLCanvasElement>;
-  // @ViewChild('qrCanvas') qrCanvas: ElementRef<HTMLCanvasElement> | undefined;
+  @ViewChild('barcodeCanvas', { static: false }) barcodeCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('printSection', { static: false }) printSection!: ElementRef<HTMLDivElement>;
   hallTicketData = {
     competitionName: 'SIMAS ACADEMY',
@@ -34,22 +33,26 @@ export class HallticketComponent implements OnInit, AfterViewInit {
   ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.generateQRCode(), 0); // Ensure view is fully initialized
+    setTimeout(() => {
+      this.generateBarcode();
+    }, 0); // Ensure view is fully initialized
   }
+
 
   constructor(
     private dialogRef: DynamicDialogRef,
   ) { }
 
-  generateQRCode() {
-    if (this.qrCanvas && this.qrCanvas.nativeElement) {
-      const data = JSON.stringify(this.hallTicketData);
-      QRCode.toCanvas(this.qrCanvas.nativeElement, data, { width: 128 }, (error: any) => {
-        if (error) {
-          console.error('QR Code Generation Error:', error);
-        } else {
-          console.log('QR code generated successfully!');
-        }
+  generateBarcode() {
+    if (this.barcodeCanvas && this.barcodeCanvas.nativeElement) {
+      const data = this.hallTicketData.hallTicketNumber; // Using hall ticket number for barcode
+      JSBarcode(this.barcodeCanvas.nativeElement, data, {
+        format: 'CODE128',
+        width: 2,
+        height: 30,
+        displayValue: true,
+        fontSize: 16,
+        textAlign: 'center'
       });
     } else {
       console.error('Canvas element not found');
@@ -58,18 +61,23 @@ export class HallticketComponent implements OnInit, AfterViewInit {
 
   download() {
     console.log('Hall Ticket Download');
-    if (this.qrCanvas && this.qrCanvas.nativeElement) {
-      const canvas = this.qrCanvas.nativeElement;
+    if (this.barcodeCanvas && this.barcodeCanvas.nativeElement) {
+      const canvas = this.barcodeCanvas.nativeElement;
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/png');
-      link.download = 'hallticket_qrcode.png';
+      link.download = 'hallticket_barcode.png';
       link.click();
     }
   }
 
   print() {
-    const qrCanvas: HTMLCanvasElement = this.qrCanvas.nativeElement;
-    const qrDataURL = qrCanvas.toDataURL('image/png'); // Convert canvas to an image URL
+    if (!this.barcodeCanvas || !this.barcodeCanvas.nativeElement) {
+      console.error('Barcode canvas element is not available');
+      return;
+    }
+
+    const barcodeCanvas: HTMLCanvasElement = this.barcodeCanvas.nativeElement;
+    const barcodeDataURL = barcodeCanvas.toDataURL('image/png'); // Convert canvas to an image URL
 
     // Create a new iframe for print preview
     const iframe = document.createElement('iframe');
@@ -85,64 +93,128 @@ export class HallticketComponent implements OnInit, AfterViewInit {
     if (iframeDoc) {
       iframeDoc.open();
       iframeDoc.write(`
-          <html>
-            <head>
-              <title>Print Preview</title>
-              <style>
-                @media print {
-                  html, body {
-                    width: 100%;
-                    height: 100%;
-                    margin: 0;
-                    padding: 0;
-                    overflow: hidden;
-                  }
-                  #printSection {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    box-sizing: border-box;
-                  }
-                  .print-flex-row {
-                    display: flex !important;
-                    flex-direction: row !important;
-                    justify-content: space-between !important;
-                  }
-                  .student-photo {
-                    width: 128px !important;
-                    height: 128px !important;
-                    object-fit: cover;
-                    border: 2px solid #d1d5db;
-                    margin: 0 !important;
-                    box-shadow: none !important;
-                  }
-                  .qr-code {
-                    width: 128px !important;
-                    height: 128px !important;
-                    object-fit: cover;
-                    border: none !important;
-                    margin: 0 !important;
-                    box-shadow: none !important;
-                  }
-                  table {
-                    width: 100% !important;
-                    border-collapse: collapse;
-                  }
-                  p-button, button {
-                    display: none !important;
-                  }
+        <html>
+          <head>
+            <style>
+              @media print {
+                html, body {
+                  width: 100%;
+                  height: 100%;
+                  margin: 0;
+                  padding: 0;
+                  overflow: hidden;
+                  font-family: Arial, sans-serif;
                 }
-              </style>
-            </head>
-            <body>
-              ${this.printSection.nativeElement.innerHTML.replace(
-        /<canvas[\s\S]*?<\/canvas>/,
-        `<img src="${qrDataURL}" class="qr-code" alt="QR Code">`
-      )}
-            </body>
-          </html>
-        `);
+                #printSection {
+                  width: 100% !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  box-sizing: border-box;
+                }
+                .print-container {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  padding: 20px;
+                }
+                .print-container table {
+                  width: 100% !important;
+                  border-collapse: collapse;
+                  margin: 20px 0;
+                }
+                .print-container th, .print-container td {
+                  padding: 10px;
+                  text-align: left;
+                  border: 1px solid #d1d5db;
+                }
+                .print-container th {
+                  background-color: #f4f4f4;
+                  font-weight: bold;
+                }
+                .print-container .student-photo {
+                  width: 128px !important;
+                  height: 128px !important;
+                  object-fit: cover;
+                  border: 2px solid #d1d5db;
+                  margin: 10px 0;
+                }
+                .print-container .barcode {
+                  width: 128px !important;
+                  object-fit: cover;
+                  margin: 10px 0;
+                }
+                .header {
+                  text-align: center;
+                  margin-bottom: 20px;
+                }
+                .footer {
+                  text-align: center;
+                  margin-top: 20px;
+                  font-size: 0.9em;
+                  color: #555;
+                }
+                p-button, button {
+                  display: none !important;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <div id="printSection" class="print-container">
+              <div class="header">
+                <h3>Hall Ticket</h3>
+              </div>
+              <table>
+                <tbody>
+                  <tr class="flex items-center">
+                    <td><img src="${this.hallTicketData.studentPhoto}" class="student-photo" alt="Student Photo"></td>
+                    <td><img src="${barcodeDataURL}" class="barcode" alt="Barcode"></td>
+                  </tr>
+                  <tr>
+                    <th>Hall Ticket Number</th>
+                    <td>${this.hallTicketData.hallTicketNumber}</td>
+                  </tr>
+                  <tr>
+                    <th>Center</th>
+                    <td>${this.hallTicketData.center}</td>
+                  </tr>
+                  <tr>
+                    <th>Group</th>
+                    <td>${this.hallTicketData.group}</td>
+                  </tr>
+                  <tr>
+                    <th>Level</th>
+                    <td>${this.hallTicketData.level}</td>
+                  </tr>
+                  <tr>
+                    <th>Instructor</th>
+                    <td>${this.hallTicketData.instructorName}</td>
+                  </tr>
+                  <tr>
+                    <th>Exam Center</th>
+                    <td>${this.hallTicketData.examCenter}</td>
+                  </tr>
+                  <tr>
+                    <th>Batch Date & Time</th>
+                    <td>${this.hallTicketData.batchDate.toLocaleString()}</td>
+                  </tr>
+                  <tr>
+                    <th>Website</th>
+                    <td>${this.hallTicketData.website}</td>
+                  </tr>
+                  <tr>
+                    <th>Email</th>
+                    <td>${this.hallTicketData.email}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="footer">
+                <p>Thank you for your participation!</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `);
       iframeDoc.close();
 
       // Trigger print dialog
@@ -155,6 +227,9 @@ export class HallticketComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
+
+
 
   handleDialogCancel() {
     this.dialogRef.close(false);

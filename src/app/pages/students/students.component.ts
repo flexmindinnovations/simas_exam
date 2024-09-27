@@ -106,7 +106,7 @@ export class StudentsComponent implements OnInit {
       closable: false,
       modal: true,
       height: 'auto',
-      width: utils.isMobile() ? '95%' : '42%',
+      width: utils.isMobile() ? '95%' : '40%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Student' : 'Add New Student',
     });
