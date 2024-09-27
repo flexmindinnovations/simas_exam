@@ -71,75 +71,91 @@ export class HallticketComponent implements OnInit, AfterViewInit {
     const qrCanvas: HTMLCanvasElement = this.qrCanvas.nativeElement;
     const qrDataURL = qrCanvas.toDataURL('image/png'); // Convert canvas to an image URL
 
-    // Create a new print window
-    const printWindow = window.open('', '', 'width=800,height=800');
+    // Create a new iframe for print preview
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
 
-    // Prepare the content for printing
-    const content = `
-      <html>
-        <head>
-          <title>Print Modal</title>
-          <style>
-            @media print {
-              html, body {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-              }
-              #printSection {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-              }
-              .print-flex-row {
-                display: flex !important;
-                flex-direction: row !important;
-                justify-content: space-between !important;
-              }
-              .student-photo {
-                width: 128px !important;
-                height: 128px !important;
-                object-fit: cover;
-                border: 2px solid #d1d5db;
-                margin: 0 !important;
-                box-shadow: none !important;
-              }
-              .qr-code {
-                width: 128px !important;
-                height: 128px !important;
-                object-fit: cover;
-                border: none !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-              }
-              table {
-                width: 100% !important;
-                border-collapse: collapse;
-              }
-              p-button, button {
-                display: none !important;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          ${this.printSection.nativeElement.innerHTML.replace(
-      /<canvas[\s\S]*?<\/canvas>/,
-      `<img src="${qrDataURL}" class="qr-code" alt="QR Code">`
-    )}
-        </body>
-      </html>
-    `;
+    document.body.appendChild(iframe);
 
-    printWindow?.document.write(content);
-    printWindow?.document.close();
-    printWindow?.focus();
-    printWindow?.print();
+    const iframeDoc = iframe.contentWindow?.document;
+
+    if (iframeDoc) {
+      iframeDoc.open();
+      iframeDoc.write(`
+          <html>
+            <head>
+              <title>Print Preview</title>
+              <style>
+                @media print {
+                  html, body {
+                    width: 100%;
+                    height: 100%;
+                    margin: 0;
+                    padding: 0;
+                    overflow: hidden;
+                  }
+                  #printSection {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    box-sizing: border-box;
+                  }
+                  .print-flex-row {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    justify-content: space-between !important;
+                  }
+                  .student-photo {
+                    width: 128px !important;
+                    height: 128px !important;
+                    object-fit: cover;
+                    border: 2px solid #d1d5db;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                  }
+                  .qr-code {
+                    width: 128px !important;
+                    height: 128px !important;
+                    object-fit: cover;
+                    border: none !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                  }
+                  table {
+                    width: 100% !important;
+                    border-collapse: collapse;
+                  }
+                  p-button, button {
+                    display: none !important;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              ${this.printSection.nativeElement.innerHTML.replace(
+        /<canvas[\s\S]*?<\/canvas>/,
+        `<img src="${qrDataURL}" class="qr-code" alt="QR Code">`
+      )}
+            </body>
+          </html>
+        `);
+      iframeDoc.close();
+
+      // Trigger print dialog
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+
+      // Remove iframe after printing
+      iframe.addEventListener('afterprint', () => {
+        document.body.removeChild(iframe);
+      });
+    }
   }
+
   handleDialogCancel() {
     this.dialogRef.close(false);
   }
