@@ -106,7 +106,7 @@ export class StudentsComponent implements OnInit {
       closable: false,
       modal: true,
       height: 'auto',
-      width: utils.isMobile() ? '95%' : '40%',
+      width: utils.isMobile() ? '95%' : '25%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Student' : 'Add New Student',
     });
@@ -162,7 +162,7 @@ export class StudentsComponent implements OnInit {
       data: rowData,
       closable: false,
       modal: true,
-      width: utils.isMobile() ? '95%' : '35%',
+      width: utils.isMobile() ? '95%' : '28%',
       styleClass: 'hallticket-dialog',
       header: 'Admit Card',
     });
