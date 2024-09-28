@@ -69,6 +69,7 @@ export class HallticketComponent implements OnInit, AfterViewInit {
       link.click();
     }
   }
+
   print() {
     if (!this.barcodeCanvas || !this.barcodeCanvas.nativeElement) {
       console.error('Barcode canvas element is not available');
@@ -98,22 +99,16 @@ export class HallticketComponent implements OnInit, AfterViewInit {
               @media print {
                 html, body {
                   width: 100%;
-                  height: 100%;
+                  height: auto; /* Adjusted to prevent overflow */
                   margin: 0;
                   padding: 0;
                   font-family: 'Arial', sans-serif;
                   background-color: #f9f9f9;
                 }
                 #printSection {
-                  width: 100%;
-                  margin: 0;
-                  padding: 0;
-                  box-sizing: border-box;
-                }
-                .hall-ticket {
-                  width: 800px;
+                  width: 900px; /* Increased width for the overall section */
                   margin: 20px auto;
-                  padding: 20px;
+                  padding: 10px; /* Reduced padding */
                   background-color: #fff;
                   border: 2px solid #ddd;
                   border-radius: 8px;
@@ -121,58 +116,54 @@ export class HallticketComponent implements OnInit, AfterViewInit {
                 }
                 .hall-ticket-header {
                   text-align: center;
-                  margin-bottom: 20px;
+                  margin-bottom: 10px; /* Reduced margin */
                 }
                 .hall-ticket-header h3 {
-                  font-size: 2em;
+                  font-size: 1.8em; /* Reduced font size */
                   color: #333;
                   font-weight: bold;
                 }
                 .image-barcode-details {
                   display: flex;
-                  justify-content: space-between;
                   align-items: flex-start;
-                  padding: 20px;
-                  background-color: #f4f4f4;
-                  border: 1px solid #ddd;
+                  margin-bottom: 0;
+                  border: 1px solid #ddd; /* Border for image and barcode section */
+                  padding: 10px;
                   border-radius: 4px;
-                  margin-bottom: 20px;
                 }
                 .image-barcode {
                   display: flex;
                   flex-direction: column;
                   align-items: center;
+                  margin-right: 30px; /* Increased margin for spacing */
+                  width: 200px; /* Increased width for the image and barcode section */
                 }
                 .image-barcode img.student-photo {
-                  width: 128px;
-                  height: 128px;
+                  width: 140px; /* Increased width for the student photo */
+                  height: 140px; /* Increased height for the student photo */
                   object-fit: cover;
-                  border: 2px solid #ddd;
+                  border: 1px solid #ddd; /* Border for the student photo */
                   border-radius: 4px;
-                  margin-bottom: 10px;
+                  margin-bottom: 5px; /* Reduced margin */
                 }
                 .image-barcode img.barcode {
-                  width: 100%;
-                  height: auto;
+                  width: 200px; /* Increased width for barcode */
+                  height: auto; /* Maintain aspect ratio */
                   object-fit: contain;
-                  margin-top: 10px;
+                  margin: 5px 0; /* Margin for spacing */
                 }
-                .student-basic-info {
+                .student-details {
                   flex: 1;
-                  margin-left: 20px;
-                }
-                .student-basic-info p {
-                  margin: 5px 0;
-                  font-size: 1em;
-                  color: #333;
+                  margin-bottom: 0;
                 }
                 .student-details table {
                   width: 100%;
                   border-collapse: collapse;
+                  margin-bottom: 0; /* Remove margin at the bottom */
                 }
                 .student-details th, .student-details td {
-                  padding: 8px 12px;
-                  border: 1px solid #ddd;
+                  padding: 8px 10px; /* Adjusted padding */
+                  border: 1px solid #ddd; /* Unified border for table cells */
                   text-align: left;
                 }
                 .student-details th {
@@ -193,7 +184,7 @@ export class HallticketComponent implements OnInit, AfterViewInit {
             </style>
           </head>
           <body>
-            <div id="printSection" class="hall-ticket">
+            <div id="printSection">
               <div class="hall-ticket-header">
                 <h3>Hall Ticket</h3>
               </div>
@@ -202,24 +193,40 @@ export class HallticketComponent implements OnInit, AfterViewInit {
                   <img src="${this.hallTicketData.studentPhoto}" class="student-photo" alt="Student Photo">
                   <img src="${barcodeDataURL}" class="barcode" alt="Barcode">
                 </div>
-                <div class="student-basic-info">
-                  <p><strong>Hall Ticket Number:</strong> ${this.hallTicketData.hallTicketNumber}</p>
-                  <p><strong>Center:</strong> ${this.hallTicketData.center}</p>
-                  <p><strong>Group:</strong> ${this.hallTicketData.group}</p>
-                  <p><strong>Level:</strong> ${this.hallTicketData.level}</p>
+                <div class="student-details">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Hall Ticket Number</th>
+                        <td>${this.hallTicketData.hallTicketNumber}</td>
+                      </tr>
+                      <tr>
+                        <th>Center</th>
+                        <td>${this.hallTicketData.center}</td>
+                      </tr>
+                      <tr>
+                        <th>Group</th>
+                        <td>${this.hallTicketData.group}</td>
+                      </tr>
+                      <tr>
+                        <th>Level</th>
+                        <td>${this.hallTicketData.level}</td>
+                      </tr>
+                      <tr>
+                        <th>Instructor</th>
+                        <td>${this.hallTicketData.instructorName}</td>
+                      </tr>
+                      <tr>
+                        <th>Exam Center</th>
+                        <td>${this.hallTicketData.examCenter}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
               <div class="student-details">
                 <table>
                   <tbody>
-                    <tr>
-                      <th>Instructor</th>
-                      <td>${this.hallTicketData.instructorName}</td>
-                    </tr>
-                    <tr>
-                      <th>Exam Center</th>
-                      <td>${this.hallTicketData.examCenter}</td>
-                    </tr>
                     <tr>
                       <th>Batch Date & Time</th>
                       <td>${this.hallTicketData.batchDate.toLocaleString()}</td>
@@ -254,7 +261,6 @@ export class HallticketComponent implements OnInit, AfterViewInit {
       });
     }
   }
-
 
 
   handleDialogCancel() {
