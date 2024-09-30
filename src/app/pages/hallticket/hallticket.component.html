@@ -1,1 +1,37 @@
-<p>hallticket works!</p>
+<div class="hallticket-container page-container">
+    <div
+        class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5">
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="franchiseList">Franchise</label>
+            <p-dropdown appendTo="body" inputId="franchiseList" [options]="franchiseList"
+                [loading]="isFranchiseListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedFranchise"
+                [disabled]="isSearchActionLoading" ariaLabelledBy="franchiseName" placeholder="Select"
+                (onChange)="handleOnFranchiseChange($event)" optionValue="franchiseId" optionLabel="franchiseName"
+                [filter]="true" filterBy="franchiseName" [showClear]="false" />
+        </div>
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="instructorId">Instructor Name</label>
+            <p-dropdown appendTo="body" inputId="instructorList" [options]="instructorList"
+                [loading]="isInstructorListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedInstructor"
+                [disabled]="isSearchActionLoading" ariaLabelledBy="instructorName" placeholder="Select"
+                (onChange)="handleOnInstructorNameChange($event)" optionValue="instructorId"
+                optionLabel="instructorName" [filter]="true" filterBy="instructorName" [showClear]="false" />
+        </div>
+        <div class="flex flex-col items-start w-full max-w-48">
+            <label for="instructorId">Exam center</label>
+            <p-dropdown appendTo="body" inputId="examCenterList" [options]="examCenterList"
+                [loading]="isExamCenterLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedExamCenter"
+                [disabled]="isSearchActionLoading" ariaLabelledBy="examCenterName" placeholder="Select"
+                (onChange)="handleOnExamCanterChange($event)" optionValue="examCenterId" optionLabel="examCenterName"
+                [filter]="true" filterBy="examCanterName" [showClear]="false" />
+        </div>
+        <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="isSearchDisabled || isSearchActionLoading"
+            icon="pi pi-search" styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>
+
+<div class="table-container">
+    <app-data-grid [colDefs]="colDefs" [showAddButton]="true" [dataSource]="tableDataSource"
+        (onAddAction)="handleAddEditAction()"></app-data-grid>
+</div>
