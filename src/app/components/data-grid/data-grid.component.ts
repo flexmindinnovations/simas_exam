@@ -17,7 +17,6 @@ import autoTable from 'jspdf-autotable';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
-import { HallticketComponent } from '../hallticket/hallticket.component';
 
 @Component({
   selector: 'app-data-grid',

@@ -9,7 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AddEditStudentComponent } from '../../modals/add-edit-student/add-edit-student.component';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { HallticketComponent } from '../../components/hallticket/hallticket.component';
+import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
 
 @Component({
   selector: 'app-students',
@@ -158,7 +158,7 @@ export class StudentsComponent implements OnInit {
 
   handleGenerateOperation(data: any) {
     const { rowData, rowIndex } = data;
-    this.dialogRef = this.dialogService.open(HallticketComponent, {
+    this.dialogRef = this.dialogService.open(HallticketModalComponent, {
       data: rowData,
       closable: false,
       modal: true,

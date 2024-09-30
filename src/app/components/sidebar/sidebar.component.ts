@@ -94,6 +94,18 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const data = changes['permissionList'].currentValue;
+    const hallticket = {
+      "permissionId": 16,
+      "moduleId": 16,
+      "moduleName": "Hallticket",
+      "roleId": 1,
+      "canView": true,
+      "canAdd": true,
+      "canEdit": true,
+      "canDelete": true,
+      "id": 181
+    }
+    data.push(hallticket);
     if (data) {
       const menuItems = MENU_ITEMS;
       const filteredMenuItems = menuItems.filter((menuItem: MenuItem) => {
@@ -107,7 +119,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
             const superMenuItems = filteredMenuItems.slice(0, 9);
             const extraMenuItems = filteredMenuItems.slice(9);
             const moreMenuItem = {
-              id: 17,
+              id: 18,
               title: 'More',
               label: 'More',
               moduleName: 'more',

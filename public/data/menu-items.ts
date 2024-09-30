@@ -128,5 +128,13 @@ export const MENU_ITEMS: Array<MenuItem> = [
         icon: 'pi pi-shield',
         isActive: false,
         route: 'roles'
-    }
+    },
+    {
+        id: 17,
+        title: 'Hallticket',
+        moduleName: 'Hallticket',
+        icon: 'pi pi-id-card',
+        isActive: false,
+        route: 'hallticket'
+    },
 ]

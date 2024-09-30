@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import JSBarcode from 'jsbarcode';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 
 @Component({
-  selector: 'app-hallticket',
+  selector: 'app-hallticket-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule],
-  templateUrl: './hallticket.component.html',
-  styleUrls: ['./hallticket.component.scss'],
+  templateUrl: './hallticket-modal.component.html',
+  styleUrl: './hallticket-modal.component.scss'
 })
-export class HallticketComponent implements OnInit, AfterViewInit {
+export class HallticketModalComponent implements OnInit, AfterViewInit {
   @ViewChild('barcodeCanvas', { static: false }) barcodeCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('printSection', { static: false }) printSection!: ElementRef<HTMLDivElement>;
   hallTicketData = {

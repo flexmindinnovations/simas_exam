@@ -17,6 +17,7 @@ import { StudentExamComponent } from "../student-exam/student-exam.component";
 import { ReportsComponent } from "../reports/reports.component";
 import { RolesComponent } from "../roles/roles.component";
 import { CompetitionComponent } from "../competition/competition.component";
+import { HallticketComponent } from "../hallticket/hallticket.component";
 
 export const layoutRoutes: Routes = [
     {
@@ -102,6 +103,11 @@ export const layoutRoutes: Routes = [
                 path: 'roles',
                 component: RolesComponent,
                 data: { animation: 'RolesComponent' }
+            },
+            {
+                path: 'hallticket',
+                component: HallticketComponent,
+                data: { animation: 'HallticketComponent' }
             },
             {
                 path: '**',
