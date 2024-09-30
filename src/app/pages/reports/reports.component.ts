@@ -19,11 +19,15 @@ import { StudentService } from '../../services/student/student.service';
 import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 import { LevelService } from '../../services/level/level.service';
 import { Observable, Subject } from 'rxjs';
+import { PanelModule } from 'primeng/panel';
+import { ChipModule } from 'primeng/chip';
+import { ReportsService } from '../../services/reports/reports.service';
+
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule],
   providers: [DialogService],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss'
@@ -45,6 +49,7 @@ export class ReportsComponent implements OnInit {
   studentListLoading: boolean = false;
   levelListLoading: boolean = false;
   roundListLoading: boolean = false;
+  isPanelCollapsed: boolean = false;
 
   selectedFranchise: any = undefined;
   selectedInstructor: any = undefined;
@@ -58,7 +63,8 @@ export class ReportsComponent implements OnInit {
     private instructorService: InstructorService,
     private studentService: StudentService,
     private examTypeService: ExamTypeService,
-    private levelService: LevelService
+    private levelService: LevelService,
+    private reportService: ReportsService
   ) { }
 
   ngOnInit(): void {
@@ -81,7 +87,11 @@ export class ReportsComponent implements OnInit {
           apiCall = this.instructorService.getInstructorList();
           break;
         case ReportCriteriaText.STUDENT:
-          apiCall = this.studentService.getStudentList();
+          const payloadByFranchiseIdAndInstructorId = {
+            franchiseId: this.selectedFranchise,
+            instructorId: this.selectedInstructor
+          }
+          apiCall = this.reportService.getStudentListFromExamPaperFranchiseAndInstructorWise(payloadByFranchiseIdAndInstructorId);
           break;
         case ReportCriteriaText.EXAM_TYPE:
           apiCall = this.examTypeService.getExamTypeList();
@@ -115,6 +125,7 @@ export class ReportsComponent implements OnInit {
 
   async handleListItemChange(event: DropdownChangeEvent, src: ReportCriteria) {
     const value = event.value;
+    let studentInfo: any;
     switch (src) {
       case ReportCriteriaText.FRANCHISE:
         this.selectedFranchise = value;
@@ -126,23 +137,31 @@ export class ReportsComponent implements OnInit {
         this.studentList = studentList.map((item: any) => {
           item['fullName'] = item?.studentFirstName + ' ' + item?.studentLastName;
           return item;
-        })
+        });
         break;
       case ReportCriteriaText.STUDENT:
         this.selectedStudent = value;
-        this.examTypeList = await this.getDropdownData('examType');
+        studentInfo = this.studentList.find((student: any) => student.studentId === this.selectedStudent);
+        if (studentInfo) {
+          this.examTypeList = studentInfo?.examTypeList;
+        }
         break;
       case ReportCriteriaText.EXAM_TYPE:
-        this.selectedExamType = value;
-        this.levelNameList = await this.getDropdownData('level');
+        if (this.selectedStudent > 0) {
+          this.selectedExamType = value;
+          studentInfo = this.studentList.find((student: any) => student.studentId === this.selectedStudent);
+          if (studentInfo) {
+            this.levelNameList = studentInfo?.levelList;
+          }
+        }
         break;
       case ReportCriteriaText.LEVEL:
-        this.selectedLevel = value;
-        this.roundListLoading = true;
-        this.selectedLevel = event?.value;
-        const roundList = this.levelNameList.filter((each) => each.levelId === value);
-        if (roundList?.length) this.roundNameList = roundList[0]?.examRoundList;
-        this.roundListLoading = false;
+        if (this.selectedStudent > 0) {
+          studentInfo = this.studentList.find((student: any) => student.studentId === this.selectedStudent);
+          if (studentInfo) {
+            this.roundNameList = studentInfo?.roundList;
+          }
+        }
         break;
       case ReportCriteriaText.ROUND:
         this.selectedRound = value;
@@ -151,6 +170,7 @@ export class ReportsComponent implements OnInit {
   }
 
   handleSearchAction() {
+    // this.isSearchActionLoading = true;
     const payload = {
       selectedFranchise: this.selectedFranchise ?? 0,
       selectedInstructor: this.selectedInstructor ?? 0,
@@ -159,6 +179,22 @@ export class ReportsComponent implements OnInit {
       selectedLevel: this.selectedLevel ?? 0,
       selectedRound: this.selectedRound ?? 0,
     }
+    const payloadByFranchiseIdAndInstructorId = {
+      franchiseId: payload.selectedFranchise,
+      instructorId: payload.selectedInstructor
+    }
+    // const apiCall = this.reportService.getStudentListFromExamPaperFranchiseAndInstructorWise(payloadByFranchiseIdAndInstructorId);
+    // apiCall.subscribe({
+    //   next: (response: any) => {
+    //     console.log('response: ', response);
+
+    //     this.isSearchActionLoading = false;
+    //   },
+    //   error: (error: HttpErrorResponse) => {
+    //     this.isSearchActionLoading = false;
+    //     utils.setMessages(error.message, 'error');
+    //   }
+    // })
   }
 
   toggleLoading(listName: ReportCriteria | null = null, isLoading: boolean) {

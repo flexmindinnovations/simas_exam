@@ -57,6 +57,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
     effect(() => {
       this.isUserSessionEnded = utils.isUserSessionEnded();
+      this.cdref.detectChanges();
     })
 
     effect(() => {
