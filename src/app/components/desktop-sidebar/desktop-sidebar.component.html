@@ -1,0 +1,67 @@
+<div class="header lg:hidden xl:hidden 2xl:hidden 2x:hidden">
+    <div class="logo-container w-full flex items-center justify-center border-0 border-b border-solid border-b-transparent relative lg:rounded-l-2xl"
+        [ngClass]="isMobile ? 'logo' : 'large'">
+        <p class="h-9 w-max bg-transparent text-white flex items-center justify-center tracking-widest font-bold">
+            <img [src]="logoSrc" alt="Logo" class="shadow-2xl h-full w-full object-fill rounded-full" />
+            <span *ngIf="sideBarOpened" class="min-w-32 text-center delay-500 opacity-1">
+                Simas <br /> Academy
+            </span>
+        </p>
+        <div class="actions flex items-center justify-center gap-4 absolute -top-4 md:-top-12 md:-right-4 -right-5">
+            <p-button [text]="true" styleClass="action lg:hidden" class="w-full" icon="pi pi-times" severity="warning"
+                [pTooltip]="'Close Sidebar'" [ngClass]="isMobile || isTablet ? 'flex' : 'hidden'" iconPos="right"
+                (onClick)="closeSidebar($event)" />
+        </div>
+    </div>
+</div>
+
+<div class="list overflow-hidden flex items-start overflow-y-auto lg:mt-12">
+    <ul class="p-0 w-full flex flex-col items-start justify-center" [@listAnimation]>
+        <ng-container *ngFor="let item of menuItems.slice(0, 7); let index = index;">
+            <li class="w-full flex lg:flex-col items-center justify-start list-none gap-1.5 my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:min-h-12 lg:justify-center text-white rounded-full"
+                [ngClass]="{
+                    'active': item?.isActive && !isMobile,
+                    'inactive': !item?.isActive,
+                    'active-mobile': item?.isActive && isMobile,
+                    'first': index === 0
+                }" (click)="handleItemClick(item)" [pTooltip]="item?.title">
+                <!-- Icon with bounce and scale effect if active -->
+                <i class="{{item?.icon}} text-sm transition-all duration-200 ease-in-out z-10 self-center"
+                    [ngClass]="item?.isActive ? 'scale-105' : ''"
+                    style="display: flex; align-items: center; justify-content: center;"></i>
+
+                <!-- Title next to the icon -->
+                <p class="m-0 !text-[10px] tracking-wider self-center z-10">{{ item?.title }}</p>
+            </li>
+        </ng-container>
+
+        <ng-container *ngIf="menuItems.length > MENU_THRESHOLD">
+            <li id="moreMenu"
+                class="w-full flex lg:flex-col items-center justify-start list-none my-1 cursor-pointer py-1.5 min-h-10 min-w-12 pl-4 pr-3.5 lg:min-h-12 lg:justify-center text-white rounded-full"
+                [ngClass]="{
+                    'active': isMoreMenuActive && !isMobile,
+                    'inactive': !isMoreMenuActive,
+                    'active-mobile': isMoreMenuActive && isMobile
+                }" (click)="moreMenu.toggle($event)" pTooltip="Click to show More items">
+                <!-- Icon with bounce and scale effect if active -->
+                <i class="{{menuItems[menuItems.length - 1].icon}} text-base transition-all duration-200 ease-in-out z-10 self-center"
+                    [ngClass]="isMoreMenuActive ? 'scale-105' : ''"
+                    style="display: flex; align-items: center; justify-content: center;"></i>
+
+                <!-- 'More' text -->
+                <p class="m-0 !text-[10px] tracking-wider self-center z-10">More</p>
+            </li>
+
+            <p-menu #moreMenu [popup]="true" [model]="moreMenuItems" (onShow)="onMoreMenuShow()">
+                <ng-template pTemplate="item" let-item>
+                    <a [routerLink]="item.route" [attr.data-active]="item.isActive"
+                        class="p-menuitem-link rounded-md my-1"
+                        [ngClass]="item?.isActive ? 'bg-ph-100 text-ph-600' : ''">
+                        <span [class]="item.icon"></span>
+                        <span class="ml-2">{{ item.label }}</span>
+                    </a>
+                </ng-template>
+            </p-menu>
+        </ng-container>
+    </ul>
+</div>

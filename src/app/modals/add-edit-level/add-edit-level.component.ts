@@ -12,7 +12,6 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { SharedService } from '../../services/shared/shared.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { LevelService } from '../../services/level/level.service';
-import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 

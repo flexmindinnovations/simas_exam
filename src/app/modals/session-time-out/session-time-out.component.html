@@ -1,0 +1,8 @@
+<p-dialog header="Session Timeout" [modal]="true" [closable]="false" [(visible)]="visible">
+    <span class="p-text-secondary block mb-5">
+        Your session has expired due to inactivity. Please log in again to continue.
+    </span>
+    <div class="flex justify-end gap-2">
+        <p-button label="Login" (onClick)="redirectToLogin()" />
+    </div>
+</p-dialog>

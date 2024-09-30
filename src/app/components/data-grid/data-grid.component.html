@@ -6,8 +6,9 @@
         <div class="search w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[30%] 2x:w-[30%]">
             <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
                 <i class="pi pi-search"></i>
-                <input type="text" class="w-96" pInputText placeholder="Enter text to filter grid" type="text"
-                    (input)="onFilterValueChange($event)" [(ngModel)]="searchValue" pInputText />
+                <input type="text" class="w-96 focus:outline-none active:outline-none focus:border-none" pInputText
+                    placeholder="Enter text to filter grid" type="text" (input)="onFilterValueChange($event)"
+                    [(ngModel)]="searchValue" pInputText />
             </span>
         </div>
         <div class="options flex items-center justify-end w-full">
@@ -209,17 +210,7 @@
 } @else {
 <div class="w-full h-full flex items-center justify-center">
     @if (isLoading) {
-    <div class="select-none flex items-end justify-center">
-        <i class="pi pi-spin pi-spinner text-xs space-x-1 mb-1 mr-1"></i> Loading
-        <div class="mb-1 flex gap-1 ml-1">
-            <span
-                class='h-[3px] w-[3px] bg-black dark:bg-white rounded-full animate-bounce [animation-delay:-0.3s]'></span>
-            <span
-                class='h-[3px] w-[3px] bg-black dark:bg-white rounded-full animate-bounce [animation-delay:-0.15s]'></span>
-            <span
-                class='h-[3px] w-[3px] bg-black dark:bg-white rounded-full animate-bounce [animation-delay:-0.30s]'></span>
-        </div>
-    </div>
+    <app-loading [showLoader]="isLoading"></app-loading>
     } @else {
     <div class="w-full h-full flex items-center justify-center">
         <p class="select-none opacity-80">

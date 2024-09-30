@@ -138,7 +138,7 @@ export class LevelComponent {
     if (this.isEditMode) utils.isTableEditAction.set(true);
     else utils.isAddActionLoading.set(true);
     this.dialogRef = this.dialogService.open(AddEditLevelComponent, {
-      data: this.isEditMode ? this.filterExamInfo(data?.levelId) : { isEditMode: this.isEditMode },
+      data: this.isEditMode ? this.filterLevelInfo(data?.levelId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
       height: 'auto',
@@ -163,7 +163,8 @@ export class LevelComponent {
       }
     })
   }
-  filterExamInfo(rowId: number) {
+
+  filterLevelInfo(rowId: number) {
     const filteredItem = this.levelList.filter((item) => item.levelId
       === rowId)[0];
     return { ...filteredItem, isEditMode: this.isEditMode };

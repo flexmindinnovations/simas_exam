@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examType' | 'examPaper' | 'questionBank' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper';
 
 export type ApiCallConfig = {
   settings: {};
@@ -70,6 +70,14 @@ export type ApiCallConfig = {
     updateExam: string;
     deleteExam: string;
   };
+  examCenter: {
+    examCenterList: string;
+    examCenterById: string;
+    batchTimeSlotListByExamCenterId: string;
+    saveExamCenter: string;
+    updateExamCenter: string;
+    deleteExamCenter: string;
+  };
   examType: {
     examTypeList: string;
     examTypeById: string;
@@ -111,6 +119,11 @@ export type ApiCallConfig = {
     competitionById: string;
     saveCompetition: string;
     updateCompetition: string;
+  };
+  reports: {
+    examPaperExamTypeAndLevelwise: string;
+    studentListFromExamPaperLevelAndRoundWise: string;
+    studentListFromExamPaperFranchiseAndInstructorWise: string;
   }
 }
 @Injectable({
@@ -188,6 +201,16 @@ export class AppConfigService {
       updateExam: `${this.hostUrl}/Exam/updateExam`,
       deleteExam: `${this.hostUrl}/Exam/Delete/{{id}}`,
     },
+    // /api/ExamCenter/getBatchTimeSlotListByExamCenterId/{examCenterId}
+
+    examCenter: {
+      examCenterList: `${this.hostUrl}/ExamCenter/getExamCenterList`,
+      examCenterById: `${this.hostUrl}/ExamCenter/getExamCenterById/{{id}}`,
+      batchTimeSlotListByExamCenterId: `${this.hostUrl}/ExamCenter/getBatchTimeSlotListByExamCenterId/{{id}}`,
+      saveExamCenter: `${this.hostUrl}/ExamCenter/saveExamCenter`,
+      updateExamCenter: `${this.hostUrl}/ExamCenter/updateExamCenter/{{id}}`,
+      deleteExamCenter: `${this.hostUrl}/ExamCenter/Delete/{{id}}`,
+    },
     examType: {
       examTypeList: `${this.hostUrl}/ExamType/getExamTypeList`,
       examTypeById: `${this.hostUrl}/ExamType/getExamTypeById/{{id}}`,
@@ -229,8 +252,12 @@ export class AppConfigService {
       competitionById: `${this.hostUrl}/Compitition/getCompititionById/{{id}}`,
       saveCompetition: `${this.hostUrl}/Compitition/SaveCompititionMaster`,
       updateCompetition: `${this.hostUrl}/Compitition/updateCompititionMaster`,
+    },
+    reports: {
+      examPaperExamTypeAndLevelwise: `${this.hostUrl}/Report/getExamPaperExamTypeAndLevelwise`,
+      studentListFromExamPaperLevelAndRoundWise: `${this.hostUrl}/Report/getStudentListFromExamPaperLevelAndRoundWise`,
+      studentListFromExamPaperFranchiseAndInstructorWise: `${this.hostUrl}/Report/getStudentListFromExamPaperFranchiseAndInstructorWise`
     }
-
   }
 
   constructor() { }

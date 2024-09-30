@@ -17,11 +17,12 @@ import autoTable from 'jspdf-autotable';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
   styleUrl: './data-grid.component.scss'
@@ -58,8 +59,8 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   dialogRef: DynamicDialogRef | undefined;
 
   downloadOptions: MenuItem[] = [];
-  permissionList: any[] = [];
   currentModule: any;
+  selectedRoute: any;
 
   downloadMenuId = new Date().getTime();
 
@@ -86,11 +87,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     effect(() => {
       this.isMobile = utils.isMobile();
     })
-
-    effect(() => {
-      this.permissionList = utils.permissionList();
-    })
-
     effect(() => {
       this.addButtonTitle = utils.addButtonTitle();
     })
@@ -107,6 +103,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
       if (rowIndex > -1) {
         this.dataSource[rowIndex]['isGenerateActionLoading'] = false;
       }
+      this.selectedRoute = utils.activeItem();
     })
 
     effect(() => {
@@ -165,16 +162,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   async setModulePermissions() {
     let activeModule: any;
     const permissionList = await db.permissiontem.toArray();
-    let currentRoute = window.location.href;
-    currentRoute = currentRoute.substring(currentRoute.lastIndexOf('/') + 1, currentRoute.length);
-    if (currentRoute.includes('-')) {
-      currentRoute = currentRoute.split('-')
-        .map((char) => char.charAt(0)?.toUpperCase() + char.slice(1))
-        .join('');
-    } else {
-      currentRoute = currentRoute.charAt(0).toUpperCase() + currentRoute.slice(1);
-    }
-    activeModule = permissionList.find((item: any) => item.moduleName === currentRoute);
+    activeModule = permissionList.find((item: any) => item.moduleName === this.selectedRoute?.moduleName);
     this.currentModule = activeModule;
   }
 

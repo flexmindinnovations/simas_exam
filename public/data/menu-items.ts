@@ -27,6 +27,14 @@ export const MENU_ITEMS: Array<MenuItem> = [
     },
     {
         id: 4,
+        title: 'Exam Center',
+        moduleName: 'Exam Center',
+        icon: 'pi pi-clipboard',
+        isActive: false,
+        route: 'exam-center'
+    },
+    {
+        id: 5,
         title: 'Exam Report',
         moduleName: 'ExamReport',
         icon: 'pi pi-chart-line',
@@ -34,7 +42,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'exam-report'
     },
     {
-        id: 5,
+        id: 6,
         title: 'Franchise',
         moduleName: 'Franchise',
         icon: 'pi pi-briefcase',
@@ -42,7 +50,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'franchise'
     },
     {
-        id: 6,
+        id: 7,
         title: 'Instructor',
         moduleName: 'Instructor',
         icon: 'pi pi-user',
@@ -50,7 +58,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'instructor'
     },
     {
-        id: 7,
+        id: 8,
         title: 'Activation',
         moduleName: 'Activation',
         icon: 'pi pi-key',
@@ -58,7 +66,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'activation'
     },
     {
-        id: 8,
+        id: 9,
         title: 'Students',
         moduleName: 'Student',
         icon: 'pi pi-users',
@@ -66,39 +74,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'students'
     },
     {
-        id: 9,
-        title: 'Level',
-        moduleName: 'Level',
-        icon: 'pi pi-sitemap',
-        isActive: false,
-        route: 'level'
-    },
-    {
         id: 10,
-        title: 'Lesson',
-        moduleName: 'Lesson',
-        icon: 'pi pi-book',
-        isActive: false,
-        route: 'lesson'
-    },
-    {
-        id: 11,
-        title: 'Question Paper',
-        moduleName: 'QuestionPaper',
-        icon: 'pi pi-file',
-        isActive: false,
-        route: 'question-paper'
-    },
-    {
-        id: 12,
-        title: 'Question Bank',
-        moduleName: 'QuestionBank',
-        icon: 'pi pi-database',
-        isActive: false,
-        route: 'question-bank'
-    },
-    {
-        id: 13,
         title: 'Student Exam',
         moduleName: 'StudentExam',
         icon: 'pi pi-file-edit',
@@ -106,7 +82,39 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'student-exam'
     },
     {
+        id: 11,
+        title: 'Level',
+        moduleName: 'Level',
+        icon: 'pi pi-sitemap',
+        isActive: false,
+        route: 'level'
+    },
+    {
+        id: 12,
+        title: 'Lesson',
+        moduleName: 'Lesson',
+        icon: 'pi pi-book',
+        isActive: false,
+        route: 'lesson'
+    },
+    {
+        id: 13,
+        title: 'Question Paper',
+        moduleName: 'QuestionPaper',
+        icon: 'pi pi-file',
+        isActive: false,
+        route: 'question-paper'
+    },
+    {
         id: 14,
+        title: 'Question Bank',
+        moduleName: 'QuestionBank',
+        icon: 'pi pi-database',
+        isActive: false,
+        route: 'question-bank'
+    },
+    {
+        id: 15,
         title: 'Reports',
         moduleName: 'Reports',
         icon: 'pi pi-chart-bar',
@@ -114,7 +122,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'reports'
     },
     {
-        id: 15,
+        id: 16,
         title: 'Competition',
         moduleName: 'Competition',
         icon: 'pi pi-trophy',
@@ -122,7 +130,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'competition'
     },
     {
-        id: 16,
+        id: 17,
         title: 'Roles',
         moduleName: 'Roles',
         icon: 'pi pi-shield',
