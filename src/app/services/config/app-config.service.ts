@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation';
 
 export type ApiCallConfig = {
   settings: {};
@@ -125,6 +125,13 @@ export type ApiCallConfig = {
     studentListFromExamPaperLevelAndRoundWise: string;
     studentListFromExamPaperFranchiseAndInstructorWise: string;
   }
+  hallticket: {
+    getStudentHallTicketList: string;
+  },
+  batchAllocation: {
+    saveStudentBatchAllocation: string;
+  }
+
 }
 @Injectable({
   providedIn: 'root'
@@ -257,6 +264,12 @@ export class AppConfigService {
       examPaperExamTypeAndLevelwise: `${this.hostUrl}/Report/getExamPaperExamTypeAndLevelwise`,
       studentListFromExamPaperLevelAndRoundWise: `${this.hostUrl}/Report/getStudentListFromExamPaperLevelAndRoundWise`,
       studentListFromExamPaperFranchiseAndInstructorWise: `${this.hostUrl}/Report/getStudentListFromExamPaperFranchiseAndInstructorWise`
+    },
+    hallticket: {
+      getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocation`
+    },
+    batchAllocation: {
+      saveStudentBatchAllocation: `${this.hostUrl}/StudentBatchAllocation/saveStudentBatchAllocation`
     }
   }
 

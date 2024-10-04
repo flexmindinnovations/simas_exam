@@ -103,7 +103,8 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
               margin-bottom: 0;
               border: 1px solid #ddd;
               padding: 10px;
-              border-radius: 4px;
+              border-bottom:none;
+              // border-radius: 4px;
             }
             .image-barcode {
               display: flex;
@@ -117,7 +118,7 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
               height: 140px;
               object-fit: cover;
               border: 1px solid #ddd;
-              border-radius: 4px;
+              // border-radius: 4px;
               margin-bottom: 5px;
             }
             .image-barcode img.barcode {
@@ -312,8 +313,9 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                   align-items: flex-start;
                   margin-bottom: 0;
                   border: 1px solid #ddd; /* Border for image and barcode section */
+                  border-bottom: none;
                   padding: 10px;
-                  border-radius: 4px;
+                  // border-radius: 4px;
                 }
                 .image-barcode {
                   display: flex;
@@ -327,7 +329,7 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                   height: 140px; /* Height for the student photo */
                   object-fit: cover;
                   border: 1px solid #ddd; /* Border for the student photo */
-                  border-radius: 4px;
+                  // border-radius: 4px;
                   margin-bottom: 5px;
                 }
                 .image-barcode img.barcode {
@@ -347,7 +349,7 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                 }
                 .student-details th, .student-details td {
                   padding: 8px 10px;
-                  border: 1px solid #ddd; /* Unified border for table cells */
+                  border: 1px solid #ddd; /* Unified border for table cells */ 
                   text-align: left;
                   width: 50%; /* Set equal width for columns */
                 }

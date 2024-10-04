@@ -19,6 +19,7 @@ import { RolesComponent } from "../roles/roles.component";
 import { CompetitionComponent } from "../competition/competition.component";
 import { HallticketComponent } from "../hallticket/hallticket.component";
 import { ExamCenterComponent } from "../exam-center/exam-center.component";
+import { BatchAllocationComponent } from "../batch-allocation/batch-allocation.component";
 
 export const layoutRoutes: Routes = [
     {
@@ -114,6 +115,11 @@ export const layoutRoutes: Routes = [
                 path: 'hallticket',
                 component: HallticketComponent,
                 data: { animation: 'HallticketComponent' }
+            },
+            {
+                path: 'batch-allocation',
+                component: BatchAllocationComponent,
+                data: { animation: 'BatchAllocationComponent' }
             },
             {
                 path: '**',

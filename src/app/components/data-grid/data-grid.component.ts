@@ -18,11 +18,13 @@ import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
 import { LoadingComponent } from '../loading/loading.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { CustomCheckboxComponent } from '../custom-checkbox/custom-checkbox.component';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent, CheckboxModule, CustomCheckboxComponent],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
   styleUrl: './data-grid.component.scss'
@@ -54,6 +56,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
   @Output() onGenerateAction: EventEmitter<any> = new EventEmitter();
+  @Output() selectedRowsChange: EventEmitter<any[]> = new EventEmitter();
 
   paginatorPosition = [100, 180];
   dialogRef: DynamicDialogRef | undefined;
@@ -61,8 +64,10 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   downloadOptions: MenuItem[] = [];
   currentModule: any;
   selectedRoute: any;
-
+  selectedLines: any;
   downloadMenuId = new Date().getTime();
+  allRowsSelected: boolean = false;
+  selectedRows: any[] = [];
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -123,15 +128,19 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     if (this.isTreeList()) {
       this.dataSource = this.transformDataToTreeNodes(this.dataSource);
     }
-    const dataSource = this.dataSource.map((item: any) => {
-      item['isEditActionLoading'] = false;
-      item['isDeleteActionLoading'] = false;
-      item['isGenerateActionLoading'] = false;
-      return item;
-    });
-    this.dataSource = dataSource;
-    this.showPaginator = this.dataSource.length > 15 ? true : false;
+
+    // Ensure each item has a 'selected' property
+    this.dataSource = this.dataSource.map((item: any) => ({
+      ...item,
+      studentId: item.studentId || item.id, // Make sure studentId exists
+      isEditActionLoading: false,
+      isDeleteActionLoading: false,
+      isGenerateActionLoading: false,
+      selected: item.selected || false // Initialize the selected property
+    }));
+    this.showPaginator = this.dataSource.length > 15;
   }
+
 
   ngAfterViewInit(): void {
     const paginatorElement = document.getElementsByClassName('p-paginator-rpp-options')[0];
@@ -285,6 +294,46 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   getFrozenCols(column: any) {
     return column.field === 'action' ? true : false;
+  }
+
+  selectAllRows(event: boolean) {
+    if (event) {
+      // Select all rows
+      this.dataSource.forEach((row: any) => {
+        row.selected = true;
+      });
+      this.selectedRows = [...this.dataSource]; // Update selectedRows
+      this.allRowsSelected = true;
+    } else {
+      // Deselect all rows
+      this.dataSource.forEach((row: any) => {
+        row.selected = false;
+      });
+      this.selectedRows = []; // Clear selectedRows
+      this.allRowsSelected = false;
+    }
+
+    // Emit the selected rows
+    this.selectedRowsChange.emit(this.selectedRows);
+  }
+  selectRow(event: boolean, rowData: any) {
+    rowData.selected = event;
+
+    if (event) {
+      // Add to selectedRows if checked
+      if (!this.selectedRows.includes(rowData)) {
+        this.selectedRows.push(rowData);
+      }
+    } else {
+      // Remove from selectedRows if unchecked
+      this.selectedRows = this.selectedRows.filter((row) => row !== rowData);
+    }
+
+    // Update the allRowsSelected state
+    this.allRowsSelected = this.dataSource.every((row: any) => row.selected);
+
+    // Emit the selected rows
+    this.selectedRowsChange.emit(this.selectedRows);
   }
 }
 

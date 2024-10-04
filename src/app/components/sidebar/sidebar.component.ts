@@ -71,7 +71,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
         const currentUrl = this.getCurrentUrl();
         currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
       }
-    });
+    }, { allowSignalWrites: true });
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
@@ -102,6 +102,18 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       "id": 181
     }
     data.push(hallticket);
+    const batchallocation = {
+      "permissionId": 17,
+      "moduleId": 17,
+      "moduleName": "BatchAllocation",
+      "roleId": 1,
+      "canView": true,
+      "canAdd": true,
+      "canEdit": true,
+      "canDelete": true,
+      "id": 182
+    }
+    data.push(batchallocation);
     if (data) {
       this.filterMenuItems(data);
       this.splitMenuItems();
@@ -137,7 +149,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 17,
+      id: 20,
       title: 'More',
       label: 'More',
       moduleName: 'more',

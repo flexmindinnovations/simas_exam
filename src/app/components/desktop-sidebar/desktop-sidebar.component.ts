@@ -65,7 +65,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
         const currentUrl = this.getCurrentUrl();
         currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
       }
-    });
+    }, { allowSignalWrites: true });
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();

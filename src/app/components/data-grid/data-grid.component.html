@@ -143,64 +143,53 @@
     <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
         (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
         [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-        [globalFilterFields]="getGlobalFilters()" sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
-        [rowsPerPageOptions]="[15, 30, 50]" styleClass="p-datatable-sm"
-        [ngClass]="dataSource?.length > 0 ? 'full' : 'empty'" [tableStyle]="{'min-width': isMobile ? '50%' : '50rem'}">
+        [globalFilterFields]="getGlobalFilters()" sortMode="multiple"
+        [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'" [rowsPerPageOptions]="[15, 30, 50]"
+        styleClass="p-datatable-sm" [tableStyle]="{'min-width': isMobile ? '50%' : '80%'}" [(selection)]="selectedRows">
+
         <ng-template pTemplate="header" let-columns>
             <tr>
+                <th>
+                    <app-custom-checkbox [(ngModel)]="allRowsSelected"
+                        (change)="selectAllRows($event)"></app-custom-checkbox>
+                </th>
                 <th *ngFor="let col of columns" [pSortableColumn]="col.field"
                     [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
-                    @if(col.field === 'action') {
-                    <div class="w-full flex items-center justify-center gap-1">
-                        {{col.header}}
-                    </div>
-                    } @else {
-                    {{ col.header }}
-                    <p-sortIcon [field]="col.field" />
-                    }
+                    <p class="m-0 flex items-center justify-start">
+                        <span>{{ col.header }}</span>
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </p>
                 </th>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
             <tr class="w-full h-10">
-                @for (item of colDefs; track $index) {
-                <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
-                    @if(item.field === 'status') {
+                <td>
+                    <app-custom-checkbox [(ngModel)]="rowData.selected"
+                        (change)="selectRow($event, rowData)"></app-custom-checkbox>
+                </td>
+                <td *ngFor="let col of columns" [ngClass]="col.field === 'action' ? 'action-cell' : 'data-cell'">
+                    @if(col.field === 'status') {
                     <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
-                        [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'">
-                        {{rowData[item.field] === '1' ? 'Active' : 'Inactive'}}
+                        [ngClass]="rowData[col.field] === '1' ? 'active' : 'inactive'">
+                        {{ rowData[col.field] === '1' ? 'Active' : 'Inactive' }}
                     </p>
-                    }@else if(item.field === 'action') {
+                    } @else if(col.field === 'action') {
                     <div class="w-full flex items-center justify-center gap-1">
-                        @if (currentModule?.canEdit) {
-                        <p-button [text]="true" icon="pi 
-                                        pi-pen-to-square" [loading]="rowData.isEditActionLoading"
-                            styleClass="table-action-btn" tooltipPosition="bottom" loadingIcon="pi pi-spin pi-spinner"
-                            pTooltip="Edit" (onClick)="handleEditOperation(rowData, rowIndex)" />
-                        }
-                        @if (currentModule?.canDelete) {
-                        <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
-                            loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)"
-                            pTooltip="Delete" [text]="true" icon="pi pi-trash" />
-                        }
-                        @if(isGenerate){
-                        <p-button [loading]="rowData.isGenerateActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                            (onClick)="handleGenerateOperation(rowData, rowIndex)" pTooltip="Generate" [text]="true"
-                            icon="pi pi-id-card" />
-                        }
+                        <p-button [text]="true" icon="pi pi-pen-to-square"
+                            (onClick)="handleEditOperation(rowData, rowIndex)" />
                     </div>
                     } @else {
-                    {{rowData[item.field]}}
+                    <p class="m-0 w-fit">{{ rowData[col.field] }}</p>
                     }
                 </td>
-                }
             </tr>
         </ng-template>
+
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td [attr.colspan]="colDefs.length ?? 5" [attr.rowspan]="colDefs.length ?? 5" class="text-center py-3">
-                    No records found.
-                </td>
+                <td [attr.colspan]="colDefs.length + 1" class="text-center py-3">No records found.</td>
             </tr>
         </ng-template>
     </p-table>

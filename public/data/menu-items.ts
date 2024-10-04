@@ -138,11 +138,19 @@ export const MENU_ITEMS: Array<MenuItem> = [
         route: 'roles'
     },
     {
-        id: 17,
-        title: 'Hallticket',
+        id: 18,
+        title: 'Hall Ticket',
         moduleName: 'Hallticket',
         icon: 'pi pi-id-card',
         isActive: false,
         route: 'hallticket'
+    },
+    {
+        id: 19,
+        title: 'Batch Allocation',
+        moduleName: 'BatchAllocation',
+        icon: 'pi pi-tags',
+        isActive: false,
+        route: 'batch-allocation'
     },
 ]
