@@ -63,8 +63,8 @@
     <div class="table-container flex flex-col">
         <app-data-grid [isGenerate]="false" [colDefs]="colDefs" [dataSource]="tableDataSource"
             (onAddAction)="handleAddEditAction()" (selectedRowsChange)="onSelectedRowsChange($event)"></app-data-grid>
-        <p-button label="Allocate Batch" (onClick)="handleAllocateBatch()" [disabled]="" icon="pi pi-tags"
-            class="ml-auto" styleClass="justify-end" severity="primary" [loading]=""
+        <p-button label="Allocate Batch" (onClick)="handleAllocateBatch()" [disabled]="!validAllocate" icon="pi pi-tags"
+            class="ml-auto" styleClass="justify-end" severity="primary" [loading]="isAllocateActionLoading"
             loadingIcon="pi pi-spin pi-spinner"></p-button>
     </div>
     }

@@ -13,39 +13,43 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-       <input type="checkbox" [checked]="checked" (change)="onCheckboxChange($event)" />
-      <ng-content></ng-content>
-  `,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CustomCheckboxComponent),
-      multi: true,
-    },
-  ],
+    <input type="checkbox" [checked]="checked" (change)="onInputChange($event)" />
+`,
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => CustomCheckboxComponent),
+    multi: true
+  }]
 })
 export class CustomCheckboxComponent implements ControlValueAccessor {
-  @Input() checked = false;
-  @Output() change = new EventEmitter<boolean>();
+  checked: boolean = false; // The model value (checked/unchecked state)
 
-  onChange: (value: boolean) => void = () => { };
-  onTouched: () => void = () => { };
+  // These methods will be provided by Angular forms
+  private onChange: (_: any) => void = () => { };
+  private onTouched: () => void = () => { };
 
-  writeValue(value: boolean): void {
-    this.checked = value;
+  // This will be called when the checkbox value changes
+  onInputChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.checked = input.checked;
+    this.onChange(this.checked); // Notify the change to Angular
+    this.onTouched(); // Mark as touched
   }
 
-  registerOnChange(fn: (value: boolean) => void): void {
+  // ControlValueAccessor methods
+  writeValue(value: any): void {
+    this.checked = value || false; // Set the checkbox's internal state
+  }
+
+  registerOnChange(fn: any): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: () => void): void {
+  registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
 
-  onCheckboxChange(event: Event): void {
-    this.checked = (event.target as HTMLInputElement).checked;
-    this.onChange(this.checked);
-    this.change.emit(this.checked);
+  setDisabledState?(isDisabled: boolean): void {
+    // Handle the disabled state here if needed
   }
 }

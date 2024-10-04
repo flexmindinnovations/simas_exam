@@ -17,6 +17,7 @@ import { PanelModule } from 'primeng/panel';
 import { StudentService } from '../../services/student/student.service';
 import { Student } from '../../interfaces/Student';
 import { CompetitionService } from '../../services/competition/competition.service';
+import { BatchAllocationService } from '../../services/batch-allocation.service';
 
 @Component({
   selector: 'app-batch-allocation',
@@ -35,6 +36,7 @@ export class BatchAllocationComponent {
   isExamCenterLoading: boolean = false;
   isBatchTimeLoading: boolean = false;
   isCompetitionListLoading: boolean = false;
+  isAllocateActionLoading: boolean = false;
   selectedFranchise: string = '';
   examCenterList: any[] = [];
   batchTimeList: any[] = [];
@@ -46,6 +48,8 @@ export class BatchAllocationComponent {
   studentList: Array<Student> = [];
   franchiseId: string = '';
   showGrid: boolean = false;
+  studentBatchAllocationList: any;
+  validAllocate: boolean = false;
 
 
   constructor(
@@ -53,6 +57,7 @@ export class BatchAllocationComponent {
     private examCenterService: ExamCenterService,
     private studentService: StudentService,
     private competitionService: CompetitionService,
+    private batchService: BatchAllocationService,
   ) {
 
   }
@@ -209,7 +214,15 @@ export class BatchAllocationComponent {
     })
   }
   handleAllocateBatch() {
-
+    this.isAllocateActionLoading = true;
+    this.batchService.saveStudentBatchAllocation(this.studentBatchAllocationList).subscribe({
+      next: (response) => {
+        this.isAllocateActionLoading = false;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isAllocateActionLoading = false;
+      }
+    });
   }
 
   handleOnCompetitionChange(event: DropdownChangeEvent) {
@@ -222,9 +235,7 @@ export class BatchAllocationComponent {
     }
   }
   onSelectedRowsChange(selectedRows: any[]) {
-    console.log('Selected Rows:', selectedRows);
-    console.log(selectedRows);
-    const studentBatchAllocation = {
+    this.studentBatchAllocationList = {
       studentBatchAllocationId: 0,
       compititionId: this.selectedCompetiton,
       franchiseId: this.franchiseId,
@@ -241,11 +252,22 @@ export class BatchAllocationComponent {
         studentId: row.studentId || 0,
         levelId: row.levelId || 0,
         maxNo: row.maxNo || 0,
-        hallTicketNumber: row.hallTicketNumber || 0,
-        studentFullName: row.fullName || "string",
-        levelName: row.levelName || "string"
+        hallTicketNumber: row.hallTicketNumber || '',
+        studentFullName: row.fullName || '',
+        levelName: row.levelName || ''
       }))
     };
-    console.log(studentBatchAllocation);
+    this.validataAllocateBatch(selectedRows);
+    console.log(this.studentBatchAllocationList);
   }
+  validataAllocateBatch(selectedRows: any) {
+    this.validAllocate = (
+      selectedRows.length > 0 && // At least one student is selected
+      this.selectedExamCenter !== '' && // Exam center is selected
+      this.selectedBatchTime !== '' && // Batch time is selected
+      this.selectedCompetiton !== '' && // Competition is selected
+      this.franchiseId !== '' // Franchise is selected
+    );
+  }
+
 }

@@ -166,8 +166,8 @@
         <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
             <tr class="w-full h-10">
                 <td>
-                    <app-custom-checkbox [(ngModel)]="rowData.selected"
-                        (change)="selectRow($event, rowData)"></app-custom-checkbox>
+                    <app-custom-checkbox [(ngModel)]="rowData.selected" (change)="selectRow($event, rowData)">
+                    </app-custom-checkbox>
                 </td>
                 <td *ngFor="let col of columns" [ngClass]="col.field === 'action' ? 'action-cell' : 'data-cell'">
                     @if(col.field === 'status') {

@@ -296,45 +296,49 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     return column.field === 'action' ? true : false;
   }
 
-  selectAllRows(event: boolean) {
-    if (event) {
-      // Select all rows
-      this.dataSource.forEach((row: any) => {
-        row.selected = true;
-      });
-      this.selectedRows = [...this.dataSource]; // Update selectedRows
-      this.allRowsSelected = true;
+  selectRow(event: Event, rowData: any) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    rowData.selected = isChecked;
+
+    // Update selectedRows array
+    if (isChecked) {
+      // Add the rowData to selectedRows if it's checked
+      this.selectedRows.push(rowData);
     } else {
-      // Deselect all rows
-      this.dataSource.forEach((row: any) => {
-        row.selected = false;
-      });
-      this.selectedRows = []; // Clear selectedRows
-      this.allRowsSelected = false;
+      // Remove the rowData from selectedRows if it's unchecked
+      this.selectedRows = this.selectedRows.filter(row => row !== rowData);
     }
 
-    // Emit the selected rows
-    this.selectedRowsChange.emit(this.selectedRows);
-  }
-  selectRow(event: boolean, rowData: any) {
-    rowData.selected = event;
-
-    if (event) {
-      // Add to selectedRows if checked
-      if (!this.selectedRows.includes(rowData)) {
-        this.selectedRows.push(rowData);
-      }
-    } else {
-      // Remove from selectedRows if unchecked
-      this.selectedRows = this.selectedRows.filter((row) => row !== rowData);
-    }
-
-    // Update the allRowsSelected state
+    // Update allRowsSelected if all rows are now selected
     this.allRowsSelected = this.dataSource.every((row: any) => row.selected);
 
-    // Emit the selected rows
+    // Emit updated selectedRows
     this.selectedRowsChange.emit(this.selectedRows);
   }
+
+  selectAllRows(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+
+    // Select or deselect all rows
+    this.dataSource.forEach((row: any) => {
+      row.selected = isChecked;
+    });
+
+    // Update selectedRows based on whether all are selected or none are selected
+    if (isChecked) {
+      this.selectedRows = [...this.dataSource];  // Select all rows
+    } else {
+      this.selectedRows = [];  // Deselect all rows
+    }
+
+    // Update allRowsSelected based on isChecked
+    this.allRowsSelected = isChecked;
+
+    // Emit updated selectedRows
+    this.selectedRowsChange.emit(this.selectedRows);
+  }
+
+
 }
 
 export interface TableColumn {
