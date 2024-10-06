@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <input type="checkbox" [checked]="checked" (change)="onInputChange($event)" />
+    <input type="checkbox" [checked]="checked" (change)="onInputChange($event)" class="w-4 h-4" />
 `,
   providers: [{
     provide: NG_VALUE_ACCESSOR,

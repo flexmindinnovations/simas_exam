@@ -50,6 +50,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) colDefs: any;
   @Input() showAddButton: boolean = true;
   @Input() isGenerate: boolean = false;
+  @Input() isCheckbox: boolean = false;
   @Input({ required: false }) childColDefs: any;
   @Input({ required: true }) dataSource: any;
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();

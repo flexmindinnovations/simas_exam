@@ -218,9 +218,11 @@ export class BatchAllocationComponent {
     this.batchService.saveStudentBatchAllocation(this.studentBatchAllocationList).subscribe({
       next: (response) => {
         this.isAllocateActionLoading = false;
+        utils.setMessages(response.message, 'success');
       },
       error: (error: HttpErrorResponse) => {
         this.isAllocateActionLoading = false;
+        utils.setMessages(error.message, 'error');
       }
     });
   }

@@ -149,10 +149,12 @@
 
         <ng-template pTemplate="header" let-columns>
             <tr>
+                @if(isCheckbox){
                 <th>
                     <app-custom-checkbox [(ngModel)]="allRowsSelected"
                         (change)="selectAllRows($event)"></app-custom-checkbox>
                 </th>
+                }
                 <th *ngFor="let col of columns" [pSortableColumn]="col.field"
                     [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
                     <p class="m-0 flex items-center justify-start">
@@ -165,10 +167,12 @@
 
         <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
             <tr class="w-full h-10">
+                @if(isCheckbox){
                 <td>
                     <app-custom-checkbox [(ngModel)]="rowData.selected" (change)="selectRow($event, rowData)">
                     </app-custom-checkbox>
                 </td>
+                }
                 <td *ngFor="let col of columns" [ngClass]="col.field === 'action' ? 'action-cell' : 'data-cell'">
                     @if(col.field === 'status') {
                     <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
