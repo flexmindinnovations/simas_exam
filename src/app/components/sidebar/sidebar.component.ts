@@ -114,6 +114,18 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
       "id": 182
     }
     data.push(batchallocation);
+    const examActivation = {
+      "permissionId": 18,
+      "moduleId": 18,
+      "moduleName": "ExamActivation",
+      "roleId": 1,
+      "canView": true,
+      "canAdd": true,
+      "canEdit": true,
+      "canDelete": true,
+      "id": 183
+    }
+    data.push(examActivation);
     if (data) {
       this.filterMenuItems(data);
       this.splitMenuItems();
@@ -149,7 +161,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 20,
+      id: 21,
       title: 'More',
       label: 'More',
       moduleName: 'more',

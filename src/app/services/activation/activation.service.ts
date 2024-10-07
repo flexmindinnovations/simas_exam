@@ -24,4 +24,7 @@ export class ActivationService {
   saveMultipleActivation(payload: any): Observable<any> {
     return this.http.post(this.activationPath.saveMultipleActivation, payload);
   }
+  saveMultipleExamActivation(payload: any): Observable<any> {
+    return this.http.post(this.activationPath.saveMultipleExamActivation, payload);
+  }
 }

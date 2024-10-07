@@ -139,6 +139,9 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
       isGenerateActionLoading: false,
       selected: item.selected || false // Initialize the selected property
     }));
+    this.selectedRows = [];
+    this.allRowsSelected = false;
+    this.selectedRowsChange.emit(this.selectedRows);
     this.showPaginator = this.dataSource.length > 15;
   }
 
@@ -300,42 +303,28 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   selectRow(event: Event, rowData: any) {
     const isChecked = (event.target as HTMLInputElement).checked;
     rowData.selected = isChecked;
-
-    // Update selectedRows array
     if (isChecked) {
-      // Add the rowData to selectedRows if it's checked
       this.selectedRows.push(rowData);
     } else {
-      // Remove the rowData from selectedRows if it's unchecked
       this.selectedRows = this.selectedRows.filter(row => row !== rowData);
     }
-
-    // Update allRowsSelected if all rows are now selected
     this.allRowsSelected = this.dataSource.every((row: any) => row.selected);
-
-    // Emit updated selectedRows
     this.selectedRowsChange.emit(this.selectedRows);
   }
 
   selectAllRows(event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
-
-    // Select or deselect all rows
     this.dataSource.forEach((row: any) => {
       row.selected = isChecked;
     });
-
-    // Update selectedRows based on whether all are selected or none are selected
     if (isChecked) {
       this.selectedRows = [...this.dataSource];  // Select all rows
     } else {
       this.selectedRows = [];  // Deselect all rows
     }
 
-    // Update allRowsSelected based on isChecked
     this.allRowsSelected = isChecked;
 
-    // Emit updated selectedRows
     this.selectedRowsChange.emit(this.selectedRows);
   }
 

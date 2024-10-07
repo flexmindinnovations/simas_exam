@@ -260,7 +260,7 @@ export class BatchAllocationComponent {
       }))
     };
     this.validataAllocateBatch(selectedRows);
-    console.log(this.studentBatchAllocationList);
+    // console.log(this.studentBatchAllocationList);
   }
   validataAllocateBatch(selectedRows: any) {
     this.validAllocate = (

@@ -170,7 +170,7 @@ export class HallticketComponent {
       this.hallticketService.getStudentHallTicketList(this.formGroup.value).subscribe({
         next: (respones) => {
           if (respones) {
-            console.log(respones);
+            // console.log(respones);
             this.hallTicketList = respones;
             // this.hallTicketList = respones.map((item: any) => {
             //   item['fullName'] = item['studentFirstName'] + " " + item['studentLastName'];

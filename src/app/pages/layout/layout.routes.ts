@@ -20,6 +20,7 @@ import { CompetitionComponent } from "../competition/competition.component";
 import { HallticketComponent } from "../hallticket/hallticket.component";
 import { ExamCenterComponent } from "../exam-center/exam-center.component";
 import { BatchAllocationComponent } from "../batch-allocation/batch-allocation.component";
+import { ExamActivationComponent } from "../exam-activation/exam-activation.component";
 
 export const layoutRoutes: Routes = [
     {
@@ -120,6 +121,11 @@ export const layoutRoutes: Routes = [
                 path: 'batch-allocation',
                 component: BatchAllocationComponent,
                 data: { animation: 'BatchAllocationComponent' }
+            },
+            {
+                path: 'exam-activation',
+                component: ExamActivationComponent,
+                data: { animation: 'ExamActivation' }
             },
             {
                 path: '**',
