@@ -160,5 +160,13 @@ export const MENU_ITEMS: Array<MenuItem> = [
         icon: 'pi pi-key',
         isActive: false,
         route: 'exam-activation'
+    },
+    {
+        id: 21,
+        title: 'Offline Student Result',
+        moduleName: 'StudentResult',
+        icon: 'pi pi-ban',
+        isActive: false,
+        route: 'student-result'
     }
 ]
