@@ -94,17 +94,17 @@ export class CompetitionComponent implements OnInit {
   }
 
   getRoleList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.competitionService.getCompetitionList().subscribe({
       next: (response) => {
         if (response) {
           this.compeitionList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.compeitionList)
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })

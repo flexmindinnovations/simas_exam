@@ -3,7 +3,7 @@ import { formatDate } from "@angular/common";
 import { signal } from "@angular/core";
 import { Message } from "primeng/api";
 import crypto from 'crypto-js';
-import { AbstractControl, FormArray, FormGroup, ValidatorFn } from "@angular/forms";
+import { AbstractControl, FormArray, FormGroup, ValidatorFn, type FormControl } from "@angular/forms";
 
 export interface TableDeleteAction {
     isDeleteActionFired: boolean;
@@ -156,6 +156,16 @@ export const utils = {
         } else {
             return "Good Night";
         }
+    },
+    optionalControlValidator(control: FormControl) {
+        const value = control.value;
+        if (!value || value.trim() === '') {
+            return null;
+        }
+        if (value.length < 6) {
+            return { minLength: 'Password must be at least 6 characters long' };
+        }
+        return null;
     },
     addSpaceBetweenWords(str: string) {
         return str.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');

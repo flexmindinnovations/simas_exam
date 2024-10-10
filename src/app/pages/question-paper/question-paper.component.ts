@@ -80,18 +80,18 @@ export class QuestionPaperComponent {
   }
 
   getQuestionPaperList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.questionPaperService.getQuestionPaperList().subscribe({
       next: (response) => {
         if (response) {
           this.questionPaperList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionPaperList)
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
           utils.setMessages(response.message, 'success');
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })

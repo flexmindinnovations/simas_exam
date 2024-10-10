@@ -79,7 +79,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getStudentList() {
-    utils.isTableLoading.update(val => !val);
+  utils.isTableLoading.set(true);
     this.studentService.getStudentList().subscribe({
       next: (response) => {
         if (response) {
@@ -88,11 +88,11 @@ export class StudentsComponent implements OnInit {
             return item;
           });
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })
@@ -106,7 +106,7 @@ export class StudentsComponent implements OnInit {
       closable: false,
       modal: true,
       height: 'auto',
-      width: utils.isMobile() ? '95%' : '25%',
+      width: utils.isMobile() ? '95%' : '35%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Student' : 'Add New Student',
     });

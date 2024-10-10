@@ -20,6 +20,8 @@ import { UserType, UserTypeObj } from '../../enums/user-types';
 import { db } from '../../../db';
 import { SessionTimeOutComponent } from '../../modals/session-time-out/session-time-out.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { RouterAnimation } from '../../utils/animations';
 
 @Component({
   selector: 'app-layout',
@@ -27,7 +29,18 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
-  animations: [utils.slideInRouter]
+  animations: [
+    trigger('fade', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0)' }),
+        animate('200ms ease-in-out', style({ opacity: 1, transform: 'scale(1)' }))
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, transform: 'scale(1)' }),
+        animate('500ms ease-in-out', style({ opacity: 0, transform: 'scale(0)' }))
+      ])
+    ]),
+    RouterAnimation]
 })
 export class LayoutComponent implements OnInit, AfterViewInit {
   sideBarOpened: boolean = false;

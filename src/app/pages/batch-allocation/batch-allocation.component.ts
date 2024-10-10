@@ -75,11 +75,11 @@ export class BatchAllocationComponent {
         if (response) {
           this.competitionList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })
@@ -141,13 +141,13 @@ export class BatchAllocationComponent {
             delete item['batchTimeSlotList'];
             return item;
           })
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       }
     })
@@ -202,13 +202,13 @@ export class BatchAllocationComponent {
           });
           this.tableDataSource = this.studentList;
           this.showGrid = this.tableDataSource.length > 1 ? true : false;
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       }
     })

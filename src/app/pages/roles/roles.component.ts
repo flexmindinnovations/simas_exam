@@ -79,17 +79,17 @@ export class RolesComponent implements OnInit {
   }
 
   getRoleList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.roleService.getRoleList().subscribe({
       next: (response) => {
         if (response) {
           this.roleList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.roleList)
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })
