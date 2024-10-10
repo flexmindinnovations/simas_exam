@@ -1,6 +1,6 @@
 <div class="students-container page-container">
     <div class="table-container">
-        <app-data-grid [isGenerate]="true" [colDefs]="colDefs" [dataSource]="tableDataSource"
-            (onAddAction)="handleAddEditAction()" (onGenerateAction)="handleGenerateOperation($event)"></app-data-grid>
+        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
     </div>
 </div>

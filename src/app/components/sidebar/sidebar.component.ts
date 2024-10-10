@@ -90,42 +90,6 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const data = changes['permissionList']?.currentValue;
-    const hallticket = {
-      "permissionId": 16,
-      "moduleId": 16,
-      "moduleName": "Hallticket",
-      "roleId": 1,
-      "canView": true,
-      "canAdd": true,
-      "canEdit": true,
-      "canDelete": true,
-      "id": 181
-    }
-    data.push(hallticket);
-    const batchallocation = {
-      "permissionId": 17,
-      "moduleId": 17,
-      "moduleName": "BatchAllocation",
-      "roleId": 1,
-      "canView": true,
-      "canAdd": true,
-      "canEdit": true,
-      "canDelete": true,
-      "id": 182
-    }
-    data.push(batchallocation);
-    const examActivation = {
-      "permissionId": 18,
-      "moduleId": 18,
-      "moduleName": "ExamActivation",
-      "roleId": 1,
-      "canView": true,
-      "canAdd": true,
-      "canEdit": true,
-      "canDelete": true,
-      "id": 183
-    }
-    data.push(examActivation);
     if (data) {
       this.filterMenuItems(data);
       this.splitMenuItems();
