@@ -17,7 +17,7 @@
                 </ng-container>
             </div>
         </ng-template>
-        <form [formGroup]="formGroup"
+        <form [formGroup]="formSearch"
             class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5">
             <div class="flex flex-col items-start w-full max-w-48">
                 <label for="competitionList">Competition</label>
@@ -33,9 +33,49 @@
                     class="p-inputtext p-component w-full" formControlName="hallTicketNo"
                     ariaLabelledBy="hallTicketNo" />
             </div>
-            <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="formGroup.invalid" icon="pi pi-search"
-                styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+            <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="formSearch.invalid"
+                icon="pi pi-search" styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
                 loadingIcon="pi pi-spin pi-spinner"></p-button>
         </form>
     </p-panel>
+    @if(showLevels){
+    <div class="flex flex-wrap items-end justify-start gap-3 lg:gap-5 w-full px-3 lg:px-5 my-5">
+        <div class="flex flex-col">
+            <label class="text-xl font-semibold text-gray-700 mb-3">Marks</label>
+            <div class="flex flex-col gap-2 p-4">
+                <div class="flex flex-col items-start w-full">
+                    <label for="studentFullName" class="text-sm text-gray-600 font-medium">Student Name</label>
+                    <label class="text-lg font-semibold text-gray-900 mt-1">{{fullName}}</label>
+                </div>
+                <div class="flex flex-col items-start w-full">
+                    <label for=" levelName" class="text-sm text-gray-600 font-medium">Level Name</label>
+                    <label class="text-lg font-semibold text-gray-900 mt-1">{{levelName}}</label>
+                </div>
+            </div>
+        </div>
+        <form [formGroup]="formLevels" class="flex flex-wrap gap-3 lg:gap-5 w-full">
+            <div class="flex flex-col items-start w-full max-w-48">
+                <label for="level1">Round 1</label>
+                <input id="level1" placeholder="Enter level 1" type="text" class="p-inputtext p-component w-full"
+                    formControlName="level1" ariaLabelledBy="level1" />
+            </div>
+            <div class="flex flex-col items-start w-full max-w-48">
+                <label for="level2">Round 2</label>
+                <input id="level2" placeholder="Enter level 2" type="text" class="p-inputtext p-component w-full"
+                    formControlName="level2" ariaLabelledBy="level2" />
+            </div>
+            <div class="flex flex-col items-start w-full max-w-48">
+                <label for="level3">Round 3</label>
+                <input id="level3" placeholder="Enter level 3" type="text" class="p-inputtext p-component w-full"
+                    formControlName="level3" ariaLabelledBy="level3" />
+            </div>
+            <div class="flex flex-col items-start w-full max-w-48">
+                <label></label>
+                <p-button label="Save" (onClick)="handleFormLevelsAction()" [disabled]="formLevels.invalid"
+                    icon="pi pi-save" class="py-2.5" severity="primary" [loading]="isSubmitActionLoading"
+                    loadingIcon="pi pi-spin pi-spinner"></p-button>
+            </div>
+        </form>
+    </div>
+    }
 </div>

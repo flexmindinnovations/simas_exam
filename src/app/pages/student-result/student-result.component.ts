@@ -12,11 +12,24 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { utils } from '../../utils';
 import { CompetitionService } from '../../services/competition/competition.service';
+import { BatchAllocationService } from '../../services/batch-allocation.service';
 
 @Component({
   selector: 'app-student-result',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    TooltipModule,
+    DataGridComponent,
+    DropdownModule,
+    PanelModule,
+    ChipModule
+  ],
   templateUrl: './student-result.component.html',
   styleUrls: ['./student-result.component.scss']
 })
@@ -30,22 +43,34 @@ export class StudentResultComponent implements OnInit {
   selectedCompetition: string = '';
   isPanelCollapsed: boolean = false;
   selectedHallTicket: string = '';
-  formGroup!: FormGroup;
+  formSearch!: FormGroup;
+  formLevels!: FormGroup;
+  fullName: string = '';
+  levelName: string = '';
+  isSubmitActionLoading: boolean = false;
+  showLevels: boolean = false;
 
   constructor(
     private competitionService: CompetitionService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private batchService: BatchAllocationService
   ) { }
 
   ngOnInit(): void {
-    this.initFormGroup();
+    this.initFormGroups();
     this.getCompetitionList();
   }
 
-  initFormGroup() {
-    this.formGroup = this.fb.group({
+  initFormGroups() {
+    this.formSearch = this.fb.group({
       competitionId: ['', [Validators.required]],
       hallTicketNo: ['', [Validators.required]],
+    });
+
+    this.formLevels = this.fb.group({
+      level1: ['', [Validators.required]],
+      level2: ['', [Validators.required]],
+      level3: ['', [Validators.required]]
     });
   }
 
@@ -55,10 +80,9 @@ export class StudentResultComponent implements OnInit {
       next: (response) => {
         if (response) {
           this.competitionList = response;
-          // Assuming you want to set tableDataSource after receiving the competition list
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList);
         }
-        this.isCompetitionListLoading = false; // Move this here to ensure it's called in both success and error cases
+        this.isCompetitionListLoading = false;
       },
       error: (error: HttpErrorResponse) => {
         this.isCompetitionListLoading = false;
@@ -68,18 +92,34 @@ export class StudentResultComponent implements OnInit {
   }
 
   handleOnCompetitionChange(event: DropdownChangeEvent) {
-    this.colDefs = []; // Reset column definitions if needed
-    this.tableDataSource = []; // Reset table data source
     this.selectedCompetition = event.value;
-    this.isSearchDisabled = this.selectedCompetition === ''; // Update search button disabled state
+    this.isSearchDisabled = this.selectedCompetition === '';
   }
 
   handleSearchAction() {
-    if (this.formGroup.valid) {
+    if (this.formSearch.valid) {
       this.isSearchActionLoading = true;
+      const hallTicketNumber = this.formSearch.get('hallTicketNo')?.value;
+      this.batchService.getStudentInfoHallTicketNoWise({ compititionId: this.selectedCompetition, hallTicketNumber }).subscribe({
+        next: (response) => {
+          this.fullName = response?.studentFullName
+          this.levelName = response?.levelName;
+          this.isSearchActionLoading = false;
+          this.formLevels.reset();
+          this.showLevels = true;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isSearchActionLoading = false;
+          utils.setMessages(error.message, 'error');
+        }
+      });
+    }
+  }
+  handleFormLevelsAction() {
+    if (this.formLevels.valid) {
+      this.isSubmitActionLoading = true;
       setTimeout(() => {
-        this.isSearchActionLoading = false;
-        // Here you can perform any actions after the search, like fetching results
+        this.isSubmitActionLoading = false;
       }, 2000);
     }
   }

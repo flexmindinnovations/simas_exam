@@ -130,6 +130,7 @@ export type ApiCallConfig = {
     getStudentHallTicketList: string;
   },
   batchAllocation: {
+    getStudentInfoHallTicketNoWise: string;
     saveStudentBatchAllocation: string;
   }
 
@@ -271,7 +272,8 @@ export class AppConfigService {
       getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocation`
     },
     batchAllocation: {
-      saveStudentBatchAllocation: `${this.hostUrl}/StudentBatchAllocation/saveStudentBatchAllocation`
+      getStudentInfoHallTicketNoWise: `${this.hostUrl}/StudentBatchAllocation/getStudentInfoHallTicketNoWise`,
+      saveStudentBatchAllocation: `${this.hostUrl}/StudentBatchAllocation/saveStudentBatchAllocation`,
     }
   }
 
