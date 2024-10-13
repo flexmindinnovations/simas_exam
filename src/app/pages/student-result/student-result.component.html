@@ -42,7 +42,7 @@
     <div class="flex flex-wrap items-end justify-start gap-3 lg:gap-5 w-full px-3 lg:px-5 my-5">
         <div class="flex flex-col">
             <label class="text-xl font-semibold text-gray-700 mb-3">Marks</label>
-            <div class="flex flex-col gap-2 p-4">
+            <div class="flex flex-row gap-2 p-4">
                 <div class="flex flex-col items-start w-full">
                     <label for="studentFullName" class="text-sm text-gray-600 font-medium">Student Name</label>
                     <label class="text-lg font-semibold text-gray-900 mt-1">{{fullName}}</label>
@@ -77,5 +77,11 @@
             </div>
         </form>
     </div>
+    @if(showGrid){
+    <div class="table-container">
+        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
+    </div>
+    }
     }
 </div>

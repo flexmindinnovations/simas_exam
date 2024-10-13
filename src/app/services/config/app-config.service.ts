@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation' | 'offlineStudent';
 
 export type ApiCallConfig = {
   settings: {};
@@ -132,6 +132,10 @@ export type ApiCallConfig = {
   batchAllocation: {
     getStudentInfoHallTicketNoWise: string;
     saveStudentBatchAllocation: string;
+  }
+  offlineStudent: {
+    saveOfflineStudentMarkEntry: string;
+    getOfflineStudentListCompititionIdWise: string;
   }
 
 }
@@ -274,6 +278,10 @@ export class AppConfigService {
     batchAllocation: {
       getStudentInfoHallTicketNoWise: `${this.hostUrl}/StudentBatchAllocation/getStudentInfoHallTicketNoWise`,
       saveStudentBatchAllocation: `${this.hostUrl}/StudentBatchAllocation/saveStudentBatchAllocation`,
+    },
+    offlineStudent: {
+      saveOfflineStudentMarkEntry: `${this.hostUrl}/OfflineStudentMarkEntry/saveOfflineStudentMarkEntry`,
+      getOfflineStudentListCompititionIdWise: `${this.hostUrl}/OfflineStudentMarkEntry/getOfflineStudentListCompititionIdWise`,
     }
   }
 

@@ -13,6 +13,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { utils } from '../../utils';
 import { CompetitionService } from '../../services/competition/competition.service';
 import { BatchAllocationService } from '../../services/batch-allocation.service';
+import { OfflineStudentService } from '../../services/offline-student.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-student-result',
@@ -49,11 +51,15 @@ export class StudentResultComponent implements OnInit {
   levelName: string = '';
   isSubmitActionLoading: boolean = false;
   showLevels: boolean = false;
+  hallTicketNowiseInfo: any;
+  showGrid: boolean = false;
+
 
   constructor(
     private competitionService: CompetitionService,
     private fb: FormBuilder,
-    private batchService: BatchAllocationService
+    private batchService: BatchAllocationService,
+    private offlineService: OfflineStudentService,
   ) { }
 
   ngOnInit(): void {
@@ -96,12 +102,32 @@ export class StudentResultComponent implements OnInit {
     this.isSearchDisabled = this.selectedCompetition === '';
   }
 
+
+  setTableColumns() {
+    this.colDefs = [
+      { field: 'studentId', header: 'Id', width: '5%', styleClass: 'studentId' },
+      { field: 'hallTicketNumber', header: 'Hall Ticket Number', width: '20%', styleClass: 'hallTicketNumber' },
+      { field: 'levelId', header: 'Level Id', width: '20%', styleClass: 'levelId' },
+      { field: 'compititionId', header: 'Compitition Id', width: '20%', styleClass: 'compititionId' },
+      { field: 'round1Mark', header: 'Round 1', width: '10%', styleClass: 'round1Mark' },
+      { field: 'round2Mark', header: 'Round 2', width: '10%', styleClass: 'round2Mark' },
+      { field: 'round3Mark', header: 'Round 3', width: '10%', styleClass: 'round3Mark' },
+      {
+        field: 'action',
+        header: 'Action',
+        width: '20%',
+        styleClass: 'action'
+      }
+    ];
+  }
+
   handleSearchAction() {
     if (this.formSearch.valid) {
       this.isSearchActionLoading = true;
       const hallTicketNumber = this.formSearch.get('hallTicketNo')?.value;
       this.batchService.getStudentInfoHallTicketNoWise({ compititionId: this.selectedCompetition, hallTicketNumber }).subscribe({
         next: (response) => {
+          this.hallTicketNowiseInfo = response;
           this.fullName = response?.studentFullName
           this.levelName = response?.levelName;
           this.isSearchActionLoading = false;
@@ -115,12 +141,47 @@ export class StudentResultComponent implements OnInit {
       });
     }
   }
+  handleAddEditAction() {
+
+  }
   handleFormLevelsAction() {
     if (this.formLevels.valid) {
       this.isSubmitActionLoading = true;
-      setTimeout(() => {
-        this.isSubmitActionLoading = false;
-      }, 2000);
+
+      const searchForm = this.formSearch.getRawValue();
+      const formLevels = this.formLevels.getRawValue();
+      const payload = {
+        "studentOfflineMarkId": 0,
+        "studentId": this.hallTicketNowiseInfo?.studentId,
+        "levelId": this.hallTicketNowiseInfo?.levelId,
+        "compititionId": searchForm?.competitionId,
+        "hallTicketNumber": searchForm?.hallTicketNo,
+        "round1Mark": formLevels.level1,
+        "round2Mark": formLevels.level2,
+        "round3Mark": formLevels.level3,
+        "createdDate": new Date(),
+      };
+      forkJoin({
+        saveMarkEntry: this.offlineService.saveOfflineStudentMarkEntry(payload),
+        getStudentList: this.offlineService.getOfflineStudentListCompititionIdWise({
+          compititionId: searchForm?.competitionId,
+        }),
+      }).subscribe({
+        next: (results) => {
+          this.isSubmitActionLoading = false;
+          const saveMarkResponse = results.saveMarkEntry;
+          const studentListResponse = results.getStudentList;
+          utils.setMessages(saveMarkResponse.message, 'success');
+          console.log('Student List:', studentListResponse);
+          this.tableDataSource = studentListResponse;
+          this.setTableColumns();
+          this.showGrid = true;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isSubmitActionLoading = false;
+          utils.setMessages(error.message, 'error');
+        },
+      });
     }
   }
 }
