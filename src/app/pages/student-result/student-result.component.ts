@@ -172,10 +172,11 @@ export class StudentResultComponent implements OnInit {
           const saveMarkResponse = results.saveMarkEntry;
           const studentListResponse = results.getStudentList;
           utils.setMessages(saveMarkResponse.message, 'success');
-          console.log('Student List:', studentListResponse);
+          // console.log('Student List:', studentListResponse);
           this.tableDataSource = studentListResponse;
           this.setTableColumns();
           this.showGrid = true;
+          if (this.tableDataSource.length > 0) this.isPanelCollapsed = true
         },
         error: (error: HttpErrorResponse) => {
           this.isSubmitActionLoading = false;

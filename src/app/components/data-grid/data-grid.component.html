@@ -21,11 +21,11 @@
                     [model]="downloadOptions" />
                 }
             </div>
-            <!-- @if (showAddButton && currentModule?.canAdd) { -->
+            @if (showAddButton && currentModule?.canAdd) {
             <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
                 pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
                 [pTooltip]="'Add ' + addButtonTitle" tooltipPosition="left" (onClick)="handleAddAction()"></p-button>
-            <!-- } -->
+            }
         </div>
     </div>
     @if(isTreeList()) {
