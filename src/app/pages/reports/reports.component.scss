@@ -1,0 +1,12 @@
+.hide-scrollbar {
+    overflow: auto;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}

@@ -201,7 +201,7 @@ export class BatchAllocationComponent {
             return item;
           });
           this.tableDataSource = this.studentList;
-          this.showGrid = this.tableDataSource.length > 1 ? true : false;
+          this.showGrid = this.tableDataSource.length > 0 ? true : false;
           utils.isTableLoading.update(val => !val);
         }
       },
