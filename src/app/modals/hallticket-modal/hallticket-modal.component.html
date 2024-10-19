@@ -1,0 +1,82 @@
+<div class="dialog-body" #printSection>
+
+    <div>
+        <strong class="text-gray-700">Hall Ticket Number: </strong>
+        <span class="text-gray-600">{{ hallTicketData.hallTicketNumber }}</span>
+    </div>
+
+    <div class="flex flex-col md:flex-row items-center md:justify-between mt-1">
+        <div class="flex justify-center md:justify-start">
+            <img *ngIf="hallTicketData.studentPhoto" [src]="hallTicketData.studentPhoto" alt="Student Photo"
+                class="student-photo w-24 h-24 md:w-32 md:h-32 object-cover border-4 border-blue-600 shadow-md">
+        </div>
+        <div class="text-center md:text-left">
+            <div>
+                <strong class="text-gray-700">Name: </strong>
+                <span class="text-gray-600">{{ hallTicketData.studentName }}</span>
+            </div>
+            <div>
+                <strong class="text-gray-700">Center: </strong>
+                <span class="text-gray-600">{{ hallTicketData.center }}</span>
+            </div>
+            <div>
+                <strong class="text-gray-700">Group: </strong>
+                <span class="text-gray-600">{{ hallTicketData.group }}</span>
+            </div>
+            <div>
+                <canvas #barcodeCanvas class="barcode"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Competition Details -->
+    <div class="border-b border-gray-300 my-2">
+        <strong class="text-gray-700">Competition Details</strong>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300">
+                <tbody>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Level:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.level }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Competition Name:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.competitionName }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Instructor:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.instructorName }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Exam Center:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.examCenter }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Batch Date & Time:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.batchDate | date: 'short' }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Website:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.website }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-300">
+                        <td class="px-4 py-2 text-sm text-gray-700 font-medium">Email:</td>
+                        <td class="px-4 py-2 text-sm text-gray-600">{{ hallTicketData.email }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- <hr class="my-4 border-gray-300" /> -->
+<div class="flex justify-between">
+    <div>
+        <p-button label="Cancel" severity="secondary" (onClick)="handleDialogCancel()"></p-button>
+    </div>
+    <div>
+        <p-button (click)="download()" label="Download" class="p-button-primary"></p-button>
+        <p-button (click)="print()" label="Print" class="p-button-success ml-2"></p-button>
+    </div>
+</div>

@@ -8,7 +8,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule, Table } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
-import { DataGridComponent } from '../../components/data-grid/data-grid.component';
+import { DataGridComponent, TableColumn } from '../../components/data-grid/data-grid.component';
 import { AddEditExamComponent } from '../../modals/add-edit-exam/add-edit-exam.component';
 import { ExamService } from '../../services/exam/exam.service';
 import { utils } from '../../utils';
@@ -34,6 +34,9 @@ import { ReportsService } from '../../services/reports/reports.service';
 })
 export class ReportsComponent implements OnInit {
   franchiseList: Array<any> = [];
+  colDefs: Array<TableColumn> = [];
+  tableDataSource: any[] = [];
+  selectedExamPaperId: number | null = null
   instructorList: Array<any> = [];
   studentList: Array<any> = [];
   examTypeList: Array<any> = [];
@@ -57,6 +60,7 @@ export class ReportsComponent implements OnInit {
   selectedExamType: any = undefined;
   selectedLevel: any = undefined;
   selectedRound: any = undefined;
+  showGrid: boolean = false;
 
   constructor(
     private franchiseService: FranchiseService,
@@ -84,7 +88,7 @@ export class ReportsComponent implements OnInit {
           apiCall = this.franchiseService.getFranchiseByTypeList('1');
           break;
         case ReportCriteriaText.INSTRUCTOR:
-          apiCall = this.instructorService.getInstructorList();
+          apiCall = this.instructorService.getInstructorListByFranchiseId(this.selectedFranchise);
           break;
         case ReportCriteriaText.STUDENT:
           const payloadByFranchiseIdAndInstructorId = {
@@ -169,6 +173,31 @@ export class ReportsComponent implements OnInit {
     }
   }
 
+  formatDate(dateString: string): string {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', options);
+  }
+
+
+  toggleDetails(examPaperId: number) {
+    if (this.selectedExamPaperId === examPaperId) {
+      this.selectedExamPaperId = null;
+    } else {
+      this.selectedExamPaperId = examPaperId;
+    }
+  }
+
+  isSelected(examPaperId: number): boolean {
+    return this.selectedExamPaperId === examPaperId;
+  }
+
   handleSearchAction() {
     // this.isSearchActionLoading = true;
     const payload = {
@@ -179,22 +208,25 @@ export class ReportsComponent implements OnInit {
       selectedLevel: this.selectedLevel ?? 0,
       selectedRound: this.selectedRound ?? 0,
     }
-    const payloadByFranchiseIdAndInstructorId = {
-      franchiseId: payload.selectedFranchise,
-      instructorId: payload.selectedInstructor
+    const payloadBystudentIdAndExamTypeIdAndLevel = {
+      studentId: 5,
+      examTypeId: 1,
+      levelId: 1
     }
-    // const apiCall = this.reportService.getStudentListFromExamPaperFranchiseAndInstructorWise(payloadByFranchiseIdAndInstructorId);
-    // apiCall.subscribe({
-    //   next: (response: any) => {
-    //     console.log('response: ', response);
 
-    //     this.isSearchActionLoading = false;
-    //   },
-    //   error: (error: HttpErrorResponse) => {
-    //     this.isSearchActionLoading = false;
-    //     utils.setMessages(error.message, 'error');
-    //   }
-    // })
+    const apiCall = this.reportService.getExampByExamTypeAndLevel(payloadBystudentIdAndExamTypeIdAndLevel);
+    apiCall.subscribe({
+      next: (response: any) => {
+        // console.log('response: ', response);
+        this.tableDataSource = response;
+        this.showGrid = this.tableDataSource.length > 0 ? true : false;
+        this.isSearchActionLoading = false;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isSearchActionLoading = false;
+        utils.setMessages(error.message, 'error');
+      }
+    })
   }
 
   toggleLoading(listName: ReportCriteria | null = null, isLoading: boolean) {

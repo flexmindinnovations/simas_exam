@@ -65,7 +65,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
         const currentUrl = this.getCurrentUrl();
         currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
       }
-    });
+    }, { allowSignalWrites: true });
 
     effect(() => {
       this.sideBarOpened = utils.sideBarOpened();
@@ -119,7 +119,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 17,
+      id: 22,
       title: 'More',
       label: 'More',
       moduleName: 'more',

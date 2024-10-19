@@ -18,11 +18,13 @@ import { TreeTableModule } from 'primeng/treetable';
 import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
 import { LoadingComponent } from '../loading/loading.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { CustomCheckboxComponent } from '../custom-checkbox/custom-checkbox.component';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent, CheckboxModule, CustomCheckboxComponent],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
   styleUrl: './data-grid.component.scss'
@@ -38,6 +40,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   isDeleteActionLoading: boolean = false;
   isEditActionLoading: boolean = false;
   isAddActionLoading: boolean = false;
+  isGenerateActionLoading: boolean = false;
   isExportActionLoading: boolean = false;
   showPaginator: boolean = false;
   isMobile: boolean = false;
@@ -46,11 +49,15 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @ViewChild('dataGrid', { static: false }) dataGrid!: Table;
   @Input({ required: true }) colDefs: any;
   @Input() showAddButton: boolean = true;
+  @Input() isGenerate: boolean = false;
+  @Input() isCheckbox: boolean = false;
   @Input({ required: false }) childColDefs: any;
   @Input({ required: true }) dataSource: any;
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
+  @Output() onGenerateAction: EventEmitter<any> = new EventEmitter();
+  @Output() selectedRowsChange: EventEmitter<any[]> = new EventEmitter();
 
   paginatorPosition = [100, 180];
   dialogRef: DynamicDialogRef | undefined;
@@ -58,8 +65,10 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   downloadOptions: MenuItem[] = [];
   currentModule: any;
   selectedRoute: any;
-
+  selectedLines: any;
   downloadMenuId = new Date().getTime();
+  allRowsSelected: boolean = false;
+  selectedRows: any[] = [];
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -96,6 +105,10 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     })
 
     effect(() => {
+      const rowIndex = utils.onModalClose();
+      if (rowIndex > -1) {
+        this.dataSource[rowIndex]['isGenerateActionLoading'] = false;
+      }
       this.selectedRoute = utils.activeItem();
     })
 
@@ -105,6 +118,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
         this.dataSource.forEach((item: any) => {
           item['isEditActionLoading'] = false;
           item['isDeleteActionLoading'] = false;
+          item['isGenerateActionLoading'] = false;
         });
 
       }
@@ -115,14 +129,22 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     if (this.isTreeList()) {
       this.dataSource = this.transformDataToTreeNodes(this.dataSource);
     }
-    const dataSource = this.dataSource.map((item: any) => {
-      item['isEditActionLoading'] = false;
-      item['isDeleteActionLoading'] = false;
-      return item;
-    });
-    this.dataSource = dataSource;
-    this.showPaginator = this.dataSource.length > 15 ? true : false;
+
+    // Ensure each item has a 'selected' property
+    this.dataSource = this.dataSource.map((item: any) => ({
+      ...item,
+      studentId: item.studentId || item.id, // Make sure studentId exists
+      isEditActionLoading: false,
+      isDeleteActionLoading: false,
+      isGenerateActionLoading: false,
+      selected: item.selected || false // Initialize the selected property
+    }));
+    this.selectedRows = [];
+    this.allRowsSelected = false;
+    this.selectedRowsChange.emit(this.selectedRows);
+    this.showPaginator = this.dataSource.length > 15;
   }
+
 
   ngAfterViewInit(): void {
     const paginatorElement = document.getElementsByClassName('p-paginator-rpp-options')[0];
@@ -262,6 +284,14 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     })
   }
 
+  handleGenerateOperation(rowData: any, rowIndex: any) {
+    this.isGenerateActionLoading = true;
+    this.dataSource.forEach((item: any) => item['isGenerateActionLoading'] = false);
+    this.dataSource[rowIndex]['isGenerateActionLoading'] = true;
+    this.onGenerateAction.emit({ rowData, rowIndex });
+    this.cdref.detectChanges();
+  }
+
   handleAddAction() {
     this.onAddAction.emit(this.addButtonTitle.toLowerCase());
   }
@@ -269,6 +299,36 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   getFrozenCols(column: any) {
     return column.field === 'action' ? true : false;
   }
+
+  selectRow(event: Event, rowData: any) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    rowData.selected = isChecked;
+    if (isChecked) {
+      this.selectedRows.push(rowData);
+    } else {
+      this.selectedRows = this.selectedRows.filter(row => row !== rowData);
+    }
+    this.allRowsSelected = this.dataSource.every((row: any) => row.selected);
+    this.selectedRowsChange.emit(this.selectedRows);
+  }
+
+  selectAllRows(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.dataSource.forEach((row: any) => {
+      row.selected = isChecked;
+    });
+    if (isChecked) {
+      this.selectedRows = [...this.dataSource];  // Select all rows
+    } else {
+      this.selectedRows = [];  // Deselect all rows
+    }
+
+    this.allRowsSelected = isChecked;
+
+    this.selectedRowsChange.emit(this.selectedRows);
+  }
+
+
 }
 
 export interface TableColumn {
@@ -294,5 +354,9 @@ export interface TreeNode {
   draggable?: boolean;
   droppable?: boolean;
   selectable?: boolean;
+}
+
+function handleGenerateOperation(rowData: any, any: any) {
+  throw new Error('Function not implemented.');
 }
 

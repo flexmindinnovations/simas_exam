@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation' | 'offlineStudent';
 
 export type ApiCallConfig = {
   settings: {};
@@ -113,6 +113,7 @@ export type ApiCallConfig = {
     saveActivation: string;
     saveMultipleActivation: string;
     updateActivation: string;
+    saveMultipleExamActivation: string
   };
   competition: {
     competitionList: string;
@@ -125,6 +126,18 @@ export type ApiCallConfig = {
     studentListFromExamPaperLevelAndRoundWise: string;
     studentListFromExamPaperFranchiseAndInstructorWise: string;
   }
+  hallticket: {
+    getStudentHallTicketList: string;
+  },
+  batchAllocation: {
+    getStudentInfoHallTicketNoWise: string;
+    saveStudentBatchAllocation: string;
+  }
+  offlineStudent: {
+    saveOfflineStudentMarkEntry: string;
+    getOfflineStudentListCompititionIdWise: string;
+  }
+
 }
 @Injectable({
   providedIn: 'root'
@@ -245,7 +258,8 @@ export class AppConfigService {
     activation: {
       saveActivation: `${this.hostUrl}/Activation/SaveActivation`,
       updateActivation: `${this.hostUrl}/Activation/UpdateActivation`,
-      saveMultipleActivation: `${this.hostUrl}/Activation/SaveMultipleActivation`
+      saveMultipleActivation: `${this.hostUrl}/Activation/SaveMultipleActivation`,
+      saveMultipleExamActivation: `${this.hostUrl}/Activation/SaveMultipleExamActivation`
     },
     competition: {
       competitionList: `${this.hostUrl}/Compitition/getCompititionList`,
@@ -257,6 +271,17 @@ export class AppConfigService {
       examPaperExamTypeAndLevelwise: `${this.hostUrl}/Report/getExamPaperExamTypeAndLevelwise`,
       studentListFromExamPaperLevelAndRoundWise: `${this.hostUrl}/Report/getStudentListFromExamPaperLevelAndRoundWise`,
       studentListFromExamPaperFranchiseAndInstructorWise: `${this.hostUrl}/Report/getStudentListFromExamPaperFranchiseAndInstructorWise`
+    },
+    hallticket: {
+      getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocation`
+    },
+    batchAllocation: {
+      getStudentInfoHallTicketNoWise: `${this.hostUrl}/StudentBatchAllocation/getStudentInfoHallTicketNoWise`,
+      saveStudentBatchAllocation: `${this.hostUrl}/StudentBatchAllocation/saveStudentBatchAllocation`,
+    },
+    offlineStudent: {
+      saveOfflineStudentMarkEntry: `${this.hostUrl}/OfflineStudentMarkEntry/saveOfflineStudentMarkEntry`,
+      getOfflineStudentListCompititionIdWise: `${this.hostUrl}/OfflineStudentMarkEntry/getOfflineStudentListCompititionIdWise`,
     }
   }
 

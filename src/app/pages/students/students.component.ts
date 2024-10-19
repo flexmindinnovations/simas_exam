@@ -9,6 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AddEditStudentComponent } from '../../modals/add-edit-student/add-edit-student.component';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
 
 @Component({
   selector: 'app-students',
@@ -68,7 +69,12 @@ export class StudentsComponent implements OnInit {
       // { field: 'franchiseName', header: 'Franchise', width: '15%', styleClass: 'franchiseName' },
       // { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
       { field: 'status', header: 'Status', width: '20%', styleClass: 'status' },
-      { field: 'action', header: 'Action', width: '10%', styleClass: 'action' },
+      {
+        field: 'action',
+        header: 'Action',
+        width: '10%',
+        styleClass: 'action'
+      }
     ];
   }
 
@@ -100,7 +106,7 @@ export class StudentsComponent implements OnInit {
       closable: false,
       modal: true,
       height: 'auto',
-      width: utils.isMobile() ? '95%' : '42%',
+      width: utils.isMobile() ? '95%' : '25%',
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Student' : 'Add New Student',
     });
@@ -149,4 +155,19 @@ export class StudentsComponent implements OnInit {
       utils.isTableDeleteAction.set(false);
     }, 2000);
   }
+
+  // handleGenerateOperation(data: any) {
+  //   const { rowData, rowIndex } = data;
+  //   this.dialogRef = this.dialogService.open(HallticketModalComponent, {
+  //     data: rowData,
+  //     closable: false,
+  //     modal: true,
+  //     width: utils.isMobile() ? '95%' : '28%',
+  //     styleClass: 'hallticket-dialog',
+  //     header: 'Admit Card',
+  //   });
+  //   this.dialogRef.onClose.subscribe((res) => {
+  //     utils.onModalClose.set(rowIndex)
+  //   })
+  // }
 }

@@ -136,5 +136,37 @@ export const MENU_ITEMS: Array<MenuItem> = [
         icon: 'pi pi-shield',
         isActive: false,
         route: 'roles'
+    },
+    {
+        id: 18,
+        title: 'Hall Ticket',
+        moduleName: 'Hallticket',
+        icon: 'pi pi-id-card',
+        isActive: false,
+        route: 'hallticket'
+    },
+    {
+        id: 19,
+        title: 'Batch Allocation',
+        moduleName: 'BatchAllocation',
+        icon: 'pi pi-tags',
+        isActive: false,
+        route: 'batch-allocation'
+    },
+    {
+        id: 20,
+        title: 'Exam Activation',
+        moduleName: 'ExamActivation',
+        icon: 'pi pi-key',
+        isActive: false,
+        route: 'exam-activation'
+    },
+    {
+        id: 21,
+        title: 'Offline Student Result',
+        moduleName: 'StudentResult',
+        icon: 'pi pi-ban',
+        isActive: false,
+        route: 'student-result'
     }
 ]
