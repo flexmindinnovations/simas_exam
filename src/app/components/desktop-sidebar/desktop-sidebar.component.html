@@ -42,7 +42,7 @@
                     'active': isMoreMenuActive && !isMobile,
                     'inactive': !isMoreMenuActive,
                     'active-mobile': isMoreMenuActive && isMobile
-                }" (click)="moreMenu.toggle($event)" pTooltip="Click to show More items">
+                }" (mouseenter)="moreMenu.toggle($event)" (click)="moreMenu.toggle($event)" pTooltip="Click to show More items">
                 <!-- Icon with bounce and scale effect if active -->
                 <i class="{{menuItems[menuItems.length - 1].icon}} text-base transition-all duration-200 ease-in-out z-10 self-center"
                     [ngClass]="isMoreMenuActive ? 'scale-105' : ''"

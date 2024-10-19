@@ -204,6 +204,8 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
     this.isMoreMenuVisible = !this.isMoreMenuVisible;
   }
 
+  onMouseEnter(event: any) { }
+
   getCurrentUrl(): string {
     return this.router.url.split('/')[2];
   }
