@@ -116,7 +116,8 @@ export class AddEditQuestionBankComponent implements OnInit {
   handleSubmitAction() {
     this.isSubmitActionLoading = true;
     this.formGroup.disable();
-    const formVal = this.formGroup.getRawValue();
+    let formVal = this.formGroup.getRawValue();
+    formVal = { examTypeId: formVal.examTypeName, levelId: formVal.levelName, roundId: formVal.roundName, questionTypeId: formVal.questionType, noOfRows: Number(formVal.noOfRows), noOfColumns: Number(formVal.noOfColumns) }
     delete formVal['file'];
     const formData = new FormData();
     if (this.isEditMode) formVal['questionBankId'] = this.dialogData?.questionBankId;
