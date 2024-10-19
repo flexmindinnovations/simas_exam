@@ -201,8 +201,8 @@ export class BatchAllocationComponent {
             return item;
           });
           this.tableDataSource = this.studentList;
-          this.showGrid = this.tableDataSource.length > 1 ? true : false;
-        // utils.isTableLoading.update(val => !val);
+          this.showGrid = this.tableDataSource.length > 0 ? true : false;
+          // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -218,9 +218,11 @@ export class BatchAllocationComponent {
     this.batchService.saveStudentBatchAllocation(this.studentBatchAllocationList).subscribe({
       next: (response) => {
         this.isAllocateActionLoading = false;
+        utils.setMessages(response.message, 'success');
       },
       error: (error: HttpErrorResponse) => {
         this.isAllocateActionLoading = false;
+        utils.setMessages(error.message, 'error');
       }
     });
   }
@@ -258,7 +260,7 @@ export class BatchAllocationComponent {
       }))
     };
     this.validataAllocateBatch(selectedRows);
-    console.log(this.studentBatchAllocationList);
+    // console.log(this.studentBatchAllocationList);
   }
   validataAllocateBatch(selectedRows: any) {
     this.validAllocate = (

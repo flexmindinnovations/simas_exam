@@ -153,4 +153,20 @@ export const MENU_ITEMS: Array<MenuItem> = [
         isActive: false,
         route: 'batch-allocation'
     },
+    {
+        id: 20,
+        title: 'Exam Activation',
+        moduleName: 'ExamActivation',
+        icon: 'pi pi-key',
+        isActive: false,
+        route: 'exam-activation'
+    },
+    {
+        id: 21,
+        title: 'Offline Student Result',
+        moduleName: 'StudentResult',
+        icon: 'pi pi-ban',
+        isActive: false,
+        route: 'student-result'
+    }
 ]

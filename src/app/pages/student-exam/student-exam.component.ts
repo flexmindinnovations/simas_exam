@@ -784,7 +784,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   handleKeyValue(event: any): void {
     const input = event;
     this.selectedAnswer = input;
-    console.log({ input, selectedAnswer: this.selectedAnswer });
+    // console.log({ input, selectedAnswer: this.selectedAnswer });
     if (input) {
       this.questionList[this.activeQuestionIndex]['userInput'] = input;
       this.isAnswerSubmitted = true;

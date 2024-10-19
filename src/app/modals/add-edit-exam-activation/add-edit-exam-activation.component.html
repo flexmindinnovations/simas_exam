@@ -1,0 +1,40 @@
+<div class="dialog-body">
+    <div class="form-container">
+        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
+            @for (key of fieldGroupOrder; track $index) {
+            @if (key === 'status') {
+            <div class="flex flex-col items-start w-full col-span-2 mb-3">
+                <label [for]="key">{{getLabelName(key)}}</label>
+                <p-inputSwitch [inputId]="key" [formControlName]="key" />
+            </div>
+            <!-- } @else if(key === 'startDate' || key === 'endDate') {
+            <div class="flex form-input flex-col items-start w-full">
+                <label [for]="key">{{getLabelName(key)}}</label>
+                <p-calendar appendTo="body" [attr.ariaLabelledBy]="key" [formControlName]="key" [showButtonBar]="true"
+                    [iconDisplay]="'input'" [showIcon]="true" [inputId]="key" dateFormat="dd-mm-yy" />
+                <div *ngIf="formGroup.get(key)?.invalid && (formGroup.get(key)?.dirty || formGroup.get(key)?.touched)">
+                    <small *ngIf="formGroup.get(key)?.errors?.['required']" class="p-error">This field
+                        is required.</small>
+                </div>
+          </div>-->
+            } @else {
+            <div class="flex form-input flex-col items-start w-full">
+                <label [for]="key">{{getLabelName(key)}}</label>
+                <input type="text" pInputText [formControlName]="key" />
+                <div *ngIf="formGroup.get(key)?.invalid && (formGroup.get(key)?.dirty || formGroup.get(key)?.touched)">
+                    <small *ngIf="formGroup.get(key)?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+            }
+            }
+        </form>
+    </div>
+    <div class="action w-full flex items-center justify-end gap-3 p-4">
+        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
+            (onClick)="handleDialogCancel()"></p-button>
+        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
+            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
+            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+    </div>
+</div>

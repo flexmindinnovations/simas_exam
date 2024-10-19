@@ -1,0 +1,82 @@
+<div class="student-result-container page-container"
+    [ngClass]="!isPanelCollapsed ? 'overflow-auto' : 'overflow-hidden' ">
+    <p-panel [toggleable]="true" [(collapsed)]="isPanelCollapsed" class="panel-component">
+        <ng-template pTemplate="header">
+            <div class="flex flex-col lg:flex-row xl:flex-row 2xl:flex-row items-center justify-start space-x-2">
+                <div class="header min-w-40 flex items-start justify-start gap-2">
+                    <i class="pi pi-cog"></i>
+                    <span>
+                        Student Result Options
+                    </span>
+                </div>
+                <ng-container *ngIf="isPanelCollapsed">
+                    <br />
+                    <div class="!ml-5 hidden lg:flex xl:flex 2xl:flex items-center justify-start space-x-2 w-full">
+                        <p-chip class="chip-component min-w-32" label="Competition: {{selectedCompetition}}" />
+                        <p-chip class="chip-component min-w-24" label="Hall Ticket No: {{selectedHallTicket}}" />
+                    </div>
+                </ng-container>
+            </div>
+        </ng-template>
+        <form [formGroup]="formSearch"
+            class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5">
+            <div class="flex flex-col items-start w-full max-w-48">
+                <label for="competitionList">Competition</label>
+                <p-dropdown appendTo="body" inputId="competitionList" [options]="competitionList"
+                    [loading]="isCompetitionListLoading" loadingIcon="pi pi-spin pi-spinner"
+                    formControlName="competitionId" ariaLabelledBy="compititionName" placeholder="Select"
+                    (onChange)="handleOnCompetitionChange($event)" optionValue="compititionId"
+                    optionLabel="compititionName" [filter]="true" filterBy="compititionName" [showClear]="false" />
+            </div>
+            <div class="flex flex-col items-start w-full max-w-48">
+                <label for="hallTicketNo">Hall Ticket No</label>
+                <input id="hallTicketNo" placeholder="Enter Hall Ticket No" type="text"
+                    class="p-inputtext p-component w-full" formControlName="hallTicketNo"
+                    ariaLabelledBy="hallTicketNo" />
+            </div>
+            <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="formSearch.invalid"
+                icon="pi pi-search" styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
+                loadingIcon="pi pi-spin pi-spinner"></p-button>
+        </form>
+        @if(showLevels){
+        <div class="flex flex-wrap items-end gap-3 lg:gap-5 w-full px-3 lg:px-5 my-5">
+            <form [formGroup]="formLevels" class="flex flex-row gap-5 w-full items-end">
+                <div class="flex flex-col items-start w-full max-w-48">
+                    <label for="level1" class="text-sm text-gray-600 font-medium">Round 1</label>
+                    <input id="level1" placeholder="Enter level 1" type="text" class="p-inputtext p-component w-full"
+                        formControlName="level1" ariaLabelledBy="level1" />
+                </div>
+                <div class="flex flex-col items-start w-full max-w-48">
+                    <label for="level2" class="text-sm text-gray-600 font-medium">Round 2</label>
+                    <input id="level2" placeholder="Enter level 2" type="text" class="p-inputtext p-component w-full"
+                        formControlName="level2" ariaLabelledBy="level2" />
+                </div>
+                <div class="flex flex-col items-start w-full max-w-48">
+                    <label for="level3" class="text-sm text-gray-600 font-medium">Round 3</label>
+                    <input id="level3" placeholder="Enter level 3" type="text" class="p-inputtext p-component w-full"
+                        formControlName="level3" ariaLabelledBy="level3" />
+                </div>
+                <div class="flow-root items-start w-full max-w-48 self-end">
+                    <p-button label="Save" (onClick)="handleFormLevelsAction()" [disabled]="formLevels.invalid"
+                        icon="pi pi-save" class="py-2.5" severity="primary" [loading]="isSubmitActionLoading"
+                        loadingIcon="pi pi-spin pi-spinner"></p-button>
+                </div>
+                <div class="flex flex-col w-full max-w-xs">
+                    <label class="text-sm text-gray-600 font-medium">Student Name</label>
+                    <label class="text-lg font-semibold text-gray-900 mt-1">{{ fullName }}</label>
+                </div>
+                <div class="flex flex-col w-full max-w-xs">
+                    <label class="text-sm text-gray-600 font-medium">Level Name</label>
+                    <label class="text-lg font-semibold text-gray-900 mt-1">{{ levelName }}</label>
+                </div>
+            </form>
+        </div>
+        }
+    </p-panel>
+    @if(showGrid){
+    <div class="table-container">
+        <app-data-grid [colDefs]="colDefs" [dataSource]="tableDataSource"
+            (onAddAction)="handleAddEditAction()"></app-data-grid>
+    </div>
+    }
+</div>

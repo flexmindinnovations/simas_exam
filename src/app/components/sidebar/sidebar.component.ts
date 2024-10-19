@@ -90,30 +90,18 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const data = changes['permissionList']?.currentValue;
-    const hallticket = {
-      "permissionId": 16,
-      "moduleId": 16,
-      "moduleName": "Hallticket",
+    const studentResult = {
+      "permissionId": 21,
+      "moduleId": 21,
+      "moduleName": "StudentResult",
       "roleId": 1,
       "canView": true,
       "canAdd": true,
       "canEdit": true,
       "canDelete": true,
-      "id": 181
+      "id": 184
     }
-    data.push(hallticket);
-    const batchallocation = {
-      "permissionId": 17,
-      "moduleId": 17,
-      "moduleName": "BatchAllocation",
-      "roleId": 1,
-      "canView": true,
-      "canAdd": true,
-      "canEdit": true,
-      "canDelete": true,
-      "id": 182
-    }
-    data.push(batchallocation);
+    data.push(studentResult);
     if (data) {
       this.filterMenuItems(data);
       this.splitMenuItems();
@@ -149,7 +137,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 20,
+      id: 22,
       title: 'More',
       label: 'More',
       moduleName: 'more',

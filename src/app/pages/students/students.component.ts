@@ -156,18 +156,18 @@ export class StudentsComponent implements OnInit {
     }, 2000);
   }
 
-  handleGenerateOperation(data: any) {
-    const { rowData, rowIndex } = data;
-    this.dialogRef = this.dialogService.open(HallticketModalComponent, {
-      data: rowData,
-      closable: false,
-      modal: true,
-      width: utils.isMobile() ? '95%' : '28%',
-      styleClass: 'hallticket-dialog',
-      header: 'Admit Card',
-    });
-    this.dialogRef.onClose.subscribe((res) => {
-      utils.onModalClose.set(rowIndex)
-    })
-  }
+  // handleGenerateOperation(data: any) {
+  //   const { rowData, rowIndex } = data;
+  //   this.dialogRef = this.dialogService.open(HallticketModalComponent, {
+  //     data: rowData,
+  //     closable: false,
+  //     modal: true,
+  //     width: utils.isMobile() ? '95%' : '28%',
+  //     styleClass: 'hallticket-dialog',
+  //     header: 'Admit Card',
+  //   });
+  //   this.dialogRef.onClose.subscribe((res) => {
+  //     utils.onModalClose.set(rowIndex)
+  //   })
+  // }
 }

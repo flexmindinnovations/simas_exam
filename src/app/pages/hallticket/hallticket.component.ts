@@ -15,11 +15,14 @@ import { ExamCenterService } from '../../services/exam-center/exam-center.servic
 import { ChipModule } from 'primeng/chip';
 import { PanelModule } from 'primeng/panel';
 import { HallticketService } from '../../services/hallticket/hallticket.service';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
 
 @Component({
   selector: 'app-hallticket',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule],
+  providers: [DialogService],
   templateUrl: './hallticket.component.html',
   styleUrl: './hallticket.component.scss'
 })
@@ -44,12 +47,14 @@ export class HallticketComponent {
   formGroup!: FormGroup;
   hallTicketList: any[] = [];
   showGrid: boolean = false;
+  dialogRef: DynamicDialogRef | undefined;
 
   constructor(
     private franchiseService: FranchiseService,
     private instructorService: InstructorService,
     private examCenterService: ExamCenterService,
     private hallticketService: HallticketService,
+    private dialogService: DialogService,
     private fb: FormBuilder,
   ) {
 
@@ -74,9 +79,9 @@ export class HallticketComponent {
     this.colDefs = [
       { field: 'studentId', header: 'Id', width: '5%', styleClass: 'studentId' },
       { field: 'studentFullName', header: 'Full Name', width: '30%', styleClass: 'studentFullName' },
-      { field: 'instructorName', header: 'Instructor', width: '30%', styleClass: 'instructorName' },
+      { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
       // { field: 'franchiseName', header: 'Franchise', width: '20%', styleClass: 'franchiseName' },
-      { field: 'levelName', header: 'Level', width: '30%', styleClass: 'levelName' },
+      { field: 'levelName', header: 'Level', width: '20%', styleClass: 'levelName' },
       // { field: 'mobileNo', header: 'Mobile Number', width: '10%', styleClass: 'mobileNo' },
       // { field: 'status', header: 'Status', width: '20%', styleClass: 'status' },
       // { field: 'studentLastName', header: 'Last Name', width: '20%', styleClass: 'studentLastName' },
@@ -172,7 +177,7 @@ export class HallticketComponent {
       this.hallticketService.getStudentHallTicketList(this.formGroup.value).subscribe({
         next: (respones) => {
           if (respones) {
-            console.log(respones);
+            // console.log(respones);
             this.hallTicketList = respones;
             // this.hallTicketList = respones.map((item: any) => {
             //   item['fullName'] = item['studentFirstName'] + " " + item['studentLastName'];
@@ -218,5 +223,20 @@ export class HallticketComponent {
     } else {
       this.isSearchDisabled = true;
     }
+  }
+
+  handleGenerateOperation(data: any) {
+    const { rowData, rowIndex } = data;
+    this.dialogRef = this.dialogService.open(HallticketModalComponent, {
+      data: rowData,
+      closable: false,
+      modal: true,
+      width: utils.isMobile() ? '95%' : '28%',
+      styleClass: 'hallticket-dialog',
+      header: 'Admit Card',
+    });
+    this.dialogRef.onClose.subscribe((res: any) => {
+      utils.onModalClose.set(rowIndex)
+    })
   }
 }

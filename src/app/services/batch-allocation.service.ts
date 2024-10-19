@@ -19,4 +19,8 @@ export class BatchAllocationService {
   saveStudentBatchAllocation(payload: any): Observable<any> {
     return this.http.post(this.batchAllocation.saveStudentBatchAllocation, payload);
   }
+  getStudentInfoHallTicketNoWise({ compititionId, hallTicketNumber }: { compititionId: string, hallTicketNumber: string }): Observable<any> {
+    const searchParams = new URLSearchParams({ compititionId, hallTicketNumber });
+    return this.http.get(`${this.batchAllocation.getStudentInfoHallTicketNoWise}?${searchParams}`);
+  }
 }
