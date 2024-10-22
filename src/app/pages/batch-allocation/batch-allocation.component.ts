@@ -92,21 +92,21 @@ export class BatchAllocationComponent {
       { field: 'fullName', header: 'Full Name', width: '20%', styleClass: 'fullName' },
       { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
       { field: 'franchiseName', header: 'Franchise', width: '20%', styleClass: 'franchiseName' },
-      { field: 'levelName', header: 'Level', width: '10%', styleClass: 'levelName' },
+      { field: 'levelName', header: 'Level', width: '20%', styleClass: 'levelName' },
       { field: 'mobileNo', header: 'Mobile Number', width: '10%', styleClass: 'mobileNo' },
-      { field: 'status', header: 'Status', width: '20%', styleClass: 'status' },
+      { field: 'status', header: 'Status', width: '10%', styleClass: 'status' },
       // { field: 'studentLastName', header: 'Last Name', width: '20%', styleClass: 'studentLastName' },
       // { field: 'emailId', header: 'Email', width: '15%', styleClass: 'emailId' },
       // { field: 'dob', header: 'DOB', width: '10%', styleClass: 'dob' },
       // { field: 'schoolName', header: 'School Name', width: '20%', styleClass: 'schoolName' },
       // { field: 'standard', header: 'Standard', width: '20%', styleClass: 'Standard' },
       // { field: 'franchiseTypeName', header: 'Franchise Type', width: '15%', styleClass: 'franchiseTypeName' },
-      {
-        field: 'action',
-        header: 'Action',
-        width: '10%',
-        styleClass: 'action'
-      }
+      // {
+      //   field: 'action',
+      //   header: 'Action',
+      //   width: '10%',
+      //   styleClass: 'action'
+      // }
     ];
   }
 

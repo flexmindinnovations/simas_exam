@@ -66,7 +66,7 @@ export class AddEditQuestionPaperComponent implements OnInit, AfterViewInit {
       const children = this.dialogData?.children.map((item: any) => {
         const obj = {
           questionPaperId: item?.questionPaperId ?? 0,
-          questionType: item?.questionType ?? '',
+          questionType: item?.questionType?.toLowerCase() ?? '',
           columns: item?.columns ?? '',
           rows: item?.rows ?? '',
           noOfQuestion: item?.noOfQuestion ?? '',
