@@ -30,6 +30,8 @@ export class QuestionPaperComponent {
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
   editModeData: any;
+  childColDefs: any[] = [];
+  isTreeList: boolean = true;
 
   constructor(
     private questionPaperService: QuestionPaperService,
@@ -65,10 +67,22 @@ export class QuestionPaperComponent {
         styleClass: 'questionPaperId'
       },
       {
-        field: 'questionPaperName',
+        field: 'examTypeName',
         header: 'Question Paper Name',
-        width: '100%',
+        width: '30%',
         styleClass: 'questionPaperName'
+      },
+      {
+        field: 'levelName',
+        header: 'Level Name',
+        width: '30%',
+        styleClass: 'levelName'
+      },
+      {
+        field: 'roundName',
+        header: 'Round Name',
+        width: '30%',
+        styleClass: 'roundName'
       },
       {
         field: 'action',
@@ -79,15 +93,59 @@ export class QuestionPaperComponent {
     ];
   }
 
+
+  setChildColDefs() {
+    this.childColDefs = [
+      {
+        field: 'questionType',
+        header: 'Question Type',
+        width: '20%',
+        styleClass: 'questionType'
+      },
+      {
+        field: 'noOfQuestion',
+        header: 'Total Questions',
+        width: '20%',
+        styleClass: 'noOfQuestion'
+      },
+      {
+        field: 'markPerQuestion',
+        header: 'Mark per Question',
+        width: '20%',
+        styleClass: 'markPerQuestion'
+      },
+      {
+        field: 'rows',
+        header: 'Rows',
+        width: '20%',
+        styleClass: 'rows'
+      },
+      {
+        field: 'columns',
+        header: 'Columns',
+        width: '20%',
+        styleClass: 'columns'
+      },
+    ];
+  }
+
+
   getQuestionPaperList() {
     utils.isTableLoading.update(val => !val);
     this.questionPaperService.getQuestionPaperList().subscribe({
       next: (response) => {
         if (response) {
           this.questionPaperList = response;
-          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionPaperList)
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionPaperList);
+          this.tableDataSource = response.map((item: any) => {
+            const children = item?.questionPaperDetailsModels.filter((child: any) => child.questionPaperId === item?.questionPaperId);
+            item['children'] = children;
+            delete item['questionPaperDetailsModels'];
+            return item;
+          })
           utils.isTableLoading.update(val => !val);
-          utils.setMessages(response.message, 'success');
+          // utils.setMessages(response.message, 'success');
+          this.setChildColDefs();
         }
       },
       error: (error: HttpErrorResponse) => {

@@ -209,9 +209,9 @@ export class ReportsComponent implements OnInit {
       selectedRound: this.selectedRound ?? 0,
     }
     const payloadBystudentIdAndExamTypeIdAndLevel = {
-      studentId: 5,
-      examTypeId: 1,
-      levelId: 1
+      studentId: payload.selectedStudent,
+      examTypeId: payload.selectedExamType,
+      levelId: payload.selectedLevel
     }
 
     const apiCall = this.reportService.getExampByExamTypeAndLevel(payloadBystudentIdAndExamTypeIdAndLevel);

@@ -10,8 +10,7 @@
             </div>
             <div class="flex flex-col items-center justify-start gap-4">
                 <span class="font-normal text-xs">{{ imageName }}</span>
-                <p-button icon="pi pi-image" label="Change Image" (onClick)="handleChangeImage()"
-                    [rounded]="false" />
+                <p-button icon="pi pi-image" label="Change Image" (onClick)="handleChangeImage()" [rounded]="false" />
             </div>
         </div>
     </div>
@@ -30,11 +29,11 @@
                 <p-button (onClick)="clearCallback();imageChange = false" icon="pi pi-times" [rounded]="true"
                     [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" />
             </div>
-            <p-progressBar [value]="totalSizePercent" [showValue]="false"
+            <!-- <p-progressBar [value]="totalSizePercent" [showValue]="false"
                 styleClass="md:w-[20rem] h-4 w-full md:ml-auto"
                 [ngClass]="{ 'exceeded-progress-bar': totalSizePercent > 100 }">
                 <span class="white-space-nowrap">{{ totalSize }}B / 1Mb</span>
-            </p-progressBar>
+            </p-progressBar> -->
         </div>
     </ng-template>
     <ng-template pTemplate="content" let-files let-uploadedFiles="uploadedFiles"
