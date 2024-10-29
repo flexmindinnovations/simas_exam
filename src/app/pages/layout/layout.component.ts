@@ -20,11 +20,12 @@ import { UserType, UserTypeObj } from '../../enums/user-types';
 import { db } from '../../../db';
 import { SessionTimeOutComponent } from '../../modals/session-time-out/session-time-out.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { FullScreenModalComponent } from '../../modals/full-screen-modal/full-screen-modal.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule],
+  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule,FullScreenModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   animations: [utils.slideInRouter]
@@ -37,6 +38,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isTablet: boolean = false;
   isMenuItemClicked: boolean = false;
   messages: any[] = [];
+  showFullScreen:boolean = false;
 
   permissionList: any[] = [];
 
@@ -162,6 +164,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     if (permissionList.length) {
       this.permissionList = permissionList;
       utils.permissionList.set(permissionList);
+    }
+    if(this.permissionList?.length === 0){
+      this.showFullScreen = true;
     }
   }
 
