@@ -36,6 +36,9 @@ export class AddEditQuestionBankComponent implements OnInit {
   roundNameListLoading: boolean = false;
   questionTypeListLoading: boolean = false;
   typeListLoading: boolean = false;
+  levelListLoading: boolean = false;
+  roundListLoading: boolean = false;
+  examTypeListLoading: boolean = false;
 
   questionTypeList: Array<QuestionType> = QUESTION_TYPES;
   typeList: Array<Type> = TYPES;
@@ -43,9 +46,13 @@ export class AddEditQuestionBankComponent implements OnInit {
   examTypeNameList: Array<any> = [];
   levelNameList: Array<any> = [];
   roundNameList: Array<any> = [];
+  roundList: any[] = [];
+  examTypeList: any[] = [];
+  levelList: any[] = [];
 
   selectedFiles: File[] = [];
   selectedFileName: string = 'No file chosen';
+  
 
   constructor(
     private dialogRef: DynamicDialogRef,
@@ -82,20 +89,36 @@ export class AddEditQuestionBankComponent implements OnInit {
   }
 
   getPopupData() {
-    const examList = this.examTypeService.getExamTypeList();
+    const examTypeList = this.examTypeService.getExamTypeList();
     const levelList = this.levelService.getLevelList();
-    forkJoin({ examList, levelList }).subscribe({
+    forkJoin({ examTypeList, levelList }).subscribe({
       next: (response) => {
         if (response) {
-          const { examList, levelList } = response;
+          const { examTypeList, levelList } = response;
           this.levelNameList = levelList;
-          this.examTypeNameList = examList;
+          this.examTypeNameList = examTypeList;
+          if (this.isEditMode && this.dialogData) this.patchFormData();
         }
+       
       },
       error: (error: HttpErrorResponse) => {
         utils.setMessages(error.message, 'error');
       }
     })
+  }
+
+  patchFormData(){
+      this.handleOnLevelListChange({value :this.dialogData?.levelId});
+      const formValue = {
+          "examTypeName": this.dialogData['examTypeId'],
+          "levelName": this.dialogData['levelId'],
+          "roundName": this.dialogData['roundId'],
+          "questionType": this.dialogData['questionBankId'],
+          "noOfRows":this.dialogData['noOfRows'],
+          "noOfColumns":this.dialogData['noOfColumns'],
+      }
+      this.formGroup.patchValue(formValue);
+      this.cdref.detectChanges();
   }
 
   handleDialogCancel() {
@@ -156,7 +179,7 @@ export class AddEditQuestionBankComponent implements OnInit {
   handleOnExamTypeListChange(event: DropdownChangeEvent) {
   }
 
-  handleOnLevelListChange(event: DropdownChangeEvent) {
+  handleOnLevelListChange(event: DropdownChangeEvent | any) {
     const levelId = event.value;
     let roundList = this.levelNameList.filter((item: any) => item?.levelId === levelId)[0];
     if (roundList) {
@@ -168,6 +191,7 @@ export class AddEditQuestionBankComponent implements OnInit {
   }
   handleOnQuestionTypeListChange(event: DropdownChangeEvent) {
   }
+
   handleOnTypeListChange(event: DropdownChangeEvent) {
   }
 }
