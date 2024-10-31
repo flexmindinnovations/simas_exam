@@ -6,8 +6,9 @@
             <p class="m-0">{{currentDate}}</p>
         </div>
     </div>
+
     <div class="content-wrapper px-5 w-full flex items-start">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 gap-4 w-full sm:w-auto custom-responsive-grid ">
             <div *ngFor="let card of cardData"
                 class="relative w-full sm:w-72 card border bg-white border-gray-200 rounded-lg p-4 shadow-2xl 
                 {{ hoverColors[card.title] }} transition duration-300 transform hover:-translate-y-1 overflow-hidden group">
@@ -19,7 +20,8 @@
                 </div>
                 <div class="relative z-10 flex flex-col items-center space-y-2 justify-center text-center">
                     <h3 class=" m-0 text-lg font-semibold text-gray-800">{{ card.title }}</h3>
-                    <p class="m-0 !text-7xl font-bold {{ textColors[card.title] }} mt-2">{{ card.count }}</p>
+                    <p class="m-0 !text-7xl font-bold {{ textColors[card.title] }} mt-2">{{ card.count }}
+                    </p>
                     <div class="text-gray-500 mt-2 flex items-center justify-between w-full">
                         <p class="m-0">Active: <span class="text-black font-medium">{{ card.activeCount }}</span></p>
                         <p class="m-0">Pending: <span class="text-black font-medium">{{ card.pendingCount }}</span></p>
