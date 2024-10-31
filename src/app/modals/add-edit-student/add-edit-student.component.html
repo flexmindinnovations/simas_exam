@@ -205,7 +205,7 @@
                         required.</small>
                 </div>
             </div>
-
+            @if(!isEditMode || (isEditMode && dialogData['status'] === true)){
             <div class="flex form-input flex-col items-start w-full">
                 <label for="stuPass">Student Password</label>
                 <p-password id="stuPass" formControlName="stuPass" [feedback]="false" [toggleMask]="true" />
@@ -216,6 +216,8 @@
                         required.</small>
                 </div>
             </div>
+            }
+
 
             <!-- <div class="flex form-input flex-col items-start w-full">
                 <label for="startDate">Start Date</label>

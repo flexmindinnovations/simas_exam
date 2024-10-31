@@ -32,7 +32,7 @@ export class StudentService {
   }
 
   saveStudent(payload: Student): Observable<Student> {
-    return this.http.post<Student>(this.studentPath.savetStudent, payload);
+    return this.http.post<Student>(this.studentPath.saveStudent, payload);
   }
 
   uploadStudentDetails(payload: any): Observable<any> {

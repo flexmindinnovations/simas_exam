@@ -26,7 +26,7 @@ export type ApiCallConfig = {
     studentListByFranchiseId: string;
     studentListInstructorWise: string;
     studentById: string;
-    savetStudent: string;
+    saveStudent: string;
     updateStudent: string;
     upload: string;
     uploadandUpdateStudent: string;
@@ -170,7 +170,7 @@ export class AppConfigService {
       studentListByFranchiseId: `${this.hostUrl}/Student/GetStudentList?franchiseId={{id}}`,
       studentListInstructorWise: `${this.hostUrl}/Student/GetStudentListInstructorWise`,
       studentById: `${this.hostUrl}/Student/GetStudentById?studentId={{id}}`,
-      savetStudent: `${this.hostUrl}/Student/SavetStudent`,
+      saveStudent: `${this.hostUrl}/Student/SaveStudent`,
       updateStudent: `${this.hostUrl}/Student/UpdateStudent`,
       upload: `${this.hostUrl}/Student/Upload`,
       uploadandUpdateStudent: `${this.hostUrl}/Student/UploadandUpdateStudent`,

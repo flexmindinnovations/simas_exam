@@ -1,25 +1,32 @@
-<div class="home-container flex flex-col gap-4 items-start justify-start">
-    <div class="header flex items-center justify-between px-5 max-w-3xl mx-auto">
+<div class="home-container page-container  flex flex-col gap-4 items-start justify-start">
+    <div class="header flex items-center justify-between px-5 mx-auto">
         <h3 class="text-2xl">{{greetMessage}},</h3>
         <div class="dateTime flex flex-col items-end">
             <p class="m-0">{{currentTime}}</p>
             <p class="m-0">{{currentDate}}</p>
         </div>
     </div>
-    <div class="content-wrapper px-5 w-full flex items-center justify-center">
-        <!-- <div
-            class="banner min-h-28 w-full bg-gradient-to-tr bg-botticelli-200 p-3 max-w-5xl rounded-2xl flex items-start justify-between">
-            <div class="text-space flex-[1_0_auto]">
-                <h3 class="text-2xl tracking-wider text-botticelli-600 font-bolder select-none">
-                    Welcome Back {{userName}},
-                </h3>
-                <p class="text-botticelli-950 !text-lg m-0">
-                    keep it up and improve yourself.
-                </p>
+    <div class="content-wrapper px-5 w-full flex items-start">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div *ngFor="let card of cardData"
+                class="relative w-full sm:w-72 card border bg-white border-gray-200 rounded-lg p-4 shadow-2xl 
+                {{ hoverColors[card.title] }} transition duration-300 transform hover:-translate-y-1 overflow-hidden group">
+                <!-- Background Icon with opacity and hover effect -->
+                <div
+                    class="icon absolute top-0 left-0 w-20 h-16 {{bgColors[card.title]}} flex items-center justify-center rounded-br-full">
+                    <i class="pi {{ card.icon }} mr-4 {{ iconColors[card.title] }}
+                    transition duration-300 text-3xl group-hover:text-blue-400"></i>
+                </div>
+                <div class="relative z-10 flex flex-col items-center space-y-2 justify-center text-center">
+                    <h3 class=" m-0 text-lg font-semibold text-gray-800">{{ card.title }}</h3>
+                    <p class="m-0 !text-7xl font-bold {{ textColors[card.title] }} mt-2">{{ card.count }}</p>
+                    <div class="text-gray-500 mt-2 flex items-center justify-between w-full">
+                        <p class="m-0">Active: <span class="text-black font-medium">{{ card.activeCount }}</span></p>
+                        <p class="m-0">Pending: <span class="text-black font-medium">{{ card.pendingCount }}</span></p>
+                    </div>
+                </div>
             </div>
-            <div class="image-container h-full w-full relative">
-                <img class="h-60 w-auto absolute right-[5%] -bottom-3 rounded-full" src="/images/bts.jpg" alt="bg-image"/>
-            </div>
-        </div> -->
+        </div>
+
     </div>
 </div>
