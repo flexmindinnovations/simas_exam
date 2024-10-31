@@ -90,18 +90,6 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const data = changes['permissionList']?.currentValue;
-    const studentResult = {
-      "permissionId": 21,
-      "moduleId": 21,
-      "moduleName": "StudentResult",
-      "roleId": 1,
-      "canView": true,
-      "canAdd": true,
-      "canEdit": true,
-      "canDelete": true,
-      "id": 184
-    }
-    data.push(studentResult);
     if (data) {
       this.filterMenuItems(data);
       this.splitMenuItems();
