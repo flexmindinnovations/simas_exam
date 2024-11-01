@@ -99,7 +99,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: any): any {
     return {
-      id: 17,
+      id: 22,
       title: 'More',
       label: 'More',
       moduleName: 'more',
