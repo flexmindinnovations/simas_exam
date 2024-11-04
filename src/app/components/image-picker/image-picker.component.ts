@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { PrimeNGConfig } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -28,6 +29,7 @@ export class ImagePickerComponent implements OnInit, OnChanges, OnDestroy {
   imageChange: boolean = false;
   constructor(
     private config: PrimeNGConfig,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -35,11 +37,16 @@ export class ImagePickerComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const imagePath = changes?.['selectedImagePath']?.currentValue;
-    if (this.isEditMode && imagePath) {
-      this.imageName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
-      this.files.push(imagePath);
+    if (this.selectedImagePath) {
+      if (this.isEditMode && this.selectedImagePath) {
+        this.imageName = this.selectedImagePath.substring(this.selectedImagePath.lastIndexOf('/') + 1);
+        this.files.push(this.getSanitizedImage(this.selectedImagePath));
+      }
     }
+  }
+
+  getSanitizedImage(url: string) {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
   handleChangeImage() {

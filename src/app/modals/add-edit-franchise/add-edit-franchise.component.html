@@ -6,7 +6,7 @@
                 <label for="status">Status</label>
                 <p-inputSwitch formControlName="status" />
             </div>
-
+            
             <div class="flex form-input flex-col items-start w-full col-span-2">
                 <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
                     (uploadFile)="handleUploadFile($event)"></image-picker>

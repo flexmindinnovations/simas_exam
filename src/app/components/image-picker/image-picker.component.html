@@ -39,7 +39,7 @@
     <ng-template pTemplate="content" let-files let-uploadedFiles="uploadedFiles"
         let-removeFileCallback="removeFileCallback" let-removeUploadedFileCallback="removeUploadedFileCallback">
         <div *ngIf="files?.length > 0">
-            <h5>Pending</h5>
+            <!-- <h5>Pending</h5> -->
             <div class="flex flex-wrap p-0 sm:p-5 gap-5 w-full">
                 <div *ngFor="let file of files; let i = index"
                     class="card w-full m-0 px-6 flex border-1 surface-border items-center justify-between gap-3">
@@ -51,12 +51,12 @@
                         <span class="font-semibold">{{ file.name }}</span>
                         <span class="file-size">{{ formatSize(file.size) }}</span>
                     </div>
-                    <p-badge value="Pending" severity="warning" />
+                    <!-- <p-badge value="Pending" severity="warning" /> -->
                 </div>
             </div>
         </div>
         <div *ngIf="uploadedFiles?.length > 0">
-            <h5>Completed</h5>
+            <!-- <h5>Completed</h5> -->
             <div class="flex flex-wrap p-0 sm:p-5 gap-5 w-full">
                 <div *ngFor="let file of uploadedFiles; let i = index"
                     class="card w-full m-0 px-6 flex border-1 surface-border items-center justify-between gap-3">
@@ -65,7 +65,7 @@
                     </div>
                     <span class="font-semibold">{{ file.name }}</span>
                     <div>{{ formatSize(file.size) }}</div>
-                    <p-badge value="Completed" class="mt-3" severity="success" />
+                    <!-- <p-badge value="Completed" class="mt-3" severity="success" /> -->
                 </div>
             </div>
         </div>

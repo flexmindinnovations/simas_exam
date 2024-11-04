@@ -67,7 +67,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.isEditMode && this.dialogData) {
       const formData = JSON.parse(JSON.stringify(this.dialogData));
-      formData['status'] = formData['status'] === '1' ? true : false;
+      formData['status'] = formData['status'] === 'Active' ? true : false;
       formData['startDate'] = new Date(formData['startDate']);
       formData['endDate'] = new Date(formData['endDate']);
       this.formGroup.patchValue(formData);
@@ -151,7 +151,7 @@ export class AddEditInstructorComponent implements OnInit, AfterViewInit {
     formVal['franchiseTypeName'] = '';
     formVal['userPassword'] = formVal['instructorPassword'];
     formVal['mobileNo'] = formVal['mobileNo'].toString();
-    formVal['status'] = status === true ? '1' : '0';
+    formVal['status'] = status === true ? 'Active' : 'DeActive';
     formData.append('instructorModel', JSON.stringify(formVal));
     let apiCall = this.instructorService.saveInstructor(formVal);
     if (this.isEditMode) {

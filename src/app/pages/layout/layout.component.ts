@@ -38,7 +38,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isTablet: boolean = false;
   isMenuItemClicked: boolean = false;
   messages: any[] = [];
-  showFullScreen:boolean = false;
+  noPermissionPop:boolean = false;
 
   permissionList: any[] = [];
 
@@ -165,9 +165,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       this.permissionList = permissionList;
       utils.permissionList.set(permissionList);
     }
-    if(this.permissionList?.length === 0){
-      this.showFullScreen = true;
-    }
+    this.noPermissionPop = this.permissionList.find((item:any)=>item.canView !== true) ? true : false;
   }
 
   ngAfterViewInit(): void {

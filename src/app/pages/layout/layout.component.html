@@ -34,6 +34,6 @@
 @if (isUserSessionEnded) {
 <app-session-time-out [visible]="isUserSessionEnded"></app-session-time-out>
 }
-@if(showFullScreen){
-    <app-full-screen-modal [visible] ='showFullScreen' [message]='"You do not have permission to access this resource. Please contact your administrator."'></app-full-screen-modal>
+@if(noPermissionPop){
+    <app-full-screen-modal [visible] ='noPermissionPop' [message]='"You do not have permission to access this resource. Please contact your administrator."'></app-full-screen-modal>
 }
