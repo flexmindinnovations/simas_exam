@@ -100,29 +100,31 @@
                         required.</small>
                 </div>
             </div>
-            <div class="flex form-input flex-col items-start w-full col-span-2 gap-2">
-                <input #excelFileChooser type="file" (change)="handleFileChange($event)" accept=".xlsx"
-                    class="hidden" />
-                <div class="file-wrapper w-full" (onClick)="excelFileChooser.click()">
-                    <span class="p-input-icon-right w-full flex items-start justify-start">
-                        <span class="min-w-28 -mr-[2px]">
-                            <p-button label="Choose File" (onClick)="excelFileChooser.click()" styleClass="file-chooser"
-                                [disabled]="isSubmitActionLoading" icon="pi pi-cloud-upload" severity="primary"
-                                [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+            @if(!isEditMode){
+                <div class="flex form-input flex-col items-start w-full col-span-2 gap-2">
+                    <input #excelFileChooser type="file" (change)="handleFileChange($event)" accept=".xlsx"
+                        class="hidden" />
+                    <div class="file-wrapper w-full" (onClick)="excelFileChooser.click()">
+                        <span class="p-input-icon-right w-full flex items-start justify-start">
+                            <span class="min-w-28 -mr-[2px]">
+                                <p-button label="Choose File" (onClick)="excelFileChooser.click()" styleClass="file-chooser"
+                                    [disabled]="isSubmitActionLoading" icon="pi pi-cloud-upload" severity="primary"
+                                    [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
+                            </span>
+                            <input type="text" pInputText (onClick)="excelFileChooser.click()" [readOnly]="true"
+                                [placeholder]="selectedFileName" formControlName="file"
+                                class="!w-[55%] lg:!w-80% xl:!80% 2xl:!80%"
+                                style="width: 80%;border-top-left-radius: 0;border-bottom-left-radius: 0;"
+                                [ngClass]="formGroup.get('file')?.touched || formGroup.get('file')?.dirty ? 'ng-invalid ng-dirty' : ''" />
                         </span>
-                        <input type="text" pInputText (onClick)="excelFileChooser.click()" [readOnly]="true"
-                            [placeholder]="selectedFileName" formControlName="file"
-                            class="!w-[55%] lg:!w-80% xl:!80% 2xl:!80%"
-                            style="width: 80%;border-top-left-radius: 0;border-bottom-left-radius: 0;"
-                            [ngClass]="formGroup.get('file')?.touched || formGroup.get('file')?.dirty ? 'ng-invalid ng-dirty' : ''" />
-                    </span>
-                    <div
-                        *ngIf="formGroup.get('file')?.invalid && (formGroup.get('file')?.dirty || formGroup.get('file')?.touched)">
-                        <small *ngIf="formGroup.get('file')?.errors?.['required']" class="p-error">This field is
-                            required.</small>
+                            <div
+                            *ngIf="formGroup.get('file')?.invalid && (formGroup.get('file')?.dirty || formGroup.get('file')?.touched)">
+                            <small *ngIf="formGroup.get('file')?.errors?.['required']" class="p-error">This field is
+                                required.</small>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }    
         </form>
     </div>
     <div class="action w-full flex items-center justify-end gap-3 p-4">
