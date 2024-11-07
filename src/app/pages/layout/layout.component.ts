@@ -25,7 +25,7 @@ import { FullScreenModalComponent } from '../../modals/full-screen-modal/full-sc
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule,FullScreenModalComponent],
+  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule, FullScreenModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   animations: [utils.slideInRouter]
@@ -38,7 +38,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isTablet: boolean = false;
   isMenuItemClicked: boolean = false;
   messages: any[] = [];
-  noPermissionPop:boolean = false;
+  showPermissionPop: boolean = false;
 
   permissionList: any[] = [];
 
@@ -165,7 +165,11 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       this.permissionList = permissionList;
       utils.permissionList.set(permissionList);
     }
-    this.noPermissionPop = this.permissionList.find((item:any)=>item.canView !== true) ? true : false;
+
+    const viewableModules = permissionList.filter(permission => permission.canView);
+    if (viewableModules.length === 0) {
+      this.showPermissionPop = true;
+    }
   }
 
   ngAfterViewInit(): void {

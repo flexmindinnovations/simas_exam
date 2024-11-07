@@ -118,6 +118,7 @@ export class AddEditQuestionBankComponent implements OnInit {
           "noOfColumns":this.dialogData['noOfColumns'],
       }
       this.formGroup.patchValue(formValue);
+      if(this.isEditMode) this.formGroup.get('file')?.disable();
       this.cdref.detectChanges();
   }
 
