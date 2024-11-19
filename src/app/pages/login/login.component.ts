@@ -108,6 +108,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
       next: (response: any) => {
         if (response) {
           const { token, roleId, roleName } = response;
+          if (response.hasOwnProperty('student')) {
+            const { studentId, ...rest } = response?.student[0];
+            sessionStorage.setItem('userId', studentId);
+          }
           const userRoleEnc = utils.encryptString(roleName, token);
           sessionStorage.setItem('token', token);
           sessionStorage.setItem('role', userRoleEnc);
