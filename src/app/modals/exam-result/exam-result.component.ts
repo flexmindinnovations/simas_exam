@@ -74,7 +74,7 @@ export class ExamResultComponent implements OnInit {
         skipQuestions: this.skippedQuestions?.length,
         rightAnswer: this.correctQuestions?.length,
         wrongAnswer: this.wrongQuestions?.length,
-        totalTimeTaken: item.timeTaken ? +item.timeTaken : +this.totalTime
+        totalTimeTaken: item.timeTaken
       };
       return obj;
     });

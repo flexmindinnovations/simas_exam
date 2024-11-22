@@ -872,6 +872,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.onClose.subscribe((res) => {
       // console.log('res: ', res);
       if (res) {
+        this.isPanelCollapsed = !this.isPanelCollapsed;
         utils.setMessages(res.message, 'success');
       }
     })
