@@ -134,6 +134,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   timeLeft: any;
   totalElapsedTime: any;
   isMobile: boolean = false;
+  NoDataFound:boolean = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
@@ -310,10 +311,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   canStartExam(): boolean {
     const data = {
       levelId: this.selectedLevel,
-      roundId: this.selectedRound,
+      // roundId: this.selectedRound,
       examTypeId: this.selectedExamType,
-      noOfColumn: this.selectedNoOfColumn,
-      noOfRow: this.selectedNoOfRows
+      // noOfColumn: this.selectedNoOfColumn,
+      // noOfRow: this.selectedNoOfRows
     }
     return Object.values(data).every(value => value !== null && value !== undefined && value !== '');
   }
@@ -477,6 +478,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(() => {
       this.showExamResults();
     })
+    this.NoDataFound = false;
   }
 
   confirm(event: Event) {
@@ -532,16 +534,16 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isSearchDisabled = true;
     const payload = {
       levelId: this.selectedLevel,
-      roundId: this.selectedRound,
+      // roundId: this.selectedRound,
       examTypeId: this.selectedExamType,
-      noOfColumn: this.selectedNoOfColumn,
-      noOfRow: this.selectedNoOfRows
+      // noOfColumn: this.selectedNoOfColumn,
+      // noOfRow: this.selectedNoOfRows
     }
-    this.questionBankService.flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise(payload)
+    this.questionBankService.getFlashAnzanQuestionBankListExamTypeAndLevelWise(payload)
       .subscribe({
         next: (response) => {
-          if (response) {
-            this.questionList = response.map((item: any) => {
+          if (response.length > 0) {
+            this.questionList = response?.map((item: any) => {
               item['isAttempted'] = false;
               item['isWrongAnswer'] = false;
               return item;
@@ -565,6 +567,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
             timer(500).subscribe(() => {
               this.startFlashing();
             });
+          }else{
+            this.NoDataFound = true;
+            this.isSearchActionLoading = false;
+            this.isSearchDisabled = false;
           }
         },
         error: (error: HttpErrorResponse) => {
@@ -847,7 +853,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       examPaperId: 0,
       studentId: 0,
       levelId: this.selectedLevel,
-      roundId: this.selectedRound,
+      roundId: 0,
       questionId: 0,
       examTypeId: this.selectedExamType,
       examPaperDate: new Date().toISOString(),
@@ -866,6 +872,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.onClose.subscribe((res) => {
       // console.log('res: ', res);
       if (res) {
+        this.isPanelCollapsed = !this.isPanelCollapsed;
         utils.setMessages(res.message, 'success');
       }
     })

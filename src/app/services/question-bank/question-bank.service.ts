@@ -40,9 +40,9 @@ export class QuestionBankService {
     return this.http.get(`${this.questionBankApiPath.questionBankList}?${searchParams}`);
   }
 
-  flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise(payload: { levelId: string, roundId: string, examTypeId: string, noOfColumn: string, noOfRow: string }): Observable<any> {
+  getFlashAnzanQuestionBankListExamTypeAndLevelWise(payload: { levelId: string, examTypeId: string}): Observable<any> {
     const searchParams = new URLSearchParams(payload);
-    return this.http.get(`${this.questionBankApiPath.flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise}?${searchParams}`);
+    return this.http.get(`${this.questionBankApiPath.getFlashAnzanQuestionBankListExamTypeAndLevelWise}?${searchParams}`);
   }
 
   updateQuestionBank(payload: string): Observable<any> {

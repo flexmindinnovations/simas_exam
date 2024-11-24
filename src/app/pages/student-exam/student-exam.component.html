@@ -30,7 +30,7 @@
                     optionLabel="levelName" [filter]="true" filterBy="levelName" [showClear]="false" />
             </div>
 
-            <div class="flex flex-col items-start w-full max-w-32">
+            <!-- <div class="flex flex-col items-start w-full max-w-32">
                 <label for="roundList">Round <span class="text-red-500">*</span></label>
                 <p-dropdown appendTo="body" inputId="roundList" [options]="roundList"
                     [loading]="isLevelListLoading || isRoundListLoading" loadingIcon="pi pi-spin pi-spinner"
@@ -66,7 +66,7 @@
                     ariaLabelledBy="title" placeholder="Select"
                     (onChange)="handleOnDropdownValueChange($event, 'speed')" optionValue="value" optionLabel="title"
                     [filter]="true" filterBy="title" [showClear]="false" />
-            </div>
+            </div> -->
 
             <p-button label="Start" (onClick)="handleSearchAction()"
                 [disabled]="!canStartExam() || isSearchDisabled || isSearchActionLoading" icon="pi pi-play"
@@ -158,8 +158,13 @@
         } @else {
         <div class="col-span-2 row-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
             <p class="opacity-70 select-none md:!text-sm lg:!text-sm xl:!text-lg 2xl:!text-lg">
-                Choose the exam data from the available options and then press the 'Start' button to initiate the
-                exam.
+                @if(NoDataFound){
+                    No data is available for the selected options. Please review your selection and try again.
+                }@else{
+                    Choose the exam data from the available options and then press the 'Start' button to initiate the
+                    exam.
+                }
+              
             </p>
         </div>
         }

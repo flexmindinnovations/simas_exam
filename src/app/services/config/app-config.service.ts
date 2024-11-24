@@ -97,7 +97,7 @@ export type ApiCallConfig = {
     // questionBankListExamTypeAndTypeWise: string;
     // questionBankListExamTypeAndLessonORTypeWise: string;
     // flashAnzanQuestionBankListExamTypeAndLevelWise: string;
-    flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise: string;
+    getFlashAnzanQuestionBankListExamTypeAndLevelWise: string;
     updateQuestionBank: string;
     uploadFile: string;
     deleteQuestionBank: string;
@@ -243,7 +243,7 @@ export class AppConfigService {
       // questionBankListExamTypeAndTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndTypeWise`,
       // questionBankListExamTypeAndLessonORTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndLessonORTypeWise`,
       // flashAnzanQuestionBankListExamTypeAndLevelWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelWise`,
-      flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelAndRoundWise`,
+      getFlashAnzanQuestionBankListExamTypeAndLevelWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelWise`,
       updateQuestionBank: `${this.hostUrl}/QuestionBank/updateQuestionBank`,
       uploadFile: `${this.hostUrl}/QuestionBank/uploadFile`,
       deleteQuestionBank: `${this.hostUrl}/QuestionBank/Delete/{{id}}`
