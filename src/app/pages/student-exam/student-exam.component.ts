@@ -135,6 +135,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   totalElapsedTime: any;
   isMobile: boolean = false;
   NoDataFound:boolean = false;
+  roundId:any;
+  questionListRoundWise:any[]=[];
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
@@ -406,7 +408,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.questionList[this.activeQuestionIndex].isSkipped = true;
       this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
       this.isWrongAnswer = isWrongAnswer;
-
       timer(1500).pipe(
         tap(() => {
           this.resetTimer();
@@ -548,6 +549,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               item['isWrongAnswer'] = false;
               return item;
             });
+            this.roundId = this.questionList[this.activeQuestionIndex].roundId;
+            const roundWise = this.questionList.sort((a:any, b:any) => a.roundId - b.roundId)
+            this.questionListRoundWise = roundWise.filter((question:any)=>question.roundId === this.roundId);
+            console.log(this.questionListRoundWise);
             // this.questionList = this.questionList.slice(0, 5);
             this.activeQuestion = this.questionList[0];
             this.correctAnswer = this.activeQuestion?.answer;
