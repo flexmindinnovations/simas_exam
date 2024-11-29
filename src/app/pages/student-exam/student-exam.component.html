@@ -131,7 +131,7 @@
 
                 </div>
 
-                <div class="questionResultContainer" id="questionResultContainer">
+                <div class="questionResultContainer flex" id="questionResultContainer">
                     @if (showAnswer && submitedlashQuestionsIndex > -1) {
                     <div class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
                         [ngClass]="questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'bg-red-500' : 'bg-green-500'">
@@ -140,6 +140,9 @@
                         <p class="m-0 tracking-wider">{{modifiedFlashQuestionsString}} = {{correctAnswer}}</p>
                     </div>
                     }
+                    <div class="absolute bottom-5 right-5 z-50">
+                        <p-button label="Next Round" [disabled]="!canMoveToNextRound" (click)="nextRound()" icon="pi pi-play" styleClass="py-2.5" severity="primary" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,7 +151,7 @@
             <app-timer [questionDuration]="questionDuration" (timeEnded)="OnTimerFinished($event)"
                 (timeLeft)="handleTimer($event)"
                 class="max-w-lg lg:max-w-lg xl:max-w-lg 2xl:max-w-lg md:min-w-[40%] md:flex md:items-start md:justify-center h-full w-full"
-                [examStarted]="examStarted" [questionsList]="questionListRoundWise" [activeQuestion]="activeQuestion"
+                [examStarted]="examStarted" [questionsList]="questionList" [activeQuestion]="activeQuestion"
                 [activeQuestionIndex]="activeQuestionIndex" (selectedQuestion)="selectedQuestion($event)"></app-timer>
         </div>
         <div class="card flex-1 col-span-2 flex items-center justify-center">
@@ -156,9 +159,6 @@
                 (onChange)="handleExamControlOptionChange($event)" [styleClass]="'examControls'"
                 [(ngModel)]="selectedExamControlOption" optionLabel="label" optionValue="value" />
         </div>
-        <p-button label="Next" icon="pi pi-play" styleClass="py-2.5" severity="primary"
-            [disabled]="activeQuestionIndex !== questionListRoundWise.length - 1">
-        </p-button>
         } @else {
         <div
             class="col-span-2 row-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
