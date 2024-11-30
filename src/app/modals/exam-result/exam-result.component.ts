@@ -39,7 +39,7 @@ export class ExamResultComponent implements OnInit {
     this.totalTime = this.dialogData?.totalTime;
     if (this.questionList?.length) {
       this.attemptedQuestions = this.questionList.filter((item: any) => item.isAttempted === true);
-      this.skippedQuestions = this.questionList.filter((item: any) => item.isSkipped === true);
+      this.skippedQuestions = this.questionList.filter((item: any) => item.isAttempted === false);
       this.wrongQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === true);
       this.correctQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
     }
