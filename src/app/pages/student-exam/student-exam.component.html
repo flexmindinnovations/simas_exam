@@ -110,8 +110,8 @@
 
                             </div>
                             } -->
-                            <input type="number" (ngModelChange)="handleKeyValue($event)" pInputText
-                                [(ngModel)]="selectedAnswer" />
+                            <input type="text" (ngModelChange)="handleKeyValue($event)" pInputText
+                                [(ngModel)]="selectedAnswer" /> 
                         </div>
                     </div>
                     } @else if(isLoadingQuestion && !quizCompleted) {

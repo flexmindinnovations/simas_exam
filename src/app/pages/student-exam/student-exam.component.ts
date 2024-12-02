@@ -362,6 +362,14 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submitQuestion() {
+    if (!this.validateNumber(this.selectedAnswer)) {
+      const sound = this.sounds['error'];
+      this.playSound(sound);
+      timer(200).subscribe(() => {
+        utils.setMessages('Please choose the correct answer', 'error');
+      });
+      return; // Exit the function early if validation fails
+    }
     if (this.isAnswerSubmitted) {
       const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
       // Process the current question
@@ -392,6 +400,11 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         utils.setMessages('Please choose the correct answer', 'error');
       });
   }
+}
+
+validateNumber(input: string): boolean {
+  const regex = /^-?\d+(\.\d+)?$/;
+  return regex.test(input);
 }
   
   
