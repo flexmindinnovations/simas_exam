@@ -942,9 +942,6 @@ endExam() {
             question, // Adding question object from allResults
         };
     });
-    
-    console.log(questionAllResult);
-    
   
     const examInputData = {
       examPaperId: 0,
