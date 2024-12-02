@@ -1,5 +1,5 @@
 <div class="student-exam-container page-container flex flex-col">
-    <p-panel [toggleable]="true"  [(collapsed)]="isPanelCollapsed" class="panel-component">
+    <p-panel [toggleable]="true" [(collapsed)]="isPanelCollapsed" class="panel-component">
         <ng-template pTemplate="header">
             <div class="flex items-center justify-start space-x-2">
                 <i class="pi pi-cog"></i>
@@ -79,7 +79,8 @@
         @if (examStarted && !quizCompleted) {
         <div
             class="exam-container h-full col-start-1 row-start-2 md:col-start-1 lg:col-start-1 lg:row-start-1 md:row-start-2 md:row-end-2 flex flex-col min-h-52">
-            <div class="flex flex-col items-center lg:items-start xl:items-start 2xl:items-start justify-center w-full h-full">
+            <div
+                class="flex flex-col items-center lg:items-start xl:items-start 2xl:items-start justify-center w-full h-full">
                 <div #exampOptionsCard class="exampOptionsCard card flex justify-center">
                     <p-selectButton [options]="examOptions" (onChange)="handleExamOptionChange($event)"
                         [(ngModel)]="selectedExamOption" optionLabel="label" optionValue="value" />
@@ -109,8 +110,8 @@
 
                             </div>
                             } -->
-                            <input type="number" (ngModelChange)="handleKeyValue($event)" pInputText
-                                [(ngModel)]="selectedAnswer" />
+                            <input type="text" (ngModelChange)="handleKeyValue($event)" pInputText
+                                [(ngModel)]="selectedAnswer" /> 
                         </div>
                     </div>
                     } @else if(isLoadingQuestion && !quizCompleted) {
@@ -130,7 +131,7 @@
 
                 </div>
 
-                <div class="questionResultContainer" id="questionResultContainer">
+                <div class="questionResultContainer flex" id="questionResultContainer">
                     @if (showAnswer && submitedlashQuestionsIndex > -1) {
                     <div class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
                         [ngClass]="questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'bg-red-500' : 'bg-green-500'">
@@ -139,6 +140,9 @@
                         <p class="m-0 tracking-wider">{{modifiedFlashQuestionsString}} = {{correctAnswer}}</p>
                     </div>
                     }
+                    <div class="absolute bottom-5 right-5 z-50">
+                        <p-button label="Next Round" *ngIf="canMoveToNextRound" (click)="nextRound()" icon="pi pi-play" styleClass="py-2.5" severity="primary" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,15 +160,16 @@
                 [(ngModel)]="selectedExamControlOption" optionLabel="label" optionValue="value" />
         </div>
         } @else {
-        <div class="col-span-2 row-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
+        <div
+            class="col-span-2 row-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full">
             <p class="opacity-70 select-none md:!text-sm lg:!text-sm xl:!text-lg 2xl:!text-lg">
                 @if(NoDataFound){
-                    No data is available for the selected options. Please review your selection and try again.
+                No data is available for the selected options. Please review your selection and try again.
                 }@else{
-                    Choose the exam data from the available options and then press the 'Start' button to initiate the
-                    exam.
+                Choose the exam data from the available options and then press the 'Start' button to initiate the
+                exam.
                 }
-              
+
             </p>
         </div>
         }

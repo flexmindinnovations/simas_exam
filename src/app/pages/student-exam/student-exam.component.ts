@@ -134,7 +134,13 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   timeLeft: any;
   totalElapsedTime: any;
   isMobile: boolean = false;
-  NoDataFound:boolean = false;
+  NoDataFound: boolean = false;
+  roundIds: any[] = [];
+  questionListAll: any[] = [];
+  groupedQuestions:any;
+  currentRoundIndex=0;
+  roundHeader:string = '';
+  canMoveToNextRound = false; 
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
@@ -356,8 +362,16 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submitQuestion() {
+    if (!this.validateNumber(this.selectedAnswer)) {
+      const sound = this.sounds['error'];
+      this.playSound(sound);
+      timer(200).subscribe(() => {
+        utils.setMessages('Please choose the correct answer', 'error');
+      });
+      return; // Exit the function early if validation fails
+    }
     if (this.isAnswerSubmitted) {
-      const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
+      const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
       // Process the current question
       this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
       this.formatSequence();
@@ -365,59 +379,86 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.correctAnswer = this.activeQuestion?.answer;
       const userInput = this.questionList[this.activeQuestionIndex].userInput;
       const isWrongAnswer = String(userInput) != String(this.correctAnswer);
+      // Mark question status
       this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
       this.questionList[this.activeQuestionIndex].isAttempted = true;
       this.questionList[this.activeQuestionIndex].isSkipped = false;
       this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
       this.isWrongAnswer = isWrongAnswer;
-      this.cdref.detectChanges();
-      if (isLastQuestion) {
-        timer(1500).pipe(
-          tap(() => {
-            this.resetTimer();
-            this.quizCompleted = true;
-            this.isSearchDisabled = false;
-            this.isSearchActionLoading = false;
-          }),
-          switchMap(() => timer(500))
-        ).subscribe(() => {
-          this.showExamResults();
-        });
+      this.cdref.detectChanges(); 
+      // Check if all questions in the current round are completed
+      if (isLastQuestionInRound) {
+        this.canMoveToNextRound = true; // Enable the "Next Round" button
       } else {
         this.loadNextQuestion();
       }
+      this.cdref.detectChanges();
     } else {
       const sound = this.sounds['error'];
       this.playSound(sound);
       timer(200).subscribe(() => {
         utils.setMessages('Please choose the correct answer', 'error');
       });
+  }
+}
+
+validateNumber(input: string): boolean {
+  const regex = /^-?\d+(\.\d+)?$/;
+  return regex.test(input);
+}
+  
+  
+  nextRound() {
+    if (this.canMoveToNextRound) {
+      this.selectedAnswer = null;
+      // Reset the flag for the next round
+      this.canMoveToNextRound = false;
+  
+      // Move to the next round
+      const nextRoundIndex = this.currentRoundIndex + 1;
+  
+      if (nextRoundIndex < this.roundIds.length) {
+        // Load the next round's questions
+        this.currentRoundIndex = nextRoundIndex;
+        this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the next round
+      } else {
+        // All rounds are completed, end the exam
+        this.endExam();
+      }
     }
   }
+  
+
+  moveToNextRound() {
+    const nextRoundIndex = this.currentRoundIndex + 1;
+  
+    if (nextRoundIndex < this.roundIds.length) {
+      // Load the next round's questions
+      this.currentRoundIndex = nextRoundIndex;
+      this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the next round
+    } else {
+      // All rounds are completed, end the exam
+      this.endExam();
+    }
+  }
+  
 
   newQuestion() {
-    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
-    if (isLastQuestion) {
-      this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
-      this.correctAnswer = this.activeQuestion?.answer;
-      const userInput = this.questionList[this.activeQuestionIndex].userInput;
-      const isWrongAnswer = userInput !== this.correctAnswer;
-      this.questionList[this.activeQuestionIndex].isAttempted = false;
-      this.questionList[this.activeQuestionIndex].isSkipped = true;
-      this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
-      this.isWrongAnswer = isWrongAnswer;
-
-      timer(1500).pipe(
-        tap(() => {
-          this.resetTimer();
-          this.quizCompleted = true;
-          this.isSearchDisabled = false;
-          this.isSearchActionLoading = false;
-        }),
-        switchMap(() => timer(500))
-      ).subscribe(() => {
-        this.showExamResults();
-      })
+    const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
+  
+    // Skip current question
+    this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
+    this.correctAnswer = this.activeQuestion?.answer;
+    const userInput = this.questionList[this.activeQuestionIndex].userInput;
+    const isWrongAnswer = userInput !== this.correctAnswer;
+    this.questionList[this.activeQuestionIndex].isAttempted = false;
+    this.questionList[this.activeQuestionIndex].isSkipped = true;
+    this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
+    this.isWrongAnswer = isWrongAnswer;
+  
+    // If last question of the current round, move to the next round
+    if (isLastQuestionInRound) {
+      this.moveToNextRound();
     } else {
       this.loadNextQuestion();
     }
@@ -454,32 +495,24 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdref.detectChanges();
   }
 
-  endExam() {
-    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
-    if (!isLastQuestion) {
-      const currentQuestionIndex = this.activeQuestionIndex;
-      const totalQuestions = this.questionList.length;
-      for (let i = currentQuestionIndex; i < totalQuestions; i++) {
-        this.questionList[i].isAttempted = false;
-        this.questionList[i].isSkipped = true;
-        this.questionList[i].isWrongAnswer = false;
-      }
-    }
-    timer(1000).pipe(
-      tap(() => {
-        this.isSearchDisabled = false;
-        this.isFlashEnded = true;
-        this.quizCompleted = true;
-        this.examStarted = false;
-        this.showAnswer = false;
-        this.resetTimer();
-      }),
-      switchMap(() => timer(500))
-    ).subscribe(() => {
-      this.showExamResults();
-    })
-    this.NoDataFound = false;
-  }
+endExam() {
+  // Proceed with the end exam logic without checking if all rounds are completed
+  timer(1000).pipe(
+    tap(() => {
+      this.isSearchDisabled = false;
+      this.isFlashEnded = true;
+      this.quizCompleted = true;
+      this.examStarted = false;
+      this.showAnswer = false;
+      this.resetTimer();
+    }),
+    switchMap(() => timer(500))
+  ).subscribe(() => {
+    this.showExamResults();  // Show the results for all rounds
+  });
+}
+
+  
 
   confirm(event: Event) {
     this.confirmationService.confirm({
@@ -528,46 +561,28 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       console.error('Error playing sound:', error);
     });
   }
-
   handleSearchAction() {
     this.isSearchActionLoading = true;
     this.isSearchDisabled = true;
     const payload = {
       levelId: this.selectedLevel,
-      // roundId: this.selectedRound,
       examTypeId: this.selectedExamType,
-      // noOfColumn: this.selectedNoOfColumn,
-      // noOfRow: this.selectedNoOfRows
-    }
+    };
+  
     this.questionBankService.getFlashAnzanQuestionBankListExamTypeAndLevelWise(payload)
       .subscribe({
         next: (response) => {
           if (response.length > 0) {
-            this.questionList = response?.map((item: any) => {
-              item['isAttempted'] = false;
-              item['isWrongAnswer'] = false;
-              return item;
-            });
-            // this.questionList = this.questionList.slice(0, 5);
-            this.activeQuestion = this.questionList[0];
-            this.correctAnswer = this.activeQuestion?.answer;
-            this.questionType = this.activeQuestion?.questionType;
-            this.flashQuestions = this.activeQuestion?.questions.split(',');
-            this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
-            this.activeQuestionIndex = 0;
-            this.isLoadingQuestion = true;
-            const sound = this.sounds['simple'];
-            this.playSound(sound);
-            this.isFlashEnded = false;
-            this.examStarted = true;
-            this.quizCompleted = false;
+            // Group questions by roundId
+            this.questionListAll = response?.sort((a:any, b:any) => parseInt(a) - parseInt(b));
+            this.groupedQuestions = this.groupQuestionsByRound(response);
+            this.roundIds = Object.keys(this.groupedQuestions).sort((a, b) => parseInt(a) - parseInt(b)); // Sort rounds
+            this.currentRoundIndex = 0; // Start from the first round
+            
+            this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the first round's questions
             this.isSearchActionLoading = false;
-            this.setTimerWidth();
             this.isPanelCollapsed = true;
-            timer(500).subscribe(() => {
-              this.startFlashing();
-            });
-          }else{
+          } else {
             this.NoDataFound = true;
             this.isSearchActionLoading = false;
             this.isSearchDisabled = false;
@@ -578,8 +593,43 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isSearchActionLoading = false;
           this.isSearchDisabled = false;
         }
-      })
+      });
   }
+  
+  // Helper function to group questions by round
+  groupQuestionsByRound(questions: any[]) {
+    return questions.reduce((grouped: any, question: any) => {
+      const roundId = question.roundId;
+      if (!grouped[roundId]) {
+        grouped[roundId] = [];
+      }
+      grouped[roundId].push(question);
+      return grouped;
+    }, {});
+  }
+  
+  // Function to load the questions for a specific round
+  loadRoundQuestions(roundId: string) {
+    this.questionList = this.groupedQuestions[roundId];
+    this.activeQuestionIndex = 0;
+    this.activeQuestion = this.questionList[this.activeQuestionIndex];
+    this.correctAnswer = this.activeQuestion?.answer;
+    this.flashQuestions = this.activeQuestion?.questions.split(',');
+    this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
+    
+    this.isLoadingQuestion = true;
+    this.isFlashEnded = false;
+    this.examStarted = true;
+    this.quizCompleted = false;
+    this.showRoundHeader(roundId); // Optionally display round header
+    this.startFlashing();
+  }
+  
+  // Optionally, display the current round
+  showRoundHeader(roundId: string) {
+    this.roundHeader = `Round ${roundId}`;
+  }
+  
 
   startFlashing(): void {
     const minTime = 500;
@@ -849,6 +899,50 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showExamResults() {
+    const allResults:any = [];
+
+    for (const roundId of this.roundIds) {
+        const questionsInRound = this.groupedQuestions[roundId];
+    
+        const roundResults = questionsInRound.map((question:any) => {
+            return {
+                userInput: question.userInput,
+                isSkipped: question.isSkipped || false,
+                isAttempted: question.isAttempted || false,
+            };
+        });
+        allResults.push(...roundResults);
+    }
+
+    const questionAllResult = this.questionListAll.map((item, index) => {
+        const question = allResults[index] || {}; // Match allResults by index
+    
+        return {
+            questionBankId: item.questionBankId,
+            levelId: item.levelId,
+            roundId: item.roundId,
+            roundName: item.roundName,
+            levelName: item.levelName,
+            questionType: item.questionType,
+            examTypeId: item.examTypeId,
+            examTypeName: item.examTypeName,
+            questionBankDetailsId: item.questionBankDetailsId,
+            noOfColumn: item.noOfColumn,
+            noOfRow: item.noOfRow,
+            questions: item.questions,
+            answer: item.answer,
+            examRoundTime: item.examRoundTime,
+            isActive: item.isActive,
+            timeTaken: item.timeTaken,
+            userAnswer: question.userInput,
+            isCorrect: String(question.userInput) === String(item.answer),
+            isWrongAnswer: String(question.userInput) !== String(item.answer),
+            isSkipped: question.isSkipped,
+            isAttempted: question.isAttempted,
+            question, // Adding question object from allResults
+        };
+    });
+  
     const examInputData = {
       examPaperId: 0,
       studentId: 0,
@@ -857,10 +951,12 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       questionId: 0,
       examTypeId: this.selectedExamType,
       examPaperDate: new Date().toISOString(),
-      examPaperTime: ""
+      examPaperTime: this.totalTime,
     };
+  
+  
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
-      data: { questionList: this.questionList, examInputData, totalTime: this.totalTime },
+      data: { questionList:questionAllResult, examInputData, totalTime: this.totalTime },
       closable: true,
       modal: true,
       height: 'auto',
@@ -868,15 +964,15 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       styleClass: 'add-edit-dialog',
       header: 'Exam Result',
     });
-
+  
     this.dialogRef.onClose.subscribe((res) => {
-      // console.log('res: ', res);
       if (res) {
         this.isPanelCollapsed = !this.isPanelCollapsed;
         utils.setMessages(res.message, 'success');
       }
-    })
+    });
   }
+  
 
   cleanupSounds(): void {
     Object.keys(this.sounds).forEach((key) => {
@@ -895,5 +991,20 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resetTimer();
   }
 
+  loadNextRound() {
+    this.selectedAnswer = null;
+    const nextRoundIndex = this.currentRoundIndex + 1;
+  
+    if (nextRoundIndex < this.roundIds.length) {
+      // Move to the next round
+      this.currentRoundIndex = nextRoundIndex;
+      this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the next round's questions
+    } else {
+      // End the quiz if no more rounds
+      this.quizCompleted = true;
+      this.showExamResults();
+    }
+  }
+  
 }
 

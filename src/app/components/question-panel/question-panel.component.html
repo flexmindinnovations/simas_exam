@@ -7,7 +7,7 @@
     <div class="question-count relative w-full">
         <ul class="question-list">
             @for (item of questionsList; track $index) {
-            <li (click)="handleQuestionClick(item, $index)" [ngClass]="item.isActive ? 'active' : ''">
+            <li [ngClass]="item.isActive ? 'active' : ''">
                 <div class="outer"
                     [ngClass]="[item?.isActive ? 'outer-active' : '', item?.isCompleted ? 'completed' : '', item?.isSkipped ? 'bg-red-500' : '']">
                     <div class="inner"

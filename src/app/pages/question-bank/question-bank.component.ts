@@ -104,7 +104,7 @@ export class QuestionBankComponent {
       next: (response) => {
         if (response) {
           this.questionBankList = response;
-          console.log(this.questionBankList);
+          // console.log(this.questionBankList);
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionBankList)
           utils.isTableLoading.update(val => !val);
         }
