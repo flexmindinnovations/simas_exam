@@ -1,5 +1,5 @@
 .form-container {
     p {
-        @apply my-2 w-full text-sm font-semibold grid grid-cols-[40%_1fr];
+      @apply  my-2 w-full text-sm font-semibold grid grid-cols-[60%_1fr] md:grid-cols-[40%_1fr] lg:grid-cols-[30%_1fr] ;
     }
 }
