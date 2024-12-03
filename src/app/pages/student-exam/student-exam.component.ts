@@ -104,6 +104,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isSubmitClicked: boolean = false;
   isNextClicked: boolean = false;
   isEndClicked: boolean = false;
+  isNextRoundClicked: boolean = false;
 
 
   options: any[] = [];
@@ -137,10 +138,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   NoDataFound: boolean = false;
   roundIds: any[] = [];
   questionListAll: any[] = [];
-  groupedQuestions:any;
-  currentRoundIndex=0;
-  roundHeader:string = '';
-  canMoveToNextRound = false; 
+  groupedQuestions: any;
+  currentRoundIndex = 0;
+  roundHeader: string = '';
+  canMoveToNextRound = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   constructor(
@@ -179,6 +180,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         window.location.reload();
       }
     })
+  }
+
+  get filteredExamControls() {
+    return this.examControls.filter(control => control.value !== 'round' || this.canMoveToNextRound);
   }
 
   ngAfterViewInit(): void {
@@ -267,6 +272,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       { label: 'Submit', value: 'submit', styleClass: 'submit-action' },
       { label: 'Next/Skip', value: 'next', styleClass: 'next-action' },
       { label: 'End Exam', value: 'end', styleClass: 'end-action' },
+      { label: 'Next Round', value: 'round', styleClass: 'nextRound-action' },
     ]
 
     this.noOfRowsList = [
@@ -332,12 +338,13 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleExamControlOptionChange(event: any) {
     const target = event?.originalEvent?.target;
-    let srcTarget = target.innerText === 'Next/Skip' ? 'next' : target.innerText === 'End Exam' ? 'end' : target?.innerText.toLowerCase();
+    let srcTarget = target.innerText === 'Next/Skip' ? 'next' : target.innerText === 'End Exam' ? 'end' : target.innerText === 'Next Round' ? 'round' : target?.innerText.toLowerCase();
     const selectedValue = srcTarget ? srcTarget : event.value;
     let sound = this.sounds[selectedValue];
     this.isSubmitClicked = false;
     this.isNextClicked = false;
     this.isEndClicked = false;
+    this.isNextRoundClicked = false;
 
     switch (selectedValue) {
       case 'submit':
@@ -357,6 +364,12 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         sound = this.sounds['error'];
         this.playSound(sound);
         this.confirm(event?.originalEvent);
+        break;
+      case 'round':
+        this.isNextRoundClicked = true;
+        sound = this.sounds['next1'];
+        this.playSound(sound);
+        this.nextRound();
         break;
     }
   }
@@ -385,7 +398,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.questionList[this.activeQuestionIndex].isSkipped = false;
       this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
       this.isWrongAnswer = isWrongAnswer;
-      this.cdref.detectChanges(); 
+      this.cdref.detectChanges();
       // Check if all questions in the current round are completed
       if (isLastQuestionInRound) {
         this.canMoveToNextRound = true; // Enable the "Next Round" button
@@ -399,24 +412,24 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       timer(200).subscribe(() => {
         utils.setMessages('Please choose the correct answer', 'error');
       });
+    }
   }
-}
 
-validateNumber(input: string): boolean {
-  const regex = /^-?\d+(\.\d+)?$/;
-  return regex.test(input);
-}
-  
-  
+  validateNumber(input: string): boolean {
+    const regex = /^-?\d+(\.\d+)?$/;
+    return regex.test(input);
+  }
+
+
   nextRound() {
     if (this.canMoveToNextRound) {
       this.selectedAnswer = null;
       // Reset the flag for the next round
       this.canMoveToNextRound = false;
-  
+
       // Move to the next round
       const nextRoundIndex = this.currentRoundIndex + 1;
-  
+
       if (nextRoundIndex < this.roundIds.length) {
         // Load the next round's questions
         this.currentRoundIndex = nextRoundIndex;
@@ -427,11 +440,11 @@ validateNumber(input: string): boolean {
       }
     }
   }
-  
+
 
   moveToNextRound() {
     const nextRoundIndex = this.currentRoundIndex + 1;
-  
+
     if (nextRoundIndex < this.roundIds.length) {
       // Load the next round's questions
       this.currentRoundIndex = nextRoundIndex;
@@ -441,11 +454,11 @@ validateNumber(input: string): boolean {
       this.endExam();
     }
   }
-  
+
 
   newQuestion() {
     const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
-  
+
     // Skip current question
     this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
     this.correctAnswer = this.activeQuestion?.answer;
@@ -455,7 +468,7 @@ validateNumber(input: string): boolean {
     this.questionList[this.activeQuestionIndex].isSkipped = true;
     this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
     this.isWrongAnswer = isWrongAnswer;
-  
+
     // If last question of the current round, move to the next round
     if (isLastQuestionInRound) {
       this.moveToNextRound();
@@ -495,24 +508,24 @@ validateNumber(input: string): boolean {
     this.cdref.detectChanges();
   }
 
-endExam() {
-  // Proceed with the end exam logic without checking if all rounds are completed
-  timer(1000).pipe(
-    tap(() => {
-      this.isSearchDisabled = false;
-      this.isFlashEnded = true;
-      this.quizCompleted = true;
-      this.examStarted = false;
-      this.showAnswer = false;
-      this.resetTimer();
-    }),
-    switchMap(() => timer(500))
-  ).subscribe(() => {
-    this.showExamResults();  // Show the results for all rounds
-  });
-}
+  endExam() {
+    // Proceed with the end exam logic without checking if all rounds are completed
+    timer(1000).pipe(
+      tap(() => {
+        this.isSearchDisabled = false;
+        this.isFlashEnded = true;
+        this.quizCompleted = true;
+        this.examStarted = false;
+        this.showAnswer = false;
+        this.resetTimer();
+      }),
+      switchMap(() => timer(500))
+    ).subscribe(() => {
+      this.showExamResults();  // Show the results for all rounds
+    });
+  }
 
-  
+
 
   confirm(event: Event) {
     this.confirmationService.confirm({
@@ -568,17 +581,17 @@ endExam() {
       levelId: this.selectedLevel,
       examTypeId: this.selectedExamType,
     };
-  
+
     this.questionBankService.getFlashAnzanQuestionBankListExamTypeAndLevelWise(payload)
       .subscribe({
         next: (response) => {
           if (response.length > 0) {
             // Group questions by roundId
-            this.questionListAll = response?.sort((a:any, b:any) => parseInt(a) - parseInt(b));
+            this.questionListAll = response?.sort((a: any, b: any) => parseInt(a) - parseInt(b));
             this.groupedQuestions = this.groupQuestionsByRound(response);
             this.roundIds = Object.keys(this.groupedQuestions).sort((a, b) => parseInt(a) - parseInt(b)); // Sort rounds
             this.currentRoundIndex = 0; // Start from the first round
-            
+
             this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the first round's questions
             this.isSearchActionLoading = false;
             this.isPanelCollapsed = true;
@@ -595,7 +608,7 @@ endExam() {
         }
       });
   }
-  
+
   // Helper function to group questions by round
   groupQuestionsByRound(questions: any[]) {
     return questions.reduce((grouped: any, question: any) => {
@@ -607,7 +620,7 @@ endExam() {
       return grouped;
     }, {});
   }
-  
+
   // Function to load the questions for a specific round
   loadRoundQuestions(roundId: string) {
     this.questionList = this.groupedQuestions[roundId];
@@ -616,7 +629,7 @@ endExam() {
     this.correctAnswer = this.activeQuestion?.answer;
     this.flashQuestions = this.activeQuestion?.questions.split(',');
     this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
-    
+
     this.isLoadingQuestion = true;
     this.isFlashEnded = false;
     this.examStarted = true;
@@ -624,12 +637,12 @@ endExam() {
     this.showRoundHeader(roundId); // Optionally display round header
     this.startFlashing();
   }
-  
+
   // Optionally, display the current round
   showRoundHeader(roundId: string) {
     this.roundHeader = `Round ${roundId}`;
   }
-  
+
 
   startFlashing(): void {
     const minTime = 500;
@@ -834,6 +847,7 @@ endExam() {
       this.isSubmitClicked = false;
       this.isNextClicked = false;
       this.isEndClicked = false;
+      this.isNextRoundClicked = false;
     }
   }
 
@@ -847,6 +861,7 @@ endExam() {
       this.isSubmitClicked = false;
       this.isNextClicked = false;
       this.isEndClicked = false;
+      this.isNextRoundClicked = false;
     }
   }
 
@@ -899,50 +914,50 @@ endExam() {
   }
 
   showExamResults() {
-    const allResults:any = [];
+    const allResults: any = [];
 
     for (const roundId of this.roundIds) {
-        const questionsInRound = this.groupedQuestions[roundId];
-    
-        const roundResults = questionsInRound.map((question:any) => {
-            return {
-                userInput: question.userInput,
-                isSkipped: question.isSkipped || false,
-                isAttempted: question.isAttempted || false,
-            };
-        });
-        allResults.push(...roundResults);
+      const questionsInRound = this.groupedQuestions[roundId];
+
+      const roundResults = questionsInRound.map((question: any) => {
+        return {
+          userInput: question.userInput,
+          isSkipped: question.isSkipped || false,
+          isAttempted: question.isAttempted || false,
+        };
+      });
+      allResults.push(...roundResults);
     }
 
     const questionAllResult = this.questionListAll.map((item, index) => {
-        const question = allResults[index] || {}; // Match allResults by index
-    
-        return {
-            questionBankId: item.questionBankId,
-            levelId: item.levelId,
-            roundId: item.roundId,
-            roundName: item.roundName,
-            levelName: item.levelName,
-            questionType: item.questionType,
-            examTypeId: item.examTypeId,
-            examTypeName: item.examTypeName,
-            questionBankDetailsId: item.questionBankDetailsId,
-            noOfColumn: item.noOfColumn,
-            noOfRow: item.noOfRow,
-            questions: item.questions,
-            answer: item.answer,
-            examRoundTime: item.examRoundTime,
-            isActive: item.isActive,
-            timeTaken: item.timeTaken,
-            userAnswer: question.userInput,
-            isCorrect: String(question.userInput) === String(item.answer),
-            isWrongAnswer: String(question.userInput) !== String(item.answer),
-            isSkipped: question.isSkipped,
-            isAttempted: question.isAttempted,
-            question, // Adding question object from allResults
-        };
+      const question = allResults[index] || {}; // Match allResults by index
+
+      return {
+        questionBankId: item.questionBankId,
+        levelId: item.levelId,
+        roundId: item.roundId,
+        roundName: item.roundName,
+        levelName: item.levelName,
+        questionType: item.questionType,
+        examTypeId: item.examTypeId,
+        examTypeName: item.examTypeName,
+        questionBankDetailsId: item.questionBankDetailsId,
+        noOfColumn: item.noOfColumn,
+        noOfRow: item.noOfRow,
+        questions: item.questions,
+        answer: item.answer,
+        examRoundTime: item.examRoundTime,
+        isActive: item.isActive,
+        timeTaken: item.timeTaken,
+        userAnswer: question.userInput,
+        isCorrect: String(question.userInput) === String(item.answer),
+        isWrongAnswer: String(question.userInput) !== String(item.answer),
+        isSkipped: question.isSkipped,
+        isAttempted: question.isAttempted,
+        question, // Adding question object from allResults
+      };
     });
-  
+
     const examInputData = {
       examPaperId: 0,
       studentId: 0,
@@ -953,10 +968,10 @@ endExam() {
       examPaperDate: new Date().toISOString(),
       examPaperTime: this.totalTime,
     };
-  
-  
+
+
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
-      data: { questionList:questionAllResult, examInputData, totalTime: this.totalTime },
+      data: { questionList: questionAllResult, examInputData, totalTime: this.totalTime },
       closable: true,
       modal: true,
       height: 'auto',
@@ -964,7 +979,7 @@ endExam() {
       styleClass: 'add-edit-dialog',
       header: 'Exam Result',
     });
-  
+
     this.dialogRef.onClose.subscribe((res) => {
       if (res) {
         this.isPanelCollapsed = !this.isPanelCollapsed;
@@ -972,7 +987,7 @@ endExam() {
       }
     });
   }
-  
+
 
   cleanupSounds(): void {
     Object.keys(this.sounds).forEach((key) => {
@@ -994,7 +1009,7 @@ endExam() {
   loadNextRound() {
     this.selectedAnswer = null;
     const nextRoundIndex = this.currentRoundIndex + 1;
-  
+
     if (nextRoundIndex < this.roundIds.length) {
       // Move to the next round
       this.currentRoundIndex = nextRoundIndex;
@@ -1005,6 +1020,6 @@ endExam() {
       this.showExamResults();
     }
   }
-  
+
 }
 

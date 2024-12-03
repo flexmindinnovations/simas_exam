@@ -111,7 +111,7 @@
                             </div>
                             } -->
                             <input type="text" (ngModelChange)="handleKeyValue($event)" pInputText
-                                [(ngModel)]="selectedAnswer" /> 
+                                [(ngModel)]="selectedAnswer" />
                         </div>
                     </div>
                     } @else if(isLoadingQuestion && !quizCompleted) {
@@ -131,7 +131,7 @@
 
                 </div>
 
-                <div class="questionResultContainer flex" id="questionResultContainer">
+                <div class="questionResultContainer" id="questionResultContainer">
                     @if (showAnswer && submitedlashQuestionsIndex > -1) {
                     <div class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
                         [ngClass]="questionList[submitedlashQuestionsIndex].isWrongAnswer ? 'bg-red-500' : 'bg-green-500'">
@@ -140,9 +140,6 @@
                         <p class="m-0 tracking-wider">{{modifiedFlashQuestionsString}} = {{correctAnswer}}</p>
                     </div>
                     }
-                    <div class="absolute bottom-5 right-5 z-50">
-                        <p-button label="Next Round" *ngIf="canMoveToNextRound" (click)="nextRound()" icon="pi pi-play" styleClass="py-2.5" severity="primary" />
-                    </div>
                 </div>
             </div>
         </div>
@@ -155,7 +152,7 @@
                 [activeQuestionIndex]="activeQuestionIndex" (selectedQuestion)="selectedQuestion($event)"></app-timer>
         </div>
         <div class="card flex-1 col-span-2 flex items-center justify-center">
-            <p-selectButton [disabled]="!isFlashEnded" [options]="examControls"
+            <p-selectButton [disabled]="!isFlashEnded" [options]="filteredExamControls"
                 (onChange)="handleExamControlOptionChange($event)" [styleClass]="'examControls'"
                 [(ngModel)]="selectedExamControlOption" optionLabel="label" optionValue="value" />
         </div>

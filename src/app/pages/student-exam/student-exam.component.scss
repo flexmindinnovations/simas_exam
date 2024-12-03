@@ -40,7 +40,13 @@
             @apply bg-red-500 text-white;
         }
     }
+    .nextRound-action {
+        @apply bg-blue-200 text-white;
 
+        &::before {
+            @apply bg-blue-500 text-white;
+        }
+    }
 
 }
 
