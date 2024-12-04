@@ -406,6 +406,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   
       if (isLastQuestionInRound) {
         this.canMoveToNextRound = true;
+        this.isLoadingQuestion = false;
         this.resetTimer();
       } else {
         this.loadNextQuestion();
@@ -474,7 +475,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   
     if (isLastQuestionInRound) {
       this.canMoveToNextRound = true;
-      this.isLoadingQuestion = false; 
+      this.isLoadingQuestion = false;
+      this.resetTimer();
       return;
     }
   
