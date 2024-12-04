@@ -383,29 +383,32 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       return; // Exit the function early if validation fails
     }
+  
     if (this.isAnswerSubmitted) {
       const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
+  
       // Process the current question
       this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
       this.formatSequence();
       this.submitedlashQuestionsIndex = this.activeQuestionIndex;
       this.correctAnswer = this.activeQuestion?.answer;
       const userInput = this.questionList[this.activeQuestionIndex].userInput;
-      const isWrongAnswer = String(userInput) != String(this.correctAnswer);
+      const isWrongAnswer = String(userInput) !== String(this.correctAnswer);
+  
       // Mark question status
       this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
       this.questionList[this.activeQuestionIndex].isAttempted = true;
       this.questionList[this.activeQuestionIndex].isSkipped = false;
       this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
       this.isWrongAnswer = isWrongAnswer;
+  
       this.cdref.detectChanges();
-      // Check if all questions in the current round are completed
+  
       if (isLastQuestionInRound) {
         this.canMoveToNextRound = true; // Enable the "Next Round" button
       } else {
         this.loadNextQuestion();
       }
-      this.cdref.detectChanges();
     } else {
       const sound = this.sounds['error'];
       this.playSound(sound);
@@ -414,7 +417,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
   }
-
+  
   validateNumber(input: string): boolean {
     const regex = /^-?\d+(\.\d+)?$/;
     return regex.test(input);
@@ -423,23 +426,23 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nextRound() {
     if (this.canMoveToNextRound) {
-      this.selectedAnswer = null;
-      // Reset the flag for the next round
-      this.canMoveToNextRound = false;
+        this.isLoadingQuestion = false; // Clear loading state
+        this.isFlashEnded = false; // Reset flash state
+        this.selectedAnswer = null;
+        this.canMoveToNextRound = false;
 
-      // Move to the next round
-      const nextRoundIndex = this.currentRoundIndex + 1;
-
-      if (nextRoundIndex < this.roundIds.length) {
-        // Load the next round's questions
-        this.currentRoundIndex = nextRoundIndex;
-        this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the next round
-      } else {
-        // All rounds are completed, end the exam
-        this.endExam();
-      }
+        const nextRoundIndex = this.currentRoundIndex + 1;
+        if (nextRoundIndex < this.roundIds.length) {
+            this.currentRoundIndex = nextRoundIndex;
+            this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]);
+        } else {
+            this.endExam();
+        }
+    } else {
+        utils.setMessages('Complete the current round before moving to the next round.', 'info');
     }
-  }
+}
+
 
 
   moveToNextRound() {
@@ -458,8 +461,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   newQuestion() {
     const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
-
-    // Skip current question
+  
     this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
     this.correctAnswer = this.activeQuestion?.answer;
     const userInput = this.questionList[this.activeQuestionIndex].userInput;
@@ -468,63 +470,72 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.questionList[this.activeQuestionIndex].isSkipped = true;
     this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
     this.isWrongAnswer = isWrongAnswer;
-
-    // If last question of the current round, move to the next round
+  
     if (isLastQuestionInRound) {
-      this.moveToNextRound();
-    } else {
-      this.loadNextQuestion();
+      this.canMoveToNextRound = true;
+      this.isLoadingQuestion = false; 
+      return;
     }
+  
+    this.loadNextQuestion();
   }
-
+  
   loadNextQuestion() {
+    // Check if the round has ended
+    const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
+    if (isLastQuestionInRound || this.canMoveToNextRound || this.quizCompleted) {
+      return; // Prevent loading new questions if the round is completed
+    }
+  
     this.resetTimer();
-    timer(200).pipe(
-      tap(() => {
-        if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
-          this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
-          this.questionList[this.activeQuestionIndex]['isAttempted'] = false;
-          this.questionList[this.activeQuestionIndex]['isSkipped'] = true;
-        } else {
-          this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
-          this.questionList[this.activeQuestionIndex]['isAttempted'] = true;
-        }
-        const nextQuestionIndex = this.activeQuestionIndex + 1;
-        const activeQuestion = this.questionList[nextQuestionIndex];
-        this.activeQuestionIndex = nextQuestionIndex;
-        this.activeQuestion = activeQuestion;
-        this.flashQuestions = this.activeQuestion?.questions.split(',');
-        this.isAnswerSubmitted = false;
-        this.isFlashEnded = false;
-        this.isLoadingQuestion = true;
-      }),
-      switchMap(() => timer(1000))
-    ).subscribe(() => {
-      const sound = this.sounds['simple'];
-      this.playSound(sound);
-      this.startFlashing();
-    });
-
+    timer(200)
+      .pipe(
+        tap(() => {
+          if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
+            this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
+            this.questionList[this.activeQuestionIndex]['isAttempted'] = false;
+            this.questionList[this.activeQuestionIndex]['isSkipped'] = true;
+          } else {
+            this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
+            this.questionList[this.activeQuestionIndex]['isAttempted'] = true;
+          }
+  
+          const nextQuestionIndex = this.activeQuestionIndex + 1;
+          this.activeQuestionIndex = nextQuestionIndex;
+          this.activeQuestion = this.questionList[nextQuestionIndex];
+          this.flashQuestions = this.activeQuestion?.questions.split(',');
+          this.isAnswerSubmitted = false;
+          this.isFlashEnded = false;
+          this.isLoadingQuestion = true;
+        }),
+        switchMap(() => timer(1000))
+      )
+      .subscribe(() => {
+        const sound = this.sounds['simple'];
+        this.playSound(sound);
+        this.startFlashing();
+      });
+  
     this.cdref.detectChanges();
   }
-
+  
   endExam() {
-    // Proceed with the end exam logic without checking if all rounds are completed
-    timer(1000).pipe(
-      tap(() => {
-        this.isSearchDisabled = false;
-        this.isFlashEnded = true;
-        this.quizCompleted = true;
-        this.examStarted = false;
-        this.showAnswer = false;
-        this.resetTimer();
-      }),
-      switchMap(() => timer(500))
-    ).subscribe(() => {
-      this.showExamResults();  // Show the results for all rounds
-    });
+    this.quizCompleted = true; // Prevent any further progression
+    this.examStarted = false;
+    this.isFlashEnded = true;
+  
+    timer(1000)
+      .pipe(
+        tap(() => {
+          this.isSearchDisabled = false;
+          this.resetTimer();
+        }),
+        switchMap(() => timer(500))
+      )
+      .subscribe(() => {
+        this.showExamResults();
+      });
   }
-
 
 
   confirm(event: Event) {
@@ -684,34 +695,37 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   finalizeFlashing(): void {
     this.isFlashEnded = true;
+    this.isLoadingQuestion = false; // Ensure loading state is off
+
     if (this.activeQuestionIndex >= this.questionList.length) {
-      timer(1000)
-        .pipe(
-          tap(() => {
-            this.showAnswer = false;
-            this.resetTimer();
-            this.quizCompleted = true;
-            this.isSearchDisabled = false;
-            this.isSearchActionLoading = false;
-          }),
-          switchMap(() => timer(1500))
-        )
-        .subscribe(() => {
-          this.showExamResults();
-        });
+        timer(1000)
+            .pipe(
+                tap(() => {
+                    this.quizCompleted = true;
+                    this.isSearchDisabled = false;
+                    this.isSearchActionLoading = false;
+                    this.resetTimer(); // Reset timer states
+                }),
+                switchMap(() => timer(1500))
+            )
+            .subscribe(() => {
+                this.showExamResults();
+            });
     } else {
-      timer(1000).subscribe(() => {
-        this.state = 'void';
-        this.checkBoxstate = 'scaled';
-        this.submitedlashQuestionsIndex = -1;
-        this.questionTimer = '100';
-        this.initQuestionTimer();
-        this.options = [];
-        this.populateAndShuffleOptions();
-        this.cdref.detectChanges();
-      });
+        // Prepare for the next question
+        timer(1000).subscribe(() => {
+            this.state = 'void';
+            this.checkBoxstate = 'scaled';
+            this.submitedlashQuestionsIndex = -1;
+            this.questionTimer = '100';
+            this.initQuestionTimer();
+            this.options = [];
+            this.populateAndShuffleOptions();
+            this.cdref.detectChanges();
+        });
     }
-  }
+}
+
 
   initQuestionTimer() {
     if (this.subscription) {
@@ -767,35 +781,36 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isWarningPhase = false;
     this.questionTimer = '0';
     timer(2000)
-      .subscribe(() => {
-        this.resetTimer();
-        if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
-          this.questionList[this.activeQuestionIndex].isSkipped = true;
-          this.questionList[this.activeQuestionIndex].isAttempted = false;
-          this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
-        }
-        this.isFlashEnded = false;
-        this.showAnswer = false;
-        this.newQuestion();
-      })
-  }
+        .subscribe(() => {
+            this.resetTimer();
+            if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
+                this.questionList[this.activeQuestionIndex].isSkipped = true;
+                this.questionList[this.activeQuestionIndex].isAttempted = false;
+                this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
+            }
+            this.isFlashEnded = true; // Mark flash as ended
+            this.newQuestion();
+        });
+}
+
 
   resetTimer() {
     if (this.subscription) {
-      this.subscription.unsubscribe();
+        this.subscription.unsubscribe();
     }
     this.selectedAnswer = null;
     this.remainingTime = this.totalTime;
+    this.isLoadingQuestion = false; // Ensure this resets
     this.isWrongAnswer = false;
     this.isWarningPhase = false;
     this.isDangerPhase = false;
-    this.questionTimer = '0';
     this.flashQuestionsString = '';
+    this.questionTimer = '0';
     this.checkBoxstate = 'void';
     utils.isWarningPhase.set(this.isWarningPhase);
     utils.isDangerPhase.set(this.isDangerPhase);
-    this.isLoadingQuestion = true;
-  }
+}
+
 
   OnTimerFinished(timeFinished: boolean) {
     if (timeFinished) {
