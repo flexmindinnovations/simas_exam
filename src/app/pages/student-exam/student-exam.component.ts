@@ -405,7 +405,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cdref.detectChanges();
   
       if (isLastQuestionInRound) {
-        this.canMoveToNextRound = true; // Enable the "Next Round" button
+        this.canMoveToNextRound = true;
+        this.resetTimer();
       } else {
         this.loadNextQuestion();
       }
