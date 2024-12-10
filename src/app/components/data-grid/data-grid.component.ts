@@ -110,6 +110,10 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
         this.dataSource[rowIndex]['isGenerateActionLoading'] = false;
       }
       this.selectedRoute = utils.activeItem();
+      if (typeof this.selectedRoute === 'object' && Object.keys(this.selectedRoute).length > 0) {
+        this.setModulePermissions();
+      }
+
     })
 
     effect(() => {
@@ -157,7 +161,6 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
       { label: 'XLSX', icon: 'pi pi-file-excel', command: () => { this.downloadxlxs(); } },
       { label: 'PDF', icon: 'pi pi-file-pdf', command: () => { this.downloadPdf(); } }
     ];
-    this.setModulePermissions();
     this.cdref.detectChanges();
   }
 
