@@ -17,6 +17,7 @@ import { FranchiseService } from '../../services/franchise/franchise.service';
 import { StudentService } from '../../services/student/student.service';
 import { InstructorService } from '../../services/instructor/instructor.service';
 import { AddEditActivationComponent } from '../../modals/add-edit-activation/add-edit-activation.component';
+import { ActivationService } from '../../services/activation/activation.service';
 
 @Component({
   selector: 'app-activation',
@@ -42,13 +43,19 @@ export class ActivationComponent {
   selectedActivationType: string = '';
   selectedFranchise: string = '';
   apiResponse: any;
+  validActivate: boolean = false;
+  data: string = '';
+  isActivateActionLoading: boolean = false;
+  showGrid: boolean = false;
+  selectedRows: any[] = [];
 
   constructor(
     private examService: ExamService,
     private franchiseService: FranchiseService,
     private studentService: StudentService,
     private instructorService: InstructorService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private activationService: ActivationService,
   ) {
 
     effect(() => {
@@ -100,6 +107,7 @@ export class ActivationComponent {
   handleOnActivationTypeChange(event: DropdownChangeEvent) {
     this.selectedFranchise = '';
     this.colDefs = [];
+    this.showGrid = false;
     this.tableDataSource = [];
     if (this.selectedActivationType === this.activationType.Franchise)
       this.isSearchDisabled = false;
@@ -110,6 +118,7 @@ export class ActivationComponent {
   handleOnFranchiseChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedActivationType !== this.activationType.Franchise && this.selectedFranchise !== '') {
       this.isSearchDisabled = false;
     } else {
@@ -153,6 +162,7 @@ export class ActivationComponent {
 
   createTableDataSource(response: any) {
     this.tableDataSource = utils.filterDataByColumns(this.colDefs, response);
+    this.showGrid = this.tableDataSource.length > 0 ? true : false;
   }
 
 
@@ -320,52 +330,52 @@ export class ActivationComponent {
   }
 
   handleAddEditAction(data?: any) {
-    if (this.selectedActivationType) {
-      if (data?.isEditActionLoading || data?.isDeleteActionLoading) {
-        if (data.hasOwnProperty('isEditActionLoading')) {
-          delete data.isEditActionLoading;
-        }
-        if (data.hasOwnProperty('isDeleteActionLoading')) {
-          delete data.isDeleteActionLoading;
-        }
-      }
-      let rowData: any;
-      if (this.selectedActivationType === this.activationType.Franchise && this.apiResponse?.length) {
-        rowData = this.apiResponse?.find((item: any) => item.franchiseId === data?.franchiseId);
-      } else if (this.selectedActivationType === this.activationType.Student) {
-        rowData = this.apiResponse?.find((item: any) => item.studentId === data?.studentId);
-      } else {
-        rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
-      }
-      // if (this.isEditMode) utils.isTableEditAction.set(true);
-      // else utils.isAddActionLoading.set(true);
-      this.dialogRef = this.dialogService.open(AddEditActivationComponent, {
-        data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
-        closable: false,
-        modal: true,
-        height: 'auto',
-        width: utils.isMobile() ? '95%' : '42%',
-        styleClass: 'add-edit-dialog',
-        header: this.isEditMode ? `Update Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}` : `Add Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}`,
-      });
+    // if (this.selectedActivationType) {
+    //   if (data?.isEditActionLoading || data?.isDeleteActionLoading) {
+    //     if (data.hasOwnProperty('isEditActionLoading')) {
+    //       delete data.isEditActionLoading;
+    //     }
+    //     if (data.hasOwnProperty('isDeleteActionLoading')) {
+    //       delete data.isDeleteActionLoading;
+    //     }
+    //   }
+    //   let rowData: any;
+    //   if (this.selectedActivationType === this.activationType.Franchise && this.apiResponse?.length) {
+    //     rowData = this.apiResponse?.find((item: any) => item.franchiseId === data?.franchiseId);
+    //   } else if (this.selectedActivationType === this.activationType.Student) {
+    //     rowData = this.apiResponse?.find((item: any) => item.studentId === data?.studentId);
+    //   } else {
+    //     rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
+    //   }
+      
+    //   this.dialogRef = this.dialogService.open(AddEditActivationComponent, {
+    //     data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
+    //     closable: false,
+    //     modal: true,
+    //     height: 'auto',
+    //     width: utils.isMobile() ? '95%' : '42%',
+    //     styleClass: 'add-edit-dialog',
+    //     header: this.isEditMode ? `Update Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}` : `Add Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}`,
+    //   });
 
-      this.dialogRef.onClose.subscribe((res) => {
-        if (res) {
-          if (res?.status) {
-            utils.setMessages(res.message, 'success');
-            utils.isTableEditAction.set(false);
-            this.handleSearchAction();
-          } else {
-            utils.isTableEditAction.set(false);
-            utils.setMessages(res.message, 'error');
-          }
-        } else {
-          utils.isTableEditAction.set(false);
-        }
-      })
-    } else {
-      utils.setMessages('Please Select Activation Type', 'info');
-    }
+    //   this.dialogRef.onClose.subscribe((res) => {
+    //     if (res) {
+    //       if (res?.status) {
+    //         utils.setMessages(res.message, 'success');
+    //         utils.isTableEditAction.set(false);
+    //         this.handleSearchAction();
+    //       } else {
+    //         utils.isTableEditAction.set(false);
+    //         utils.setMessages(res.message, 'error');
+    //       }
+    //     } else {
+    //       utils.isTableEditAction.set(false);
+    //     }
+    //   })
+    // } else {
+    //   utils.setMessages('Please Select Activation Type', 'info');
+    // }
+    this.handleActivateExam();
   }
 
   // filterExamInfo(examId: number) {
@@ -390,7 +400,53 @@ export class ActivationComponent {
       utils.isTableDeleteAction.set(false);
     }, 2000)
   }
+
+  handleActivateExam(selectedRows?: any) {
+    const payload = {
+      "activationId": 0,
+      "objectId": 0,
+      "data": this.data,
+      "objectType": this.selectedActivationType
+    }
+    let apiCall = this.selectedRows && this.selectedRows.length > 1 ? 
+    this.activationService.saveMultipleActivation(payload) : this.activationService.saveActivation(payload);
+    apiCall.subscribe({
+      next: (response) => {
+        if (response) {
+          utils.setMessages(response.message, 'success');
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
+  onSelectedRowsChange({selectedRows, isInline}: {selectedRows: any[], isInline: boolean} ) {
+    this.selectedRows = selectedRows;
+    if (this.selectedActivationType === 'student') {
+      const studentIds = selectedRows.map((row: any) => row.studentId)
+      this.data = studentIds.join(',');
+    }
+    if (this.selectedActivationType === "instructor") {
+      const instructorIds = selectedRows.map((row: any) => row.instructorId)
+      this.data = instructorIds.join(',');
+    }
+    if (this.selectedActivationType === "franchise") {
+      const franchiseIds = selectedRows.map((row: any) => row.franchiseId)
+      this.data = franchiseIds.join(',');
+    }
+    this.validActivate = selectedRows.length > 0 ? true : false;
+    if(isInline) {
+      this.handleActivateExam(selectedRows);
+    }
+  }
+
+  ngOnDestroy() {
+    this.selectedRows = [];
+  }
 }
+
 
 export enum ActivationType {
   Franchise = 'franchise',

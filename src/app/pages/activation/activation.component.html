@@ -29,8 +29,12 @@
             loadingIcon="pi pi-spin pi-spinner"></p-button>
     </div>
 
-    <div class="table-container">
-        <app-data-grid [colDefs]="colDefs" [showAddButton]="true" [dataSource]="tableDataSource"
-            (onAddAction)="handleAddEditAction()"></app-data-grid>
+    <div *ngIf="showGrid" class="table-container flex flex-col">
+        <app-data-grid [colDefs]="colDefs" [showAddButton]="true"  [isCheckbox]="true" [dataSource]="tableDataSource"
+        (onAddAction)="handleAddEditAction()" (selectedRowsChange)="onSelectedRowsChange($event)"></app-data-grid>
+        <!-- <p-button label="Activate" (onClick)="handleActivateExam()" [disabled]="!validActivate" icon="pi pi-tags"
+            class="ml-auto" styleClass="justify-end" severity="primary" [loading]="isActivateActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"></p-button> -->
     </div>
+
 </div>

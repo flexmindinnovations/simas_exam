@@ -19,12 +19,12 @@ import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
 import { LoadingComponent } from '../loading/loading.component';
 import { CheckboxModule } from 'primeng/checkbox';
-import { CustomCheckboxComponent } from '../custom-checkbox/custom-checkbox.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent, CheckboxModule, CustomCheckboxComponent],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent, CheckboxModule,InputSwitchModule],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
   styleUrl: './data-grid.component.scss'
@@ -57,7 +57,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
   @Output() onGenerateAction: EventEmitter<any> = new EventEmitter();
-  @Output() selectedRowsChange: EventEmitter<any[]> = new EventEmitter();
+  @Output() selectedRowsChange: EventEmitter<any> = new EventEmitter();
 
   paginatorPosition = [100, 180];
   dialogRef: DynamicDialogRef | undefined;
@@ -69,6 +69,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   downloadMenuId = new Date().getTime();
   allRowsSelected: boolean = false;
   selectedRows: any[] = [];
+  checked: boolean = false;
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -145,7 +146,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     }));
     this.selectedRows = [];
     this.allRowsSelected = false;
-    this.selectedRowsChange.emit(this.selectedRows);
+    this.selectedRowsChange.emit({selectedRows: this.selectedRows, isInline: false});
     this.showPaginator = this.dataSource.length > 15;
   }
 
@@ -215,6 +216,11 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     const fileName = utils.addButtonTitle() + '_export' + new Date().getTime();
     doc.save(`${fileName}.pdf`);
     this.isExportActionLoading = false;
+  }
+
+  handleSwitchButton(rowData:any){
+    const isInline = true;
+    this.selectedRowsChange.emit({selectedRows: [rowData], isInline});
   }
 
   saveAsExcelFile(buffer: any, fileName: string): void {
@@ -303,35 +309,9 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     return column.field === 'action' ? true : false;
   }
 
-  selectRow(event: Event, rowData: any) {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    rowData.selected = isChecked;
-    if (isChecked) {
-      this.selectedRows.push(rowData);
-    } else {
-      this.selectedRows = this.selectedRows.filter(row => row !== rowData);
-    }
-    this.allRowsSelected = this.dataSource.every((row: any) => row.selected);
-    this.selectedRowsChange.emit(this.selectedRows);
+  selectRow(rowData: any) {
+    this.selectedRowsChange.emit({selectedRows: rowData, isInline: false});
   }
-
-  selectAllRows(event: Event) {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    this.dataSource.forEach((row: any) => {
-      row.selected = isChecked;
-    });
-    if (isChecked) {
-      this.selectedRows = [...this.dataSource];  // Select all rows
-    } else {
-      this.selectedRows = [];  // Deselect all rows
-    }
-
-    this.allRowsSelected = isChecked;
-
-    this.selectedRowsChange.emit(this.selectedRows);
-  }
-
-
 }
 
 export interface TableColumn {

@@ -31,9 +31,9 @@
     </div>
 </div>
 
-@if (isUserSessionEnded) {
+<!-- @if (isUserSessionEnded) {
 <app-session-time-out [visible]="isUserSessionEnded"></app-session-time-out>
-}
+} -->
 @if(showPermissionPop){
 <app-full-screen-modal [visible]='showPermissionPop'
     [message]='"You do not have permission to access this resource. Please contact your administrator."'></app-full-screen-modal>
