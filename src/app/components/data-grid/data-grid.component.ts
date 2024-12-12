@@ -40,6 +40,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   isDeleteActionLoading: boolean = false;
   isEditActionLoading: boolean = false;
   isAddActionLoading: boolean = false;
+  isRefreshing: boolean = false;
   isGenerateActionLoading: boolean = false;
   isExportActionLoading: boolean = false;
   showPaginator: boolean = false;
@@ -56,6 +57,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Output() onRowDelete: EventEmitter<any> = new EventEmitter();
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
+  @Output() onRefresh: EventEmitter<any> = new EventEmitter();
   @Output() onGenerateAction: EventEmitter<any> = new EventEmitter();
   @Output() selectedRowsChange: EventEmitter<any> = new EventEmitter();
 
@@ -70,6 +72,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   allRowsSelected: boolean = false;
   selectedRows: any[] = [];
   checked: boolean = false;
+  selectedItems:any[] = [];
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
@@ -301,8 +304,14 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     this.cdref.detectChanges();
   }
 
+  handleRefresh() {
+    this.onRefresh.emit(true);
+  }
+
   handleAddAction() {
     this.onAddAction.emit(this.addButtonTitle.toLowerCase());
+    this.selectedRows = [];
+    this.selectedItems = [];
   }
 
   getFrozenCols(column: any) {
@@ -311,6 +320,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   selectRow(rowData: any) {
     this.selectedRowsChange.emit({selectedRows: rowData, isInline: false});
+    this.selectedItems = rowData;
   }
 }
 

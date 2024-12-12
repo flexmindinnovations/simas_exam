@@ -48,18 +48,45 @@
         />
         }
       </div>
-      @if (showAddButton && currentModule?.canAdd) {
       <p-button
-        [ngClass]="dataSource?.length ? 'ml-4' : ''"
-        [label]="addButtonTitle"
-        icon="pi 
-                pi-plus"
-        [loading]="isAddActionLoading"
-        loadingIcon="pi pi-spin pi-spinner"
-        [pTooltip]="'Add ' + addButtonTitle"
-        tooltipPosition="left"
-        (onClick)="handleAddAction()"
-      ></p-button>
+          [ngClass]="dataSource?.length ? 'ml-4' : ''"
+          label="Refresh"
+          icon="pi 
+                  pi-sync"
+          [loading]="isRefreshing"
+          loadingIcon="pi pi-spin pi-spinner"
+          [pTooltip]="'Refresh Data'"
+          tooltipPosition="left"
+          (onClick)="handleRefresh()"
+        ></p-button>
+      @if (showAddButton && currentModule?.canAdd) {
+        @if(currentModule?.moduleName === "Activation" || currentModule?.moduleName === "ExamActivation"){
+          <p-button
+          [disabled]="selectedRows.length < 2"
+          [ngClass]="dataSource?.length ? 'ml-4' : ''"
+          label="Mutiple Activation"
+          icon="pi 
+                  pi-plus"
+          [loading]="isAddActionLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          [pTooltip]="'Add ' + addButtonTitle"
+          tooltipPosition="left"
+          (onClick)="handleAddAction()"
+        ></p-button>
+        }@else {
+          <p-button
+          [ngClass]="dataSource?.length ? 'ml-4' : ''"
+          [label]="addButtonTitle"
+          icon="pi 
+                  pi-plus"
+          [loading]="isAddActionLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          [pTooltip]="'Add ' + addButtonTitle"
+          tooltipPosition="left"
+          (onClick)="handleAddAction()"
+        ></p-button>
+        }
+     
       }
     </div>
   </div>
@@ -137,7 +164,7 @@
             </div>
             } @else if(item.field === 'status') { @if(isCheckbox){
             <p-inputSwitch
-              [ngModel]="rowData[item.field] === '1' ? true : false"
+              [ngModel]="rowData[item.field] === 'Active' ? true : false"
             >
             </p-inputSwitch>
             } @else {
@@ -150,7 +177,7 @@
             } }@else if(item.field === 'action') {
             <div class="w-full flex items-center justify-center gap-1">
               @if (currentModule?.canEdit) {
-              <p-button
+                <p-button
                 [text]="true"
                 icon="pi
                                             pi-pen-to-square"
@@ -307,7 +334,7 @@
             @if(col.field === 'status') {
             @if(isCheckbox){
             <p-inputSwitch
-              [ngModel]="rowData[col.field] === '1' ? true : false"
+              [ngModel]="rowData[col.field] === 'Active' ? true : false"
               (onChange)="handleSwitchButton(rowData)"
             >
             </p-inputSwitch>

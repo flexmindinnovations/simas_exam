@@ -394,6 +394,10 @@ export class ActivationComponent {
     }
   }
 
+  handleTableRefresh(event: any) {
+    this.handleSearchAction();
+  }
+
   deleteExamRow(data: any) {
     this.handleRowDelet(data);
     setTimeout(() => {
@@ -404,12 +408,13 @@ export class ActivationComponent {
   handleActivateExam(selectedRows?: any) {
     const payload = {
       "activationId": 0,
-      "objectId": 0,
-      "data": this.data,
-      "objectType": this.selectedActivationType
+      "objectId": this.selectedRows && this.selectedRows.length > 1 ?  0 : Number(this.data[0]),
+      "objectType": this.selectedActivationType,
+      "status" :  this.selectedRows && this.selectedRows.length > 1 ?  "Active" : selectedRows[0].status === "Active" ? "DeActive" : "Active" ,
     }
+
     let apiCall = this.selectedRows && this.selectedRows.length > 1 ? 
-    this.activationService.saveMultipleActivation(payload) : this.activationService.saveActivation(payload);
+    this.activationService.saveMultipleActivation({"data": this.data,...payload}) : this.activationService.saveActivation(payload);
     apiCall.subscribe({
       next: (response) => {
         if (response) {
