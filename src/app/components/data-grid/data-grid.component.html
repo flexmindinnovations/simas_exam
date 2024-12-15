@@ -1,220 +1,399 @@
 @if (!isLoading) {
-<div class="data-grid-container flex flex-col items-start justify-start gap-5 w-full"
-    [ngClass]="isMobile ? 'px-3' : 'lg:max-w-[100%] lg:p-4 xl:max-w-[100%]'">
+<div
+  class="data-grid-container flex flex-col items-start justify-start gap-5 w-full"
+  [ngClass]="isMobile ? 'px-3' : 'lg:max-w-[100%] lg:p-4 xl:max-w-[100%]'"
+>
+  <div
+    class="grid-options flex flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row 2x:flex-row items-start justify-end lg:xl:justify-between w-full gap-4 lg:xl:gap-0"
+  >
     <div
-        class="grid-options flex flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row 2x:flex-row items-start justify-end lg:xl:justify-between w-full gap-4 lg:xl:gap-0">
-        <div class="search w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[30%] 2x:w-[30%]">
-            <span *ngIf="dataSource.length" class="p-input-icon-left search-input w-full">
-                <i class="pi pi-search"></i>
-                <input type="text" class="w-96 focus:outline-none active:outline-none focus:border-none" pInputText
-                    placeholder="Enter text to filter grid" type="text" (input)="onFilterValueChange($event)"
-                    [(ngModel)]="searchValue" pInputText />
-            </span>
-        </div>
-        <div class="options flex items-center justify-end w-full">
-            <div class="export-option">
-                @if (dataSource?.length) {
-                <p-button label="Download Data" icon="pi pi-download" [loading]="isExportActionLoading"
-                    loadingIcon="pi pi-spin pi-spinner" pTooltip="Export table data" tooltipPosition="left"
-                    appendTo="body" [id]="downloadMenuId" (onClick)="downloadOptionsMenu.toggle($event)" />
-                <p-tieredMenu [attr.target]="'#'+ downloadMenuId" #downloadOptionsMenu [popup]="true"
-                    [model]="downloadOptions" />
-                }
-            </div>
-            @if (showAddButton && currentModule?.canAdd) {
-            <p-button [ngClass]="dataSource?.length ? 'ml-4' : ''" [label]="addButtonTitle" icon="pi 
-                pi-plus" [loading]="isAddActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                [pTooltip]="'Add ' + addButtonTitle" tooltipPosition="left" (onClick)="handleAddAction()"></p-button>
-            }
-        </div>
+      class="search w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[30%] 2x:w-[30%]"
+    >
+      <span
+        *ngIf="dataSource.length"
+        class="p-input-icon-left search-input w-full"
+      >
+        <i class="pi pi-search"></i>
+        <input
+          type="text"
+          class="w-96 focus:outline-none active:outline-none focus:border-none"
+          pInputText
+          placeholder="Enter text to filter grid"
+          type="text"
+          (input)="onFilterValueChange($event)"
+          [(ngModel)]="searchValue"
+          pInputText
+        />
+      </span>
     </div>
-    @if(isTreeList()) {
-    <div class="card w-full">
-        <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
-            (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
-            [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-            [globalFilterFields]="getGlobalFilters()" sortMode="multiple"
-            [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'" [rowsPerPageOptions]="[15, 30, 50]"
-            styleClass="p-datatable-sm" [tableStyle]="{'min-width': isMobile ? '50%' : '80%'}">
-            <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th *ngFor="let col of columns; let i=index" [pSortableColumn]="col.field"
-                        [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
-                        @if (i === 0) {
-                        <div class="w-full flex items-center justify-center gap-1">
-                            <p class="m-0">{{col.header}}</p>
-                        </div>
+    <div class="options flex items-center justify-end w-full">
+      <div class="export-option">
+        @if (dataSource?.length) {
+        <p-button
+          label="Download Data"
+          icon="pi pi-download"
+          [loading]="isExportActionLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          pTooltip="Export table data"
+          tooltipPosition="left"
+          appendTo="body"
+          [id]="downloadMenuId"
+          (onClick)="downloadOptionsMenu.toggle($event)"
+        />
+        <p-tieredMenu
+          [attr.target]="'#' + downloadMenuId"
+          #downloadOptionsMenu
+          [popup]="true"
+          [model]="downloadOptions"
+        />
+        }
+      </div>
+      <p-button
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        label="Refresh"
+        icon="pi 
+                  pi-sync"
+        [loading]="isRefreshing"
+        loadingIcon="pi pi-spin pi-spinner"
+        [pTooltip]="'Refresh Data'"
+        tooltipPosition="left"
+        (onClick)="handleRefresh()"
+      ></p-button>
+      @if (showAddButton && currentModule?.canAdd) {
+      @if(currentModule?.moduleName === "Activation" ||
+      currentModule?.moduleName === "ExamActivation"){
+      <!-- <p-button
+        [disabled]="selectedRows.length < 2"
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        label="Mutiple Activation"
+        icon="pi 
+                  pi-plus"
+        [loading]="isAddActionLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+        [pTooltip]="'Add ' + addButtonTitle"
+        tooltipPosition="left"
+        (onClick)="handleAddAction()"
+      ></p-button> -->
+      <p-dropdown
+        appendTo="body"
+        [disabled]="selectedRows.length < 2"
+        inputId="statusList"
+        [options]="statusList"
+        ariaLabelledBy="value"
+        placeholder="Change Status"
+        (onChange)="handleChangeStatus($event)"
+        optionValue="value"
+        optionLabel="title"
+        [filter]="true"
+        filterBy="value"
+        [showClear]="false"
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        class="w-full sm:!w-1/6"
+      />
 
-                        } @else if(col.field === 'action') {
-                        <div class="w-full flex items-center justify-center gap-1">
-                            <p class="m-0">{{col.header}}</p>
-                        </div>
-                        } @else {
-                        <p class="m-0 flex items-center justify-start ">
-                            <span>{{col.header}}</span>
-                            <p-sortIcon [field]="col.field" />
-                        </p>
-                        }
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
-                <tr class="w-full h-10">
-                    @for (item of colDefs; track $index) {
-                    <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
-                        @if($index === 0) {
-                        <div class="flex items-center justify-start gap-5">
-                            <p-button [text]="true" [pTooltip]="rowData?.expanded ? 'Collapse Row' : 'Expand Row'"
-                                styleClass="toggleRowButton"
-                                [icon]="rowData.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                                (onClick)="toggleRow(rowData)" />
-                            <p class="m-0">{{rowData[item.field]}}</p>
-                        </div>
-                        } @else if(item.field === 'status') {
-                        <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
-                            [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'">
-                            {{rowData[item.field] === '1' ? 'Active' : 'Inactive'}}
-                        </p>
-                        }@else if(item.field === 'action') {
-                        <div class="w-full flex items-center justify-center gap-1">
-                            @if (currentModule?.canEdit) {
-                            <p-button [text]="true" icon="pi
-                                            pi-pen-to-square" [loading]="rowData.isEditActionLoading"
-                                loadingIcon="pi pi-spin pi-spinner" pTooltip="Edit" tooltipPosition="bottom"
-                                (onClick)="handleEditOperation(rowData, rowIndex)" />
-                            }
-                            @if (currentModule?.canDelete) {
-                            <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
+      }@else {
+      <p-button
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        [label]="addButtonTitle"
+        icon="pi 
+                  pi-plus"
+        [loading]="isAddActionLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+        [pTooltip]="'Add ' + addButtonTitle"
+        tooltipPosition="left"
+        (onClick)="handleAddAction()"
+      ></p-button>
+      } }
+    </div>
+  </div>
+  @if(isTreeList()) {
+  <div class="card w-full">
+    <p-table
+      class="w-full overflow-auto"
+      [loading]="isLoading"
+      loadingIcon="pi pi-spin pi-spinner"
+      (onRowSelect)="handleRowSelect($event)"
+      [resizableColumns]="true"
+      #dataGrid
+      [columns]="colDefs"
+      [value]="dataSource"
+      [rows]="15"
+      [paginator]="showPaginator"
+      [scrollable]="true"
+      [autoLayout]="true"
+      [globalFilterFields]="getGlobalFilters()"
+      sortMode="multiple"
+      [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'"
+      [rowsPerPageOptions]="[15, 30, 50]"
+      styleClass="p-datatable-sm"
+      [tableStyle]="{ 'min-width': isMobile ? '50%' : '80%' }"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th
+            *ngFor="let col of columns; let i = index"
+            [pSortableColumn]="col.field"
+            [ngStyle]="{ width: col.width, 'min-width': col.width }"
+            pResizableColumn
+          >
+            @if (i === 0) {
+            <div class="w-full flex items-center justify-center gap-1">
+              <p class="m-0">{{ col.header }}</p>
+            </div>
+
+            } @else if(col.field === 'action') {
+            <div class="w-full flex items-center justify-center gap-1">
+              <p class="m-0">{{ col.header }}</p>
+            </div>
+            } @else {
+            <p class="m-0 flex items-center justify-start">
+              <span>{{ col.header }}</span>
+              <p-sortIcon [field]="col.field" />
+            </p>
+            }
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr class="w-full h-10">
+          @for (item of colDefs; track $index) {
+          <td [ngClass]="item.field === 'action' ? 'action-cell' : 'data-cell'">
+            @if($index === 0) {
+            <div class="flex items-center justify-start gap-5">
+              <p-button
+                [text]="true"
+                [pTooltip]="rowData?.expanded ? 'Collapse Row' : 'Expand Row'"
+                styleClass="toggleRowButton"
+                [icon]="
+                  rowData.expanded
+                    ? 'pi pi-chevron-down'
+                    : 'pi pi-chevron-right'
+                "
+                (onClick)="toggleRow(rowData)"
+              />
+              <p class="m-0">{{ rowData[item.field] }}</p>
+            </div>
+            } @else if(item.field === 'status') { @if(isCheckbox){
+            <p-inputSwitch
+              [ngModel]="rowData[item.field] === 'Active' ? true : false"
+            >
+            </p-inputSwitch>
+            } @else {
+            <p
+              class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
+              [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'"
+            >
+              {{ rowData[item.field] === "1" ? "Active" : "Inactive" }}
+            </p>
+            } }@else if(item.field === 'action') {
+            <div class="w-full flex items-center justify-center gap-1">
+              @if (currentModule?.canEdit) {
+              <p-button
+                [text]="true"
+                icon="pi
+                                            pi-pen-to-square"
+                [loading]="rowData.isEditActionLoading"
+                loadingIcon="pi pi-spin pi-spinner"
+                pTooltip="Edit"
+                tooltipPosition="bottom"
+                (onClick)="handleEditOperation(rowData, rowIndex)"
+              />
+              } @if (currentModule?.canDelete) {
+              <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
                                     loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
                                     [text]="true" icon="pi pi-trash" /> -->
-                            }
-                            @if(isGenerate){
-                            <p-button [loading]="rowData.isGenerateActionLoading" loadingIcon="pi pi-spin pi-spinner"
-                                (onClick)="handleGenerateOperation(rowData, rowIndex)" pTooltip="Generate"
-                                tooltipPosition="bottom" [text]="true" icon="pi pi-id-card" />
-                            }
-                        </div>
-                        } @else {
-                        <p class="m-0 w-fit">{{rowData[item.field]}}</p>
-                        }
-                    </td>
-                    }
-                </tr>
-                @if (rowData.expanded) {
-                <tr>
-                    <td [attr.colspan]="colDefs.length" class="bg-gray-50">
-                        <div class="w-full max-w-5xl mx-auto">
-                            <p-table class="w-full max-w-5xl mx-auto overflow-auto " [loading]="isLoading"
-                                loadingIcon="pi pi-spin pi-spinner" (onRowSelect)="handleRowSelect($event)"
-                                [resizableColumns]="true" [columns]="childColDefs" [value]="rowData?.children"
-                                sortMode="multiple" [scrollHeight]="scrollHeight + 'px'"
-                                styleClass="p-datatable-sm child-table">
-                                <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th *ngFor="let col of columns; let i=index" [pSortableColumn]="col.field"
-                        [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
-                        <p class="m-0 flex items-center justify-start ">
-                            <span>{{col.header}}</span>
-                            <p-sortIcon [field]="col.field" />
-                        </p>
+              } @if(isGenerate){
+              <p-button
+                [loading]="rowData.isGenerateActionLoading"
+                loadingIcon="pi pi-spin pi-spinner"
+                (onClick)="handleGenerateOperation(rowData, rowIndex)"
+                pTooltip="Generate"
+                tooltipPosition="bottom"
+                [text]="true"
+                icon="pi pi-id-card"
+              />
+              }
+            </div>
+            } @else {
+            <p class="m-0 w-fit">{{ rowData[item.field] }}</p>
+            }
+          </td>
+          }
+        </tr>
+        @if (rowData.expanded) {
+        <tr>
+          <td [attr.colspan]="colDefs.length" class="bg-gray-50">
+            <div class="w-full max-w-5xl mx-auto">
+              <p-table
+                class="w-full max-w-5xl mx-auto overflow-auto"
+                [loading]="isLoading"
+                loadingIcon="pi pi-spin pi-spinner"
+                (onRowSelect)="handleRowSelect($event)"
+                [resizableColumns]="true"
+                [columns]="childColDefs"
+                [value]="rowData?.children"
+                sortMode="multiple"
+                [scrollHeight]="scrollHeight + 'px'"
+                styleClass="p-datatable-sm child-table"
+              >
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th
+                      *ngFor="let col of columns; let i = index"
+                      [pSortableColumn]="col.field"
+                      [ngStyle]="{ width: col.width, 'min-width': col.width }"
+                      pResizableColumn
+                    >
+                      <p class="m-0 flex items-center justify-start">
+                        <span>{{ col.header }}</span>
+                        <p-sortIcon [field]="col.field" />
+                      </p>
                     </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr class="w-full h-10">
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                  <tr class="w-full h-10">
                     @for (col of columns; track $index) {
                     <td>
-                        <p class="m-0 w-fit">{{rowData[col.field]}}</p>
+                      <p class="m-0 w-fit">{{ rowData[col.field] }}</p>
                     </td>
                     }
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
-    </td>
-    </tr>
-    }
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-        <tr>
-            <td [attr.colspan]="colDefs.length" [attr.rowspan]="1" class="text-center py-3">No records found.
-            </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
         </tr>
-    </ng-template>
+        }
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td
+            [attr.colspan]="colDefs.length"
+            [attr.rowspan]="1"
+            class="text-center py-3"
+          >
+            No records found.
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
-</div>
-} @else {
-<div class="card w-full">
-    <p-table class="w-full overflow-auto" [loading]="isLoading" loadingIcon="pi pi-spin pi-spinner"
-        (onRowSelect)="handleRowSelect($event)" [resizableColumns]="true" #dataGrid [columns]="colDefs"
-        [value]="dataSource" [rows]="15" [paginator]="showPaginator" [scrollable]="true" [autoLayout]="true"
-        [globalFilterFields]="getGlobalFilters()" sortMode="multiple"
-        [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'" [rowsPerPageOptions]="[15, 30, 50]"
-        styleClass="p-datatable-sm" [tableStyle]="{'min-width': isMobile ? '50%' : '80%'}" [(selection)]="selectedRows">
+  </div>
+  } @else {
+  <div class="card w-full">
+    <p-table
+      class="w-full overflow-auto"
+      [loading]="isLoading"
+      loadingIcon="pi pi-spin pi-spinner"
+      (onRowSelect)="handleRowSelect($event)"
+      [resizableColumns]="true"
+      #dataGrid
+      [columns]="colDefs"
+      [value]="dataSource"
+      [rows]="15"
+      [paginator]="showPaginator"
+      [scrollable]="true"
+      [autoLayout]="true"
+      [globalFilterFields]="getGlobalFilters()"
+      sortMode="multiple"
+      [selectionMode]="'multiple'"
+      (selectionChange)="selectRow($event)"
+      [scrollHeight]="scrollHeight - paginatorPosition[1] + 'px'"
+      [rowsPerPageOptions]="[15, 30, 50]"
+      styleClass="p-datatable-sm"
+      [tableStyle]="{ 'min-width': isMobile ? '50%' : '80%' }"
+      [(selection)]="selectedRows"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          @if(isCheckbox){
+          <th><p-tableHeaderCheckbox /></th>
+          }
+          <th
+            *ngFor="let col of columns"
+            [pSortableColumn]="col.field"
+            [ngStyle]="{ width: col.width, 'min-width': col.width }"
+            pResizableColumn
+          >
+            <p class="m-0 flex items-center justify-start">
+              <span>{{ col.header }}</span>
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </p>
+          </th>
+        </tr>
+      </ng-template>
 
-        <ng-template pTemplate="header" let-columns>
-            <tr>
-                @if(isCheckbox){
-                <th>
-                    <app-custom-checkbox [(ngModel)]="allRowsSelected"
-                        (change)="selectAllRows($event)"></app-custom-checkbox>
-                </th>
-                }
-                <th *ngFor="let col of columns" [pSortableColumn]="col.field"
-                    [ngStyle]="{'width': col.width, 'min-width': col.width}" pResizableColumn>
-                    <p class="m-0 flex items-center justify-start">
-                        <span>{{ col.header }}</span>
-                        <p-sortIcon [field]="col.field"></p-sortIcon>
-                    </p>
-                </th>
-            </tr>
-        </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr class="w-full h-10">
+          @if(isCheckbox){
+          <td>
+            <p-tableCheckbox
+              class="flex justify-center items-center"
+              [value]="rowData"
+            />
+          </td>
+          }
+          <td
+            *ngFor="let col of columns"
+            [ngClass]="col.field === 'action' ? 'action-cell' : 'data-cell'"
+          >
+            @if(col.field === 'status') { @if(isCheckbox){
+            <p-inputSwitch
+              [ngModel]="rowData[col.field] === 'Active' ? true : false"
+              (onChange)="handleSwitchButton(rowData)"
+            >
+            </p-inputSwitch>
+            }@else {
+            <p
+              class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
+              [ngClass]="rowData[col.field] === '1' ? 'active' : 'inactive'"
+            >
+              {{ rowData[col.field] === "1" ? "Active" : "Inactive" }}
+            </p>
+            } } @else if(col.field === 'action') {
+            <div class="w-full flex items-center justify-center gap-1">
+              <p-button
+                [text]="true"
+                icon="pi pi-pen-to-square"
+                (onClick)="handleEditOperation(rowData, rowIndex)"
+              />
+            </div>
+            } @else {
+            <p class="m-0 w-fit">{{ rowData[col.field] }}</p>
+            }
+          </td>
+        </tr>
+      </ng-template>
 
-        <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
-            <tr class="w-full h-10">
-                @if(isCheckbox){
-                <td>
-                    <app-custom-checkbox [(ngModel)]="rowData.selected" (change)="selectRow($event, rowData)">
-                    </app-custom-checkbox>
-                </td>
-                }
-                <td *ngFor="let col of columns" [ngClass]="col.field === 'action' ? 'action-cell' : 'data-cell'">
-                    @if(col.field === 'status') {
-                    <p class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
-                        [ngClass]="rowData[col.field] === '1' ? 'active' : 'inactive'">
-                        {{ rowData[col.field] === '1' ? 'Active' : 'Inactive' }}
-                    </p>
-                    } @else if(col.field === 'action') {
-                    <div class="w-full flex items-center justify-center gap-1">
-                        <p-button [text]="true" icon="pi pi-pen-to-square"
-                            (onClick)="handleEditOperation(rowData, rowIndex)" />
-                    </div>
-                    } @else {
-                    <p class="m-0 w-fit">{{ rowData[col.field] }}</p>
-                    }
-                </td>
-            </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td [attr.colspan]="colDefs.length + 1" class="text-center py-3">No records found.</td>
-            </tr>
-        </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="colDefs.length + 1" class="text-center py-3">
+            No records found.
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
-</div>
-}
+  </div>
+  }
 </div>
 } @else {
 <div class="w-full h-full flex items-center justify-center">
-    @if (isLoading) {
-    <app-loading [showLoader]="isLoading"></app-loading>
-    } @else {
-    <div class="w-full h-full flex items-center justify-center">
-        <p class="select-none opacity-80">
-            No records found
-        </p>
-    </div>
-    }
+  @if (isLoading) {
+  <app-loading [showLoader]="isLoading"></app-loading>
+  } @else {
+  <div class="w-full h-full flex items-center justify-center">
+    <p class="select-none opacity-80">No records found</p>
+  </div>
+  }
 </div>
 }
