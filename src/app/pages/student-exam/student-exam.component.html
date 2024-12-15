@@ -163,11 +163,10 @@
                             type="text"
                             #answerInput
                             pInputText
-                            autofocus
                             [(ngModel)]="selectedAnswer"
                             (ngModelChange)="handleKeyValue($event)"
                             (keydown)="handleKeydown($event)"
-                          />                          
+                          />                       
             <!-- </div> -->
           </div>
           } @else if(isLoadingQuestion && !quizCompleted) {

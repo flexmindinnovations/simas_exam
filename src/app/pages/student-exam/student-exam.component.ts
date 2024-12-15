@@ -184,7 +184,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dialogRef: DynamicDialogRef | undefined;
 
-  totalTime: number =  30; // 3 minutes in seconds
+  totalTime: number = 30; // 3 minutes in seconds
   questionTimer: any = '0';
   remainingTime: number = this.totalTime;
   elapsedTime: number = this.remainingTime;
@@ -211,7 +211,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isFocused: boolean = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
-  @ViewChild('answerInput') answerInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('answerInput', { static: false }) answerInput!: ElementRef;
 
   constructor(
     private examTypeService: ExamTypeService,
@@ -223,7 +223,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdref: ChangeDetectorRef,
     private host: ElementRef,
     private router: Router,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -557,7 +557,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   newQuestion() {
     const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
-  
+
     this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
     this.correctAnswer = this.activeQuestion?.answer;
     const userInput = this.questionList[this.activeQuestionIndex].userInput;
@@ -566,15 +566,26 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.questionList[this.activeQuestionIndex].isSkipped = true;
     this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
     this.isWrongAnswer = isWrongAnswer;
-  
+
     if (isLastQuestionInRound) {
       this.canMoveToNextRound = true;
       this.isLoadingQuestion = false;
       this.resetTimer();
       return;
     }
-  
+
     this.loadNextQuestion();
+    this.cdref.detectChanges(); // Ensure view updates before focusing
+    setTimeout(() => {
+      this.focusAnswerInput();
+    }, 100);
+  }
+
+  focusAnswerInput() {
+    if (this.answerInput && this.answerInput.nativeElement) {
+      this.renderer.setAttribute(this.answerInput.nativeElement, 'autofocus', 'true');
+      this.answerInput.nativeElement.focus();
+    }
   }
 
   loadNextQuestion() {
@@ -904,7 +915,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
       }
       this.isFlashEnded = false;
-        this.showAnswer = false; // Mark flash as ended
+      this.showAnswer = false; // Mark flash as ended
       this.newQuestion();
     });
   }
@@ -924,6 +935,20 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.checkBoxstate = 'void';
     utils.isWarningPhase.set(this.isWarningPhase);
     utils.isDangerPhase.set(this.isDangerPhase);
+    this.cdref.detectChanges(); // Ensure DOM is updated
+    setTimeout(() => {
+      this.focusAnswerInput();
+    }, 100);
+
+  }
+
+  ngAfterViewChecked() {
+    if (!this.selectedAnswer) {
+      // Focus only when no answer is selected
+      setTimeout(() => {
+        this.focusAnswerInput();
+      }, 100);
+    }
   }
 
   OnTimerFinished(timeFinished: boolean) {
