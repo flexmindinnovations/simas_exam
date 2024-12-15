@@ -22,10 +22,19 @@ import { ActivationService } from '../../services/activation/activation.service'
 @Component({
   selector: 'app-activation',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, DataGridComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    TooltipModule,
+    DropdownModule,
+    DataGridComponent,
+  ],
   providers: [DialogService],
   templateUrl: './activation.component.html',
-  styleUrl: './activation.component.scss'
+  styleUrl: './activation.component.scss',
 })
 export class ActivationComponent {
   colDefs: any[] = [];
@@ -55,23 +64,25 @@ export class ActivationComponent {
     private studentService: StudentService,
     private instructorService: InstructorService,
     private dialogService: DialogService,
-    private activationService: ActivationService,
+    private activationService: ActivationService
   ) {
-
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
       if (isDeleteAction) {
         this.deleteExamRow(utils.tableDeleteRowData());
       }
-    })
+    });
 
-    effect(() => {
-      this.isEditMode = utils.isTableEditAction();
-      if (this.isEditMode) {
-        this.editModeData = utils.tableEditRowData();
-        this.handleAddEditAction(this.editModeData);
-      }
-    }, { allowSignalWrites: true })
+    effect(
+      () => {
+        this.isEditMode = utils.isTableEditAction();
+        if (this.isEditMode) {
+          this.editModeData = utils.tableEditRowData();
+          this.handleAddEditAction(this.editModeData);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
   ngOnInit(): void {
     utils.addButtonTitle.set('Activation');
@@ -91,17 +102,16 @@ export class ActivationComponent {
       error: (error: HttpErrorResponse) => {
         this.isFranchiseListLoading = false;
         utils.setMessages(error.message, 'error');
-      }
-    })
-
+      },
+    });
   }
 
   setActivationTypeList() {
     this.activationTypeList = [
       { id: 1, title: 'Franchise', value: 'franchise' },
       { id: 2, title: 'Student', value: 'student' },
-      { id: 3, title: 'Instructor', value: 'instructor' }
-    ]
+      { id: 3, title: 'Instructor', value: 'instructor' },
+    ];
   }
 
   handleOnActivationTypeChange(event: DropdownChangeEvent) {
@@ -111,15 +121,17 @@ export class ActivationComponent {
     this.tableDataSource = [];
     if (this.selectedActivationType === this.activationType.Franchise)
       this.isSearchDisabled = false;
-    else
-      this.isSearchDisabled = true;
+    else this.isSearchDisabled = true;
   }
 
   handleOnFranchiseChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
     this.showGrid = false;
-    if (this.selectedActivationType !== this.activationType.Franchise && this.selectedFranchise !== '') {
+    if (
+      this.selectedActivationType !== this.activationType.Franchise &&
+      this.selectedFranchise !== ''
+    ) {
       this.isSearchDisabled = false;
     } else {
       this.isSearchDisabled = true;
@@ -137,12 +149,16 @@ export class ActivationComponent {
       this.setTableColumns('student');
       isFranchiseListCall = false;
       isStudentListCall = true;
-      apiCall = this.studentService.getStudentListByFranchiseId(this.selectedFranchise.toString());
+      apiCall = this.studentService.getStudentListByFranchiseId(
+        this.selectedFranchise.toString()
+      );
     } else if (this.selectedActivationType === this.activationType.Instructor) {
       this.setTableColumns('instructor');
       isFranchiseListCall = false;
       isInstructorListCall = true;
-      apiCall = this.instructorService.getInstructorListByFranchiseId(this.selectedFranchise.toString());
+      apiCall = this.instructorService.getInstructorListByFranchiseId(
+        this.selectedFranchise.toString()
+      );
     }
     apiCall.subscribe({
       next: (response) => {
@@ -155,16 +171,14 @@ export class ActivationComponent {
       error: (error: HttpErrorResponse) => {
         utils.isTableLoading.set(false);
         utils.setMessages(error.message, 'error');
-      }
-    })
-
+      },
+    });
   }
 
   createTableDataSource(response: any) {
     this.tableDataSource = utils.filterDataByColumns(this.colDefs, response);
     this.showGrid = this.tableDataSource.length > 0 ? true : false;
   }
-
 
   setTableColumns(entity: 'franchise' | 'student' | 'instructor') {
     let colDefs: any;
@@ -188,44 +202,44 @@ export class ActivationComponent {
         field: 'franchiseId',
         header: '#Id',
         width: '10%',
-        styleClass: 'franchiseId'
+        styleClass: 'franchiseId',
       },
       {
         field: 'ownerName',
         header: 'Owner',
         width: '40%',
-        styleClass: 'ownerName'
+        styleClass: 'ownerName',
       },
       {
         field: 'franchiseName',
         header: 'Franchise',
         width: '40%',
-        styleClass: 'franchiseName'
+        styleClass: 'franchiseName',
       },
       {
         field: 'startDate',
         header: 'Start Date',
         width: '20%',
-        styleClass: 'startDate'
+        styleClass: 'startDate',
       },
       {
         field: 'endDate',
         header: 'End Date',
         width: '20%',
-        styleClass: 'endDate'
+        styleClass: 'endDate',
       },
       {
         field: 'status',
         header: 'Status',
         width: '10%',
-        styleClass: 'status'
+        styleClass: 'status',
       },
       {
         field: 'action',
         header: 'Action',
         width: '10%',
-        styleClass: 'action'
-      }
+        styleClass: 'action',
+      },
     ];
   }
 
@@ -235,50 +249,50 @@ export class ActivationComponent {
         field: 'studentId',
         header: '#Id',
         width: '10%',
-        styleClass: 'studentId'
+        styleClass: 'studentId',
       },
       {
         field: 'studentFirstName',
         header: 'First Name',
         width: '20%',
-        styleClass: 'studentFirstName'
+        styleClass: 'studentFirstName',
       },
       {
         field: 'studentLastName',
         header: 'Last Name',
         width: '20%',
-        styleClass: 'studentLastName'
+        styleClass: 'studentLastName',
       },
       {
         field: 'franchiseName',
         header: 'Franchise',
         width: '20%',
-        styleClass: 'franchiseName'
+        styleClass: 'franchiseName',
       },
       {
         field: 'startDate',
         header: 'Start Date',
         width: '20%',
-        styleClass: 'startDate'
+        styleClass: 'startDate',
       },
       {
         field: 'endDate',
         header: 'End Date',
         width: '20%',
-        styleClass: 'endDate'
+        styleClass: 'endDate',
       },
       {
         field: 'status',
         header: 'Status',
         width: '10%',
-        styleClass: 'status'
+        styleClass: 'status',
       },
       {
         field: 'action',
         header: 'Action',
         width: '10%',
-        styleClass: 'action'
-      }
+        styleClass: 'action',
+      },
     ];
   }
 
@@ -288,44 +302,44 @@ export class ActivationComponent {
         field: 'instructorId',
         header: '#Id',
         width: '10%',
-        styleClass: 'instructorId'
+        styleClass: 'instructorId',
       },
       {
         field: 'instructorName',
         header: 'Instructor',
         width: '40%',
-        styleClass: 'instructorName'
+        styleClass: 'instructorName',
       },
       {
         field: 'franchiseName',
         header: 'Franchise',
         width: '40%',
-        styleClass: 'franchiseName'
+        styleClass: 'franchiseName',
       },
       {
         field: 'startDate',
         header: 'Start Date',
         width: '20%',
-        styleClass: 'startDate'
+        styleClass: 'startDate',
       },
       {
         field: 'endDate',
         header: 'End Date',
         width: '20%',
-        styleClass: 'endDate'
+        styleClass: 'endDate',
       },
       {
         field: 'status',
         header: 'Status',
         width: '10%',
-        styleClass: 'status'
+        styleClass: 'status',
       },
       {
         field: 'action',
         header: 'Action',
         width: '10%',
-        styleClass: 'action'
-      }
+        styleClass: 'action',
+      },
     ];
   }
 
@@ -347,7 +361,7 @@ export class ActivationComponent {
     //   } else {
     //     rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
     //   }
-      
+
     //   this.dialogRef = this.dialogService.open(AddEditActivationComponent, {
     //     data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
     //     closable: false,
@@ -385,11 +399,17 @@ export class ActivationComponent {
   // }
 
   handleRowDelet(event: any) {
-    const deleteItemIndex = this.activationList.findIndex((item) => item?.id === event?.id);
+    const deleteItemIndex = this.activationList.findIndex(
+      (item) => item?.id === event?.id
+    );
     if (deleteItemIndex > -1) {
       this.activationList.splice(deleteItemIndex, 1);
       this.tableDataSource.splice(deleteItemIndex, 1);
-      const deleteMessageObj = { detail: 'Record deleted successsfully', severity: 'success', closable: true };
+      const deleteMessageObj = {
+        detail: 'Record deleted successsfully',
+        severity: 'success',
+        closable: true,
+      };
       utils.messages.update((val: Message[]) => [...val, deleteMessageObj]);
     }
   }
@@ -398,23 +418,50 @@ export class ActivationComponent {
     this.handleSearchAction();
   }
 
+  handleChangeStatus({
+    selectedRows,
+    isInline,
+    multipleStatus,
+  }: {
+    selectedRows: any[];
+    isInline: boolean;
+    multipleStatus: string;
+  }) {
+    if (!isInline) {
+      this.handleActivateExam(selectedRows, multipleStatus);
+    }
+  }
+
   deleteExamRow(data: any) {
     this.handleRowDelet(data);
     setTimeout(() => {
       utils.isTableDeleteAction.set(false);
-    }, 2000)
+    }, 2000);
   }
 
-  handleActivateExam(selectedRows?: any) {
+  handleActivateExam(selectedRows?: any, multipleStatus?: any) {
     const payload = {
-      "activationId": 0,
-      "objectId": this.selectedRows && this.selectedRows.length > 1 ?  0 : Number(this.data[0]),
-      "objectType": this.selectedActivationType,
-      "status" :  this.selectedRows && this.selectedRows.length > 1 ?  "Active" : selectedRows[0].status === "Active" ? "DeActive" : "Active" ,
-    }
+      activationId: 0,
+      objectId:
+        this.selectedRows && this.selectedRows.length > 1
+          ? 0
+          : Number(this.data[0]),
+      objectType: this.selectedActivationType,
+      status:
+        this.selectedRows && this.selectedRows.length > 1
+          ? multipleStatus
+          : selectedRows[0].status === 'Active'
+          ? 'DeActive'
+          : 'Active',
+    };
 
-    let apiCall = this.selectedRows && this.selectedRows.length > 1 ? 
-    this.activationService.saveMultipleActivation({"data": this.data,...payload}) : this.activationService.saveActivation(payload);
+    let apiCall =
+      this.selectedRows && this.selectedRows.length > 1
+        ? this.activationService.saveMultipleActivation({
+            data: this.data,
+            ...payload,
+          })
+        : this.activationService.saveActivation(payload);
     apiCall.subscribe({
       next: (response) => {
         if (response) {
@@ -423,26 +470,32 @@ export class ActivationComponent {
       },
       error: (error: HttpErrorResponse) => {
         utils.setMessages(error.message, 'error');
-      }
-    })
+      },
+    });
   }
 
-  onSelectedRowsChange({selectedRows, isInline}: {selectedRows: any[], isInline: boolean} ) {
+  onSelectedRowsChange({
+    selectedRows,
+    isInline,
+  }: {
+    selectedRows: any[];
+    isInline: boolean;
+  }) {
     this.selectedRows = selectedRows;
     if (this.selectedActivationType === 'student') {
-      const studentIds = selectedRows.map((row: any) => row.studentId)
+      const studentIds = selectedRows.map((row: any) => row.studentId);
       this.data = studentIds.join(',');
     }
-    if (this.selectedActivationType === "instructor") {
-      const instructorIds = selectedRows.map((row: any) => row.instructorId)
+    if (this.selectedActivationType === 'instructor') {
+      const instructorIds = selectedRows.map((row: any) => row.instructorId);
       this.data = instructorIds.join(',');
     }
-    if (this.selectedActivationType === "franchise") {
-      const franchiseIds = selectedRows.map((row: any) => row.franchiseId)
+    if (this.selectedActivationType === 'franchise') {
+      const franchiseIds = selectedRows.map((row: any) => row.franchiseId);
       this.data = franchiseIds.join(',');
     }
     this.validActivate = selectedRows.length > 0 ? true : false;
-    if(isInline) {
+    if (isInline) {
       this.handleActivateExam(selectedRows);
     }
   }
@@ -452,9 +505,8 @@ export class ActivationComponent {
   }
 }
 
-
 export enum ActivationType {
   Franchise = 'franchise',
   Student = 'student',
-  Instructor = 'instructor'
+  Instructor = 'instructor',
 }

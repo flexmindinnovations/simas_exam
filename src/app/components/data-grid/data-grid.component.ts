@@ -1,5 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, effect, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, OnChanges, SimpleChanges, input, ChangeDetectorRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  OnChanges,
+  SimpleChanges,
+  input,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -8,7 +22,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { utils } from '../../utils';
-import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog';
+import {
+  DialogService,
+  DynamicDialogModule,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
 import { DeleteConfirmComponent } from '../../modals/delete-confirm/delete-confirm.component';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { MenuItem } from 'primeng/api';
@@ -20,14 +38,31 @@ import { db } from '../../../db';
 import { LoadingComponent } from '../loading/loading.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, IconFieldModule, InputIconModule, DynamicDialogModule, TieredMenuModule, TreeTableModule, LoadingComponent, CheckboxModule,InputSwitchModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    TooltipModule,
+    IconFieldModule,
+    InputIconModule,
+    DynamicDialogModule,
+    TieredMenuModule,
+    TreeTableModule,
+    LoadingComponent,
+    CheckboxModule,
+    InputSwitchModule,
+    DropdownModule,
+  ],
   providers: [DialogService],
   templateUrl: './data-grid.component.html',
-  styleUrl: './data-grid.component.scss'
+  styleUrl: './data-grid.component.scss',
 })
 export class DataGridComponent implements OnChanges, AfterViewInit {
   scrollHeight: any = '450px';
@@ -58,6 +93,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   @Output() onRowEdit: EventEmitter<any> = new EventEmitter();
   @Output() onAddAction: EventEmitter<any> = new EventEmitter();
   @Output() onRefresh: EventEmitter<any> = new EventEmitter();
+  @Output() onChangeStatus: EventEmitter<any> = new EventEmitter();
   @Output() onGenerateAction: EventEmitter<any> = new EventEmitter();
   @Output() selectedRowsChange: EventEmitter<any> = new EventEmitter();
 
@@ -72,18 +108,23 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   allRowsSelected: boolean = false;
   selectedRows: any[] = [];
   checked: boolean = false;
-  selectedItems:any[] = [];
+  selectedItems: any[] = [];
+  statusList: any[] = [];
 
   @HostListener('window:resize', ['$event'])
   getScreenSize(event?: any) {
     if (event) {
       this.screenHeight = window.screen.availHeight;
       this.screenWidth = window.screen.availWidth;
-      const position = utils.isMobile() ? this.paginatorPosition[0] : this.paginatorPosition[1];
+      const position = utils.isMobile()
+        ? this.paginatorPosition[0]
+        : this.paginatorPosition[1];
       this.screenHeight = window.innerHeight;
       this.scrollHeight = this.screenHeight - position;
     } else {
-      const position = utils.isMobile() ? this.paginatorPosition[0] : this.paginatorPosition[1];
+      const position = utils.isMobile()
+        ? this.paginatorPosition[0]
+        : this.paginatorPosition[1];
       this.screenHeight = window.innerHeight;
       this.scrollHeight = this.screenHeight - position;
     }
@@ -96,17 +137,17 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     this.getScreenSize();
     effect(() => {
       this.isMobile = utils.isMobile();
-    })
+    });
     effect(() => {
       this.addButtonTitle = utils.addButtonTitle();
-    })
+    });
 
     effect(() => {
       this.isLoading = utils.isTableLoading();
-    })
+    });
     effect(() => {
       this.isAddActionLoading = utils.isAddActionLoading();
-    })
+    });
 
     effect(() => {
       const rowIndex = utils.onModalClose();
@@ -114,11 +155,13 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
         this.dataSource[rowIndex]['isGenerateActionLoading'] = false;
       }
       this.selectedRoute = utils.activeItem();
-      if (typeof this.selectedRoute === 'object' && Object.keys(this.selectedRoute).length > 0) {
+      if (
+        typeof this.selectedRoute === 'object' &&
+        Object.keys(this.selectedRoute).length > 0
+      ) {
         this.setModulePermissions();
       }
-
-    })
+    });
 
     effect(() => {
       this.isEditActionLoading = utils.isTableEditAction();
@@ -128,9 +171,8 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
           item['isDeleteActionLoading'] = false;
           item['isGenerateActionLoading'] = false;
         });
-
       }
-    })
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -145,36 +187,59 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
       isEditActionLoading: false,
       isDeleteActionLoading: false,
       isGenerateActionLoading: false,
-      selected: item.selected || false // Initialize the selected property
+      selected: item.selected || false, // Initialize the selected property
     }));
     this.selectedRows = [];
     this.allRowsSelected = false;
-    this.selectedRowsChange.emit({selectedRows: this.selectedRows, isInline: false});
+    this.selectedRowsChange.emit({
+      selectedRows: this.selectedRows,
+      isInline: false,
+    });
     this.showPaginator = this.dataSource.length > 15;
   }
 
-
   ngAfterViewInit(): void {
-    const paginatorElement = document.getElementsByClassName('p-paginator-rpp-options')[0];
+    this.setStatusList();
+    const paginatorElement = document.getElementsByClassName(
+      'p-paginator-rpp-options'
+    )[0];
     if (paginatorElement?.parentElement) {
       paginatorElement.parentElement.style.width = 'auto';
     }
 
     this.downloadOptions = [
-      { label: 'CSV', icon: 'pi pi-file-export', command: () => { this.downloadCsv(); } },
-      { label: 'XLSX', icon: 'pi pi-file-excel', command: () => { this.downloadxlxs(); } },
-      { label: 'PDF', icon: 'pi pi-file-pdf', command: () => { this.downloadPdf(); } }
+      {
+        label: 'CSV',
+        icon: 'pi pi-file-export',
+        command: () => {
+          this.downloadCsv();
+        },
+      },
+      {
+        label: 'XLSX',
+        icon: 'pi pi-file-excel',
+        command: () => {
+          this.downloadxlxs();
+        },
+      },
+      {
+        label: 'PDF',
+        icon: 'pi pi-file-pdf',
+        command: () => {
+          this.downloadPdf();
+        },
+      },
     ];
     this.cdref.detectChanges();
   }
 
   transformDataToTreeNodes(data: any[]): TreeNode[] {
-    return data.map(item => {
+    return data.map((item) => {
       const { children, ...rest } = item;
       return {
         ...rest,
         expanded: false,
-        children: children ? this.transformDataToTreeNodes(children) : []
+        children: children ? this.transformDataToTreeNodes(children) : [],
       };
     });
   }
@@ -182,12 +247,31 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   async setModulePermissions() {
     let activeModule: any;
     const permissionList = await db.permissiontem.toArray();
-    activeModule = permissionList.find((item: any) => item.moduleName === this.selectedRoute?.moduleName);
+    activeModule = permissionList.find(
+      (item: any) => item.moduleName === this.selectedRoute?.moduleName
+    );
     this.currentModule = activeModule;
   }
 
   toggleRow(rowData: any) {
     rowData.expanded = !rowData.expanded;
+  }
+
+  setStatusList() {
+    this.statusList = [
+      { id: 1, title: 'Activate', value: 'Active' },
+      { id: 2, title: 'Deactivate', value: 'DeActive' },
+    ];
+  }
+
+  handleChangeStatus(status: any) {
+    this.onChangeStatus.emit({
+      selectedRows: this.selectedRows,
+      isInline: false,
+      multipleStatus: status.value,
+    });
+    this.selectedRows = [];
+    this.selectedItems = [];
   }
 
   downloadCsv() {
@@ -199,44 +283,48 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   downloadxlxs() {
     this.isExportActionLoading = true;
     const dtSource = this.dataSource.map((item: any) => item);
-    import("xlsx").then(xlsx => {
+    import('xlsx').then((xlsx) => {
       const worksheet = xlsx.utils.json_to_sheet(this.dataSource);
-      const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, {
-        bookType: "xlsx",
-        type: "array"
+        bookType: 'xlsx',
+        type: 'array',
       });
-      const fileName = utils.addButtonTitle() + '_export' + new Date().getTime();
+      const fileName =
+        utils.addButtonTitle() + '_export' + new Date().getTime();
       this.saveAsExcelFile(excelBuffer, fileName);
     });
   }
 
   downloadPdf() {
     this.isExportActionLoading = true;
-    const exportCols = this.colDefs.map((col: any) => ({ title: col.header, dataKey: col.field }));
+    const exportCols = this.colDefs.map((col: any) => ({
+      title: col.header,
+      dataKey: col.field,
+    }));
     const doc = new jsPDF('portrait', 'px', 'a4');
-    autoTable(doc, { columns: exportCols, body: this.dataSource, });
+    autoTable(doc, { columns: exportCols, body: this.dataSource });
     const fileName = utils.addButtonTitle() + '_export' + new Date().getTime();
     doc.save(`${fileName}.pdf`);
     this.isExportActionLoading = false;
   }
 
-  handleSwitchButton(rowData:any){
+  handleSwitchButton(rowData: any) {
     const isInline = true;
-    this.selectedRowsChange.emit({selectedRows: [rowData], isInline});
+    this.selectedRowsChange.emit({ selectedRows: [rowData], isInline });
   }
 
   saveAsExcelFile(buffer: any, fileName: string): void {
-    import("file-saver").then(FileSaver => {
+    import('file-saver').then((FileSaver) => {
       let EXCEL_TYPE =
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-      let EXCEL_EXTENSION = ".xlsx";
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+      let EXCEL_EXTENSION = '.xlsx';
       const data: Blob = new Blob([buffer], {
-        type: EXCEL_TYPE
+        type: EXCEL_TYPE,
       });
       FileSaver.saveAs(
         data,
-        fileName + "_export_" + new Date().getTime() + EXCEL_EXTENSION
+        fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
       );
       this.isExportActionLoading = false;
     });
@@ -249,20 +337,23 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   clear(table: Table) {
     table.clear();
-    this.searchValue = ''
+    this.searchValue = '';
   }
 
   getGlobalFilters() {
-    const filters = this.colDefs.filter((item: any) => item.field !== 'action').map((item: any) => item.field);
+    const filters = this.colDefs
+      .filter((item: any) => item.field !== 'action')
+      .map((item: any) => item.field);
     return filters;
   }
 
-  handleRowSelect(event: any) {
-  }
+  handleRowSelect(event: any) {}
 
   handleEditOperation(rowData: any, index: number) {
     this.isEditActionLoading = true;
-    this.dataSource.forEach((item: any) => item['isEditActionLoading'] = false);
+    this.dataSource.forEach(
+      (item: any) => (item['isEditActionLoading'] = false)
+    );
     this.dataSource[index]['isEditActionLoading'] = true;
     utils.isTableEditAction.set(true);
     utils.tableEditRowData.set(rowData);
@@ -270,7 +361,9 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
 
   handleDeleteOperation(rowData: any, index: number) {
     this.isDeleteActionLoading = true;
-    this.dataSource.forEach((item: any) => item['isDeleteActionLoading'] = false);
+    this.dataSource.forEach(
+      (item: any) => (item['isDeleteActionLoading'] = false)
+    );
     this.dataSource[index]['isDeleteActionLoading'] = true;
     this.cdref.detectChanges();
     this.dialogRef = this.dialogService.open(DeleteConfirmComponent, {
@@ -293,12 +386,14 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
         });
         this.isDeleteActionLoading = false;
       }
-    })
+    });
   }
 
   handleGenerateOperation(rowData: any, rowIndex: any) {
     this.isGenerateActionLoading = true;
-    this.dataSource.forEach((item: any) => item['isGenerateActionLoading'] = false);
+    this.dataSource.forEach(
+      (item: any) => (item['isGenerateActionLoading'] = false)
+    );
     this.dataSource[rowIndex]['isGenerateActionLoading'] = true;
     this.onGenerateAction.emit({ rowData, rowIndex });
     this.cdref.detectChanges();
@@ -319,7 +414,7 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
   }
 
   selectRow(rowData: any) {
-    this.selectedRowsChange.emit({selectedRows: rowData, isInline: false});
+    this.selectedRowsChange.emit({ selectedRows: rowData, isInline: false });
     this.selectedItems = rowData;
   }
 }
@@ -352,4 +447,3 @@ export interface TreeNode {
 function handleGenerateOperation(rowData: any, any: any) {
   throw new Error('Function not implemented.');
 }
-

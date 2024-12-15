@@ -49,45 +49,61 @@
         }
       </div>
       <p-button
-          [ngClass]="dataSource?.length ? 'ml-4' : ''"
-          label="Refresh"
-          icon="pi 
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        label="Refresh"
+        icon="pi 
                   pi-sync"
-          [loading]="isRefreshing"
-          loadingIcon="pi pi-spin pi-spinner"
-          [pTooltip]="'Refresh Data'"
-          tooltipPosition="left"
-          (onClick)="handleRefresh()"
-        ></p-button>
+        [loading]="isRefreshing"
+        loadingIcon="pi pi-spin pi-spinner"
+        [pTooltip]="'Refresh Data'"
+        tooltipPosition="left"
+        (onClick)="handleRefresh()"
+      ></p-button>
       @if (showAddButton && currentModule?.canAdd) {
-        @if(currentModule?.moduleName === "Activation" || currentModule?.moduleName === "ExamActivation"){
-          <p-button
-          [disabled]="selectedRows.length < 2"
-          [ngClass]="dataSource?.length ? 'ml-4' : ''"
-          label="Mutiple Activation"
-          icon="pi 
+      @if(currentModule?.moduleName === "Activation" ||
+      currentModule?.moduleName === "ExamActivation"){
+      <!-- <p-button
+        [disabled]="selectedRows.length < 2"
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        label="Mutiple Activation"
+        icon="pi 
                   pi-plus"
-          [loading]="isAddActionLoading"
-          loadingIcon="pi pi-spin pi-spinner"
-          [pTooltip]="'Add ' + addButtonTitle"
-          tooltipPosition="left"
-          (onClick)="handleAddAction()"
-        ></p-button>
-        }@else {
-          <p-button
-          [ngClass]="dataSource?.length ? 'ml-4' : ''"
-          [label]="addButtonTitle"
-          icon="pi 
+        [loading]="isAddActionLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+        [pTooltip]="'Add ' + addButtonTitle"
+        tooltipPosition="left"
+        (onClick)="handleAddAction()"
+      ></p-button> -->
+      <p-dropdown
+        appendTo="body"
+        [disabled]="selectedRows.length < 2"
+        inputId="statusList"
+        [options]="statusList"
+        ariaLabelledBy="value"
+        placeholder="Select"
+        (onChange)="handleChangeStatus($event)"
+        optionValue="value"
+        optionLabel="title"
+        [filter]="true"
+        filterBy="value"
+        [showClear]="false"
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        class="w-full sm:!w-1/6"
+      />
+
+      }@else {
+      <p-button
+        [ngClass]="dataSource?.length ? 'ml-4' : ''"
+        [label]="addButtonTitle"
+        icon="pi 
                   pi-plus"
-          [loading]="isAddActionLoading"
-          loadingIcon="pi pi-spin pi-spinner"
-          [pTooltip]="'Add ' + addButtonTitle"
-          tooltipPosition="left"
-          (onClick)="handleAddAction()"
-        ></p-button>
-        }
-     
-      }
+        [loading]="isAddActionLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+        [pTooltip]="'Add ' + addButtonTitle"
+        tooltipPosition="left"
+        (onClick)="handleAddAction()"
+      ></p-button>
+      } }
     </div>
   </div>
   @if(isTreeList()) {
@@ -177,7 +193,7 @@
             } }@else if(item.field === 'action') {
             <div class="w-full flex items-center justify-center gap-1">
               @if (currentModule?.canEdit) {
-                <p-button
+              <p-button
                 [text]="true"
                 icon="pi
                                             pi-pen-to-square"
@@ -331,8 +347,7 @@
             *ngFor="let col of columns"
             [ngClass]="col.field === 'action' ? 'action-cell' : 'data-cell'"
           >
-            @if(col.field === 'status') {
-            @if(isCheckbox){
+            @if(col.field === 'status') { @if(isCheckbox){
             <p-inputSwitch
               [ngModel]="rowData[col.field] === 'Active' ? true : false"
               (onChange)="handleSwitchButton(rowData)"
