@@ -64,7 +64,7 @@
                     [(ngModel)]="selectedRound" [disabled]="isSearchActionLoading || isSearchDisabled"
                     ariaLabelledBy="roundName" placeholder="Select"
                     (onChange)="handleOnDropdownValueChange($event, 'round')" optionValue="roundId"
-                    optionLabel="roundName" [filter]="true" filterBy="roundName" [showClear]="false" />
+                    optionLabel="roundName" [filter]="true" filterBy="roundName" [showClear]="false"  [readonlyInput]="true />
             </div>
 
             <div class="flex flex-col items-start w-full max-w-32">
@@ -73,7 +73,7 @@
                     [loading]="isColumnListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfColumn"
                     [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
                     (onChange)="handleOnDropdownValueChange($event, 'columns')" optionValue="value" optionLabel="title"
-                    [filter]="true" filterBy="title" [showClear]="false" />
+                    [filter]="true" filterBy="title" [showClear]="false"  [readonlyInput]="true />
             </div>
 
             <div class="flex flex-col items-start w-full max-w-32">
@@ -82,7 +82,7 @@
                     [loading]="isRowsListLoading" loadingIcon="pi pi-spin pi-spinner" [(ngModel)]="selectedNoOfRows"
                     [disabled]="isSearchActionLoading || isSearchDisabled" ariaLabelledBy="title" placeholder="Select"
                     (onChange)="handleOnDropdownValueChange($event, 'rows')" optionValue="value" optionLabel="title"
-                    [filter]="true" filterBy="title" [showClear]="false" />
+                    [filter]="true" filterBy="title" [showClear]="false"  [readonlyInput]="true/>
             </div>
 
             <div class="flex flex-col items-start w-full max-w-32">
@@ -92,7 +92,7 @@
                     [(ngModel)]="selectedSpeedOfQuestion" [disabled]="isSearchActionLoading || isSearchDisabled"
                     ariaLabelledBy="title" placeholder="Select"
                     (onChange)="handleOnDropdownValueChange($event, 'speed')" optionValue="value" optionLabel="title"
-                    [filter]="true" filterBy="title" [showClear]="false" />
+                    [filter]="true" filterBy="title" [showClear]="false" [readonlyInput]="true />
             </div> -->
 
       <p-button
@@ -163,11 +163,10 @@
                             type="text"
                             #answerInput
                             pInputText
-                            autofocus
                             [(ngModel)]="selectedAnswer"
                             (ngModelChange)="handleKeyValue($event)"
                             (keydown)="handleKeydown($event)"
-                          />                          
+                          />                       
             <!-- </div> -->
           </div>
           } @else if(isLoadingQuestion && !quizCompleted) {
