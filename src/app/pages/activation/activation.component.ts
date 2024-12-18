@@ -429,6 +429,7 @@ export class ActivationComponent {
   }) {
     if (!isInline) {
       this.handleActivateExam(selectedRows, multipleStatus);
+      this.handleSearchAction();
     }
   }
 
@@ -451,16 +452,16 @@ export class ActivationComponent {
         this.selectedRows && this.selectedRows.length > 1
           ? multipleStatus
           : selectedRows[0].status === 'Active'
-          ? 'DeActive'
-          : 'Active',
+            ? 'DeActive'
+            : 'Active',
     };
 
     let apiCall =
       this.selectedRows && this.selectedRows.length > 1
         ? this.activationService.saveMultipleActivation({
-            data: this.data,
-            ...payload,
-          })
+          data: this.data,
+          ...payload,
+        })
         : this.activationService.saveActivation(payload);
     apiCall.subscribe({
       next: (response) => {
@@ -497,6 +498,7 @@ export class ActivationComponent {
     this.validActivate = selectedRows.length > 0 ? true : false;
     if (isInline) {
       this.handleActivateExam(selectedRows);
+      this.handleSearchAction();
     }
   }
 

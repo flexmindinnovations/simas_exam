@@ -85,7 +85,7 @@ export class StudentsComponent implements OnInit {
         if (response) {
           this.studentList = response.map((item: any) => {
             item['studentPhoto'] = item['studentPhoto']?.replace('webapi', 'comp');
-            item['stuPass'] = item['status'] === '1' ? item['stuPass'] : ''  
+            item['stuPass'] = item['status'] === 'Active' ? item['stuPass'] : ''
             return item;
           });
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
