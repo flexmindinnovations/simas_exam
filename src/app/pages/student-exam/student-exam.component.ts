@@ -184,7 +184,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dialogRef: DynamicDialogRef | undefined;
 
-  totalTime: number = 30; // 3 minutes in seconds
+  totalTime: number = 10; // in seconds
   questionTimer: any = '0';
   remainingTime: number = this.totalTime;
   elapsedTime: number = this.remainingTime;
@@ -209,9 +209,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   roundHeader: string = '';
   canMoveToNextRound = false;
   isFocused: boolean = false;
+  focusTriggered = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
-  @ViewChild('answerInput', { static: false }) answerInput!: ElementRef;
+  @ViewChild('answerInput') answerInput!: ElementRef;
 
   constructor(
     private examTypeService: ExamTypeService,
@@ -523,8 +524,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nextRound() {
     if (this.canMoveToNextRound) {
-      this.isLoadingQuestion = false; // Clear loading state
-      this.isFlashEnded = false; // Reset flash state
+      this.isLoadingQuestion = false;
+      this.isFlashEnded = false;
       this.selectedAnswer = null;
       this.canMoveToNextRound = false;
 
@@ -556,6 +557,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   newQuestion() {
+    this.isFlashEnded = false;
     const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
 
     this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
@@ -570,6 +572,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     if (isLastQuestionInRound) {
       this.canMoveToNextRound = true;
       this.isLoadingQuestion = false;
+      this.isFlashEnded = true;
       this.resetTimer();
       return;
     }
@@ -589,7 +592,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadNextQuestion() {
-    // Check if the round has ended
     const isLastQuestionInRound =
       this.activeQuestionIndex === this.questionList.length - 1;
     if (
@@ -619,11 +621,12 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           this.activeQuestionIndex = nextQuestionIndex;
           this.activeQuestion = this.questionList[nextQuestionIndex];
           this.flashQuestions = this.activeQuestion?.questions.split(',');
+          this.flashQuestionsString = this.flashQuestions.join(' ');
           this.isAnswerSubmitted = false;
           this.isFlashEnded = false;
           this.isLoadingQuestion = true;
         }),
-        switchMap(() => timer(1000))
+        switchMap(() => timer(500))
       )
       .subscribe(() => {
         const sound = this.sounds['simple'];
@@ -943,10 +946,11 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewChecked() {
-    if (!this.selectedAnswer) {
-      // Focus only when no answer is selected
+    if (!this.selectedAnswer && !this.focusTriggered) {
+      this.focusTriggered = true;
       setTimeout(() => {
         this.focusAnswerInput();
+        this.focusTriggered = false; // Reset for next cycle
       }, 100);
     }
   }
@@ -1167,18 +1171,4 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resetTimer();
   }
 
-  loadNextRound() {
-    this.selectedAnswer = null;
-    const nextRoundIndex = this.currentRoundIndex + 1;
-
-    if (nextRoundIndex < this.roundIds.length) {
-      // Move to the next round
-      this.currentRoundIndex = nextRoundIndex;
-      this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the next round's questions
-    } else {
-      // End the quiz if no more rounds
-      this.quizCompleted = true;
-      this.showExamResults();
-    }
-  }
 }

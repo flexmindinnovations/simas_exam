@@ -186,9 +186,11 @@
             } @else {
             <p
               class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
-              [ngClass]="rowData[item.field] === '1' ? 'active' : 'inactive'"
+              [ngClass]="
+                rowData[item.field] === 'Active' ? 'active' : 'inactive'
+              "
             >
-              {{ rowData[item.field] === "1" ? "Active" : "Inactive" }}
+              {{ rowData[item.field] === "Active" ? "Active" : "Inactive" }}
             </p>
             } }@else if(item.field === 'action') {
             <div class="w-full flex items-center justify-center gap-1">
@@ -356,9 +358,11 @@
             }@else {
             <p
               class="status-field m-0 w-fit flex items-center justify-center py-1 px-1.5 min-w-16"
-              [ngClass]="rowData[col.field] === '1' ? 'active' : 'inactive'"
+              [ngClass]="
+                rowData[col.field] === 'Active' ? 'active' : 'inactive'
+              "
             >
-              {{ rowData[col.field] === "1" ? "Active" : "Inactive" }}
+              {{ rowData[col.field] === "Active" ? "Active" : "Inactive" }}
             </p>
             } } @else if(col.field === 'action') {
             <div class="w-full flex items-center justify-center gap-1">
