@@ -160,7 +160,7 @@ export class AppConfigService {
     instructor: {
       instructorList: `${this.hostUrl}/Instructor/GetInstructorList`,
       instructorListByFranchiseId: `${this.hostUrl}/Instructor/GetInstructorList?franchiseId={{id}}`,
-      instructorById: `${this.hostUrl}/Instructor/GetInstructorById?instructorId={{id}}`,
+      instructorById: `${this.hostUrl}/Instructor/GetInstructorById?id={{id}}`,
       savetInstructor: `${this.hostUrl}/Instructor/SavetInstructor`,
       updateInstructor: `${this.hostUrl}/Instructor/UpdateInstructor`,
       deleteInstructor: `${this.hostUrl}/Instructor​/Delete/{{id}}`,
@@ -169,7 +169,7 @@ export class AppConfigService {
       studentList: `${this.hostUrl}/Student/GetStudentList`,
       studentListByFranchiseId: `${this.hostUrl}/Student/GetStudentList?franchiseId={{id}}`,
       studentListInstructorWise: `${this.hostUrl}/Student/GetStudentListInstructorWise`,
-      studentById: `${this.hostUrl}/Student/GetStudentById?studentId={{id}}`,
+      studentById: `${this.hostUrl}/Student/GetStudentById?id={{id}}`,
       saveStudent: `${this.hostUrl}/Student/SaveStudent`,
       updateStudent: `${this.hostUrl}/Student/UpdateStudent`,
       upload: `${this.hostUrl}/Student/Upload`,
