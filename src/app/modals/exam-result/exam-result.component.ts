@@ -39,7 +39,7 @@ export class ExamResultComponent implements OnInit {
     this.totalTime = this.dialogData?.totalTime;
     if (this.questionList?.length) {
       this.attemptedQuestions = this.questionList.filter((item: any) => item.isAttempted === true);
-      this.skippedQuestions = this.questionList.filter((item: any) => item.isSkipped === true);
+      this.skippedQuestions = this.questionList.filter((item: any) => item.isAttempted === false);
       this.wrongQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === true);
       this.correctQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
     }
@@ -55,25 +55,26 @@ export class ExamResultComponent implements OnInit {
 
   saveExamPaper() {
     this.isSubmitActionLoading = true;
+    const userId = sessionStorage.getItem('userId')
     const payload = this.questionList.map((item: any) => {
       const correctAnswer = item.isAttempted === true && item.isWrongAnswer === false;
       const obj = {
         examPaperId: 0,
-        studentId: this.examInputData?.studentId,
-        levelId: this.examInputData?.levelId,
-        roundId: this.examInputData?.roundId,
+        studentId: userId ? +userId : 0,
+        levelId: item?.levelId,
+        roundId: item?.roundId,
         questionId: item?.questionBankDetailsId,
-        examTypeId: this.examInputData?.examTypeId,
-        examPaperDate: this.examInputData?.examPaperDate,
-        examPaperTime: this.examInputData?.examPaperTime,
-        answer: item?.userInput ?? '',
+        examTypeId: item?.examTypeId,
+        examPaperDate: new Date(),
+        examPaperTime: new Date().toLocaleTimeString(),
+        answer: item?.userInput?.toString() ?? '',
         answerStatus: correctAnswer ? 'Y' : 'N',
         answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
         totalQuestions: this.questionList?.length,
         skipQuestions: this.skippedQuestions?.length,
         rightAnswer: this.correctQuestions?.length,
         wrongAnswer: this.wrongQuestions?.length,
-        totalTimeTaken: item.timeTaken ?? this.totalTime
+        totalTimeTaken: item.timeTaken
       };
       return obj;
     });

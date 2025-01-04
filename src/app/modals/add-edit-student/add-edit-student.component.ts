@@ -76,7 +76,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
     if (this.isEditMode) {
       this.selectedImagePath = this.dialogData['studentPhoto'];
       this.dialogData['dob'] = new Date(this.dialogData['dob']);
-      this.dialogData['status'] = this.dialogData['status'] === '1' ? true : false;
+      this.dialogData['status'] = this.dialogData['status'] === 'Active' ? true : false;
       this.formGroup.patchValue(this.dialogData);
     }
   }
@@ -189,7 +189,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
     // formVal['endDate'] = endDate;
     formVal['dob'] = dob;
     formVal['userPassword'] = formVal['stuPass'];
-    formVal['status'] = status === true ? '1' : '0';
+    formVal['status'] = status === true ? 'Active' : 'DeActive';
     formData.append('studentModel', JSON.stringify(formVal));
     if (this.selectedFiles?.length) {
       formData.append('file', this.selectedFiles[0], this.selectedFiles[0].name);

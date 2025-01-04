@@ -33,3 +33,20 @@
         --angle: 360deg;
     }
 }
+
+.custom-responsive-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 540px) {
+    .custom-responsive-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1040px) {
+    .custom-responsive-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit, Sanitizer } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,6 +18,7 @@ import { PasswordModule } from 'primeng/password';
 import { ImagePickerComponent } from '../../components/image-picker/image-picker.component';
 import { FranchiseService } from '../../services/franchise/franchise.service';
 import { forkJoin } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 
 
 @Component({
@@ -42,7 +43,10 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   stateListLoading: boolean = false;
   cityListLoading: boolean = false;
   selectedFiles: File[] = [];
-  selectedImagePath: string = '';
+  selectedImagePath: any = '';
+  countryId: string = '';
+  stateId: string = '';
+  cityId: string = ''
 
   inputId = new Date().getTime() + utils.getRandomNumber();
 
@@ -78,11 +82,15 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.isEditMode && this.dialogData) {
       const formData = JSON.parse(JSON.stringify(this.dialogData));
-      formData['status'] = formData['status'] === '1' ? true : false;
+      this.stateId = formData?.stateId;
+      this.countryId = formData?.countryId;
+      this.cityId = formData?.cityId;
+      formData['status'] = formData['status'] === 'Active' ? true : false;
       formData['joiningDate'] = new Date(formData['joiningDate']);
       formData['startDate'] = new Date(formData['startDate']);
       formData['endDate'] = new Date(formData['endDate']);
-      this.selectedImagePath = formData?.logoPath;
+      const imagePath = `${environment.apiUrl?.replace('api', formData?.logoPath)}`;
+      this.selectedImagePath = imagePath;
       this.formGroup.patchValue(formData);
       this.cdref.detectChanges();
     }
@@ -91,12 +99,8 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   handleUploadFile(event: any) {
     const eventType = event?.event;
     this.selectedFiles = event?.files;
-    if (eventType === 'onSelectedFiles') {
-
-    } else {
-
-    }
   }
+
 
   getCountryList() {
     this.countryListLoading = true;
@@ -185,6 +189,7 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
 
   handleOnCountryListChange(event: DropdownChangeEvent) {
     const { countryId, countryName } = event?.value;
+    this.countryId = event?.value;
     this.stateList = [];
     this.cityList = [];
     // this.getStateList(countryId);
@@ -192,6 +197,7 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   }
 
   handleOnStateListChange(event: DropdownChangeEvent) {
+    this.stateId = event?.value;
     this.cityList = [];
     this.formGroup.get('cityId')?.disable();
     const {
@@ -205,6 +211,7 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
   }
 
   handleOnCityListChange(event: DropdownChangeEvent) {
+    this.cityId = event?.value;
   }
 
   handleDialogCancel() {
@@ -215,9 +222,9 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
     this.isSubmitActionLoading = true;
     this.formGroup.disable();
     const formVal = this.formGroup.getRawValue();
-    const countryId = formVal['countryId']['countryId'];
-    const stateId = formVal['stateId']['stateId'];
-    const cityId = formVal['cityId']['cityId'];
+    const countryId = this.countryId;
+    const stateId = this.stateId;
+    const cityId = this.cityId;
 
     const formData = new FormData();
     if (this.isEditMode) formVal['franchiseId'] = this.dialogData?.franchiseId;
@@ -233,12 +240,15 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
     formVal['stateId'] = stateId;
     formVal['cityId'] = cityId;
     formVal['userPassword'] = formVal['franchiseePassword'];
-    formVal['logoPath'] = this.dialogData?.logoPath;
-    formVal['status'] = status === true ? '1' : '0';
-    formData.append('franchiseModel', JSON.stringify(formVal));
+    formVal['logoPath'] = this.dialogData?.logoPath ? this.dialogData?.logoPath : '';
+    formVal['status'] = status === true ? 'Active' : 'DeActive';
+    ;
     if (this.selectedFiles?.length) {
       formData.append('file', this.selectedFiles[0], this.selectedFiles[0].name);
+      formVal['logoPath'] = "";
     }
+  
+    formData.append('franchiseModel', JSON.stringify(formVal))
     let apiCall = this.franchiseService.saveFranchinse(formVal);
     if (this.selectedFiles?.length) {
       apiCall = this.franchiseService.uploadAndSaveFranchinse(formData);

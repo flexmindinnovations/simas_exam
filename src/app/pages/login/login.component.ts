@@ -14,6 +14,7 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import crypto from 'crypto-js';
 import { RoleService } from '../../services/role/role.service';
 import { db } from '../../../db';
+import { UserTypeService } from '../../services/user-type.service';
 
 @Component({
   selector: 'app-login',
@@ -50,7 +51,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private roleService: RoleService,
-    private router: Router
+    private router: Router,
+    private userTypeService: UserTypeService,
   ) { }
 
   ngOnInit(): void {
@@ -108,9 +110,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
       next: (response: any) => {
         if (response) {
           const { token, roleId, roleName } = response;
+          if (response.hasOwnProperty('student') && response?.student !== null) {
+            const { studentId, ...rest } = response?.student[0];
+            sessionStorage.setItem('userId', studentId);
+          }
+          if (response.hasOwnProperty('franchise') && response?.franchise !== null) {
+            const { franchiseId, ...rest } = response?.franchise[0];
+            sessionStorage.setItem('franchiseId', franchiseId);
+          }
+          if (response.hasOwnProperty('instructor') && response?.instructor !== null) {
+            const { instructorId, ...rest } = response?.instructor[0];
+            sessionStorage.setItem('instructorId', instructorId);
+          }
           const userRoleEnc = utils.encryptString(roleName, token);
           sessionStorage.setItem('token', token);
           sessionStorage.setItem('role', userRoleEnc);
+          this.userTypeService.setUserType(roleName);
           this.getUserRoles(roleId);
         }
       },

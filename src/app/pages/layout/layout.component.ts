@@ -3,7 +3,6 @@ import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit, SimpleChan
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { NotFoundComponent } from '../not-found/not-found.component';
 import { utils } from '../../utils';
 import { SidebarModule } from 'primeng/sidebar';
 import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
@@ -18,15 +17,15 @@ import { MessagesModule } from 'primeng/messages';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserType, UserTypeObj } from '../../enums/user-types';
 import { db } from '../../../db';
-import { SessionTimeOutComponent } from '../../modals/session-time-out/session-time-out.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterAnimation } from '../../utils/animations';
+import { FullScreenModalComponent } from '../../modals/full-screen-modal/full-screen-modal.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule],
+  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, SidebarModule, MessagesModule, MenubarModule, FullScreenModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   animations: [
@@ -50,6 +49,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   isTablet: boolean = false;
   isMenuItemClicked: boolean = false;
   messages: any[] = [];
+  showPermissionPop: boolean = false;
 
   permissionList: any[] = [];
 
@@ -175,6 +175,11 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     if (permissionList.length) {
       this.permissionList = permissionList;
       utils.permissionList.set(permissionList);
+    }
+
+    const viewableModules = permissionList.filter(permission => permission.canView);
+    if (viewableModules.length === 0) {
+      this.showPermissionPop = true;
     }
   }
 

@@ -26,7 +26,7 @@ export type ApiCallConfig = {
     studentListByFranchiseId: string;
     studentListInstructorWise: string;
     studentById: string;
-    savetStudent: string;
+    saveStudent: string;
     updateStudent: string;
     upload: string;
     uploadandUpdateStudent: string;
@@ -97,7 +97,7 @@ export type ApiCallConfig = {
     // questionBankListExamTypeAndTypeWise: string;
     // questionBankListExamTypeAndLessonORTypeWise: string;
     // flashAnzanQuestionBankListExamTypeAndLevelWise: string;
-    flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise: string;
+    getFlashAnzanQuestionBankListExamTypeAndLevelWise: string;
     updateQuestionBank: string;
     uploadFile: string;
     deleteQuestionBank: string;
@@ -160,7 +160,7 @@ export class AppConfigService {
     instructor: {
       instructorList: `${this.hostUrl}/Instructor/GetInstructorList`,
       instructorListByFranchiseId: `${this.hostUrl}/Instructor/GetInstructorList?franchiseId={{id}}`,
-      instructorById: `${this.hostUrl}/Instructor/GetInstructorById?instructorId={{id}}`,
+      instructorById: `${this.hostUrl}/Instructor/GetInstructorById?id={{id}}`,
       savetInstructor: `${this.hostUrl}/Instructor/SavetInstructor`,
       updateInstructor: `${this.hostUrl}/Instructor/UpdateInstructor`,
       deleteInstructor: `${this.hostUrl}/Instructor​/Delete/{{id}}`,
@@ -169,8 +169,8 @@ export class AppConfigService {
       studentList: `${this.hostUrl}/Student/GetStudentList`,
       studentListByFranchiseId: `${this.hostUrl}/Student/GetStudentList?franchiseId={{id}}`,
       studentListInstructorWise: `${this.hostUrl}/Student/GetStudentListInstructorWise`,
-      studentById: `${this.hostUrl}/Student/GetStudentById?studentId={{id}}`,
-      savetStudent: `${this.hostUrl}/Student/SavetStudent`,
+      studentById: `${this.hostUrl}/Student/GetStudentById?id={{id}}`,
+      saveStudent: `${this.hostUrl}/Student/SaveStudent`,
       updateStudent: `${this.hostUrl}/Student/UpdateStudent`,
       upload: `${this.hostUrl}/Student/Upload`,
       uploadandUpdateStudent: `${this.hostUrl}/Student/UploadandUpdateStudent`,
@@ -243,7 +243,7 @@ export class AppConfigService {
       // questionBankListExamTypeAndTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndTypeWise`,
       // questionBankListExamTypeAndLessonORTypeWise: `${this.hostUrl}/QuestionBank/getQuestionBankListExamTypeAndLessonORTypeWise`,
       // flashAnzanQuestionBankListExamTypeAndLevelWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelWise`,
-      flashAnzanQuestionBankListExamTypeAndLevelAndRoundWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelAndRoundWise`,
+      getFlashAnzanQuestionBankListExamTypeAndLevelWise: `${this.hostUrl}/QuestionBank/getFlashAnzanQuestionBankListExamTypeAndLevelWise`,
       updateQuestionBank: `${this.hostUrl}/QuestionBank/updateQuestionBank`,
       uploadFile: `${this.hostUrl}/QuestionBank/uploadFile`,
       deleteQuestionBank: `${this.hostUrl}/QuestionBank/Delete/{{id}}`

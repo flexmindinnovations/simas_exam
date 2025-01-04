@@ -104,6 +104,7 @@ export class QuestionBankComponent {
       next: (response) => {
         if (response) {
           this.questionBankList = response;
+          // console.log(this.questionBankList);
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionBankList)
         // utils.isTableLoading.update(val => !val);
         }
@@ -118,7 +119,7 @@ export class QuestionBankComponent {
     if (this.isEditMode) utils.isTableEditAction.set(true);
     else utils.isAddActionLoading.set(true);
     this.dialogRef = this.dialogService.open(AddEditQuestionBankComponent, {
-      data: this.isEditMode ? this.filterTableInfo(data?.examId) : { isEditMode: this.isEditMode },
+      data: this.isEditMode ? this.filterTableInfo(data?.questionBankId) : { isEditMode: this.isEditMode },
       closable: false,
       modal: true,
       height: 'auto',

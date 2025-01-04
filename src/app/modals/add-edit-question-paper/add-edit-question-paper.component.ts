@@ -66,7 +66,7 @@ export class AddEditQuestionPaperComponent implements OnInit, AfterViewInit {
       const children = this.dialogData?.children.map((item: any) => {
         const obj = {
           questionPaperId: item?.questionPaperId ?? 0,
-          questionType: item?.questionType ?? '',
+          questionType: item?.questionType?.toLowerCase() ?? '',
           columns: item?.columns ?? '',
           rows: item?.rows ?? '',
           noOfQuestion: item?.noOfQuestion ?? '',
@@ -148,6 +148,10 @@ export class AddEditQuestionPaperComponent implements OnInit, AfterViewInit {
           const { examTypeList, levelList } = response;
           this.levelList = levelList;
           this.examTypeList = examTypeList;
+          const roundList = this.levelList?.find((item: any) => item.levelId === this.dialogData?.levelId)?.examRoundList;
+          if (roundList?.length) {
+            this.roundList = roundList;
+          }
           if (levelList?.length) this.levelListLoading = false;
           if (examTypeList?.length) this.examTypeListLoading = false;
         }

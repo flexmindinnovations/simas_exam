@@ -17,6 +17,11 @@ export class FranchiseService {
     this.franchisePath = this.appConfig.get('franchise');
   }
 
+  getFranchiseById(franchiseId: any): Observable<any> {
+    const apiPath = this.franchisePath.franchiseById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', franchiseId);
+    return this.http.get(apiPath);
+  }
+
   getFranchiseTypeList(): Observable<any> {
     return this.http.get(this.franchisePath.franchiseList);
   }

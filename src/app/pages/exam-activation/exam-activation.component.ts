@@ -47,6 +47,7 @@ export class ExamActivationComponent {
   isActivateActionLoading: boolean = false;
   validActivate: boolean = false;
   data: string = '';
+  selectedRows: any[] = [];
 
   constructor(
     private examService: ExamService,
@@ -329,52 +330,52 @@ export class ExamActivationComponent {
   }
 
   handleAddEditAction(data?: any) {
-    if (this.selectedActivationType) {
-      if (data?.isEditActionLoading || data?.isDeleteActionLoading) {
-        if (data.hasOwnProperty('isEditActionLoading')) {
-          delete data.isEditActionLoading;
-        }
-        if (data.hasOwnProperty('isDeleteActionLoading')) {
-          delete data.isDeleteActionLoading;
-        }
-      }
-      let rowData: any;
-      if (this.selectedActivationType === this.activationType.Franchise && this.apiResponse?.length) {
-        rowData = this.apiResponse?.find((item: any) => item.franchiseId === data?.franchiseId);
-      } else if (this.selectedActivationType === this.activationType.Student) {
-        rowData = this.apiResponse?.find((item: any) => item.studentId === data?.studentId);
-      } else {
-        rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
-      }
-      // if (this.isEditMode) utils.isTableEditAction.set(true);
-      // else utils.isAddActionLoading.set(true);
-      this.dialogRef = this.dialogService.open(AddEditExamActivationComponent, {
-        data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
-        closable: false,
-        modal: true,
-        height: 'auto',
-        width: utils.isMobile() ? '95%' : '42%',
-        styleClass: 'add-edit-dialog',
-        header: this.isEditMode ? `Update Exam Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}` : `Add Exam Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}`,
-      });
+    // if (this.selectedActivationType) {
+    //   if (data?.isEditActionLoading || data?.isDeleteActionLoading) {
+    //     if (data.hasOwnProperty('isEditActionLoading')) {
+    //       delete data.isEditActionLoading;
+    //     }
+    //     if (data.hasOwnProperty('isDeleteActionLoading')) {
+    //       delete data.isDeleteActionLoading;
+    //     }
+    //   }
+    //   let rowData: any;
+    //   if (this.selectedActivationType === this.activationType.Franchise && this.apiResponse?.length) {
+    //     rowData = this.apiResponse?.find((item: any) => item.franchiseId === data?.franchiseId);
+    //   } else if (this.selectedActivationType === this.activationType.Student) {
+    //     rowData = this.apiResponse?.find((item: any) => item.studentId === data?.studentId);
+    //   } else {
+    //     rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
+    //   }
+  
+    //   this.dialogRef = this.dialogService.open(AddEditExamActivationComponent, {
+    //     data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
+    //     closable: false,
+    //     modal: true,
+    //     height: 'auto',
+    //     width: utils.isMobile() ? '95%' : '42%',
+    //     styleClass: 'add-edit-dialog',
+    //     header: this.isEditMode ? `Update Exam Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}` : `Add Exam Activation For: ${this.selectedActivationType.charAt(0).toUpperCase() + this.selectedActivationType.slice(1)}`,
+    //   });
 
-      this.dialogRef.onClose.subscribe((res) => {
-        if (res) {
-          if (res?.status) {
-            utils.setMessages(res.message, 'success');
-            utils.isTableEditAction.set(false);
-            this.handleSearchAction();
-          } else {
-            utils.isTableEditAction.set(false);
-            utils.setMessages(res.message, 'error');
-          }
-        } else {
-          utils.isTableEditAction.set(false);
-        }
-      })
-    } else {
-      utils.setMessages('Please Select Exam Activation Type', 'info');
-    }
+    //   this.dialogRef.onClose.subscribe((res) => {
+    //     if (res) {
+    //       if (res?.status) {
+    //         utils.setMessages(res.message, 'success');
+    //         utils.isTableEditAction.set(false);
+    //         this.handleSearchAction();
+    //       } else {
+    //         utils.isTableEditAction.set(false);
+    //         utils.setMessages(res.message, 'error');
+    //       }
+    //     } else {
+    //       utils.isTableEditAction.set(false);
+    //     }
+    //   })
+    // } else {
+    //   utils.setMessages('Please Select Exam Activation Type', 'info');
+    // }
+    this.handleActivateExam();
   }
 
   // filterExamInfo(examId: number) {
@@ -400,15 +401,15 @@ export class ExamActivationComponent {
     }, 2000)
   }
 
-  handleActivateExam() {
+  handleActivateExam(selectedRows?: any) {
     const payload = {
       "activationId": 0,
-      "objectId": 0,
-      "data": this.data,
-      "objectType": this.selectedActivationType
+      "objectId": this.selectedRows && this.selectedRows.length > 1 ?  0 : Number(this.data[0]),
+      "objectType": this.selectedActivationType,
+      "status" : "Active"
     }
-    // console.log(payload);
-    let apiCall = this.activationService.saveMultipleExamActivation(payload);
+    let apiCall = this.selectedRows && this.selectedRows.length > 1 ? 
+    this.activationService.saveMultipleExamActivation({"data": this.data,...payload}) : this.activationService.saveActivation(payload);
     apiCall.subscribe({
       next: (response) => {
         if (response) {
@@ -421,7 +422,8 @@ export class ExamActivationComponent {
     })
   }
 
-  onSelectedRowsChange(selectedRows: any[]) {
+  onSelectedRowsChange({selectedRows, isInline}: {selectedRows: any[], isInline: boolean} ) {
+    this.selectedRows = selectedRows;
     if (this.selectedActivationType === 'student') {
       const studentIds = selectedRows.map((row: any) => row.studentId)
       this.data = studentIds.join(',');
@@ -435,6 +437,13 @@ export class ExamActivationComponent {
       this.data = franchiseIds.join(',');
     }
     this.validActivate = selectedRows.length > 0 ? true : false;
+    if(isInline) {
+      this.handleActivateExam(selectedRows);
+    }
+  }
+
+  ngOnDestroy() {
+    this.selectedRows = [];
   }
 
 }

@@ -63,7 +63,7 @@ export class StudentsComponent implements OnInit {
       { field: 'emailId', header: 'Email', width: '15%', styleClass: 'emailId' },
       { field: 'dob', header: 'DOB', width: '10%', styleClass: 'dob' },
       { field: 'schoolName', header: 'School Name', width: '20%', styleClass: 'schoolName' },
-      // { field: 'standard', header: 'Standard', width: '20%', styleClass: 'Standard' },
+      { field: 'stuPass', header: 'Student Password', width: '10%', styleClass: 'stuPass' },
       // { field: 'levelName', header: 'Level', width: '10%', styleClass: 'levelName' },
       // { field: 'franchiseTypeName', header: 'Franchise Type', width: '15%', styleClass: 'franchiseTypeName' },
       // { field: 'franchiseName', header: 'Franchise', width: '15%', styleClass: 'franchiseName' },
@@ -85,6 +85,7 @@ export class StudentsComponent implements OnInit {
         if (response) {
           this.studentList = response.map((item: any) => {
             item['studentPhoto'] = item['studentPhoto']?.replace('webapi', 'comp');
+            item['stuPass'] = item['status'] === 'Active' ? item['stuPass'] : ''
             return item;
           });
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
@@ -106,7 +107,7 @@ export class StudentsComponent implements OnInit {
       closable: false,
       modal: true,
       height: 'auto',
-      width: utils.isMobile() ? '95%' : '35%',
+      width: utils.isMobile() ? '95%' : utils.desktopModalWidth,
       styleClass: 'add-edit-dialog',
       header: this.isEditMode ? 'Edit Student' : 'Add New Student',
     });

@@ -26,13 +26,13 @@ export class StudentService {
     return this.http.get<any>(getByIdApiPath);
   }
 
-  getStudentById(studentId: number): Observable<any> {
-    const getByIdApiPath = this.studentPath.studentById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', studentId.toString());
+  getStudentById(studentId: any): Observable<any> {
+    const getByIdApiPath = this.studentPath.studentById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', studentId);
     return this.http.get(getByIdApiPath);
   }
 
   saveStudent(payload: Student): Observable<Student> {
-    return this.http.post<Student>(this.studentPath.savetStudent, payload);
+    return this.http.post<Student>(this.studentPath.saveStudent, payload);
   }
 
   uploadStudentDetails(payload: any): Observable<any> {

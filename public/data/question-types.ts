@@ -11,7 +11,7 @@ export const QUESTION_TYPES = [
     },
     {
         id: 3,
-        title: 'DIVISON',
-        value: 'divison',
+        title: 'DIVISION',
+        value: 'division',
     },
 ];

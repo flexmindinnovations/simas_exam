@@ -42,6 +42,7 @@ export const utils = {
     activeItem: signal<any>({}),
     permissionList: signal<any>([]),
     pageTitle: signal<string>(DOMAIN),
+    desktopModalWidth: '35%',
     getCleanPath(urlPath: string, pathId: string) {
         return urlPath.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', pathId);;
     },
