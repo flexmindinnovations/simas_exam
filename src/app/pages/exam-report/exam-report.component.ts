@@ -59,6 +59,7 @@ export class ExamReportComponent {
   }
 
   getMasterData() {
+    utils.isTableLoading.set(true);
     this.examTypeListLoading = true;
     this.levelListLoading = true;
     this.roundListLoading = true;

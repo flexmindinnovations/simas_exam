@@ -76,6 +76,21 @@ export const FadeAnimation = trigger('fade', [
   ]),
 ]);
 
+export const RouterAnimation = trigger('routeAnimations', [
+  transition('* <=> *', [
+    query(':enter, :leave', style({ position: 'absolute', width: '97.7%', height: '100%', display: 'flex', 'align-items': 'flex-start', 'justify-content': 'flex-start', left: 0, opacity: 0 }), { optional: true }),
+    group([
+      query(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateX(0)' }))
+      ], { optional: true }),
+      query(':enter', [
+        style({ opacity: 0, transform: 'translateX(-10px)' }),
+        animate('600ms 100ms ease-out', style({ opacity: 1, transform: 'translateX(0)' }))
+      ], { optional: true })
+    ])
+  ])
+])
+
 export const BounceTextAnimation = trigger('bounce', [
   transition('* => *', [
     query('span', [

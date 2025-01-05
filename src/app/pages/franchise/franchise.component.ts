@@ -108,17 +108,17 @@ export class FranchiseComponent implements OnInit {
   }
 
   getFranchiseList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.franchiseService.getFranchiseByTypeList('1').subscribe({
       next: (response) => {
         if (response) {
           this.franshiseList = response;
           this.createTableDataSource();
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })

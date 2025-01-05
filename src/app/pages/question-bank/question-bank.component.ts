@@ -99,18 +99,18 @@ export class QuestionBankComponent {
   }
 
   getDataSourceList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.questionBankService.getQuestionBankList().subscribe({
       next: (response) => {
         if (response) {
           this.questionBankList = response;
           // console.log(this.questionBankList);
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.questionBankList)
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })

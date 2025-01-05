@@ -47,6 +47,8 @@ export class DashboardComponent implements OnInit {
             ]
             if (response?.logoPath) {
               this.imagePath = `${environment.apiUrl?.replace('api', response?.logoPath)}`;
+              console.log('this.imagePath: ', this.imagePath);
+
             }
             this.isSearchActionLoading = false;
           }

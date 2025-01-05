@@ -3,7 +3,6 @@ import { AfterViewInit, ChangeDetectorRef, Component, effect, OnInit, SimpleChan
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { NotFoundComponent } from '../not-found/not-found.component';
 import { utils } from '../../utils';
 import { SidebarModule } from 'primeng/sidebar';
 import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
@@ -18,17 +17,29 @@ import { MessagesModule } from 'primeng/messages';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserType, UserTypeObj } from '../../enums/user-types';
 import { db } from '../../../db';
-import { SessionTimeOutComponent } from '../../modals/session-time-out/session-time-out.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { RouterAnimation } from '../../utils/animations';
 import { FullScreenModalComponent } from '../../modals/full-screen-modal/full-screen-modal.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, NotFoundComponent, SidebarModule, MessagesModule, SessionTimeOutComponent, MenubarModule, FullScreenModalComponent],
+  imports: [CommonModule, LoadingBarRouterModule, LoadingBarModule, NgHttpLoaderModule, RouterOutlet, HeaderComponent, SidebarComponent, SidebarModule, MessagesModule, MenubarModule, FullScreenModalComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
-  animations: [utils.slideInRouter]
+  animations: [
+    trigger('fade', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0)' }),
+        animate('200ms ease-in-out', style({ opacity: 1, transform: 'scale(1)' }))
+      ]),
+      transition(':leave', [
+        style({ opacity: 1, transform: 'scale(1)' }),
+        animate('500ms ease-in-out', style({ opacity: 0, transform: 'scale(0)' }))
+      ])
+    ]),
+    RouterAnimation]
 })
 export class LayoutComponent implements OnInit, AfterViewInit {
   sideBarOpened: boolean = false;

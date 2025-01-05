@@ -19,6 +19,7 @@ import { ExamTypeService } from '../../services/exam-type/exam-type.service';
 import { LevelService } from '../../services/level/level.service';
 import { FranchiseService } from '../../services/franchise/franchise.service';
 import { InstructorService } from '../../services/instructor/instructor.service';
+import { CompetitionService } from '../../services/competition/competition.service';
 
 @Component({
   selector: 'app-add-edit-student',
@@ -44,6 +45,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
   franchiseTypeNameList: any[] = [];
   franchiseNameList: any[] = [];
   instructorList: any[] = [];
+  competitionList: any[] = [];
 
   selectedFiles: File[] = [];
   selectedImagePath: string = '';
@@ -59,6 +61,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
     private levelService: LevelService,
     private studentService: StudentService,
     private instructorService: InstructorService,
+    private competitionService: CompetitionService,
     private cdref: ChangeDetectorRef
   ) { }
 
@@ -85,9 +88,9 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
       studentFirstName: ['', [Validators.required]],
       studentMiddleName: ['', [Validators.required]],
       studentLastName: ['', [Validators.required]],
-      address1: ['', ![Validators.required]],
+      address1: [''],
       mobileNo: ['', [Validators.required, Validators.pattern(utils.mobileValidationPattern)]],
-      userPassword: ['', ![Validators.required]],
+      userPassword: ['', [utils.optionalControlValidator]],
       dob: ['', [Validators.required]],
       standard: ['', [Validators.required]],
       schoolName: ['', [Validators.required]],
@@ -95,12 +98,13 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
       // franchiseTypeId: ['', [Validators.required]],
       franchiseId: ['', [Validators.required]],
       levelId: ['', [Validators.required]],
+      compititionId: ['', [Validators.required]],
       instructorId: ['', [Validators.required]],
       stuPass: [uniquePassword, [Validators.required]],
-      levelName: ['', ![Validators.required]],
+      levelName: [''],
       // franchiseTypeName: ['', [Validators.required]],
-      franchiseName: ['', ![Validators.required]],
-      instructorName: ['', ![Validators.required]],
+      franchiseName: [''],
+      instructorName: [''],
       // startDate: ['', [Validators.required]],
       // endDate: ['', [Validators.required]]
     });
@@ -144,13 +148,15 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
     const franchiseList = this.franchiseService.getFranchiseByTypeList('1');
     const levelList = this.levelService.getLevelList();
     const instructorList = this.instructorService.getInstructorList();
-    forkJoin({ franchiseList, levelList, instructorList }).subscribe({
+    const competitionList = this.competitionService.getCompetitionList();
+    forkJoin({ franchiseList, levelList, instructorList, competitionList }).subscribe({
       next: (response) => {
         if (response) {
-          const { franchiseList, levelList, instructorList } = response;
+          const { franchiseList, levelList, instructorList, competitionList } = response;
           this.levelNameList = levelList;
           this.franchiseNameList = franchiseList;
           this.instructorList = instructorList;
+          this.competitionList = competitionList;
 
           this.levelListLoading = false;
           this.franchiseNameListLoading = false;

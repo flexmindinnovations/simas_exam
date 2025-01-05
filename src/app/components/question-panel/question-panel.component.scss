@@ -1,5 +1,10 @@
 .question-list {
-    @apply relative w-full h-full max-h-48 list-none m-0 p-0 flex items-center justify-start flex-wrap gap-2 overflow-auto;
+    // @apply relative w-full h-full max-h-48 list-none m-0 p-0 flex items-center justify-start flex-wrap gap-2 overflow-auto;
+
+    @apply relative w-full h-full max-h-48 list-none m-0 p-0
+    grid grid-cols-5;
+
+
 
     li {
         @apply relative cursor-pointer text-base font-semibold select-none h-12 w-12 rounded-full flex items-center justify-center;

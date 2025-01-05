@@ -79,18 +79,18 @@ export class ExamComponent implements OnInit {
   }
 
   getExamList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.examService.getExamList().subscribe({
       next: (response) => {
         if (response) {
           this.examList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examList)
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
           utils.setMessages(response.message, 'success');
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })

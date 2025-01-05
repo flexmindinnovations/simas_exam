@@ -116,13 +116,13 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
             return item;
           })
           this.setChildColDefs();
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       }
     })

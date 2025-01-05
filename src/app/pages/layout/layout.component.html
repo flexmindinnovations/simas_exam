@@ -1,4 +1,4 @@
-<div class="layout-wrapper h-full w-full">
+<div class="layout-wrapper h-full w-full" [@fade]>
     <div class="layout-container
     bg-white/20 backdrop-brightness-100 h-screen w-screen backdrop-blur-3xl isolate aspect-video ring-1 ring-black/5
  flex transition delay-500 duration-1000 ease-in-out lg:pl-4 xl:pl-4 2xl:pl-4 lg:grid xl:grid"
@@ -24,7 +24,7 @@
             <div class="dynamic sm:rounded-none md:rounded-none 
             max-w-[100vw]
              bg-white h-full w-full px-0 lg:px-4 xl:px-4 z-10" [ngClass]="[sideBarOpened ? 'lg:max-w-[95%] xl:max-w-full': '', isWarningPhase ? 'warning' : '', isDangerPhase ? 'danger': ''
-                ]" [@routeAnimations]="prepareRoute(outlet)">
+                ]">
                 <router-outlet #outlet="outlet"></router-outlet>
             </div>
         </main>

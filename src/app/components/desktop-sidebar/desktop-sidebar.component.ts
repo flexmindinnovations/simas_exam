@@ -188,6 +188,9 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.toggleMoreMenu();
     }
+    utils.isDangerPhase.set(false);
+    utils.isWarningPhase.set(false);
+    utils.isWarningPhase.set(false);
     this.removeMoreMenuActiveState();
   }
 
@@ -203,6 +206,8 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
   toggleMoreMenu() {
     this.isMoreMenuVisible = !this.isMoreMenuVisible;
   }
+
+  onMouseEnter(event: any) { }
 
   getCurrentUrl(): string {
     return this.router.url.split('/')[2];

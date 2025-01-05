@@ -207,6 +207,20 @@
             </div>
             @if(!isEditMode || (isEditMode && dialogData['status'] === true)){
             <div class="flex form-input flex-col items-start w-full">
+                <label for="compititionId">Competition</label>
+                <p-dropdown [options]="competitionList" appendTo="body" placeholder="Select" name="compititionId" id="compititionId"
+                    formControlName="compititionId" ariaLabelledBy="compititionId" [loading]="levelListLoading"
+                    [ngClass]="formGroup.get('compititionId')?.touched || formGroup.get('compititionId')?.dirty ? 'ng-invalid ng-dirty' : ''"
+                    loadingIcon="pi pi-spin pi-spinner" (onChange)="handleOnLevelChange($event)" optionValue="compititionId"
+                    optionLabel="compititionName" [filter]="true" filterBy="compititionName" [showClear]="false"></p-dropdown>
+                <div
+                    *ngIf="formGroup.get('compititionId')?.invalid && (formGroup.get('compititionId')?.dirty || formGroup.get('compititionId')?.touched)">
+                    <small *ngIf="formGroup.get('compititionId')?.errors?.['required']" class="p-error">This field is
+                        required.</small>
+                </div>
+            </div>
+
+            <div class="flex form-input flex-col items-start w-full">
                 <label for="stuPass">Student Password</label>
                 <p-password id="stuPass" formControlName="stuPass" [feedback]="false" [toggleMask]="true" />
                 <div

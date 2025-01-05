@@ -116,7 +116,7 @@
       class="exam-container h-full col-start-1 row-start-2 md:col-start-1 lg:col-start-1 lg:row-start-1 md:row-start-2 md:row-end-2 flex flex-col min-h-52"
     >
       <div
-        class="flex flex-col items-center lg:items-start xl:items-start 2xl:items-start justify-center w-full h-full"
+        class="flex flex-col items-center lg:items-center xl:items-center 2xl:items-center justify-center w-full h-full"
       >
         <div
           #exampOptionsCard
@@ -166,7 +166,7 @@
                             [(ngModel)]="selectedAnswer"
                             (ngModelChange)="handleKeyValue($event)"
                             (keydown)="handleKeydown($event)"
-                          />                       
+                          />
             <!-- </div> -->
           </div>
           } @else if(isLoadingQuestion && !quizCompleted) {
@@ -218,7 +218,7 @@
         [questionDuration]="questionDuration"
         (timeEnded)="OnTimerFinished($event)"
         (timeLeft)="handleTimer($event)"
-        class="max-w-lg lg:max-w-lg xl:max-w-lg 2xl:max-w-lg md:min-w-[40%] md:flex md:items-start md:justify-center h-full w-full"
+        class="max-w-xs lg:max-w-xs xl:max-w-xs 2xl:max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
         [examStarted]="examStarted"
         [questionsList]="questionList"
         [activeQuestion]="activeQuestion"

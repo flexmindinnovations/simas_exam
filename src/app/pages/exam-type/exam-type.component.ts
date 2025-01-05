@@ -83,17 +83,17 @@ setTableColumns() {
 }
 
 getExamList() {
-  utils.isTableLoading.update(val => !val);
+  utils.isTableLoading.set(true);
   this.examTypeService.getExamTypeList().subscribe({
     next: (response) => {
       if (response) {
         this.examTypeList = response;
         this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.examTypeList)
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
       }
     },
     error: (error: HttpErrorResponse) => {
-      utils.isTableLoading.update(val => !val);
+    // utils.isTableLoading.update(val => !val);
       utils.setMessages(error.message, 'error');
     }
   })

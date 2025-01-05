@@ -100,6 +100,7 @@ export class HallticketComponent {
   }
 
   getFranchiseList() {
+    utils.isTableLoading.set(true);
     this.isFranchiseListLoading = true;
     this.franchiseService.getFranchiseByTypeList('1').subscribe({
       next: (response) => {
@@ -116,6 +117,7 @@ export class HallticketComponent {
 
   }
   getInstructorList(franchiseId: any) {
+    utils.isTableLoading.set(true);
     this.isInstructorListLoading = true;
     this.instructorService.getInstructorListByFranchiseId(franchiseId).subscribe({
       next: (response) => {
@@ -144,13 +146,13 @@ export class HallticketComponent {
             delete item['batchTimeSlotList'];
             return item;
           })
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       }
     })
@@ -183,12 +185,12 @@ export class HallticketComponent {
             // });
             this.tableDataSource = this.hallTicketList;
             this.showGrid = this.tableDataSource.length > 1 ? true : false;
-            utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
           }
         },
         error: (error: HttpErrorResponse) => {
           utils.setMessages(error.message, 'error');
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       })
     }

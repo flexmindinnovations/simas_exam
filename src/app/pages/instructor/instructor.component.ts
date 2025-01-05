@@ -119,17 +119,17 @@ export class InstructorComponent implements OnInit {
   }
 
   getInstructorList() {
-    utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
     this.instructorService.getInstructorList().subscribe({
       next: (response) => {
         if (response) {
           this.instructorList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.instructorList);
-          utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-        utils.isTableLoading.update(val => !val);
+      // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })
