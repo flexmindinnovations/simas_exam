@@ -862,7 +862,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       '.p-progressbar .p-progressbar-value'
     );
     this.showAnswer = false;
-    const totalTime = this.totalTime;
+    const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
+    // const totalTime = this.totalTime;
+    const totalTime = convertToFloat * 60;
     this.remainingTime = totalTime;
     const warningTime = totalTime * 0.4;
     const criticalTime = totalTime * 0.15;
@@ -1169,6 +1171,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.cleanupSounds();
     this.resetTimer();
+
   }
 
 }

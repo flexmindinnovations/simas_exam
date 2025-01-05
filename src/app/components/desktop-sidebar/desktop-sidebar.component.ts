@@ -188,6 +188,9 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.toggleMoreMenu();
     }
+    utils.isDangerPhase.set(false);
+    utils.isWarningPhase.set(false);
+    utils.isWarningPhase.set(false);
     this.removeMoreMenuActiveState();
   }
 

@@ -79,24 +79,32 @@ export class StudentsComponent implements OnInit {
   }
 
   getStudentList() {
-  utils.isTableLoading.set(true);
-    this.studentService.getStudentList().subscribe({
-      next: (response) => {
-        if (response) {
-          this.studentList = response.map((item: any) => {
-            item['studentPhoto'] = item['studentPhoto']?.replace('webapi', 'comp');
-            item['stuPass'] = item['status'] === 'Active' ? item['stuPass'] : ''
-            return item;
-          });
-          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
-        // utils.isTableLoading.update(val => !val);
+    utils.isTableLoading.set(true);
+    const roleName = sessionStorage.getItem('role') || '';
+    const secretKey = sessionStorage.getItem('token') || '';
+    if (roleName) {
+      const instructorId = sessionStorage.getItem('instructorId');
+      const franchiseId = sessionStorage.getItem('franchiseId');
+      const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+      let endpoint = role === 'instructor' ? this.studentService.getStudentListByInstructor(instructorId) : role === 'franchisee' ? this.studentService.getStudentListByFranchiseId(franchiseId) : this.studentService.getStudentList();
+      endpoint.subscribe({
+        next: (response) => {
+          if (response) {
+            this.studentList = response.map((item: any) => {
+              item['studentPhoto'] = item['studentPhoto']?.replace('webapi', 'comp');
+              item['stuPass'] = item['status'] === 'Active' ? item['stuPass'] : ''
+              return item;
+            });
+            this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
+            // utils.isTableLoading.update(val => !val);
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          // utils.isTableLoading.update(val => !val);
+          utils.setMessages(error.message, 'error');
         }
-      },
-      error: (error: HttpErrorResponse) => {
-      // utils.isTableLoading.update(val => !val);
-        utils.setMessages(error.message, 'error');
-      }
-    })
+      })
+    }
   }
 
   handleAddEditAction(data?: any) {

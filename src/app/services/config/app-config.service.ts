@@ -22,9 +22,9 @@ export type ApiCallConfig = {
     deleteInstructor: string;
   };
   student: {
-    studentList: string;
-    studentListByFranchiseId: string;
-    studentListInstructorWise: string;
+    studentList: any;
+    studentListByFranchiseId: any;
+    studentListInstructorWise: any;
     studentById: string;
     saveStudent: string;
     updateStudent: string;
@@ -167,8 +167,8 @@ export class AppConfigService {
     },
     student: {
       studentList: `${this.hostUrl}/Student/GetStudentList`,
-      studentListByFranchiseId: `${this.hostUrl}/Student/GetStudentList?franchiseId={{id}}`,
-      studentListInstructorWise: `${this.hostUrl}/Student/GetStudentListInstructorWise`,
+      studentListByFranchiseId: (franchiseId = 0) => `${this.hostUrl}/Student/GetStudentList?franchiseId=${franchiseId}`,
+      studentListInstructorWise: (instructorId: any | number) => `${this.hostUrl}/Student/GetStudentListInstructorWise?instructorId=${instructorId}`,
       studentById: `${this.hostUrl}/Student/GetStudentById?id={{id}}`,
       saveStudent: `${this.hostUrl}/Student/SaveStudent`,
       updateStudent: `${this.hostUrl}/Student/UpdateStudent`,
