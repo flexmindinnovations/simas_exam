@@ -41,6 +41,7 @@ export const utils = {
     messages: signal<Message[]>([],),
     activeItem: signal<any>({}),
     permissionList: signal<any>([]),
+    studentDetails: signal<any>({}),
     pageTitle: signal<string>(DOMAIN),
     desktopModalWidth: '35%',
     getCleanPath(urlPath: string, pathId: string) {

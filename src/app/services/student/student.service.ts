@@ -29,9 +29,8 @@ export class StudentService {
     return this.http.get(this.studentPath.studentListByFranchiseId(franchiseId));
   }
 
-  getStudentById(studentId: any): Observable<any> {
-    const getByIdApiPath = this.studentPath.studentById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', studentId);
-    return this.http.get(getByIdApiPath);
+  public getStudentById(studentId: any): Observable<any> {
+    return this.http.get(this.studentPath.studentById(studentId));
   }
 
   saveStudent(payload: Student): Observable<Student> {

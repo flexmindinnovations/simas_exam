@@ -12,6 +12,7 @@ import { environment } from '../../../environments/environment.development';
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule],
+  providers: [StudentService],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -35,29 +36,24 @@ export class DashboardComponent implements OnInit {
       this.isSearchActionLoading = true;
       const userId = sessionStorage.getItem('userId');
       const studentId = Number(userId);
-      this.studentService.getStudentById(studentId).subscribe({
-        next: (response) => {
-          if (response) {
-            this.userDetails = [
-              { label: 'Student Name', value: `${response?.studentFirstName} ${response?.studentMiddleName} ${response?.studentLastName}` },
-              { label: 'Instructor Name', value: response?.instructorName },
-              { label: 'Address', value: response?.address1 },
-              { label: 'Current Level', value: response?.levelName },
-              { label: 'Contact', value: response?.mobileNo },
-            ]
-            if (response?.logoPath) {
-              this.imagePath = `${environment.apiUrl?.replace('api', response?.logoPath)}`;
-              console.log('this.imagePath: ', this.imagePath);
-
+      const userDetails = utils.studentDetails();
+      if (Object.keys(userDetails).length === 0) {
+        this.studentService.getStudentById(studentId)
+          .subscribe({
+            next: (response) => {
+              if (response) {
+                this.setUserDetails(this.userType.toLowerCase(), response);
+                this.isSearchActionLoading = false;
+              }
+            },
+            error: (error: HttpErrorResponse) => {
+              this.isSearchActionLoading = false;
+              utils.setMessages(error.message, 'error');
             }
-            this.isSearchActionLoading = false;
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          this.isSearchActionLoading = false;
-          utils.setMessages(error.message, 'error');
-        }
-      });
+          });
+      } else {
+        this.setUserDetails(this.userType.toLowerCase(), userDetails);
+      }
     } else if (this.userType === 'Instructor') {
       this.isSearchActionLoading = true;
       const userId = sessionStorage.getItem('instructorId');
@@ -107,6 +103,25 @@ export class DashboardComponent implements OnInit {
           utils.setMessages(error.message, 'error');
         }
       });
+    }
+  }
+
+  setUserDetails(role: string, response: any) {
+    switch (role) {
+      case 'student':
+        this.userDetails = [
+          { label: 'Student Name', value: `${response?.studentFirstName} ${response?.studentMiddleName} ${response?.studentLastName}` },
+          { label: 'Instructor Name', value: response?.instructorName },
+          { label: 'Address', value: response?.address1 },
+          { label: 'Current Level', value: response?.levelName },
+          { label: 'Contact', value: response?.mobileNo },
+        ]
+        if (response?.logoPath) {
+          this.imagePath = `${environment.apiUrl?.replace('api', response?.logoPath)}`;
+          console.log('this.imagePath: ', this.imagePath);
+
+        }
+        break;
     }
   }
 }
