@@ -173,6 +173,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isEndClicked: boolean = false;
   isNextRoundClicked: boolean = false;
 
+  levelDisabled: boolean = false;
+
   options: any[] = [];
   selectedOptions: Set<number> = new Set();
   selectedAnswer: any;
@@ -322,6 +324,18 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           this.examTypeList = examList;
           if (examList.length) this.isExamTypeListLoading = false;
           if (levelList.length) this.isLevelListLoading = false;
+          const roleName = sessionStorage.getItem('role') || '';
+          const secretKey = sessionStorage.getItem('token') || '';
+          if (roleName) {
+            const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+            if (role === 'student') {
+              const studentDetails = utils.studentDetails();
+              if (studentDetails.hasOwnProperty('levelId') && studentDetails.levelId > 0) {
+                this.selectedLevel = studentDetails.levelId;
+                this.levelDisabled = true;
+              }
+            }
+          }
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -441,6 +455,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'next':
         this.isNextClicked = true;
         sound = this.sounds['next1'];
+        this.resetTimer();
+        this.cleanupSounds();
         this.playSound(sound);
         this.newQuestion();
         break;
@@ -599,7 +615,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.canMoveToNextRound ||
       this.quizCompleted
     ) {
-      return; // Prevent loading new questions if the round is completed
+      return;
     }
 
     this.resetTimer();
@@ -626,7 +642,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isFlashEnded = false;
           this.isLoadingQuestion = true;
         }),
-        switchMap(() => timer(500))
+        switchMap(() => timer(3000))
       )
       .subscribe(() => {
         const sound = this.sounds['simple'];
@@ -785,7 +801,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startFlashing(): void {
-    const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
+    // const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
+    const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
+    const selectedTime = convertToFloat * 1000;
     this.currentItem = null;
     this.currentIndex = 0;
     this.state = 'scaled';
@@ -1166,6 +1184,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.levelDisabled = false;
     if (this.resizeListener) {
       this.resizeListener();
     }

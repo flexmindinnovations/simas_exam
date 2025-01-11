@@ -20,6 +20,7 @@ import { UserTypeService } from '../../services/user-type.service';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule],
+  providers: [AuthService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   animations: [
@@ -112,6 +113,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
           const { token, roleId, roleName } = response;
           if (response.hasOwnProperty('student') && response?.student !== null) {
             const { studentId, ...rest } = response?.student[0];
+            utils.studentDetails.set(rest);
             sessionStorage.setItem('userId', studentId);
           }
           if (response.hasOwnProperty('franchise') && response?.franchise !== null) {

@@ -45,7 +45,7 @@
           [loading]="isLevelListLoading"
           loadingIcon="pi pi-spin pi-spinner"
           [(ngModel)]="selectedLevel"
-          [disabled]="isSearchActionLoading || isSearchDisabled"
+          [disabled]="isSearchActionLoading || isSearchDisabled || levelDisabled"
           ariaLabelledBy="levelName"
           placeholder="Select"
           (onChange)="handleOnDropdownValueChange($event, 'level')"
