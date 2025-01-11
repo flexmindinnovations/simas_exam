@@ -564,11 +564,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     const nextRoundIndex = this.currentRoundIndex + 1;
 
     if (nextRoundIndex < this.roundIds.length) {
-      // Load the next round's questions
       this.currentRoundIndex = nextRoundIndex;
-      this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the next round
+      this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]);
     } else {
-      // All rounds are completed, end the exam
       this.endExam();
     }
   }
@@ -764,7 +762,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  // Helper function to group questions by round
+
   groupQuestionsByRound(questions: any[]) {
     return questions.reduce((grouped: any, question: any) => {
       const roundId = question.roundId;
@@ -776,7 +774,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }, {});
   }
 
-  // Function to load the questions for a specific round
+
   loadRoundQuestions(roundId: string) {
     this.questionList = this.groupedQuestions[roundId];
     this.activeQuestionIndex = 0;
@@ -803,39 +801,40 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   startFlashing(): void {
     // const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
     const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
-    const selectedTime = convertToFloat * 1000;
+    const selectedTime = Math.max(convertToFloat * 1000, 500);
+    const adjustedDelay = Math.min(350, selectedTime * 0.8);
     this.currentItem = null;
     this.currentIndex = 0;
     this.state = 'scaled';
     this.checkBoxstate = 'void';
     this.isLoadingQuestion = true;
     interval(selectedTime)
-      .pipe(
-        take(this.flashQuestions.length),
-        concatMap((index) => {
-          return of(index).pipe(
-            tap(() => {
-              this.state = 'void';
-              this.cdref.detectChanges();
-            }),
-            delay(350),
-            tap(() => {
-              this.isLoadingQuestion = false;
-              this.currentIndex = index;
-              this.currentItem = this.flashQuestions[index];
-              this.state = 'scaled';
-              this.cdref.detectChanges();
-              this.playSound(this.sounds['count']);
-            })
-          );
-        }),
-        finalize(() => {
-          timer(selectedTime).subscribe(() => {
-            this.finalizeFlashing();
-          });
-        })
-      )
-      .subscribe();
+    .pipe(
+      take(this.flashQuestions.length),
+      switchMap((index) => {
+        return of(index).pipe(
+          tap(() => {
+            this.state = 'void';
+            this.cdref.detectChanges();
+          }),
+          delay(adjustedDelay),
+          tap(() => {
+            this.isLoadingQuestion = false;
+            this.currentIndex = index;
+            this.currentItem = this.flashQuestions[index];
+            this.state = 'scaled';
+            this.cdref.detectChanges();
+            this.playSound(this.sounds['count']);
+          })
+        );
+      }),
+      finalize(() => {
+        timer(selectedTime).subscribe(() => {
+          this.finalizeFlashing();
+        });
+      })
+    )
+    .subscribe();
   }
 
   finalizeFlashing(): void {

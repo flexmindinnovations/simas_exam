@@ -143,13 +143,13 @@ export class QuestionPaperComponent {
             delete item['questionPaperDetailsModels'];
             return item;
           })
-          utils.isTableLoading.update(val => !val);
+          utils.isTableLoading.set(false);
           // utils.setMessages(response.message, 'success');
           this.setChildColDefs();
         }
       },
       error: (error: HttpErrorResponse) => {
-      // utils.isTableLoading.update(val => !val);
+        utils.isTableLoading.set(false);
         utils.setMessages(error.message, 'error');
       }
     })

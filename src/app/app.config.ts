@@ -103,6 +103,9 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
       withInterceptors([customInterceptor])
     ),
+    StudentService,
+    AppConfigService,
+    AuthService,
     importProvidersFrom(
       NgHttpLoaderModule.forRoot()
     ),

@@ -15,7 +15,7 @@ import { HallticketModalComponent } from '../../modals/hallticket-modal/halltick
   selector: 'app-students',
   standalone: true,
   imports: [CommonModule, DataGridComponent, ButtonModule, AddEditStudentComponent],
-  providers: [DialogService],
+  providers: [DialogService, StudentService],
   templateUrl: './students.component.html',
   styleUrl: './students.component.scss'
 })
