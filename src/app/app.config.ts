@@ -53,12 +53,14 @@ async function initUserData(
   authService: AuthService,
   http: HttpClient
 ): Promise<void> {
+
   const usertTypes = ['student'];
   if (authService.isLoggedIn()) {
     const roleName = sessionStorage.getItem('role') || '';
     const secretKey = sessionStorage.getItem('token') || '';
     if (roleName) {
       const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+      utils.userType.set(role);
       if (usertTypes.includes(role)) {
         const endpoint = getEndpointUrl(role, studentService, apiService, http);
         try {

@@ -1,33 +1,30 @@
-import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, effect, ViewChild, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Message } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { TableModule, Table } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
-import { DataGridComponent, TableColumn } from '../../components/data-grid/data-grid.component';
-import { AddEditExamComponent } from '../../modals/add-edit-exam/add-edit-exam.component';
-import { ExamService } from '../../services/exam/exam.service';
-import { utils } from '../../utils';
-import { DropdownModule, type DropdownChangeEvent } from 'primeng/dropdown';
-import { FranchiseService } from '../../services/franchise/franchise.service';
-import { InstructorService } from '../../services/instructor/instructor.service';
-import { StudentService } from '../../services/student/student.service';
-import { ExamTypeService } from '../../services/exam-type/exam-type.service';
-import { LevelService } from '../../services/level/level.service';
-import { Observable, Subject } from 'rxjs';
-import { PanelModule } from 'primeng/panel';
-import { ChipModule } from 'primeng/chip';
-import { ReportsService } from '../../services/reports/reports.service';
+import {CommonModule} from '@angular/common';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {ButtonModule} from 'primeng/button';
+import {DialogService} from 'primeng/dynamicdialog';
+import {InputTextModule} from 'primeng/inputtext';
+import {TableModule} from 'primeng/table';
+import {TooltipModule} from 'primeng/tooltip';
+import {TableColumn} from '../../components/data-grid/data-grid.component';
+import {utils} from '../../utils';
+import {type DropdownChangeEvent, DropdownModule} from 'primeng/dropdown';
+import {FranchiseService} from '../../services/franchise/franchise.service';
+import {InstructorService} from '../../services/instructor/instructor.service';
+import {StudentService} from '../../services/student/student.service';
+import {ExamTypeService} from '../../services/exam-type/exam-type.service';
+import {LevelService} from '../../services/level/level.service';
+import {Observable} from 'rxjs';
+import {PanelModule} from 'primeng/panel';
+import {ChipModule} from 'primeng/chip';
+import {ReportsService} from '../../services/reports/reports.service';
 
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DropdownModule, PanelModule, ChipModule],
   providers: [DialogService],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss'
@@ -69,7 +66,8 @@ export class ReportsComponent implements OnInit {
     private examTypeService: ExamTypeService,
     private levelService: LevelService,
     private reportService: ReportsService
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.getFranchiseList();
@@ -77,6 +75,41 @@ export class ReportsComponent implements OnInit {
 
   async getFranchiseList() {
     this.franchiseList = await this.getDropdownData('franchise');
+    const userType = utils.userType() ?? '';
+    if (userType === 'student') {
+      const studentDetails = await utils.studentDetails();
+      this.selectedFranchise = studentDetails.franchiseId;
+      if(studentDetails) this.setStudentData(studentDetails);
+    }
+  }
+
+  setStudentData(studentDetails: any) {
+    const {instructorId, levelId} = studentDetails;
+    this.getDropdownData('instructor')
+      .then(data => {
+        this.instructorList = data;
+        this.selectedInstructor = instructorId;
+        this.getDropdownData('student')
+          .then(studentList => {
+            this.studentList = studentList.map((item: any) => {
+              item['fullName'] = item?.studentFirstName + ' ' + item?.studentLastName;
+              return item;
+            });
+            if (studentList.length) {
+              const studentId = sessionStorage.getItem('userId') || '';
+              const studentInfo = this.studentList.find((student: any) => student.studentId === +studentId);
+              if (studentInfo) {
+                this.selectedStudent = studentInfo.studentId;
+                this.examTypeList = studentInfo?.examTypeList;
+                this.selectedExamType = this.examTypeList[0].examTypeId;
+                this.levelNameList = studentInfo?.levelList;
+                this.selectedLevel = levelId;
+                this.roundNameList = studentInfo?.roundList;
+                this.selectedRound = studentInfo?.roundList[0].roundId;
+              }
+            }
+          })
+      })
   }
 
   getDropdownData(src: ReportCriteria): Promise<any> {
@@ -130,10 +163,15 @@ export class ReportsComponent implements OnInit {
   async handleListItemChange(event: DropdownChangeEvent, src: ReportCriteria) {
     const value = event.value;
     let studentInfo: any;
+    const userType = utils.userType() ?? '';
     switch (src) {
       case ReportCriteriaText.FRANCHISE:
         this.selectedFranchise = value;
         this.instructorList = await this.getDropdownData('instructor');
+        if (this.instructorList.length && userType === 'student') {
+          const studentDetails = utils.studentDetails();
+          this.selectedInstructor = studentDetails.instructorId;
+        }
         break;
       case ReportCriteriaText.INSTRUCTOR:
         this.selectedInstructor = value;

@@ -793,7 +793,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.startFlashing();
   }
 
-  // Optionally, display the current round
   showRoundHeader(roundId: string) {
     this.roundHeader = `Round ${roundId}`;
   }

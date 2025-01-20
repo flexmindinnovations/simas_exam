@@ -114,6 +114,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
           if (response.hasOwnProperty('student') && response?.student !== null) {
             const { studentId, ...rest } = response?.student[0];
             utils.studentDetails.set(rest);
+            utils.userType.set('student');
             sessionStorage.setItem('userId', studentId);
           }
           if (response.hasOwnProperty('franchise') && response?.franchise !== null) {
