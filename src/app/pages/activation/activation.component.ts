@@ -18,6 +18,7 @@ import { StudentService } from '../../services/student/student.service';
 import { InstructorService } from '../../services/instructor/instructor.service';
 import { AddEditActivationComponent } from '../../modals/add-edit-activation/add-edit-activation.component';
 import { ActivationService } from '../../services/activation/activation.service';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-activation',
@@ -150,7 +151,7 @@ export class ActivationComponent {
       isFranchiseListCall = false;
       isStudentListCall = true;
       apiCall = this.studentService.getStudentListByFranchiseId(
-        this.selectedFranchise.toString()
+        this.selectedFranchise
       );
     } else if (this.selectedActivationType === this.activationType.Instructor) {
       this.setTableColumns('instructor');
@@ -446,7 +447,7 @@ export class ActivationComponent {
       objectId:
         this.selectedRows && this.selectedRows.length > 1
           ? 0
-          : Number(this.data[0]),
+          : Number(this.data),
       objectType: this.selectedActivationType,
       status:
         this.selectedRows && this.selectedRows.length > 1
@@ -455,7 +456,6 @@ export class ActivationComponent {
             ? 'DeActive'
             : 'Active',
     };
-
     let apiCall =
       this.selectedRows && this.selectedRows.length > 1
         ? this.activationService.saveMultipleActivation({
@@ -498,7 +498,9 @@ export class ActivationComponent {
     this.validActivate = selectedRows.length > 0 ? true : false;
     if (isInline) {
       this.handleActivateExam(selectedRows);
-      this.handleSearchAction();
+      timer(500).subscribe(() => {
+        this.handleSearchAction();
+      })
     }
   }
 

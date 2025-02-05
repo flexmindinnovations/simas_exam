@@ -14,7 +14,7 @@ export class StudentService {
     private appConfig: AppConfigService,
     private http: HttpClient
   ) {
-    this.studentPath = this.appConfig.get('student');
+    this.studentPath = this.appConfig.apiConfigData.student;
   }
 
   getStudentList(): Observable<any> {
