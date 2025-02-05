@@ -18,7 +18,7 @@ import { StudentService } from '../../services/student/student.service';
 import { InstructorService } from '../../services/instructor/instructor.service';
 import { AddEditActivationComponent } from '../../modals/add-edit-activation/add-edit-activation.component';
 import { ActivationService } from '../../services/activation/activation.service';
-import { timer } from 'rxjs';
+import { switchMap, timer } from 'rxjs';
 
 @Component({
   selector: 'app-activation',
@@ -430,7 +430,6 @@ export class ActivationComponent {
   }) {
     if (!isInline) {
       this.handleActivateExam(selectedRows, multipleStatus);
-      this.handleSearchAction();
     }
   }
 
@@ -472,6 +471,11 @@ export class ActivationComponent {
       error: (error: HttpErrorResponse) => {
         utils.setMessages(error.message, 'error');
       },
+      complete: () => {
+          timer(500).subscribe(() => {
+            this.handleSearchAction();
+          });
+      }
     });
   }
 
@@ -498,9 +502,6 @@ export class ActivationComponent {
     this.validActivate = selectedRows.length > 0 ? true : false;
     if (isInline) {
       this.handleActivateExam(selectedRows);
-      timer(500).subscribe(() => {
-        this.handleSearchAction();
-      })
     }
   }
 

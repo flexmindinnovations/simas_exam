@@ -37,7 +37,7 @@ import { TreeNodeExpandEvent } from 'primeng/tree';
 import { db } from '../../../db';
 import { LoadingComponent } from '../loading/loading.component';
 import { CheckboxModule } from 'primeng/checkbox';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputSwitchModule, type InputSwitchChangeEvent } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
@@ -309,7 +309,8 @@ export class DataGridComponent implements OnChanges, AfterViewInit {
     this.isExportActionLoading = false;
   }
 
-  handleSwitchButton(rowData: any) {
+  handleSwitchButton(rowData: any, event: InputSwitchChangeEvent) {
+    event.originalEvent.stopPropagation();
     const isInline = true;
     this.selectedRowsChange.emit({ selectedRows: [rowData], isInline });
   }

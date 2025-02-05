@@ -51,7 +51,7 @@
       <p-button
         [ngClass]="dataSource?.length ? 'ml-4' : ''"
         label="Refresh"
-        icon="pi 
+        icon="pi
                   pi-sync"
         [loading]="isRefreshing"
         loadingIcon="pi pi-spin pi-spinner"
@@ -66,7 +66,7 @@
         [disabled]="selectedRows.length < 2"
         [ngClass]="dataSource?.length ? 'ml-4' : ''"
         label="Mutiple Activation"
-        icon="pi 
+        icon="pi
                   pi-plus"
         [loading]="isAddActionLoading"
         loadingIcon="pi pi-spin pi-spinner"
@@ -95,7 +95,7 @@
       <p-button
         [ngClass]="dataSource?.length ? 'ml-4' : ''"
         [label]="addButtonTitle"
-        icon="pi 
+        icon="pi
                   pi-plus"
         [loading]="isAddActionLoading"
         loadingIcon="pi pi-spin pi-spinner"
@@ -352,7 +352,7 @@
             @if(col.field === 'status') { @if(isCheckbox){
             <p-inputSwitch
               [ngModel]="rowData[col.field] === 'Active' ? true : false"
-              (onChange)="handleSwitchButton(rowData)"
+              (onChange)="handleSwitchButton(rowData, $event)"
             >
             </p-inputSwitch>
             }@else {
