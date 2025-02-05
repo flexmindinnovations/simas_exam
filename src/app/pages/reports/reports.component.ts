@@ -1,24 +1,24 @@
-import {CommonModule} from '@angular/common';
-import {HttpErrorResponse} from '@angular/common/http';
-import {Component, OnInit} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {ButtonModule} from 'primeng/button';
-import {DialogService} from 'primeng/dynamicdialog';
-import {InputTextModule} from 'primeng/inputtext';
-import {TableModule} from 'primeng/table';
-import {TooltipModule} from 'primeng/tooltip';
-import {TableColumn} from '../../components/data-grid/data-grid.component';
-import {utils} from '../../utils';
-import {type DropdownChangeEvent, DropdownModule} from 'primeng/dropdown';
-import {FranchiseService} from '../../services/franchise/franchise.service';
-import {InstructorService} from '../../services/instructor/instructor.service';
-import {StudentService} from '../../services/student/student.service';
-import {ExamTypeService} from '../../services/exam-type/exam-type.service';
-import {LevelService} from '../../services/level/level.service';
-import {Observable} from 'rxjs';
-import {PanelModule} from 'primeng/panel';
-import {ChipModule} from 'primeng/chip';
-import {ReportsService} from '../../services/reports/reports.service';
+import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { DialogService } from 'primeng/dynamicdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
+import { TableColumn } from '../../components/data-grid/data-grid.component';
+import { utils } from '../../utils';
+import { type DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { FranchiseService } from '../../services/franchise/franchise.service';
+import { InstructorService } from '../../services/instructor/instructor.service';
+import { StudentService } from '../../services/student/student.service';
+import { ExamTypeService } from '../../services/exam-type/exam-type.service';
+import { LevelService } from '../../services/level/level.service';
+import { Observable } from 'rxjs';
+import { PanelModule } from 'primeng/panel';
+import { ChipModule } from 'primeng/chip';
+import { ReportsService } from '../../services/reports/reports.service';
 
 
 @Component({
@@ -32,7 +32,7 @@ import {ReportsService} from '../../services/reports/reports.service';
 export class ReportsComponent implements OnInit {
   franchiseList: Array<any> = [];
   colDefs: Array<TableColumn> = [];
-  tableDataSource: any[] = [];
+  tableDataSource: any;
   selectedExamPaperId: number | null = null
   instructorList: Array<any> = [];
   studentList: Array<any> = [];
@@ -59,6 +59,21 @@ export class ReportsComponent implements OnInit {
   selectedRound: any = undefined;
   showGrid: boolean = false;
 
+  products = [
+    {
+      id: '1000',
+      code: 'f230fh0g3',
+      name: 'Bamboo Watch',
+      description: 'Product Description',
+      image: 'bamboo-watch.jpg',
+      price: 65,
+      category: 'Accessories',
+      quantity: 24,
+      inventoryStatus: 'INSTOCK',
+      rating: 5
+    }
+  ]
+
   constructor(
     private franchiseService: FranchiseService,
     private instructorService: InstructorService,
@@ -79,12 +94,12 @@ export class ReportsComponent implements OnInit {
     if (userType === 'student') {
       const studentDetails = await utils.studentDetails();
       this.selectedFranchise = studentDetails.franchiseId;
-      if(studentDetails) this.setStudentData(studentDetails);
+      if (studentDetails) this.setStudentData(studentDetails);
     }
   }
 
   setStudentData(studentDetails: any) {
-    const {instructorId, levelId} = studentDetails;
+    const { instructorId, levelId } = studentDetails;
     this.getDropdownData('instructor')
       .then(data => {
         this.instructorList = data;
@@ -223,6 +238,24 @@ export class ReportsComponent implements OnInit {
     return date.toLocaleString('en-US', options);
   }
 
+  handleContainerClick(event: any) {
+    event.stopPropagation();
+  }
+
+  handleShowPaper(item: any) {
+    console.log('item: ', item);
+  }
+
+  formatDateOnly(dateString: string): string {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', options);
+  }
+
 
   toggleDetails(examPaperId: number) {
     if (this.selectedExamPaperId === examPaperId) {
@@ -255,7 +288,6 @@ export class ReportsComponent implements OnInit {
     const apiCall = this.reportService.getExampByExamTypeAndLevel(payloadBystudentIdAndExamTypeIdAndLevel);
     apiCall.subscribe({
       next: (response: any) => {
-        // console.log('response: ', response);
         this.tableDataSource = response;
         this.showGrid = this.tableDataSource.length > 0 ? true : false;
         this.isSearchActionLoading = false;
