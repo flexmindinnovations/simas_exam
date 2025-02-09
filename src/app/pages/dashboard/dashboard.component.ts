@@ -116,8 +116,8 @@ export class DashboardComponent implements OnInit {
           { label: 'Current Level', value: response?.levelName },
           { label: 'Contact', value: response?.mobileNo },
         ]
-        if (response?.logoPath) {
-          this.imagePath = `${environment.apiUrl?.replace('api', response?.logoPath)}`;
+        if (response?.studentPhoto) {
+          this.imagePath = `${environment.apiUrl?.replace('api', response?.studentPhoto)}`;
           console.log('this.imagePath: ', this.imagePath);
 
         }

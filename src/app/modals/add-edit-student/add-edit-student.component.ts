@@ -141,13 +141,20 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
   }
 
   getPopupData() {
+      const roleName = sessionStorage.getItem('role') || '';
+      const secretKey = sessionStorage.getItem('token') || '';
+      const instructorId = sessionStorage.getItem('instructorId');
+      const franchiseId = sessionStorage.getItem('franchiseId');
+      const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+    let franchise='';
+    franchise= role==='franchise'? franchiseId!:'0';
     this.levelListLoading = true;
     this.franchiseTypeNameListLoading = true;
     this.franchiseNameListLoading = true;
     this.instructorListLoading = true;
     const franchiseList = this.franchiseService.getFranchiseByTypeList('1');
     const levelList = this.levelService.getLevelList();
-    const instructorList = this.instructorService.getInstructorList();
+    const instructorList = this.instructorService.getInstructorListByFranchiseId(franchise);
     const competitionList = this.competitionService.getCompetitionList();
     forkJoin({ franchiseList, levelList, instructorList, competitionList }).subscribe({
       next: (response) => {

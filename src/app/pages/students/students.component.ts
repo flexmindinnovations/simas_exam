@@ -60,7 +60,7 @@ export class StudentsComponent implements OnInit {
       { field: 'studentFirstName', header: 'First Name', width: '20%', styleClass: 'studentFirstName' },
       { field: 'studentLastName', header: 'Last Name', width: '20%', styleClass: 'studentLastName' },
       { field: 'mobileNo', header: 'Mobile Number', width: '10%', styleClass: 'mobileNo' },
-      { field: 'emailId', header: 'Email', width: '15%', styleClass: 'emailId' },
+      { field: 'levelName', header: 'Level', width: '15%', styleClass: 'levelName' },
       { field: 'dob', header: 'DOB', width: '10%', styleClass: 'dob' },
       { field: 'schoolName', header: 'School Name', width: '20%', styleClass: 'schoolName' },
       { field: 'stuPass', header: 'Student Password', width: '10%', styleClass: 'stuPass' },

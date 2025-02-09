@@ -58,6 +58,7 @@ export class ReportsComponent implements OnInit {
   selectedLevel: any = undefined;
   selectedRound: any = undefined;
   showGrid: boolean = false;
+  franchiseId:any;
 
   products = [
     {
@@ -85,10 +86,21 @@ export class ReportsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getFranchiseList();
+    let franchise='0';
+    const roleName = sessionStorage.getItem('role') || '';
+    const secretKey = sessionStorage.getItem('token') || '';
+    if (roleName) {
+      const instructorId = sessionStorage.getItem('instructorId');
+      const franchiseId = sessionStorage.getItem('franchiseId');
+      const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+   
+    this.franchiseId= role==='franchisee'?franchiseId!:'0';
+    
+    }
+    this.getFranchiseList(this.franchiseId);
   }
 
-  async getFranchiseList() {
+  async getFranchiseList(franchiseId:string) {
     this.franchiseList = await this.getDropdownData('franchise');
     const userType = utils.userType() ?? '';
     if (userType === 'student') {
@@ -133,7 +145,7 @@ export class ReportsComponent implements OnInit {
       let apiCall: Observable<any> | undefined;
       switch (src) {
         case ReportCriteriaText.FRANCHISE:
-          apiCall = this.franchiseService.getFranchiseByTypeList('1');
+          apiCall = this.franchiseService.getFranchiseTypeList(this.franchiseId);
           break;
         case ReportCriteriaText.INSTRUCTOR:
           apiCall = this.instructorService.getInstructorListByFranchiseId(this.selectedFranchise);

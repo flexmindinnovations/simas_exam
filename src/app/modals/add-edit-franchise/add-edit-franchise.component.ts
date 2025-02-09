@@ -66,7 +66,7 @@ export class AddEditFranchiseComponent implements OnInit, AfterViewInit {
       } else {
         this.getCountryList();
       }
-    })
+    },{ allowSignalWrites: true })
   }
 
   ngOnInit(): void {
