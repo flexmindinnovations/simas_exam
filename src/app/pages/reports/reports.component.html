@@ -65,7 +65,7 @@
           optionValue="levelId" optionLabel="levelName" [filter]="true" filterBy="levelName" [showClear]="false" />
       </div>
 
-      @if(selectedLevel) {
+      <!-- @if(selectedLevel) {
       <div class="flex flex-col items-start w-full max-w-48">
         <label for="roundName">Round</label>
         <p-dropdown appendTo="body" inputId="roundName" [options]="roundNameList" ariaLabelledBy="value"
@@ -73,7 +73,7 @@
           [(ngModel)]="selectedRound" placeholder="Select" (onChange)="handleListItemChange($event, 'round')"
           optionValue="roundId" optionLabel="roundName" [filter]="true" filterBy="roundName" [showClear]="false" />
       </div>
-      }
+      } -->
 
 
       <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="isSearchDisabled || isSearchActionLoading"
@@ -111,7 +111,7 @@
             [tableStyle]="{ 'min-width': '50rem', width: '100%' }" rowGroupMode="subheader">
             <ng-template pTemplate="header" class="w-full">
               <tr>
-                <th class="text-center">Senior Level</th>
+                <th class="text-center">{{item?.levelName}}</th>
                 <th class="text-center">Date: {{formatDateOnly(item?.examPaperDate)}}</th>
                 <th class="text-center">Time: {{item?.examPaperTime}}</th>
                 <th>

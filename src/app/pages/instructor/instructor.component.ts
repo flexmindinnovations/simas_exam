@@ -120,7 +120,16 @@ export class InstructorComponent implements OnInit {
 
   getInstructorList() {
     utils.isTableLoading.set(true);
-    this.instructorService.getInstructorList().subscribe({
+    debugger;
+    const roleName = sessionStorage.getItem('role') || '';
+    const secretKey = sessionStorage.getItem('token') || '';
+    if (roleName) {
+      const instructorId = sessionStorage.getItem('instructorId');
+      const franchiseId = sessionStorage.getItem('franchiseId');
+      const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+    let franchise='0';
+    franchise= role==='franchisee'?franchiseId!:'0';
+    this.instructorService.getInstructorListByFranchiseId(franchise).subscribe({
       next: (response) => {
         if (response) {
           this.instructorList = response;
@@ -133,6 +142,7 @@ export class InstructorComponent implements OnInit {
         utils.setMessages(error.message, 'error');
       }
     })
+  }
   }
 
   handleAddEditAction(data?: any) {

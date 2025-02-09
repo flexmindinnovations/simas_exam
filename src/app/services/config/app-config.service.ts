@@ -177,7 +177,7 @@ export class AppConfigService {
       deleteStudent: `${this.hostUrl} /Student/Delete/{{id}}`,
     },
     franchise: {
-      franchiseList: `${this.hostUrl}/Franchise/GetFranchiseList`,
+      franchiseList: `${this.hostUrl}/Franchise/GetFranchiseList/{{id}}`,
       franchiseById: `${this.hostUrl}/Franchise/GetFranchiseById/{{id}}`,
       uploadFranchise: `${this.hostUrl}/Franchise/Upload`,
       saveFranchise: `${this.hostUrl}/Franchise/saveFranchise`,

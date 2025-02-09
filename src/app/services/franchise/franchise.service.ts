@@ -22,8 +22,10 @@ export class FranchiseService {
     return this.http.get(apiPath);
   }
 
-  getFranchiseTypeList(): Observable<any> {
-    return this.http.get(this.franchisePath.franchiseList);
+  getFranchiseTypeList(franchiseId: any): Observable<any> {
+    const listApiPath = this.franchisePath.franchiseList.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', franchiseId);
+    return this.http.get(listApiPath);
+    //return this.http.get(this.franchisePath.franchiseList);
   }
 
   getFranchiseByTypeList(franchiseTypeId: string): Observable<any> {
