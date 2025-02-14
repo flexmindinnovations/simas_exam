@@ -94,7 +94,7 @@ export class ReportsComponent implements OnInit {
       const franchiseId = sessionStorage.getItem('franchiseId');
       const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
    
-    this.franchiseId= role==='franchisee'?franchiseId!:'0';
+    this.franchiseId= role==='admin'?'0':franchiseId!;
     
     }
     this.getFranchiseList(this.franchiseId);
