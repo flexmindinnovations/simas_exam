@@ -84,7 +84,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
   initFormGroup() {
     const uniquePassword = utils.generatePassword(6);
     this.formGroup = this.fb.group({
-      status: [true, [Validators.required]],
+      status: [false, [Validators.required]],
       studentFirstName: ['', [Validators.required]],
       studentMiddleName: ['', [Validators.required]],
       studentLastName: ['', [Validators.required]],
@@ -94,7 +94,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
       dob: ['', [Validators.required]],
       standard: ['', [Validators.required]],
       schoolName: ['', [Validators.required]],
-      emailId: ['', [Validators.required, Validators.email]],
+      emailId: ['', [Validators.email]],
       // franchiseTypeId: ['', [Validators.required]],
       franchiseId: ['', [Validators.required]],
       levelId: ['', [Validators.required]],
@@ -147,12 +147,13 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
       const franchiseId = sessionStorage.getItem('franchiseId');
       const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
     let franchise='';
-    franchise= role==='franchise'? franchiseId!:'0';
+    console.log('admin',role);
+    franchise= role==='admin'? '0':franchiseId!;
     this.levelListLoading = true;
     this.franchiseTypeNameListLoading = true;
     this.franchiseNameListLoading = true;
     this.instructorListLoading = true;
-    const franchiseList = this.franchiseService.getFranchiseByTypeList('1');
+    const franchiseList = this.franchiseService.getFranchiseTypeList(franchise);
     const levelList = this.levelService.getLevelList();
     const instructorList = this.instructorService.getInstructorListByFranchiseId(franchise);
     const competitionList = this.competitionService.getCompetitionList();
