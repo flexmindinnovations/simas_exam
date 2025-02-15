@@ -2,10 +2,12 @@
     <p-menubar [model]="menuItems" (onFocus)="handleOnFocus()" class="mobile-menu">
         <ng-template pTemplate="item" let-item let-root="root" class="overflow-auto">
             <p class="flex items-center justify-start space-x-4 max-w-[80%] mx-auto p-2 m-1 rounded-full"
-                [ngClass]="item?.isActive ? 'bg-ph-600 text-white' : ''">
+                [ngClass]="item?.isActive ? 'bg-ph-600 text-white' : ''"  (click)="handleItemClick(item)" [pTooltip]="item?.title">
                 <i [class]="item.icon"></i>
                 <span>{{item?.label}}</span>
+                <span>{{ item?.title }}</span>
             </p>
+            <!-- <p class="m-0 !text-[10px] tracking-wider self-center z-10">{{ item?.title }}</p> -->
         </ng-template>
         <ng-template pTemplate="end">
             <div class="flex align-items-center gap-2">

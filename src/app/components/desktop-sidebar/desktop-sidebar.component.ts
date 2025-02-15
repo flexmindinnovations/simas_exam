@@ -214,7 +214,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   setDefaultMenuItem() {
-    if (this.menuItems.length > 0) {
+      if (this.menuItems.length > 0) {
       this.menuItems.forEach((each) => each.isActive = false);
       utils.activeItem.set(this.menuItems[0]);
       utils.setPageTitle(this.menuItems[0].title);

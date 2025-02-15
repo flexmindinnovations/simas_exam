@@ -35,6 +35,10 @@
             class="w-full h-full object-fill transition transform group-hover:scale-105"
           />
         </div>
+        <div class="flex form-input flex-col items-start w-full col-span-2 mb-4">
+          <image-picker [isEditMode]="isEditMode" [selectedImagePath]="selectedImagePath"
+              (uploadFile)="handleUploadFile($event)"></image-picker>
+      </div>
       </div>
     </div>
   </div>

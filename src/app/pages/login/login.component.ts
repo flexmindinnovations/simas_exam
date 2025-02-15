@@ -104,15 +104,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   handleSignIn() {
-    debugger;
-    this.isLoading = true;
+      this.isLoading = true;
     this.formGroup.disable();
     const formVal = this.formGroup.getRawValue();
     this.authService.createAuthToken(formVal).subscribe({
       next: (response: any) => {
         if (response) {
           const { token, roleId, roleName } = response;
-          debugger;
           if (response.hasOwnProperty('student') && response?.student !== null) {
             const { studentId, ...rest } = response?.student[0];
             utils.studentDetails.set(rest);
@@ -135,7 +133,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: HttpErrorResponse) => {
-        debugger;
         this.isLoading = false;
         this.formGroup.enable();
         if(error.status==404)

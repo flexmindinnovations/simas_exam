@@ -7,11 +7,12 @@ import { StudentService } from '../../services/student/student.service';
 import { FranchiseService } from '../../services/franchise/franchise.service';
 import { InstructorService } from '../../services/instructor/instructor.service';
 import { environment } from '../../../environments/environment.development';
+import { ImagePickerComponent } from '../../components/image-picker/image-picker.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,ImagePickerComponent],
   providers: [StudentService],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -21,6 +22,9 @@ export class DashboardComponent implements OnInit {
   isSearchActionLoading: boolean = false;
   imagePath: string = 'https://placehold.co/600x400';
   userType: string = '';
+  isEditMode: boolean = false;
+  selectedImagePath: string = '';
+  selectedFiles: File[] = [];
 
 
   constructor(
@@ -31,6 +35,7 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.selectedImagePath='';
     this.userType = this.userTypeService.getUserType();
     if (this.userType === 'Student') {
       this.isSearchActionLoading = true;
@@ -104,6 +109,10 @@ export class DashboardComponent implements OnInit {
         }
       });
     }
+  }
+  handleUploadFile(event: any) {
+    const eventType = event?.event;
+    this.selectedFiles = event?.files;
   }
 
   setUserDetails(role: string, response: any) {
