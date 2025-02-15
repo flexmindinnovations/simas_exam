@@ -1,5 +1,5 @@
 @if (isMobile) {
-<app-mobile-sidebar></app-mobile-sidebar>
+<app-mobile-sidebar [permissionList]="permissionList"></app-mobile-sidebar>
 } @else {
 <app-desktop-sidebar [permissionList]="permissionList"></app-desktop-sidebar>
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnChanges, OnDestroy, OnInit, SimpleChanges, effect } from '@angular/core';
+import { Component, ChangeDetectorRef, OnChanges,Input, OnDestroy, OnInit, SimpleChanges, effect } from '@angular/core';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
@@ -25,15 +25,25 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
   isMoreMenuVisible: boolean = false;
   isMoreMenuActive: boolean = false;
   isLoading: boolean = true;
+  isMobile: boolean = false;
+  isTablet: boolean = false;
 
   readonly MENU_THRESHOLD = 7;
 
   activeItem: any;
-
+  @Input({ required: true }) permissionList: any[] = [];
   constructor(
     private router: Router,
     private cdref: ChangeDetectorRef
   ) {
+    effect(() => {
+      this.isMobile = utils.isMobile();
+      this.isTablet = utils.isTablet();
+      if (utils.isPageRefreshed()) {
+        const currentUrl = this.getCurrentUrl();
+        currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
+      }
+    }, { allowSignalWrites: true });
 
     effect(() => {
       this.activeItem = utils.activeItem();
@@ -49,17 +59,17 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
 
-    this.menuItems = MENU_ITEMS.map((item: any) => {
-      const obj = {
-        ...item,
-        label: item?.title,
-        icon: item?.icon,
-        command: () => {
-          this.handleItemClick(item);
-        }
-      }
-      return obj;
-    })
+    // this.menuItems = MENU_ITEMS.map((item: any) => {
+    //   const obj = {
+    //     ...item,
+    //     label: item?.title,
+    //     icon: item?.icon,
+    //     command: () => {
+    //       this.handleItemClick(item);
+    //     }
+    //   }
+    //   return obj;
+    // })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -132,6 +142,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
     currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
   }
 
+  
   setActiveMenuItem(route: string) {
     const normalizedRoute = this.normalizeRoute(route);
     if (normalizedRoute) {
@@ -193,6 +204,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   setDefaultMenuItem() {
+    debugger
     if (this.menuItems.length > 0) {
       this.menuItems.forEach((each: any) => each.isActive = false);
       utils.activeItem.set(this.menuItems[0]);
