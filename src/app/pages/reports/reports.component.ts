@@ -103,6 +103,7 @@ export class ReportsComponent implements OnInit {
   async getFranchiseList(franchiseId:string) {
     this.franchiseList = await this.getDropdownData('franchise');
     const userType = utils.userType() ?? '';
+    debugger;
     if (userType === 'student') {
       const studentDetails = await utils.studentDetails();
       this.selectedFranchise = studentDetails.franchiseId;
@@ -112,12 +113,18 @@ export class ReportsComponent implements OnInit {
 
   setStudentData(studentDetails: any) {
     const { instructorId, levelId } = studentDetails;
+    debugger;
     this.getDropdownData('instructor')
       .then(data => {
+        debugger;
         this.instructorList = data;
         this.selectedInstructor = instructorId;
+        const userType = utils.userType() ?? '';
+    
+    
         this.getDropdownData('student')
           .then(studentList => {
+            debugger;
             this.studentList = studentList.map((item: any) => {
               item['fullName'] = item?.studentFirstName + ' ' + item?.studentLastName;
               return item;
@@ -133,10 +140,14 @@ export class ReportsComponent implements OnInit {
                 this.selectedLevel = levelId;
                 this.roundNameList = studentInfo?.roundList;
                 this.selectedRound = studentInfo?.roundList[0].roundId;
+              }else
+              {
+                this.studentList=[];
               }
             }
           })
       })
+    
   }
 
   getDropdownData(src: ReportCriteria): Promise<any> {
@@ -188,6 +199,7 @@ export class ReportsComponent implements OnInit {
   }
 
   async handleListItemChange(event: DropdownChangeEvent, src: ReportCriteria) {
+    debugger;
     const value = event.value;
     let studentInfo: any;
     const userType = utils.userType() ?? '';

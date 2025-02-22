@@ -120,7 +120,7 @@ export class InstructorComponent implements OnInit {
 
   getInstructorList() {
     utils.isTableLoading.set(true);
-    debugger;
+    
     const roleName = sessionStorage.getItem('role') || '';
     const secretKey = sessionStorage.getItem('token') || '';
     if (roleName) {
