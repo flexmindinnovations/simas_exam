@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { UserTypeService } from '../../services/user-type.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -124,6 +124,7 @@ export class DashboardComponent implements OnInit {
           { label: 'Address', value: response?.address1 },
           { label: 'Current Level', value: response?.levelName },
           { label: 'Contact', value: response?.mobileNo },
+          { label: 'Date Of Birth', value: formatDate(response?.dob ,'dd/MM/yyyy',"en-US")},
         ]
         if (response?.studentPhoto) {
           this.imagePath = `${environment.apiUrl?.replace('api', response?.studentPhoto)}`;

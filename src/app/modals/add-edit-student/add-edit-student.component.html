@@ -2,9 +2,9 @@
     <div class="form-container">
         <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
 
-            <div class="flex flex-col items-start w-full col-span-2">
+            <div *ngIf="isEditMode" class="flex flex-col items-start w-full col-span-2">
                 <label for="status">Status</label>
-                <p-inputSwitch formControlName="status" />
+                <p-inputSwitch  formControlName="status" />
             </div>
 
             <div class="flex form-input flex-col items-start w-full col-span-2 mb-4">
@@ -220,7 +220,7 @@
                 </div>
             </div>
 
-            <div class="flex form-input flex-col items-start w-full">
+            <!-- <div class="flex form-input flex-col items-start w-full">
                 <label for="stuPass">Student Password</label>
                 <p-password id="stuPass" formControlName="stuPass" [feedback]="false" [toggleMask]="true" />
                 <div
@@ -229,7 +229,7 @@
                         is
                         required.</small>
                 </div>
-            </div>
+            </div> -->
             }
 
 

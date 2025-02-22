@@ -39,6 +39,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
   franchiseTypeNameListLoading: boolean = false;
   franchiseNameListLoading: boolean = false;
   instructorListLoading: boolean = false;
+  studentStatus:boolean=false;
 
   examTypeNameList: Array<any> = [];
   levelNameList: Array<any> = [];
@@ -68,15 +69,15 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initFormGroup();
     this.getPopupData();
-  }
+      }
 
   ngAfterViewInit(): void {
     this.dialogData = this.config.data;
     this.isEditMode = this.dialogData?.isEditMode;
     if (this.isEditMode) {
       this.selectedImagePath = this.dialogData['studentPhoto'];
-      this.dialogData['dob'] = new Date(this.dialogData['dob']);
-      this.dialogData['status'] = this.dialogData['status'] === 'Active' ? true : false;
+     // this.dialogData['dob'] = new Date(this.dialogData['dob']);
+      this.studentStatus = this.dialogData['status'] === 'Active' ? true : false;
       this.formGroup.patchValue(this.dialogData);
     }
   }
@@ -84,7 +85,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
   initFormGroup() {
     const uniquePassword = utils.generatePassword(6);
     this.formGroup = this.fb.group({
-      status: [false, [Validators.required]],
+     // status: [false,[Validators.required]],
       studentFirstName: ['', [Validators.required]],
       studentMiddleName: ['', [Validators.required]],
       studentLastName: ['', [Validators.required]],
@@ -100,7 +101,7 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
       levelId: ['', [Validators.required]],
       compititionId: ['', [Validators.required]],
       instructorId: ['', [Validators.required]],
-      stuPass: [uniquePassword, [Validators.required]],
+     // stuPass: [uniquePassword, [Validators.required]],
       levelName: [''],
       // franchiseTypeName: ['', [Validators.required]],
       franchiseName: [''],
@@ -147,7 +148,6 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
       const franchiseId = sessionStorage.getItem('franchiseId');
       const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
     let franchise='';
-    console.log('admin',role);
     franchise= role==='admin'? '0':franchiseId!;
     this.levelListLoading = true;
     this.franchiseTypeNameListLoading = true;
@@ -191,13 +191,13 @@ export class AddEditStudentComponent implements OnInit, AfterViewInit {
     // const startDate = new Date(formVal['startDate']).toISOString();
     // const endDate = new Date(formVal['endDate']).toISOString();
     const dob = new Date(formVal['dob']).toISOString();
-    const status = formVal['status'];
+    //const status = formVal['status'];
     // formVal['franchiseTypeId'] = 1;
     // formVal['startDate'] = startDate;
     // formVal['endDate'] = endDate;
     formVal['dob'] = dob;
     formVal['userPassword'] = formVal['stuPass'];
-    formVal['status'] = status === true ? 'Active' : 'DeActive';
+    formVal['status'] = this.studentStatus === true ? 'Active' : 'DeActive';
     formData.append('studentModel', JSON.stringify(formVal));
     if (this.selectedFiles?.length) {
       formData.append('file', this.selectedFiles[0], this.selectedFiles[0].name);
