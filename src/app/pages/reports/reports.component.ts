@@ -39,6 +39,8 @@ export class ReportsComponent implements OnInit {
   examTypeList: Array<any> = [];
   levelNameList: Array<any> = [];
   roundNameList: Array<any> = [];
+  isStudent:boolean=false;
+  userType:any;
 
   isSearchActionLoading: boolean = false;
   isSearchDisabled: boolean = false;
@@ -89,6 +91,11 @@ export class ReportsComponent implements OnInit {
     let franchise='0';
     const roleName = sessionStorage.getItem('role') || '';
     const secretKey = sessionStorage.getItem('token') || '';
+    this.userType = utils.userType() ?? '';
+    if(this.userType==='student')
+    {
+      this.isStudent=true;
+    }
     if (roleName) {
       const instructorId = sessionStorage.getItem('instructorId');
       const franchiseId = sessionStorage.getItem('franchiseId');
@@ -102,9 +109,8 @@ export class ReportsComponent implements OnInit {
 
   async getFranchiseList(franchiseId:string) {
     this.franchiseList = await this.getDropdownData('franchise');
-    const userType = utils.userType() ?? '';
-    debugger;
-    if (userType === 'student') {
+    
+    if (this.userType === 'student') {
       const studentDetails = await utils.studentDetails();
       this.selectedFranchise = studentDetails.franchiseId;
       if (studentDetails) this.setStudentData(studentDetails);
@@ -113,18 +119,12 @@ export class ReportsComponent implements OnInit {
 
   setStudentData(studentDetails: any) {
     const { instructorId, levelId } = studentDetails;
-    debugger;
     this.getDropdownData('instructor')
       .then(data => {
-        debugger;
         this.instructorList = data;
         this.selectedInstructor = instructorId;
-        const userType = utils.userType() ?? '';
-    
-    
         this.getDropdownData('student')
           .then(studentList => {
-            debugger;
             this.studentList = studentList.map((item: any) => {
               item['fullName'] = item?.studentFirstName + ' ' + item?.studentLastName;
               return item;
@@ -199,15 +199,13 @@ export class ReportsComponent implements OnInit {
   }
 
   async handleListItemChange(event: DropdownChangeEvent, src: ReportCriteria) {
-    debugger;
     const value = event.value;
     let studentInfo: any;
-    const userType = utils.userType() ?? '';
     switch (src) {
       case ReportCriteriaText.FRANCHISE:
         this.selectedFranchise = value;
         this.instructorList = await this.getDropdownData('instructor');
-        if (this.instructorList.length && userType === 'student') {
+        if (this.instructorList.length && this.userType === 'student') {
           const studentDetails = utils.studentDetails();
           this.selectedInstructor = studentDetails.instructorId;
         }
