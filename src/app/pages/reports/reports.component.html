@@ -42,16 +42,16 @@
 
       <div class="flex flex-col items-start w-full max-w-48">
         <label for="student">Student</label>
-        <p-dropdown appendTo="body" inputId="student" [options]="studentList" ariaLabelledBy="value"
-          [loading]="studentListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+        <p-dropdown appendTo="body" [disabled]="isStudent" inputId="student" [options]="studentList" ariaLabelledBy="value"
+          [loading]="studentListLoading" loadingIcon="pi pi-spin pi-spinner" 
           [(ngModel)]="selectedStudent" placeholder="Select" (onChange)="handleListItemChange($event, 'student')"
           optionValue="studentId" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="false" />
       </div>
 
       <div class="flex flex-col items-start w-full max-w-48">
         <label for="examType">Exam Type</label>
-        <p-dropdown appendTo="body" inputId="examType" [options]="examTypeList" ariaLabelledBy="value"
-          [loading]="examTypeListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+        <p-dropdown appendTo="body" [disabled]="isStudent" inputId="examType" [options]="examTypeList" ariaLabelledBy="value"
+          [loading]="examTypeListLoading" loadingIcon="pi pi-spin pi-spinner" 
           [(ngModel)]="selectedExamType" placeholder="Select" (onChange)="handleListItemChange($event, 'examType')"
           optionValue="examTypeId" optionLabel="examTypeName" [filter]="true" filterBy="examTypeName"
           [showClear]="false" />
@@ -59,8 +59,8 @@
 
       <div class="flex flex-col items-start w-full max-w-48">
         <label for="levelName">Level</label>
-        <p-dropdown appendTo="body" inputId="levelName" [options]="levelNameList" ariaLabelledBy="value"
-          [loading]="levelListLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isSearchActionLoading"
+        <p-dropdown appendTo="body" [disabled]="isStudent" inputId="levelName" [options]="levelNameList" ariaLabelledBy="value"
+          [loading]="levelListLoading" loadingIcon="pi pi-spin pi-spinner" 
           [(ngModel)]="selectedLevel" placeholder="Select" (onChange)="handleListItemChange($event, 'level')"
           optionValue="levelId" optionLabel="levelName" [filter]="true" filterBy="levelName" [showClear]="false" />
       </div>
