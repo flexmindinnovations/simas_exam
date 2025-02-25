@@ -250,10 +250,10 @@ export class ExamActivationComponent {
         styleClass: 'studentLastName'
       },
       {
-        field: 'franchiseName',
-        header: 'Franchise',
+        field: 'levelName',
+        header: 'Level Name',
         width: '20%',
-        styleClass: 'franchiseName'
+        styleClass: 'levelName'
       },
       // {
       //   field: 'startDate',
