@@ -50,6 +50,7 @@ export class BatchAllocationComponent {
   showGrid: boolean = false;
   studentBatchAllocationList: any;
   validAllocate: boolean = false;
+  selectedRows: any[] = [];
 
 
   constructor(
@@ -66,7 +67,7 @@ export class BatchAllocationComponent {
     this.getFranchiseList();
     this.getExamCenterList();
     this.getCompetitionList();
-    utils.addButtonTitle.set('Student');
+    utils.addButtonTitle.set('Allocate Batch');
   }
 
   getCompetitionList() {
@@ -75,11 +76,11 @@ export class BatchAllocationComponent {
         if (response) {
           this.competitionList = response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
-      // utils.isTableLoading.update(val => !val);
+        // utils.isTableLoading.update(val => !val);
         utils.setMessages(error.message, 'error');
       }
     })
@@ -141,13 +142,13 @@ export class BatchAllocationComponent {
             delete item['batchTimeSlotList'];
             return item;
           })
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       }
     })
@@ -162,6 +163,9 @@ export class BatchAllocationComponent {
 
   }
   handleAddEditAction() {
+    if (this.validAllocate) {
+      this.handleAllocateBatch();
+    }
 
   }
   handleSearchAction() {
@@ -208,21 +212,28 @@ export class BatchAllocationComponent {
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       }
     })
   }
   handleAllocateBatch() {
+    if (!this.validAllocate || this.selectedRows.length === 0) {
+      utils.setMessages('Please select at least one student before allocating.', 'error');
+      return;
+    }
+
     this.isAllocateActionLoading = true;
     this.batchService.saveStudentBatchAllocation(this.studentBatchAllocationList).subscribe({
       next: (response) => {
         this.isAllocateActionLoading = false;
         utils.setMessages(response.message, 'success');
+        this.selectedRows = [];
       },
       error: (error: HttpErrorResponse) => {
         this.isAllocateActionLoading = false;
         utils.setMessages(error.message, 'error');
+        this.selectedRows = [];
       }
     });
   }
@@ -236,7 +247,8 @@ export class BatchAllocationComponent {
       this.isSearchDisabled = true;
     }
   }
-  onSelectedRowsChange(selectedRows: any[]) {
+  onSelectedRowsChange({ selectedRows, isInline }: { selectedRows: any[], isInline: boolean }) {
+    this.selectedRows = selectedRows;
     this.studentBatchAllocationList = {
       studentBatchAllocationId: 0,
       compititionId: this.selectedCompetiton,
@@ -248,7 +260,7 @@ export class BatchAllocationComponent {
       examCenterName: "",
       compititionName: "",
       batchTimeSlotName: "",
-      studentBatchAllocationDetails: selectedRows.map((row: any) => ({
+      studentBatchAllocationDetails: this.selectedRows?.map((row: any) => ({
         studentBatchAllocationDetailId: 0,
         studentBatchAllocationId: this.selectedBatchTime,
         studentId: row.studentId || 0,
@@ -259,17 +271,18 @@ export class BatchAllocationComponent {
         levelName: row.levelName || ''
       }))
     };
-    this.validataAllocateBatch(selectedRows);
+    this.validataAllocateBatch();
     // console.log(this.studentBatchAllocationList);
   }
-  validataAllocateBatch(selectedRows: any) {
+  validataAllocateBatch() {
     this.validAllocate = (
-      selectedRows.length > 0 && // At least one student is selected
-      this.selectedExamCenter !== '' && // Exam center is selected
-      this.selectedBatchTime !== '' && // Batch time is selected
-      this.selectedCompetiton !== '' && // Competition is selected
-      this.franchiseId !== '' // Franchise is selected
+      Array.isArray(this.selectedRows) && this.selectedRows.length > 0 && // At least one student is selected
+      !!this.selectedExamCenter && // Exam center is selected
+      !!this.selectedBatchTime && // Batch time is selected
+      !!this.selectedCompetiton && // Competition is selected
+      !!this.franchiseId // Franchise is selected
     );
   }
+
 
 }
