@@ -147,9 +147,14 @@ export class ExamActivationComponent {
     apiCall.subscribe({
       next: (response) => {
         if (response) {
-          this.createTableDataSource(response);
-          utils.isTableLoading.set(false);
           this.apiResponse = response;
+          const mappedResponse = response.map((item: any) => ({
+            ...item,
+            status: item.examStatus
+          }));
+          utils.isTableLoading.set(false);
+          this.createTableDataSource(mappedResponse);
+          this.apiResponse = mappedResponse;
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -347,7 +352,7 @@ export class ExamActivationComponent {
     //   } else {
     //     rowData = this.apiResponse?.find((item: any) => item.instructorId === data?.instructorId);
     //   }
-  
+
     //   this.dialogRef = this.dialogService.open(AddEditExamActivationComponent, {
     //     data: { ...rowData, activationType: this.selectedActivationType, isEditMode: this.isEditMode },
     //     closable: false,
@@ -401,15 +406,23 @@ export class ExamActivationComponent {
     }, 2000)
   }
 
-  handleActivateExam(selectedRows?: any) {
+  handleActivateExam(selectedRows?: any, multipleStatus?: any) {
     const payload = {
-      "activationId": 0,
-      "objectId": this.selectedRows && this.selectedRows.length > 1 ?  0 : Number(this.data[0]),
-      "objectType": this.selectedActivationType,
-      "status" : "Active"
+      activationId: 0,
+      objectId:
+        this.selectedRows && this.selectedRows.length > 1
+          ? 0
+          : Number(this.data),
+      objectType: this.selectedActivationType,
+      status:
+        this.selectedRows && this.selectedRows.length > 1
+          ? multipleStatus
+          : selectedRows[0].status === 'Active'
+            ? 'DeActive'
+            : 'Active',
     }
-    let apiCall = this.selectedRows && this.selectedRows.length > 1 ? 
-    this.activationService.saveMultipleExamActivation({"data": this.data,...payload}) : this.activationService.saveActivation(payload);
+    let apiCall = this.selectedRows && this.selectedRows.length > 1 ?
+      this.activationService.saveMultipleExamActivation({ "data": this.data, ...payload }) : this.activationService.saveActivation(payload);
     apiCall.subscribe({
       next: (response) => {
         if (response) {
@@ -422,7 +435,25 @@ export class ExamActivationComponent {
     })
   }
 
-  onSelectedRowsChange({selectedRows, isInline}: {selectedRows: any[], isInline: boolean} ) {
+  handleTableRefresh(event: any) {
+    this.handleSearchAction();
+  }
+
+  handleChangeStatus({
+    selectedRows,
+    isInline,
+    multipleStatus,
+  }: {
+    selectedRows: any[];
+    isInline: boolean;
+    multipleStatus: string;
+  }) {
+    if (!isInline) {
+      this.handleActivateExam(selectedRows, multipleStatus);
+    }
+  }
+
+  onSelectedRowsChange({ selectedRows, isInline }: { selectedRows: any[], isInline: boolean }) {
     this.selectedRows = selectedRows;
     if (this.selectedActivationType === 'student') {
       const studentIds = selectedRows.map((row: any) => row.studentId)
@@ -437,7 +468,7 @@ export class ExamActivationComponent {
       this.data = franchiseIds.join(',');
     }
     this.validActivate = selectedRows.length > 0 ? true : false;
-    if(isInline) {
+    if (isInline) {
       this.handleActivateExam(selectedRows);
     }
   }
