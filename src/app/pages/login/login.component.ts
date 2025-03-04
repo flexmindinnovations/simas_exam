@@ -15,12 +15,14 @@ import crypto from 'crypto-js';
 import { RoleService } from '../../services/role/role.service';
 import { db } from '../../../db';
 import { UserTypeService } from '../../services/user-type.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule],
-  providers: [AuthService],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule, ToastModule],
+  providers: [AuthService, MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   animations: [
@@ -54,6 +56,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private roleService: RoleService,
     private router: Router,
     private userTypeService: UserTypeService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -104,7 +107,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   handleSignIn() {
-      this.isLoading = true;
+    this.isLoading = true;
     this.formGroup.disable();
     const formVal = this.formGroup.getRawValue();
     this.authService.createAuthToken(formVal).subscribe({
@@ -135,12 +138,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
       error: (error: HttpErrorResponse) => {
         this.isLoading = false;
         this.formGroup.enable();
-        if(error.status==404)
-        {
-          utils.setMessages(error.error.errorMessage, 'error');
-        }else{
-        utils.setMessages(error.message, 'error');
+
+        let errorMessage = 'An error occurred';
+        if (error.status == 404) {
+          errorMessage = error.error.errorMessage;
+        } else {
+          errorMessage = error.message;
         }
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Login Failed',
+          detail: errorMessage
+        });
       }
     })
   }
