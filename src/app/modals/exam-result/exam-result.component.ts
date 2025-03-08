@@ -67,7 +67,7 @@ export class ExamResultComponent implements OnInit {
         examTypeId: item?.examTypeId,
         examPaperDate: new Date(),
         examPaperTime: new Date().toLocaleTimeString(),
-        answer: item?.userInput?.toString() ?? '',
+        answer: item?.userAnswer?.toString() ?? '', // userInput is not exist in object key name is userAnswer
         answerStatus: correctAnswer ? 'Y' : 'N',
         answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
         totalQuestions: this.questionList?.length,
