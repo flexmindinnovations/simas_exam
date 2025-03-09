@@ -12,7 +12,7 @@ import { ImagePickerComponent } from '../../components/image-picker/image-picker
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule,ImagePickerComponent],
+  imports: [CommonModule, ImagePickerComponent],
   providers: [StudentService],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.selectedImagePath='';
+    this.selectedImagePath = '';
     this.userType = this.userTypeService.getUserType();
     if (this.userType === 'Student') {
       this.isSearchActionLoading = true;
@@ -124,11 +124,11 @@ export class DashboardComponent implements OnInit {
           { label: 'Address', value: response?.address1 },
           { label: 'Current Level', value: response?.levelName },
           { label: 'Contact', value: response?.mobileNo },
-          { label: 'Date Of Birth', value: formatDate(response?.dob ,'dd/MM/yyyy',"en-US")},
+          { label: 'Date Of Birth', value: formatDate(response?.dob, 'dd/MM/yyyy', "en-US") },
         ]
         if (response?.studentPhoto) {
           this.imagePath = `${environment.apiUrl?.replace('api', response?.studentPhoto)}`;
-          console.log('this.imagePath: ', this.imagePath);
+          // console.log('this.imagePath: ', this.imagePath); // commented console
 
         }
         break;

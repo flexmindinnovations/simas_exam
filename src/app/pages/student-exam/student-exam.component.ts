@@ -808,32 +808,32 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.checkBoxstate = 'void';
     this.isLoadingQuestion = true;
     interval(selectedTime)
-    .pipe(
-      take(this.flashQuestions.length),
-      switchMap((index) => {
-        return of(index).pipe(
-          tap(() => {
-            this.state = 'void';
-            this.cdref.detectChanges();
-          }),
-          delay(adjustedDelay),
-          tap(() => {
-            this.isLoadingQuestion = false;
-            this.currentIndex = index;
-            this.currentItem = this.flashQuestions[index];
-            this.state = 'scaled';
-            this.cdref.detectChanges();
-            this.playSound(this.sounds['count']);
-          })
-        );
-      }),
-      finalize(() => {
-        timer(selectedTime).subscribe(() => {
-          this.finalizeFlashing();
-        });
-      })
-    )
-    .subscribe();
+      .pipe(
+        take(this.flashQuestions.length),
+        switchMap((index) => {
+          return of(index).pipe(
+            tap(() => {
+              this.state = 'void';
+              this.cdref.detectChanges();
+            }),
+            delay(adjustedDelay),
+            tap(() => {
+              this.isLoadingQuestion = false;
+              this.currentIndex = index;
+              this.currentItem = this.flashQuestions[index];
+              this.state = 'scaled';
+              this.cdref.detectChanges();
+              this.playSound(this.sounds['count']);
+            })
+          );
+        }),
+        finalize(() => {
+          timer(selectedTime).subscribe(() => {
+            this.finalizeFlashing();
+          });
+        })
+      )
+      .subscribe();
   }
 
   finalizeFlashing(): void {
@@ -880,7 +880,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showAnswer = false;
     const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
     // const totalTime = this.totalTime;
-    const totalTime = convertToFloat * 60;
+    // const totalTime = convertToFloat * 60; // commented for timer of question
+    const totalTime = 10; // 10 sec timer 
     this.remainingTime = totalTime;
     const warningTime = totalTime * 0.4;
     const criticalTime = totalTime * 0.15;
