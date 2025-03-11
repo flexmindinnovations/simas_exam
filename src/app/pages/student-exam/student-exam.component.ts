@@ -880,8 +880,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showAnswer = false;
     const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
     // const totalTime = this.totalTime;
-    // const totalTime = convertToFloat * 60; // commented for timer of question
-    const totalTime = 10; // 10 sec timer 
+    const totalTime = convertToFloat * 60;
     this.remainingTime = totalTime;
     const warningTime = totalTime * 0.4;
     const criticalTime = totalTime * 0.15;
