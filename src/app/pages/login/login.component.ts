@@ -69,9 +69,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
         utils.userType.set(userType);
         const imageSrc = `/images/${userType}.jpg`;
         this.bgImageSrc = imageSrc;
-      } else {
-        this.router.navigateByUrl(`login?userType=${utils.userType()}`);
       }
+      this.router.navigateByUrl(`login?userType=${utils.userType()}`);
     })
   }
 
