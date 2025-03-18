@@ -2,7 +2,10 @@
   class="login-container bg-cover bg-no-repeat bg-center bg-fill backdrop-blur-sm before:content-[''] before:absolute before:inset-0 before:flex before:bg-gradient-to-tr before:from-black/90 before:via-black/60 before:to-black/80 before:opacity-75 before:z-[-5]"
   [ngClass]="getBgImageClass()"
 >
-  <p-toast position="top-right"></p-toast>
+  <p-toast
+    [style]="{ width: isMobile ? '80vw' : '30vw', maxWidth: '90vw' }"
+  ></p-toast>
+
   <div
     class="overlay h-full w-full backdrop-blur-md flex items-center justify-center"
   >

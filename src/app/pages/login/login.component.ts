@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   UserTypes = UserType;
   userType = UserType.ADMIN;
   domain = utils.domain;
-
+  isMobile: boolean = window.innerWidth <= 768;
   isLoading = false;
 
   private activatedRoute = inject(ActivatedRoute);
@@ -60,6 +60,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
+    this.updateToastSize();
+    window.addEventListener('resize', this.updateToastSize);
     this.authService.signOutUser();
     this.initFormGroup();
     this.activatedRoute.queryParams.subscribe((params: any) => {
@@ -73,6 +75,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
       this.router.navigateByUrl(`login?userType=${utils.userType()}`);
     })
   }
+
+  ngOnDestroy() {
+    window.removeEventListener('resize', this.updateToastSize);
+  }
+
+  updateToastSize = () => {
+    this.isMobile = window.innerWidth <= 768;
+  };
 
   ngAfterViewInit() {
     utils.setPageTitle('Login');
