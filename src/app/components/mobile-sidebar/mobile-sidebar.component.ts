@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnChanges,Input, OnDestroy, OnInit, SimpleChanges, effect } from '@angular/core';
+import { Component, ChangeDetectorRef, OnChanges, Input, OnDestroy, OnInit, SimpleChanges, effect } from '@angular/core';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
@@ -48,7 +48,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
     effect(() => {
       this.activeItem = utils.activeItem();
     })
-   }
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -142,7 +142,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
     currentUrl ? this.setActiveMenuItem(currentUrl) : this.setDefaultMenuItem();
   }
 
-  
+
   setActiveMenuItem(route: string) {
     const normalizedRoute = this.normalizeRoute(route);
     if (normalizedRoute) {
@@ -204,7 +204,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   setDefaultMenuItem() {
-    debugger
+    // debugger
     if (this.menuItems.length > 0) {
       this.menuItems.forEach((each: any) => each.isActive = false);
       utils.activeItem.set(this.menuItems[0]);
