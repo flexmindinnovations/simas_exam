@@ -45,7 +45,9 @@
           [loading]="isLevelListLoading"
           loadingIcon="pi pi-spin pi-spinner"
           [(ngModel)]="selectedLevel"
-          [disabled]="isSearchActionLoading || isSearchDisabled || levelDisabled"
+          [disabled]="
+            isSearchActionLoading || isSearchDisabled || levelDisabled
+          "
           ariaLabelledBy="levelName"
           placeholder="Select"
           (onChange)="handleOnDropdownValueChange($event, 'level')"
@@ -147,7 +149,7 @@
             <!-- <div
               class="flex flex-col items-center justify-start gap-2"
             > -->
-              <!-- @for (item of options; track $index) {
+            <!-- @for (item of options; track $index) {
                             <div class="flex items-center justify-start gap-4 h-8">
                                 <p-radioButton [inputId]="item" name="question" [value]="item"
                                     (ngModelChange)="onCheckboxChange($event)" [(ngModel)]="selectedAnswer" />
@@ -159,14 +161,14 @@
 
                             </div>
                             } -->
-                            <input
-                            type="number"
-                            #answerInput
-                            pInputText
-                            [(ngModel)]="selectedAnswer"
-                            (ngModelChange)="handleKeyValue($event)"
-                            (keydown)="handleKeydown($event)"
-                          />
+            <input
+              type="number"
+              #answerInput
+              pInputText
+              [(ngModel)]="selectedAnswer"
+              (ngModelChange)="handleKeyValue($event)"
+              (keydown)="handleKeydown($event)"
+            />
             <!-- </div> -->
           </div>
           } @else if(isLoadingQuestion && !quizCompleted) {
@@ -218,7 +220,7 @@
         [questionDuration]="questionDuration"
         (timeEnded)="OnTimerFinished($event)"
         (timeLeft)="handleTimer($event)"
-        class="max-w-xs lg:max-w-xs xl:max-w-xs 2xl:max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
+        class="max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
         [examStarted]="examStarted"
         [questionsList]="questionList"
         [activeQuestion]="activeQuestion"

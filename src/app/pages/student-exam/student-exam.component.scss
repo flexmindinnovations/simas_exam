@@ -136,3 +136,19 @@
     box-shadow: inset 0 0 3rem 30px rgba(239, 68, 68, 0.8);
   }
 }
+
+@media (max-width: 344px) {
+  .exampOptionsCard {
+    @apply text-sm p-2;
+  }
+
+  /* Reduce Button Size */
+  ::ng-deep .exampOptionsCard .p-selectbutton .p-button {
+    @apply text-xs px-2 py-1 min-w-[50px];
+  }
+
+  /* Keep Buttons in One Row */
+  ::ng-deep .exampOptionsCard .p-selectbutton {
+    @apply flex flex-nowrap justify-center gap-1 overflow-x-auto;
+  }
+}

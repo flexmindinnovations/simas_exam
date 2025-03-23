@@ -212,6 +212,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   canMoveToNextRound = false;
   isFocused: boolean = false;
   focusTriggered = false;
+  showNextRoundButton: boolean = true;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   @ViewChild('answerInput') answerInput!: ElementRef;
@@ -254,8 +255,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get filteredExamControls() {
-    return this.examControls.filter(
-      (control) => control.value !== 'round' || this.canMoveToNextRound
+    return this.examControls.filter(control =>
+      control.value !== 'round' || (this.canMoveToNextRound && this.currentRoundIndex < this.roundIds.length - 1)
     );
   }
 
@@ -483,40 +484,44 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  checkAndEndExam() {
+    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
+    const isLastRound = this.currentRoundIndex === this.roundIds.length - 1;
+
+    if (isLastQuestion && isLastRound) {
+      this.endExam(); // Directly end the exam without confirmation
+      return true;
+    }
+    return false;
+  }
+
   submitQuestion() {
     if (!this.validateNumber(this.selectedAnswer)) {
-      const sound = this.sounds['error'];
-      this.playSound(sound);
+      this.playSound(this.sounds['error']);
       timer(200).subscribe(() => {
         utils.setMessages('Please Enter the correct answer', 'error');
       });
-      return; // Exit the function early if validation fails
+      return;
     }
 
     if (this.isAnswerSubmitted) {
-      const isLastQuestionInRound =
-        this.activeQuestionIndex === this.questionList.length - 1;
-
-      // Process the current question
-      this.flashQuestionsString = this.questionList[
-        this.activeQuestionIndex
-      ].questions
-        .split(',')
-        .join(' ');
+      this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
       this.formatSequence();
       this.submitedlashQuestionsIndex = this.activeQuestionIndex;
       this.correctAnswer = this.activeQuestion?.answer;
       const userInput = this.questionList[this.activeQuestionIndex].userInput;
       const isWrongAnswer = String(userInput) !== String(this.correctAnswer);
 
-      // Mark question status
-      this.questionList[this.activeQuestionIndex]['isCompleted'] = true;
+      this.questionList[this.activeQuestionIndex].isCompleted = true;
       this.questionList[this.activeQuestionIndex].isAttempted = true;
       this.questionList[this.activeQuestionIndex].isSkipped = false;
       this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
       this.isWrongAnswer = isWrongAnswer;
 
-      if (isLastQuestionInRound) {
+      // 🔹 Automatically end exam if last question in last round
+      if (this.checkAndEndExam()) return;
+
+      if (this.activeQuestionIndex === this.questionList.length - 1) {
         this.canMoveToNextRound = true;
         this.isLoadingQuestion = false;
         this.resetTimer();
@@ -524,14 +529,13 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadNextQuestion();
       }
     } else {
-      const sound = this.sounds['error'];
-      this.playSound(sound);
+      this.playSound(this.sounds['error']);
       timer(200).subscribe(() => {
         utils.setMessages('Please Enter the correct answer', 'error');
       });
     }
-
   }
+
 
   validateNumber(input: string): boolean {
     const regex = /^-?\d+(\.\d+)?$/;
@@ -546,17 +550,18 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.canMoveToNextRound = false;
 
       const nextRoundIndex = this.currentRoundIndex + 1;
+
+      // 🔹 Automatically end exam if last round
+      if (this.checkAndEndExam()) return;
+
       if (nextRoundIndex < this.roundIds.length) {
         this.currentRoundIndex = nextRoundIndex;
         this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]);
       } else {
-        this.endExam();
+        this.endExam(); // Display results
       }
     } else {
-      utils.setMessages(
-        'Complete the current round before moving to the next round.',
-        'info'
-      );
+      utils.setMessages('Complete the current round before moving to the next round.', 'info');
     }
   }
 
@@ -572,7 +577,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   newQuestion() {
     this.isFlashEnded = false;
-    const isLastQuestionInRound = this.activeQuestionIndex === this.questionList.length - 1;
+    const isLastQuestion = this.activeQuestionIndex === this.questionList.length - 1;
 
     this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
     this.correctAnswer = this.activeQuestion?.answer;
@@ -583,7 +588,10 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
     this.isWrongAnswer = isWrongAnswer;
 
-    if (isLastQuestionInRound) {
+    // 🔹 Automatically end exam if last question in last round
+    if (this.checkAndEndExam()) return;
+
+    if (isLastQuestion) {
       this.canMoveToNextRound = true;
       this.isLoadingQuestion = false;
       this.isFlashEnded = true;
@@ -592,11 +600,12 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.loadNextQuestion();
-    this.cdref.detectChanges(); // Ensure view updates before focusing
+    this.cdref.detectChanges();
     setTimeout(() => {
       this.focusAnswerInput();
     }, 100);
   }
+
 
   focusAnswerInput() {
     if (this.answerInput && this.answerInput.nativeElement) {
