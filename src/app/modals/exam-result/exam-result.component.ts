@@ -43,15 +43,16 @@ export class ExamResultComponent implements OnInit {
       this.wrongQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === true);
       this.correctQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
     }
+    this.saveExamPaper(); // as per the requirement of user
   }
 
   handleDialogCancel() {
     this.dialogRef.close(false);
   }
 
-  handleSubmitAction() {
-    this.saveExamPaper();
-  }
+  // handleSubmitAction() {  // as per the requirement of user
+  //   this.saveExamPaper();
+  // }
 
   saveExamPaper() {
     this.isSubmitActionLoading = true;
@@ -82,7 +83,7 @@ export class ExamResultComponent implements OnInit {
     savePaperList.subscribe({
       next: (response) => {
         this.isSubmitActionLoading = false;
-        this.dialogRef.close(response);
+        // this.dialogRef.close(response);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitActionLoading = false;
