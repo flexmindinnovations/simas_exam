@@ -125,6 +125,7 @@ export type ApiCallConfig = {
     examPaperExamTypeAndLevelwise: string;
     studentListFromExamPaperLevelAndRoundWise: string;
     studentListFromExamPaperFranchiseAndInstructorWise: string;
+    studentExamPaperDetailsReport: string
   }
   hallticket: {
     getStudentHallTicketList: string;
@@ -270,7 +271,8 @@ export class AppConfigService {
     reports: {
       examPaperExamTypeAndLevelwise: `${this.hostUrl}/Report/getExamPaperExamTypeAndLevelwise`,
       studentListFromExamPaperLevelAndRoundWise: `${this.hostUrl}/Report/getStudentListFromExamPaperLevelAndRoundWise`,
-      studentListFromExamPaperFranchiseAndInstructorWise: `${this.hostUrl}/Report/getStudentListFromExamPaperFranchiseAndInstructorWise`
+      studentListFromExamPaperFranchiseAndInstructorWise: `${this.hostUrl}/Report/getStudentListFromExamPaperFranchiseAndInstructorWise`,
+      studentExamPaperDetailsReport: `${this.hostUrl}/Report/getExamPaperDetailsReport`
     },
     hallticket: {
       getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocation`

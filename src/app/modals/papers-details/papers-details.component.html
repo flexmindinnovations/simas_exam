@@ -1,0 +1,110 @@
+<!-- Modal Background -->
+<div
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+>
+  <!-- Modal Box -->
+  <div
+    class="bg-white rounded-lg shadow-lg w-[95vw] max-w-7xl p-6 relative overflow-auto"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Close Button -->
+    <button
+      class="absolute border-none cursor-pointer top-3 right-3 text-gray-600 hover:text-gray-900"
+      (click)="closeModal()"
+    >
+      ✖
+    </button>
+
+    <!-- Modal Title -->
+    <h2 class="text-xl font-semibold mb-2 text-center">
+      <span class="font-bold">Student Name:</span> {{ item?.studentFullName }} |
+      <span class="font-bold">Level:</span> {{ item?.levelName }}
+    </h2>
+    <p class="text-center text-sm text-gray-500 mb-4">
+      <span class="font-bold">Date:</span>
+      {{ item?.examPaperDate | date : "yyyy-MM-dd" }} |
+      <span class="font-bold">Time:</span> {{ item?.examPaperTime }}
+    </p>
+
+    <!-- Table Container (Scrollable) -->
+    <div class="overflow-auto max-h-[70vh] border rounded-lg shadow-md">
+      <p-table
+        [value]="tableData"
+        class="w-full"
+        styleClass="p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '50rem', width: '100%' }"
+      >
+        <!-- Table Header -->
+        <ng-template pTemplate="header">
+          <tr class="bg-white">
+            <th
+              class="border border-gray-400 px-3 py-2 text-center uppercase font-bold bg-white"
+            >
+              Sr. No.
+            </th>
+            <th
+              class="border border-gray-400 px-3 py-2 text-center uppercase font-bold bg-white"
+            >
+              Round
+            </th>
+            <th
+              *ngFor="let col of columnHeaders"
+              class="border border-gray-400 px-3 py-2 text-center uppercase font-bold bg-white"
+            >
+              {{ col }}
+            </th>
+            <th
+              class="border border-gray-400 px-3 py-2 bg-green-200 text-center uppercase font-bold"
+            >
+              Actual Answer
+            </th>
+            <th
+              class="border border-gray-400 px-3 py-2 bg-blue-200 text-center uppercase font-bold"
+            >
+              Student Answer
+            </th>
+          </tr>
+        </ng-template>
+
+        <!-- Table Body -->
+        <ng-template pTemplate="body" let-row let-i="rowIndex">
+          <tr
+            [ngClass]="{ 'bg-red-100': row.studentAnswer !== row.actualAnswer }"
+            class="bg-white"
+          >
+            <td
+              class="border border-gray-300 px-3 py-2 text-center font-medium bg-white"
+            >
+              {{ i + 1 }}
+            </td>
+            <td
+              class="border border-gray-300 px-3 py-2 text-center font-medium bg-white"
+            >
+              {{ row.round }}
+            </td>
+            <td
+              *ngFor="let value of row.values"
+              class="border border-gray-300 px-3 py-2 text-center bg-white"
+            >
+              {{ value || "-" }}
+            </td>
+            <td
+              class="border border-gray-300 px-3 py-2 text-center font-bold text-green-600 bg-white"
+            >
+              {{ row.actualAnswer }}
+            </td>
+            <td
+              class="border border-gray-300 px-3 py-2 text-center font-bold bg-white"
+              [ngClass]="{
+                'text-red-500': row.studentAnswer !== row.actualAnswer,
+                'text-blue-600': row.studentAnswer === row.actualAnswer
+              }"
+            >
+              {{ row.studentAnswer || "-" }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

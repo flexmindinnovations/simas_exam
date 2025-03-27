@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { ChipModule } from 'primeng/chip';
 import { ReportsService } from '../../services/reports/reports.service';
+import { PapersDetailsComponent } from '../../modals/papers-details/papers-details.component';
 
 
 @Component({
@@ -39,8 +40,8 @@ export class ReportsComponent implements OnInit {
   examTypeList: Array<any> = [];
   levelNameList: Array<any> = [];
   roundNameList: Array<any> = [];
-  isStudent:boolean=false;
-  userType:any;
+  isStudent: boolean = false;
+  userType: any;
 
   isSearchActionLoading: boolean = false;
   isSearchDisabled: boolean = false;
@@ -60,7 +61,9 @@ export class ReportsComponent implements OnInit {
   selectedLevel: any = undefined;
   selectedRound: any = undefined;
   showGrid: boolean = false;
-  franchiseId:any;
+  franchiseId: any;
+  isMobile: boolean = false;
+  dialogRef: DynamicDialogRef | undefined;
 
   products = [
     {
@@ -83,33 +86,36 @@ export class ReportsComponent implements OnInit {
     private studentService: StudentService,
     private examTypeService: ExamTypeService,
     private levelService: LevelService,
-    private reportService: ReportsService
+    private reportService: ReportsService,
+    private dialogService: DialogService,
   ) {
+    effect(() => {
+      this.isMobile = utils.isMobile();
+    });
   }
 
   ngOnInit(): void {
-    let franchise='0';
+    let franchise = '0';
     const roleName = sessionStorage.getItem('role') || '';
     const secretKey = sessionStorage.getItem('token') || '';
     this.userType = utils.userType() ?? '';
-    if(this.userType==='student')
-    {
-      this.isStudent=true;
+    if (this.userType === 'student') {
+      this.isStudent = true;
     }
     if (roleName) {
       const instructorId = sessionStorage.getItem('instructorId');
       const franchiseId = sessionStorage.getItem('franchiseId');
       const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
-   
-    this.franchiseId= role==='admin'?'0':franchiseId!;
-    
+
+      this.franchiseId = role === 'admin' ? '0' : franchiseId!;
+
     }
     this.getFranchiseList(this.franchiseId);
   }
 
-  async getFranchiseList(franchiseId:string) {
+  async getFranchiseList(franchiseId: string) {
     this.franchiseList = await this.getDropdownData('franchise');
-    
+
     if (this.userType === 'student') {
       const studentDetails = await utils.studentDetails();
       this.selectedFranchise = studentDetails.franchiseId;
@@ -140,14 +146,13 @@ export class ReportsComponent implements OnInit {
                 this.selectedLevel = levelId;
                 this.roundNameList = studentInfo?.roundList;
                 this.selectedRound = studentInfo?.roundList[0].roundId;
-              }else
-              {
-                this.studentList=[];
+              } else {
+                this.studentList = [];
               }
             }
           })
       })
-    
+
   }
 
   getDropdownData(src: ReportCriteria): Promise<any> {
@@ -265,7 +270,31 @@ export class ReportsComponent implements OnInit {
   }
 
   handleShowPaper(item: any) {
-    console.log('item: ', item);
+    const studentId = sessionStorage.getItem('userId') || '';
+    const payload = {
+      studentId,
+      examPaperId: item?.examPaperId
+    }
+    const apiCall = this.reportService.getExamPaperDetailsReport(payload);
+    apiCall.subscribe({
+      next: (response: any) => {
+        this.dialogRef = this.dialogService.open(PapersDetailsComponent, {
+          data: {
+            paperDetails: response,
+          },
+          closable: true,
+          modal: true,
+          height: 'auto',
+          width: utils.isMobile() ? '95%' : '42%',
+          styleClass: 'add-edit-dialog',
+          header: 'Paper Details',
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        utils.setMessages(error.message, 'error');
+      }
+    })
+
   }
 
   formatDateOnly(dateString: string): string {
