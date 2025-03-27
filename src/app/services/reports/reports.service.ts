@@ -30,4 +30,9 @@ export class ReportsService {
     const searchParams = new URLSearchParams(payload);
     return this.http.get(`${this.reportsPath.studentListFromExamPaperFranchiseAndInstructorWise}?${searchParams}`);
   }
+
+  getExamPaperDetailsReport(payload: any): Observable<any> {
+    const searchParams = new URLSearchParams(payload);
+    return this.http.get(`${this.reportsPath.studentExamPaperDetailsReport}?${searchParams}`);
+  }
 }
