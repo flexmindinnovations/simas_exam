@@ -195,7 +195,8 @@ export class BatchAllocationComponent {
   getStudentListByFranchise() {
     utils.isTableLoading.set(true);
     this.setTableColumns();
-    const apiCall = this.studentService.getStudentListByFranchiseId(this.franchiseId)
+    // const apiCall = this.studentService.getStudentListByFranchiseId(this.franchiseId)
+    const apiCall = this.studentService.getStudentListWithBatchAllocation(this.selectedCompetiton, this.franchiseId)
     apiCall.subscribe({
       next: (response: any) => {
         if (response) {
