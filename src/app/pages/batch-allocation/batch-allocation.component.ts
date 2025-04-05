@@ -91,8 +91,10 @@ export class BatchAllocationComponent {
     this.colDefs = [
       { field: 'studentId', header: 'Id', width: '5%', styleClass: 'studentId' },
       { field: 'fullName', header: 'Full Name', width: '20%', styleClass: 'fullName' },
-      { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
-      { field: 'franchiseName', header: 'Franchise', width: '20%', styleClass: 'franchiseName' },
+      // { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
+      // { field: 'franchiseName', header: 'Franchise', width: '20%', styleClass: 'franchiseName' },
+      { field: 'examcentername', header: 'Exam Center', width: '20%', styleClass: 'examcentername' },
+      { field: 'batchTimeSlotName', header: 'Batch TimeSlot', width: '20%', styleClass: 'batchTimeSlotName' },
       { field: 'levelName', header: 'Level', width: '20%', styleClass: 'levelName' },
       { field: 'mobileNo', header: 'Mobile Number', width: '10%', styleClass: 'mobileNo' },
       { field: 'status', header: 'Status', width: '10%', styleClass: 'status' },

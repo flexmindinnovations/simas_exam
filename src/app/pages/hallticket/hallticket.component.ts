@@ -17,6 +17,7 @@ import { PanelModule } from 'primeng/panel';
 import { HallticketService } from '../../services/hallticket/hallticket.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
+import { CompetitionService } from '../../services/competition/competition.service';
 
 @Component({
   selector: 'app-hallticket',
@@ -48,6 +49,9 @@ export class HallticketComponent {
   hallTicketList: any[] = [];
   showGrid: boolean = false;
   dialogRef: DynamicDialogRef | undefined;
+  competitionList: any[] = [];
+  isCompetitionListLoading: boolean = false;
+  selectedCompetiton: string = '';
 
   constructor(
     private franchiseService: FranchiseService,
@@ -56,6 +60,7 @@ export class HallticketComponent {
     private hallticketService: HallticketService,
     private dialogService: DialogService,
     private fb: FormBuilder,
+    private competitionService: CompetitionService,
   ) {
 
   }
@@ -64,10 +69,12 @@ export class HallticketComponent {
     this.initFormGroup();
     this.getFranchiseList();
     this.getExamCenterList();
+    this.getCompetitionList();
   }
 
   initFormGroup() {
     this.formGroup = this.fb.group({
+      compititionId: ['', [Validators.required]],
       franchiseId: ['', [Validators.required]],
       instructorId: ['', [Validators.required]],
       examCenterId: ['', [Validators.required]],
@@ -98,6 +105,23 @@ export class HallticketComponent {
       }
     ];
   }
+
+  getCompetitionList() {
+    this.competitionService.getCompetitionList().subscribe({
+      next: (response) => {
+        if (response) {
+          this.competitionList = response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
+          // utils.isTableLoading.update(val => !val);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
 
   getFranchiseList() {
     utils.isTableLoading.set(true);
@@ -146,17 +170,28 @@ export class HallticketComponent {
             delete item['batchTimeSlotList'];
             return item;
           })
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       }
     })
   }
+
+  handleOnCompetitionChange(event: DropdownChangeEvent) {
+    this.colDefs = [];
+    this.tableDataSource = [];
+    if (this.selectedCompetiton !== '') {
+      this.isSearchDisabled = false;
+    } else {
+      this.isSearchDisabled = true;
+    }
+  }
+
   handleOnFranchiseChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
@@ -185,12 +220,12 @@ export class HallticketComponent {
             // });
             this.tableDataSource = this.hallTicketList;
             this.showGrid = this.tableDataSource.length > 1 ? true : false;
-          // utils.isTableLoading.update(val => !val);
+            // utils.isTableLoading.update(val => !val);
           }
         },
         error: (error: HttpErrorResponse) => {
           utils.setMessages(error.message, 'error');
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       })
     }
