@@ -16,8 +16,8 @@ export class HallticketService {
     this.hallticket = this.appConfig.get('hallticket');
   }
 
-  getStudentHallTicketList({ compititionId, franchiseId, instructorId, examCenterId, batchTimeSlotId }: { compititionId: string, franchiseId: string, instructorId: string, examCenterId: string, batchTimeSlotId: string }): Observable<any> {
-    const searchParams = new URLSearchParams({ compititionId, franchiseId, instructorId, examCenterId, batchTimeSlotId });
+  getStudentHallTicketList({ compititionId, franchiseId, instructorId }: { compititionId: string, franchiseId: string, instructorId: string }): Observable<any> {
+    const searchParams = new URLSearchParams({ compititionId, franchiseId, instructorId });
     return this.http.get(`${this.hallticket.getStudentHallTicketList}?${searchParams}`);
   }
 }

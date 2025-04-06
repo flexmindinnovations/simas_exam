@@ -77,8 +77,8 @@ export class HallticketComponent {
       compititionId: ['', [Validators.required]],
       franchiseId: ['', [Validators.required]],
       instructorId: ['', [Validators.required]],
-      examCenterId: ['', [Validators.required]],
-      batchTimeSlotId: ['', [Validators.required]]
+      // examCenterId: ['', [Validators.required]],
+      // batchTimeSlotId: ['', [Validators.required]]
     })
   }
 

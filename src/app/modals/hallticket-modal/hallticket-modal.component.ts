@@ -171,8 +171,16 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                       <th>Hall Ticket Number</th>
                       <td>${this.hallTicketData.hallTicketNumber}</td>
                     </tr>
+                     <tr>
+                      <th>Student Name</th>
+                      <td>${this.hallTicketData.studentName}</td>
+                    </tr>
+                     <tr>
+                      <th>Competition Name</th>
+                      <td>${this.hallTicketData.competitionName}</td>
+                    </tr>
                     <tr>
-                      <th>Center</th>
+                      <th>Center (Franchise Name)</th>
                       <td>${this.hallTicketData.center}</td>
                     </tr>
                     <tr>
@@ -184,13 +192,10 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                       <td>${this.hallTicketData.level}</td>
                     </tr>
                     <tr>
-                      <th>Instructor</th>
+                      <th>Instructor Name</th>
                       <td>${this.hallTicketData.instructorName}</td>
                     </tr>
-                    <tr>
-                      <th>Exam Center</th>
-                      <td>${this.hallTicketData.examCenter}</td>
-                    </tr>
+                  
                   </tbody>
                 </table>
               </div>
@@ -198,6 +203,10 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
             <div class="student-details">
               <table>
                 <tbody>
+                  <tr>
+                      <th>Exam Center</th>
+                      <td>${this.hallTicketData.examCenter}</td>
+                    </tr>
                   <tr>
                     <th>Batch Date & Time</th>
                     <td>${this.hallTicketData.batchDate.toLocaleString()}</td>
@@ -386,8 +395,16 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                         <th>Hall Ticket Number</th>
                         <td>${this.hallTicketData.hallTicketNumber}</td>
                       </tr>
+                         <tr>
+                      <th>Student Name</th>
+                      <td>${this.hallTicketData.studentName}</td>
+                    </tr>
+                     <tr>
+                      <th>Competition Name</th>
+                      <td>${this.hallTicketData.competitionName}</td>
+                    </tr>
                       <tr>
-                        <th>Center</th>
+                        <th>Center (Franchise Name)</th>
                         <td>${this.hallTicketData.center}</td>
                       </tr>
                       <tr>
@@ -399,12 +416,8 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                         <td>${this.hallTicketData.level}</td>
                       </tr>
                       <tr>
-                        <th>Instructor</th>
+                        <th>Instructor Name</th>
                         <td>${this.hallTicketData.instructorName}</td>
-                      </tr>
-                      <tr>
-                        <th>Exam Center</th>
-                        <td>${this.hallTicketData.examCenter}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -413,6 +426,10 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
               <div class="student-details">
                 <table>
                   <tbody>
+                   <tr>
+                        <th>Exam Center</th>
+                        <td>${this.hallTicketData.examCenter}</td>
+                      </tr>
                     <tr>
                       <th>Batch Date & Time</th>
                       <td>${this.hallTicketData.batchDate.toLocaleString()}</td>

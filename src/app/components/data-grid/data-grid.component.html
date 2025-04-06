@@ -209,16 +209,6 @@
               <!-- <p-button severity="danger" [loading]="rowData.isDeleteActionLoading"
                                     loadingIcon="pi pi-spin pi-spinner" (onClick)="handleDeleteOperation(rowData, rowIndex)" pTooltip="Delete"
                                     [text]="true" icon="pi pi-trash" /> -->
-              } @if(isGenerate){
-              <p-button
-                [loading]="rowData.isGenerateActionLoading"
-                loadingIcon="pi pi-spin pi-spinner"
-                (onClick)="handleGenerateOperation(rowData, rowIndex)"
-                pTooltip="Generate"
-                tooltipPosition="bottom"
-                [text]="true"
-                icon="pi pi-id-card"
-              />
               }
             </div>
             } @else {
@@ -371,6 +361,17 @@
                 icon="pi pi-pen-to-square"
                 (onClick)="handleEditOperation(rowData, rowIndex)"
               />
+              @if(isGenerate){
+              <p-button
+                [loading]="rowData.isGenerateActionLoading"
+                loadingIcon="pi pi-spin pi-spinner"
+                (onClick)="handleGenerateOperation(rowData, rowIndex)"
+                pTooltip="Generate"
+                tooltipPosition="bottom"
+                [text]="true"
+                icon="pi pi-id-card"
+              />
+              }
             </div>
             } @else {
             <p class="m-0 w-fit">{{ rowData[col.field] }}</p>

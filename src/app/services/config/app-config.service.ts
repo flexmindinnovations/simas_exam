@@ -277,7 +277,7 @@ export class AppConfigService {
       studentExamPaperDetailsReport: `${this.hostUrl}/Report/getExamPaperDetailsReport`
     },
     hallticket: {
-      getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocation`
+      getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocationFranchiseAndInstructorWise`
     },
     batchAllocation: {
       getStudentInfoHallTicketNoWise: `${this.hostUrl}/StudentBatchAllocation/getStudentInfoHallTicketNoWise`,
