@@ -29,6 +29,10 @@ export class StudentService {
     return this.http.get(this.studentPath.studentListByFranchiseId(franchiseId));
   }
 
+  getStudentListWithBatchAllocation(compititionId: any | number, franchiseId: any | number) {
+    return this.http.get(this.studentPath.studentListWithBatchAllocation(compititionId, franchiseId));
+  }
+
   public getStudentById(studentId: any): Observable<any> {
     return this.http.get(this.studentPath.studentById(studentId));
   }

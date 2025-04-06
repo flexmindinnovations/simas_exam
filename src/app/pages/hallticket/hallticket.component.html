@@ -1,68 +1,163 @@
 <div class="hallticket-container page-container">
-    <p-panel [toggleable]="true" [(collapsed)]="isPanelCollapsed" class="panel-component">
-        <ng-template pTemplate="header">
-            <div class="flex flex-col lg:flex-row xl:flex-row 2xl:flex-row items-center justify-start space-x-2">
-                <div class="header min-w-40 flex items-start justify-start gap-2">
-                    <i class="pi pi-cog"></i>
-                    <span>
-                        Hall Ticket Options
-                    </span>
-                </div>
-                @if (isPanelCollapsed) {
-                <br />
-                <div class="!ml-5 hidden lg:flex xl:flex 2xl:flex items-center justify-start space-x-2 w-full">
-                    <p-chip class="chip-component min-w-32" label="Franchise: {{selectedFranchise}}" />
-                    <p-chip class="chip-component min-w-24" label="Instructor: {{selectedInstructor}}" />
-                    <p-chip class="chip-component  min-w-24" label="Exam Center: {{selectedExamCenter}}" />
-                    <p-chip class="chip-component  min-w-24" label="Batch Time: {{selectedBatchTime}}" />
-                </div>
-                }
-            </div>
-        </ng-template>
-        <form [formGroup]="formGroup"
-            class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5">
-            <div class="flex flex-col items-start w-full max-w-48">
-                <label for="franchiseList">Franchise</label>
-                <p-dropdown appendTo="body" inputId="franchiseList" [options]="franchiseList"
-                    [loading]="isFranchiseListLoading" loadingIcon="pi pi-spin pi-spinner"
-                    ariaLabelledBy="franchiseName" placeholder="Select" (onChange)="handleOnFranchiseChange($event)"
-                    optionValue="franchiseId" formControlName="franchiseId" optionLabel="franchiseName" [filter]="true"
-                    filterBy="franchiseName" [showClear]="false" />
-            </div>
-            <div class="flex flex-col items-start w-full max-w-48">
-                <label for="instructorId">Instructor Name</label>
-                <p-dropdown appendTo="body" inputId="instructorList" [options]="instructorList"
-                    [loading]="isInstructorListLoading" loadingIcon="pi pi-spin pi-spinner"
-                    ariaLabelledBy="instructorName" placeholder="Select" formControlName="instructorId"
-                    (onChange)="handleOnInstructorNameChange($event)" optionValue="instructorId"
-                    optionLabel="instructorName" [filter]="true" filterBy="instructorName" [showClear]="false" />
-            </div>
-            <div class="flex flex-col items-start w-full max-w-48">
-                <label for="examCenterId">Exam center</label>
-                <p-dropdown appendTo="body" inputId="examCenterList" [options]="examCenterList"
-                    [loading]="isExamCenterLoading" loadingIcon="pi pi-spin pi-spinner" ariaLabelledBy="examCenterName"
-                    placeholder="Select" (onChange)="handleOnExamCenterChange($event)" optionValue="examCenterId"
-                    formControlName="examCenterId" optionLabel="examCenterName" [filter]="true"
-                    filterBy="examCanterName" [showClear]="false" />
-            </div>
-            <div class="flex flex-col items-start w-full max-w-48">
-                <label for="batchTimeSlotId">Batch Time</label>
-                <p-dropdown appendTo="body" inputId="batchTimeList" [options]="batchTimeList"
-                    [loading]="isBatchTimeLoading" loadingIcon="pi pi-spin pi-spinner"
-                    ariaLabelledBy="batchTimeSlotName" placeholder="Select" (onChange)="handleOnBatchTimeChange($event)"
-                    optionValue="batchTimeSlotId" formControlName="batchTimeSlotId" optionLabel="batchTimeSlotName"
-                    [filter]="true" filterBy="batchTimeSlotName" [showClear]="false" />
-            </div>
-            <p-button label="Search" (onClick)="handleSearchAction()" [disabled]="formGroup.invalid" icon="pi pi-search"
-                styleClass="py-2.5" severity="primary" [loading]="isSearchActionLoading"
-                loadingIcon="pi pi-spin pi-spinner"></p-button>
-        </form>
-    </p-panel>
-    @if(showGrid){
-    <div class="table-container">
-        <app-data-grid [isGenerate]="true" [isCheckbox]="true" [colDefs]="colDefs" [dataSource]="tableDataSource"
-            (onAddAction)="handleAddEditAction()" (onGenerateAction)="handleGenerateOperation($event)"></app-data-grid>
-    </div>
-    }
-
+  <p-panel
+    [toggleable]="true"
+    [(collapsed)]="isPanelCollapsed"
+    class="panel-component"
+  >
+    <ng-template pTemplate="header">
+      <div
+        class="flex flex-col lg:flex-row xl:flex-row 2xl:flex-row items-center justify-start space-x-2"
+      >
+        <div class="header min-w-40 flex items-start justify-start gap-2">
+          <i class="pi pi-cog"></i>
+          <span> Hall Ticket Options </span>
+        </div>
+        @if (isPanelCollapsed) {
+        <br />
+        <div
+          class="!ml-5 hidden lg:flex xl:flex 2xl:flex items-center justify-start space-x-2 w-full"
+        >
+          <p-chip
+            class="chip-component min-w-32"
+            label="Franchise: {{ selectedFranchise }}"
+          />
+          <p-chip
+            class="chip-component min-w-24"
+            label="Instructor: {{ selectedInstructor }}"
+          />
+          <p-chip
+            class="chip-component min-w-24"
+            label="Exam Center: {{ selectedExamCenter }}"
+          />
+          <p-chip
+            class="chip-component min-w-24"
+            label="Batch Time: {{ selectedBatchTime }}"
+          />
+        </div>
+        }
+      </div>
+    </ng-template>
+    <form
+      [formGroup]="formGroup"
+      class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5"
+    >
+      <div class="flex flex-col items-start w-full max-w-48">
+        <label for="competitionList">Compitition</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="competitionList"
+          [options]="competitionList"
+          [loading]="isCompetitionListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          ariaLabelledBy="compititionName"
+          placeholder="Select"
+          (onChange)="handleOnCompetitionChange($event)"
+          optionValue="compititionId"
+          formControlName="compititionId"
+          optionLabel="compititionName"
+          [filter]="true"
+          filterBy="compititionName"
+          [showClear]="false"
+        />
+      </div>
+      <div class="flex flex-col items-start w-full max-w-48">
+        <label for="franchiseList">Franchise</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="franchiseList"
+          [options]="franchiseList"
+          [loading]="isFranchiseListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          ariaLabelledBy="franchiseName"
+          placeholder="Select"
+          (onChange)="handleOnFranchiseChange($event)"
+          optionValue="franchiseId"
+          formControlName="franchiseId"
+          optionLabel="franchiseName"
+          [filter]="true"
+          filterBy="franchiseName"
+          [showClear]="false"
+        />
+      </div>
+      <div class="flex flex-col items-start w-full max-w-48">
+        <label for="instructorId">Instructor Name</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="instructorList"
+          [options]="instructorList"
+          [loading]="isInstructorListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          ariaLabelledBy="instructorName"
+          placeholder="Select"
+          formControlName="instructorId"
+          (onChange)="handleOnInstructorNameChange($event)"
+          optionValue="instructorId"
+          optionLabel="instructorName"
+          [filter]="true"
+          filterBy="instructorName"
+          [showClear]="false"
+        />
+      </div>
+      <!-- <div class="flex flex-col items-start w-full max-w-48">
+        <label for="examCenterId">Exam center</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="examCenterList"
+          [options]="examCenterList"
+          [loading]="isExamCenterLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          ariaLabelledBy="examCenterName"
+          placeholder="Select"
+          (onChange)="handleOnExamCenterChange($event)"
+          optionValue="examCenterId"
+          formControlName="examCenterId"
+          optionLabel="examCenterName"
+          [filter]="true"
+          filterBy="examCanterName"
+          [showClear]="false"
+        />
+      </div> -->
+      <!-- <div class="flex flex-col items-start w-full max-w-48">
+        <label for="batchTimeSlotId">Batch Time</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="batchTimeList"
+          [options]="batchTimeList"
+          [loading]="isBatchTimeLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          ariaLabelledBy="batchTimeSlotName"
+          placeholder="Select"
+          (onChange)="handleOnBatchTimeChange($event)"
+          optionValue="batchTimeSlotId"
+          formControlName="batchTimeSlotId"
+          optionLabel="batchTimeSlotName"
+          [filter]="true"
+          filterBy="batchTimeSlotName"
+          [showClear]="false"
+        />
+      </div> -->
+      <p-button
+        label="Search"
+        (onClick)="handleSearchAction()"
+        [disabled]="formGroup.invalid"
+        icon="pi pi-search"
+        styleClass="py-2.5"
+        severity="primary"
+        [loading]="isSearchActionLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+      ></p-button>
+    </form>
+  </p-panel>
+  @if(showGrid){
+  <div class="table-container">
+    <app-data-grid
+      [isGenerate]="true"
+      [isCheckbox]="true"
+      [colDefs]="colDefs"
+      [dataSource]="tableDataSource"
+      (onAddAction)="handleAddEditAction()"
+      (onGenerateAction)="handleGenerateOperation($event)"
+    ></app-data-grid>
+  </div>
+  }
 </div>

@@ -6,6 +6,7 @@ import jsPDF from 'jspdf';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import JSBarcode from 'jsbarcode';
+import { utils } from '../../utils';
 
 @Component({
   selector: 'app-hallticket-modal',
@@ -72,154 +73,97 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
 
     // Create the content for the iframe
     const printContent = `
-      <html>
-        <head>
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f9f9f9;
-            }
-            #printSection {
-              width: 900px;
-              margin: 20px auto;
-              padding: 10px;
-              background-color: #fff;
-              border: 2px solid #ddd;
-              border-radius: 8px;
-              box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-            }
-            .hall-ticket-header {
-              text-align: center;
-              margin-bottom: 10px;
-            }
-            .hall-ticket-header h3 {
-              font-size: 1.8em;
-              color: #333;
-              font-weight: bold;
-            }
-            .image-barcode-details {
-              display: flex;
-              align-items: flex-start;
-              margin-bottom: 0;
-              border: 1px solid #ddd;
-              padding: 10px;
-              border-bottom:none;
-              // border-radius: 4px;
-            }
-            .image-barcode {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              margin-right: 30px;
-              width: 250px;
-            }
-            .image-barcode img.student-photo {
-              width: 140px;
-              height: 140px;
-              object-fit: cover;
-              border: 1px solid #ddd;
-              // border-radius: 4px;
-              margin-bottom: 5px;
-            }
-            .image-barcode img.barcode {
-              width: 240px;
-              height: 70px;
-              object-fit: contain;
-              margin: 5px 0;
-            }
-            .student-details {
-              flex: 1;
-              margin-bottom: 0;
-            }
-            .student-details table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 0;
-            }
-            .student-details th, .student-details td {
-              padding: 8px 10px;
-              border: 1px solid #ddd;
-              text-align: left;
-              width: 50%;
-            }
-            .student-details th {
-              color: #0d0d0d;
-              font-weight: bold;
-            }
-            .footer {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 0.9em;
-              color: #555;
-            }
-          </style>
-        </head>
-        <body>
-          <div id="printSection">
-            <div class="hall-ticket-header">
-              <h3>Admit Card</h3>
-            </div>
-            <div class="image-barcode-details">
-              <div class="image-barcode">
-                <img src="${this.hallTicketData.studentPhoto}" class="student-photo" alt="Student Photo" />
-                <img src="${barcodeDataURL}" class="barcode" alt="Barcode" />
-              </div>
-              <div class="student-details">
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>Hall Ticket Number</th>
-                      <td>${this.hallTicketData.hallTicketNumber}</td>
-                    </tr>
-                    <tr>
-                      <th>Center</th>
-                      <td>${this.hallTicketData.center}</td>
-                    </tr>
-                    <tr>
-                      <th>Group</th>
-                      <td>${this.hallTicketData.group}</td>
-                    </tr>
-                    <tr>
-                      <th>Level</th>
-                      <td>${this.hallTicketData.level}</td>
-                    </tr>
-                    <tr>
-                      <th>Instructor</th>
-                      <td>${this.hallTicketData.instructorName}</td>
-                    </tr>
-                    <tr>
-                      <th>Exam Center</th>
-                      <td>${this.hallTicketData.examCenter}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="student-details">
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Batch Date & Time</th>
-                    <td>${this.hallTicketData.batchDate.toLocaleString()}</td>
-                  </tr>
-                  <tr>
-                    <th>Website</th>
-                    <td>${this.hallTicketData.website}</td>
-                  </tr>
-                  <tr>
-                    <th>Email</th>
-                    <td>${this.hallTicketData.email}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="footer">
-              <p>Thank you for your participation!</p>
-            </div>
-          </div>
-        </body>
-      </html>
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+        }
+        #printSection {
+          width: 900px;
+          margin: 20px auto;
+          padding: 20px;
+          border: 1px solid #000;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        td, th {
+          border: 1px solid #000;
+          padding: 8px;
+          vertical-align: middle;
+          text-align: left;
+        }
+        .center {
+          text-align: center;
+        }
+        .photo-cell {
+          text-align: center;
+          font-weight: bold;
+        }
+        .gray-header {
+          background-color: #ccc;
+          font-weight: bold;
+        }
+        .student-photo {
+          width: 140px;
+          height: 140px;
+          object-fit: cover;
+          border: 1px solid #000;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="printSection">
+        <table>
+          <tr>
+            <td>Competition Name</td>
+            <td colspan="3" class="center"><strong>SIMAS ACADEMY</strong></td>
+          </tr>
+          <tr>
+            <td>Hall Ticket Number</td>
+            <td>${this.hallTicketData.hallTicketNumber}</td>
+            <td>Group</td>
+            <td>${this.hallTicketData.group}</td>
+          </tr>
+          <tr>
+            <td>Level</td>
+            <td colspan="3">${this.hallTicketData.level}</td>
+          </tr>
+          <tr>
+            <td class="photo-cell" rowspan="6">
+              Student Photo<br/><br>
+              <img src="${this.hallTicketData.studentPhoto}" class="student-photo" alt="Photo" />
+            </td>
+            <td class="gray-header">Student Name</td>
+            <td class="gray-header" colspan="2">${this.hallTicketData.studentName}</td>
+          </tr>
+          <tr>
+            <td>Center (franchise Name)</td>
+            <td colspan="2">${this.hallTicketData.center}</td>
+          </tr>
+          <tr>
+            <td>Instructor Name</td>
+            <td colspan="2">${this.hallTicketData.instructorName}</td>
+          </tr>
+          <tr>
+            <td>Exam Center</td>
+            <td colspan="2">${this.hallTicketData.examCenter}</td>
+          </tr>
+          <tr>
+            <td>Batch Date & Time</td>
+            <td colspan="2">${this.hallTicketData.batchDate.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td colspan="3" class="center"><strong>Website & Email</strong><br>${this.hallTicketData.website} | ${this.hallTicketData.email}</td>
+          </tr>
+        </table>
+      </div>
+    </body>
+    </html>
     `;
+
 
     // Create a new iframe for download
     const iframe = document.createElement('iframe');
@@ -386,8 +330,16 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                         <th>Hall Ticket Number</th>
                         <td>${this.hallTicketData.hallTicketNumber}</td>
                       </tr>
+                         <tr>
+                      <th>Student Name</th>
+                      <td>${this.hallTicketData.studentName}</td>
+                    </tr>
+                     <tr>
+                      <th>Competition Name</th>
+                      <td>${this.hallTicketData.competitionName}</td>
+                    </tr>
                       <tr>
-                        <th>Center</th>
+                        <th>Center (Franchise Name)</th>
                         <td>${this.hallTicketData.center}</td>
                       </tr>
                       <tr>
@@ -399,12 +351,8 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
                         <td>${this.hallTicketData.level}</td>
                       </tr>
                       <tr>
-                        <th>Instructor</th>
+                        <th>Instructor Name</th>
                         <td>${this.hallTicketData.instructorName}</td>
-                      </tr>
-                      <tr>
-                        <th>Exam Center</th>
-                        <td>${this.hallTicketData.examCenter}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -413,6 +361,10 @@ export class HallticketModalComponent implements OnInit, AfterViewInit {
               <div class="student-details">
                 <table>
                   <tbody>
+                   <tr>
+                        <th>Exam Center</th>
+                        <td>${this.hallTicketData.examCenter}</td>
+                      </tr>
                     <tr>
                       <th>Batch Date & Time</th>
                       <td>${this.hallTicketData.batchDate.toLocaleString()}</td>

@@ -31,6 +31,7 @@ export type ApiCallConfig = {
     upload: string;
     uploadandUpdateStudent: string;
     deleteStudent: string;
+    studentListWithBatchAllocation: any;
   };
   franchise: {
     franchiseList: string;
@@ -176,6 +177,7 @@ export class AppConfigService {
       upload: `${this.hostUrl}/Student/Upload`,
       uploadandUpdateStudent: `${this.hostUrl}/Student/UploadandUpdateStudent`,
       deleteStudent: `${this.hostUrl} /Student/Delete/{{id}}`,
+      studentListWithBatchAllocation: (competitionId: any | number, franchiseId: any | number) => `${this.hostUrl}/Student/GetStudentListWithBatchAllocation?compititionId=${competitionId}&franchiseId=${franchiseId}`
     },
     franchise: {
       franchiseList: `${this.hostUrl}/Franchise/GetFranchiseList/{{id}}`,
@@ -275,7 +277,7 @@ export class AppConfigService {
       studentExamPaperDetailsReport: `${this.hostUrl}/Report/getExamPaperDetailsReport`
     },
     hallticket: {
-      getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocation`
+      getStudentHallTicketList: `${this.hostUrl}/StudentBatchAllocation/getStudentListFromBatchAllocationFranchiseAndInstructorWise`
     },
     batchAllocation: {
       getStudentInfoHallTicketNoWise: `${this.hostUrl}/StudentBatchAllocation/getStudentInfoHallTicketNoWise`,
