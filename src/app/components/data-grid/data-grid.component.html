@@ -363,8 +363,6 @@
               />
               @if(isGenerate){
               <p-button
-                [loading]="rowData.isGenerateActionLoading"
-                loadingIcon="pi pi-spin pi-spinner"
                 (onClick)="handleGenerateOperation(rowData, rowIndex)"
                 pTooltip="Generate"
                 tooltipPosition="bottom"

@@ -18,6 +18,8 @@ import { HallticketService } from '../../services/hallticket/hallticket.service'
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
 import { CompetitionService } from '../../services/competition/competition.service';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-hallticket',
@@ -53,6 +55,21 @@ export class HallticketComponent {
   isCompetitionListLoading: boolean = false;
   selectedCompetiton: string = '';
 
+  hallTicketData = {
+    competitionName: 'SIMAS ACADEMY',
+    hallTicketNumber: 'HT123456',
+    group: 'A1',
+    level: 'Intermediate',
+    studentPhoto: '/images/logo1.png',
+    studentName: 'John Doe',
+    center: 'Main Center',
+    instructorName: 'Jane Smith',
+    examCenter: 'Exam Hall 1',
+    batchDate: new Date(),
+    website: 'www.simasacademy.com',
+    email: 'info@simasacademy.com'
+  };
+
   constructor(
     private franchiseService: FranchiseService,
     private instructorService: InstructorService,
@@ -70,6 +87,7 @@ export class HallticketComponent {
     this.getFranchiseList();
     this.getExamCenterList();
     this.getCompetitionList();
+    utils.addButtonTitle.set('Download All');
   }
 
   initFormGroup() {
@@ -203,7 +221,7 @@ export class HallticketComponent {
     this.getInstructorList(event?.value);
   }
   handleAddEditAction() {
-
+    console.log("download All")
   }
   handleSearchAction() {
     this.setTableColumns();
@@ -261,17 +279,144 @@ export class HallticketComponent {
   }
 
   handleGenerateOperation(data: any) {
-    const { rowData, rowIndex } = data;
-    this.dialogRef = this.dialogService.open(HallticketModalComponent, {
-      data: rowData,
-      closable: false,
-      modal: true,
-      width: utils.isMobile() ? '95%' : '28%',
-      styleClass: 'hallticket-dialog',
-      header: 'Admit Card',
-    });
-    this.dialogRef.onClose.subscribe((res: any) => {
-      utils.onModalClose.set(rowIndex)
-    })
+    // const { rowData, rowIndex } = data;
+    // this.dialogRef = this.dialogService.open(HallticketModalComponent, {
+    //   data: rowData,
+    //   closable: false,
+    //   modal: true,
+    //   width: utils.isMobile() ? '95%' : '28%',
+    //   styleClass: 'hallticket-dialog',
+    //   header: 'Admit Card',
+    // });
+    // this.dialogRef.onClose.subscribe((res: any) => {
+    //   utils.onModalClose.set(rowIndex)
+    // })
+    const printContent = `
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+        }
+        #printSection {
+          width: 900px;
+          margin: 20px auto;
+          padding: 20px;
+          border: 1px solid #000;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        td, th {
+          border: 1px solid #000;
+          padding: 8px;
+          vertical-align: middle;
+          text-align: left;
+        }
+        .center {
+          text-align: center;
+        }
+        .photo-cell {
+          text-align: center;
+          font-weight: bold;
+        }
+        .gray-header {
+          background-color: #ccc;
+          font-weight: bold;
+        }
+        .student-photo {
+          width: 140px;
+          height: 140px;
+          object-fit: cover;
+          border: 1px solid #000;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="printSection">
+        <table>
+          <tr>
+            <td>Competition Name</td>
+            <td colspan="3" class="center"><strong>SIMAS ACADEMY</strong></td>
+          </tr>
+          <tr>
+            <td>Hall Ticket Number</td>
+            <td>${this.hallTicketData.hallTicketNumber}</td>
+            <td>Group</td>
+            <td>${this.hallTicketData.group}</td>
+          </tr>
+          <tr>
+            <td>Level</td>
+            <td colspan="3">${this.hallTicketData.level}</td>
+          </tr>
+          <tr>
+            <td class="photo-cell" rowspan="6">
+              Student Photo<br/><br>
+              <img src="${this.hallTicketData.studentPhoto}" class="student-photo" alt="Photo" />
+            </td>
+            <td class="gray-header">Student Name</td>
+            <td class="gray-header" colspan="2">${this.hallTicketData.studentName}</td>
+          </tr>
+          <tr>
+            <td>Center (franchise Name)</td>
+            <td colspan="2">${this.hallTicketData.center}</td>
+          </tr>
+          <tr>
+            <td>Instructor Name</td>
+            <td colspan="2">${this.hallTicketData.instructorName}</td>
+          </tr>
+          <tr>
+            <td>Exam Center</td>
+            <td colspan="2">${this.hallTicketData.examCenter}</td>
+          </tr>
+          <tr>
+            <td>Batch Date & Time</td>
+            <td colspan="2">${this.hallTicketData.batchDate.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td colspan="3" class="center"><strong>Website & Email</strong><br>${this.hallTicketData.website} | ${this.hallTicketData.email}</td>
+          </tr>
+        </table>
+      </div>
+    </body>
+    </html>
+    `;
+
+
+    // Create a new iframe for download
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentWindow?.document;
+
+    if (iframeDoc) {
+      iframeDoc.open();
+      iframeDoc.write(printContent);
+      iframeDoc.close();
+
+      // Wait for the iframe content to be rendered
+      setTimeout(() => {
+        html2canvas(iframeDoc.getElementById('printSection')!).then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF();
+          const imgWidth = pdf.internal.pageSize.getWidth();
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // Add image to PDF
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save('hall_ticket.pdf'); // Download the PDF
+
+          // Clean up: remove the iframe
+          document.body.removeChild(iframe);
+        });
+      }, 100); // Delay to ensure the content is fully rendered
+    }
   }
+
+
 }
