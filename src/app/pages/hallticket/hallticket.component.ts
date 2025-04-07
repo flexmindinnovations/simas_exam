@@ -20,6 +20,7 @@ import { HallticketModalComponent } from '../../modals/hallticket-modal/halltick
 import { CompetitionService } from '../../services/competition/competition.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-hallticket',
@@ -48,27 +49,12 @@ export class HallticketComponent {
   selectedBatchTime: string = '';
   isPanelCollapsed: boolean = false;
   formGroup!: FormGroup;
-  hallTicketList: any[] = [];
   showGrid: boolean = false;
   dialogRef: DynamicDialogRef | undefined;
   competitionList: any[] = [];
   isCompetitionListLoading: boolean = false;
   selectedCompetiton: string = '';
-
-  hallTicketData = {
-    competitionName: 'SIMAS ACADEMY',
-    hallTicketNumber: 'HT123456',
-    group: 'A1',
-    level: 'Intermediate',
-    studentPhoto: '/images/logo1.png',
-    studentName: 'John Doe',
-    center: 'Main Center',
-    instructorName: 'Jane Smith',
-    examCenter: 'Exam Hall 1',
-    batchDate: new Date(),
-    website: 'www.simasacademy.com',
-    email: 'info@simasacademy.com'
-  };
+  hallTicketData: any[] = [];
 
   constructor(
     private franchiseService: FranchiseService,
@@ -221,33 +207,44 @@ export class HallticketComponent {
     this.getInstructorList(event?.value);
   }
   handleAddEditAction() {
-    console.log("download All")
+    // console.log("download All")
   }
+
   handleSearchAction() {
     this.setTableColumns();
     utils.isTableLoading.set(true);
+
     if (this.formGroup.valid) {
       this.hallticketService.getStudentHallTicketList(this.formGroup.value).subscribe({
-        next: (respones) => {
-          if (respones) {
-            // console.log(respones);
-            this.hallTicketList = respones;
-            // this.hallTicketList = respones.map((item: any) => {
-            //   item['fullName'] = item['studentFirstName'] + " " + item['studentLastName'];
-            //   return item;
-            // });
-            this.tableDataSource = this.hallTicketList;
-            this.showGrid = this.tableDataSource.length > 1 ? true : false;
-            // utils.isTableLoading.update(val => !val);
+        next: (response) => {
+          if (response) {
+            this.hallTicketData = response.map((item: any) => ({
+              hallTicketNumber: item.hallTicketNumber,
+              studentName: item.studentFullName,
+              studentPhoto: item.studentPhoto,
+              level: item.levelName,
+              instructorName: item.instructorName,
+              competitionName: item.compititionName,
+              examCenter: item.examCenterName,
+              batchDate: new Date(item.batchAllocatedDate),
+              group: item?.group ? item.group : '—', // If group info exists, replace this
+              center: item?.franchiseName ? item?.franchiseName : '—', // If center (franchise name) exists, replace this
+              batchTime: item.batchTimeSlotName,
+              website: 'www.simasacademy.com',
+              email: 'info@simasacademy.com'
+            }));
+            this.tableDataSource = response;
+            this.showGrid = this.tableDataSource.length > 1;
           }
         },
         error: (error: HttpErrorResponse) => {
           utils.setMessages(error.message, 'error');
-          // utils.isTableLoading.update(val => !val);
         }
-      })
+      });
     }
   }
+
+
   handleOnInstructorNameChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
@@ -278,7 +275,26 @@ export class HallticketComponent {
     }
   }
 
-  handleGenerateOperation(data: any) {
+  getBase64ImageFromURL(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataURL);
+      };
+      img.onerror = () => reject('Could not load image');
+    });
+  }
+
+  async handleGenerateOperation(data: any) {
+
     // const { rowData, rowIndex } = data;
     // this.dialogRef = this.dialogService.open(HallticketModalComponent, {
     //   data: rowData,
@@ -291,6 +307,16 @@ export class HallticketComponent {
     // this.dialogRef.onClose.subscribe((res: any) => {
     //   utils.onModalClose.set(rowIndex)
     // })
+    const { rowIndex } = data;
+    const selectedStudent = this.hallTicketData[rowIndex];
+    const imagePath = selectedStudent.studentPhoto
+      ? `https://comp.simasacademy.com/${selectedStudent.studentPhoto}`
+      : '/images/logo1.png'; // fallback
+
+    const imageBase64 = await this.getBase64ImageFromURL('/images/logo1.png');
+
+    if (!selectedStudent) return;
+
     const printContent = `
     <html>
     <head>
@@ -338,51 +364,50 @@ export class HallticketComponent {
         <table>
           <tr>
             <td>Competition Name</td>
-            <td colspan="3" class="center"><strong>SIMAS ACADEMY</strong></td>
+            <td colspan="3" class="center"><strong>${selectedStudent.competitionName}</strong></td>
           </tr>
           <tr>
             <td>Hall Ticket Number</td>
-            <td>${this.hallTicketData.hallTicketNumber}</td>
+            <td>${selectedStudent.hallTicketNumber}</td>
             <td>Group</td>
-            <td>${this.hallTicketData.group}</td>
+            <td>${selectedStudent.group}</td>
           </tr>
           <tr>
             <td>Level</td>
-            <td colspan="3">${this.hallTicketData.level}</td>
+            <td colspan="3">${selectedStudent.level}</td>
           </tr>
           <tr>
             <td class="photo-cell" rowspan="6">
               Student Photo<br/><br>
-              <img src="${this.hallTicketData.studentPhoto}" class="student-photo" alt="Photo" />
+              <img src="${imageBase64}" crossorigin="anonymous" class="student-photo" alt="Photo" />
             </td>
             <td class="gray-header">Student Name</td>
-            <td class="gray-header" colspan="2">${this.hallTicketData.studentName}</td>
+            <td class="gray-header" colspan="2">${selectedStudent.studentName}</td>
           </tr>
           <tr>
             <td>Center (franchise Name)</td>
-            <td colspan="2">${this.hallTicketData.center}</td>
+            <td colspan="2">${selectedStudent.center}</td>
           </tr>
           <tr>
             <td>Instructor Name</td>
-            <td colspan="2">${this.hallTicketData.instructorName}</td>
+            <td colspan="2">${selectedStudent.instructorName}</td>
           </tr>
           <tr>
             <td>Exam Center</td>
-            <td colspan="2">${this.hallTicketData.examCenter}</td>
+            <td colspan="2">${selectedStudent.examCenter}</td>
           </tr>
           <tr>
             <td>Batch Date & Time</td>
-            <td colspan="2">${this.hallTicketData.batchDate.toLocaleString()}</td>
+            <td colspan="2">${new Date(selectedStudent.batchDate).toLocaleString()}</td>
           </tr>
           <tr>
-            <td colspan="3" class="center"><strong>Website & Email</strong><br>${this.hallTicketData.website} | ${this.hallTicketData.email}</td>
+            <td colspan="3" class="center"><strong>Website & Email</strong><br>${selectedStudent.website} | ${selectedStudent.email}</td>
           </tr>
         </table>
       </div>
     </body>
     </html>
     `;
-
 
     // Create a new iframe for download
     const iframe = document.createElement('iframe');
@@ -400,23 +425,175 @@ export class HallticketComponent {
       iframeDoc.close();
 
       // Wait for the iframe content to be rendered
+      // Inside iframeDoc check, after iframeDoc.write and .close()
       setTimeout(() => {
-        html2canvas(iframeDoc.getElementById('printSection')!).then((canvas) => {
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF();
-          const imgWidth = pdf.internal.pageSize.getWidth();
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const img = iframeDoc.getElementsByTagName('img')[0];
+        if (img) {
+          img.onload = () => {
+            html2canvas(iframeDoc.getElementById('printSection')!).then((canvas) => {
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF();
+              const imgWidth = pdf.internal.pageSize.getWidth();
+              const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-          // Add image to PDF
-          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-          pdf.save('hall_ticket.pdf'); // Download the PDF
+              pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+              pdf.save('hall_ticket.pdf');
+              document.body.removeChild(iframe);
+            });
+          };
 
-          // Clean up: remove the iframe
-          document.body.removeChild(iframe);
-        });
-      }, 100); // Delay to ensure the content is fully rendered
+          // Force re-render for some browsers
+          img.src = img.src;
+        } else {
+          // fallback if image not found (still generate PDF without image)
+          html2canvas(iframeDoc.getElementById('printSection')!).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF();
+            const imgWidth = pdf.internal.pageSize.getWidth();
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.save('hall_ticket.pdf');
+            document.body.removeChild(iframe);
+          });
+        }
+      }, 500); // Slightly longer delay just in case
+      // Delay to ensure the content is fully rendered
     }
+  }
+
+  async handleGenerateAllHallTickets() {
+    const pdf = new jsPDF();
+
+    for (let i = 0; i < this.hallTicketData.length; i++) {
+      const selectedStudent = this.hallTicketData[i];
+      if (!selectedStudent) continue;
+
+      const imagePath = selectedStudent.studentPhoto
+        ? `https://comp.simasacademy.com/${selectedStudent.studentPhoto}`
+        : '/images/logo1.png';
+
+      // Use fallback image to avoid CORS issue
+      const imageBase64 = await this.getBase64ImageFromURL('/images/logo1.png');
+
+      const printContent = `
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            #printSection {
+              width: 900px;
+              margin: 20px auto;
+              padding: 20px;
+              border: 1px solid #000;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            td, th {
+              border: 1px solid #000;
+              padding: 8px;
+              vertical-align: middle;
+              text-align: left;
+            }
+            .center { text-align: center; }
+            .photo-cell { text-align: center; font-weight: bold; }
+            .gray-header { background-color: #ccc; font-weight: bold; }
+            .student-photo {
+              width: 140px;
+              height: 140px;
+              object-fit: cover;
+              border: 1px solid #000;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="printSection">
+            <table>
+              <tr>
+                <td>Competition Name</td>
+                <td colspan="3" class="center"><strong>${selectedStudent.competitionName}</strong></td>
+              </tr>
+              <tr>
+                <td>Hall Ticket Number</td>
+                <td>${selectedStudent.hallTicketNumber}</td>
+                <td>Group</td>
+                <td>${selectedStudent.group}</td>
+              </tr>
+              <tr>
+                <td>Level</td>
+                <td colspan="3">${selectedStudent.level}</td>
+              </tr>
+              <tr>
+                <td class="photo-cell" rowspan="6">
+                  Student Photo<br/><br>
+                  <img src="${imageBase64}" class="student-photo" />
+                </td>
+                <td class="gray-header">Student Name</td>
+                <td class="gray-header" colspan="2">${selectedStudent.studentName}</td>
+              </tr>
+              <tr>
+                <td>Center (franchise Name)</td>
+                <td colspan="2">${selectedStudent.center}</td>
+              </tr>
+              <tr>
+                <td>Instructor Name</td>
+                <td colspan="2">${selectedStudent.instructorName}</td>
+              </tr>
+              <tr>
+                <td>Exam Center</td>
+                <td colspan="2">${selectedStudent.examCenter}</td>
+              </tr>
+              <tr>
+                <td>Batch Date & Time</td>
+                <td colspan="2">${new Date(selectedStudent.batchDate).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="center"><strong>Website & Email</strong><br>${selectedStudent.website} | ${selectedStudent.email}</td>
+              </tr>
+            </table>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Create a temporary iframe
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'absolute';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = 'none';
+      document.body.appendChild(iframe);
+
+      const iframeDoc = iframe.contentWindow?.document;
+      if (!iframeDoc) continue;
+
+      iframeDoc.open();
+      iframeDoc.write(printContent);
+      iframeDoc.close();
+
+      // Wait for content to render
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const section = iframeDoc.getElementById('printSection');
+      if (!section) continue;
+
+      const canvas = await html2canvas(section);
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = pdf.internal.pageSize.getWidth();
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+      // Clean up
+      document.body.removeChild(iframe);
+    }
+
+    pdf.save('all_hall_tickets.pdf');
   }
 
 
 }
+

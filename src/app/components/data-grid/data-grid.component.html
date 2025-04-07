@@ -329,10 +329,17 @@
         <tr class="w-full h-10">
           @if(isCheckbox){
           <td>
+            @if(currentModule?.moduleName === "BatchAllocation"){
+            <p-tableCheckbox
+              *ngIf="!rowData.batchTimeSlotName"
+              class="flex justify-center items-center"
+              [value]="rowData"
+            />}@else{
             <p-tableCheckbox
               class="flex justify-center items-center"
               [value]="rowData"
             />
+            }
           </td>
           }
           <td
