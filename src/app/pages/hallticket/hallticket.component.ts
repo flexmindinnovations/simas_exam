@@ -55,6 +55,7 @@ export class HallticketComponent {
   isCompetitionListLoading: boolean = false;
   selectedCompetiton: string = '';
   hallTicketData: any[] = [];
+  selectedRows: any[] = [];
 
   constructor(
     private franchiseService: FranchiseService,
@@ -73,7 +74,7 @@ export class HallticketComponent {
     this.getFranchiseList();
     this.getExamCenterList();
     this.getCompetitionList();
-    utils.addButtonTitle.set('Download All');
+    utils.addButtonTitle.set('Download');
   }
 
   initFormGroup() {
@@ -219,6 +220,7 @@ export class HallticketComponent {
         next: (response) => {
           if (response) {
             this.hallTicketData = response.map((item: any) => ({
+              studentId: item.studentId,
               hallTicketNumber: item.hallTicketNumber,
               studentName: item.studentFullName,
               studentPhoto: item.studentPhoto,
@@ -294,7 +296,6 @@ export class HallticketComponent {
   }
 
   async handleGenerateOperation(data: any) {
-
     // const { rowData, rowIndex } = data;
     // this.dialogRef = this.dialogService.open(HallticketModalComponent, {
     //   data: rowData,
@@ -313,7 +314,7 @@ export class HallticketComponent {
       ? `https://comp.simasacademy.com/${selectedStudent.studentPhoto}`
       : '/images/logo1.png'; // fallback
 
-    const imageBase64 = await this.getBase64ImageFromURL('/images/logo1.png');
+    const imageBase64 = await this.getBase64ImageFromURL(imagePath);
 
     if (!selectedStudent) return;
 
@@ -462,136 +463,149 @@ export class HallticketComponent {
     }
   }
 
-  async handleGenerateAllHallTickets() {
+  onSelectedRowsChange({ selectedRows, isInline }: { selectedRows: any[], isInline: boolean }) {
+    this.selectedRows = selectedRows;
+  }
+
+  async handleGenerateHallTickets() {
     const pdf = new jsPDF();
 
-    for (let i = 0; i < this.hallTicketData.length; i++) {
-      const selectedStudent = this.hallTicketData[i];
-      if (!selectedStudent) continue;
+    const filteredData = this.hallTicketData.filter(h =>
+      this.selectedRows.some(s => s.hallTicketNumber === h.hallTicketNumber)
+    );
 
-      const imagePath = selectedStudent.studentPhoto
-        ? `https://comp.simasacademy.com/${selectedStudent.studentPhoto}`
-        : '/images/logo1.png';
+    if (filteredData.length > 1) {
+      for (let i = 0; i < filteredData.length; i++) {
+        const selectedStudent = filteredData[i];
+        if (!selectedStudent) continue;
 
-      // Use fallback image to avoid CORS issue
-      const imageBase64 = await this.getBase64ImageFromURL('/images/logo1.png');
+        const imagePath = selectedStudent.studentPhoto
+          ? `https://comp.simasacademy.com/${selectedStudent.studentPhoto}`
+          : '/images/logo1.png';
 
-      const printContent = `
-        <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; }
-            #printSection {
-              width: 900px;
-              margin: 20px auto;
-              padding: 20px;
-              border: 1px solid #000;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            td, th {
-              border: 1px solid #000;
-              padding: 8px;
-              vertical-align: middle;
-              text-align: left;
-            }
-            .center { text-align: center; }
-            .photo-cell { text-align: center; font-weight: bold; }
-            .gray-header { background-color: #ccc; font-weight: bold; }
-            .student-photo {
-              width: 140px;
-              height: 140px;
-              object-fit: cover;
-              border: 1px solid #000;
-            }
-          </style>
-        </head>
-        <body>
-          <div id="printSection">
-            <table>
-              <tr>
-                <td>Competition Name</td>
-                <td colspan="3" class="center"><strong>${selectedStudent.competitionName}</strong></td>
-              </tr>
-              <tr>
-                <td>Hall Ticket Number</td>
-                <td>${selectedStudent.hallTicketNumber}</td>
-                <td>Group</td>
-                <td>${selectedStudent.group}</td>
-              </tr>
-              <tr>
-                <td>Level</td>
-                <td colspan="3">${selectedStudent.level}</td>
-              </tr>
-              <tr>
-                <td class="photo-cell" rowspan="6">
-                  Student Photo<br/><br>
-                  <img src="${imageBase64}" class="student-photo" />
-                </td>
-                <td class="gray-header">Student Name</td>
-                <td class="gray-header" colspan="2">${selectedStudent.studentName}</td>
-              </tr>
-              <tr>
-                <td>Center (franchise Name)</td>
-                <td colspan="2">${selectedStudent.center}</td>
-              </tr>
-              <tr>
-                <td>Instructor Name</td>
-                <td colspan="2">${selectedStudent.instructorName}</td>
-              </tr>
-              <tr>
-                <td>Exam Center</td>
-                <td colspan="2">${selectedStudent.examCenter}</td>
-              </tr>
-              <tr>
-                <td>Batch Date & Time</td>
-                <td colspan="2">${new Date(selectedStudent.batchDate).toLocaleString()}</td>
-              </tr>
-              <tr>
-                <td colspan="3" class="center"><strong>Website & Email</strong><br>${selectedStudent.website} | ${selectedStudent.email}</td>
-              </tr>
-            </table>
-          </div>
-        </body>
-        </html>
-      `;
+        // Use fallback image to avoid CORS issue
+        const imageBase64 = await this.getBase64ImageFromURL(imagePath);
 
-      // Create a temporary iframe
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'absolute';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = 'none';
-      document.body.appendChild(iframe);
+        const printContent = `
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; }
+              #printSection {
+                width: 900px;
+                margin: 20px auto;
+                padding: 20px;
+                border: 1px solid #000;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              td, th {
+                border: 1px solid #000;
+                padding: 8px;
+                vertical-align: middle;
+                text-align: left;
+              }
+              .center { text-align: center; }
+              .photo-cell { text-align: center; font-weight: bold; }
+              .gray-header { background-color: #ccc; font-weight: bold; }
+              .student-photo {
+                width: 140px;
+                height: 140px;
+                object-fit: cover;
+                border: 1px solid #000;
+              }
+            </style>
+          </head>
+          <body>
+            <div id="printSection">
+              <table>
+                <tr>
+                  <td>Competition Name</td>
+                  <td colspan="3" class="center"><strong>${selectedStudent.competitionName}</strong></td>
+                </tr>
+                <tr>
+                  <td>Hall Ticket Number</td>
+                  <td>${selectedStudent.hallTicketNumber}</td>
+                  <td>Group</td>
+                  <td>${selectedStudent.group}</td>
+                </tr>
+                <tr>
+                  <td>Level</td>
+                  <td colspan="3">${selectedStudent.level}</td>
+                </tr>
+                <tr>
+                  <td class="photo-cell" rowspan="6">
+                    Student Photo<br/><br>
+                    <img src="${imageBase64}" class="student-photo" />
+                  </td>
+                  <td class="gray-header">Student Name</td>
+                  <td class="gray-header" colspan="2">${selectedStudent.studentName}</td>
+                </tr>
+                <tr>
+                  <td>Center (franchise Name)</td>
+                  <td colspan="2">${selectedStudent.center}</td>
+                </tr>
+                <tr>
+                  <td>Instructor Name</td>
+                  <td colspan="2">${selectedStudent.instructorName}</td>
+                </tr>
+                <tr>
+                  <td>Exam Center</td>
+                  <td colspan="2">${selectedStudent.examCenter}</td>
+                </tr>
+                <tr>
+                  <td>Batch Date & Time</td>
+                  <td colspan="2">${new Date(selectedStudent.batchDate).toLocaleString()}</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="center"><strong>Website & Email</strong><br>${selectedStudent.website} | ${selectedStudent.email}</td>
+                </tr>
+              </table>
+            </div>
+          </body>
+          </html>
+        `;
 
-      const iframeDoc = iframe.contentWindow?.document;
-      if (!iframeDoc) continue;
+        // Create a temporary iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
 
-      iframeDoc.open();
-      iframeDoc.write(printContent);
-      iframeDoc.close();
+        const iframeDoc = iframe.contentWindow?.document;
+        if (!iframeDoc) continue;
 
-      // Wait for content to render
-      await new Promise((resolve) => setTimeout(resolve, 300));
+        iframeDoc.open();
+        iframeDoc.write(printContent);
+        iframeDoc.close();
 
-      const section = iframeDoc.getElementById('printSection');
-      if (!section) continue;
+        // Wait for content to render
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const canvas = await html2canvas(section);
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = pdf.internal.pageSize.getWidth();
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const section = iframeDoc.getElementById('printSection');
+        if (!section) continue;
 
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        const canvas = await html2canvas(section);
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = pdf.internal.pageSize.getWidth();
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      // Clean up
-      document.body.removeChild(iframe);
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+        // Clean up
+        document.body.removeChild(iframe);
+      }
+      pdf.save('Multiple_hall_tickets.pdf');
+    }
+    else {
+      utils.setMessages('Select multiple hallticket', 'error');
     }
 
-    pdf.save('all_hall_tickets.pdf');
   }
 
 
