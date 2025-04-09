@@ -155,8 +155,9 @@
       [isCheckbox]="true"
       [colDefs]="colDefs"
       [dataSource]="tableDataSource"
-      (onAddAction)="handleAddEditAction()"
+      (onAddAction)="handleGenerateHallTickets()"
       (onGenerateAction)="handleGenerateOperation($event)"
+      (selectedRowsChange)="onSelectedRowsChange($event)"
     ></app-data-grid>
   </div>
   }
