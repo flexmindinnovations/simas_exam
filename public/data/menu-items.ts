@@ -172,7 +172,7 @@ export const MENU_ITEMS: Array<MenuItem> = [
     {
         id: 22,
         title: 'Age Group',
-        moduleName: 'AgeGroup',
+        moduleName: 'Age Group',
         icon: 'pi pi-user',
         isActive: false,
         route: 'age-group'

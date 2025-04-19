@@ -538,7 +538,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   validateNumber(input: string): boolean {
-    const regex = /^-?\d+(\.\d+)?$/;
+    const regex = /^-?\d+$/;
     return regex.test(input);
   }
 

@@ -51,7 +51,7 @@ export class AgeGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    utils.addButtonTitle.set('Age');
+    utils.addButtonTitle.set('Age Group');
     this.getAgeGroupList();
     this.setTableColumns();
 
@@ -90,8 +90,10 @@ export class AgeGroupComponent implements OnInit {
         if (res?.status) {
           utils.setMessages(res.message, 'success');
           this.getAgeGroupList();
+          utils.isAddActionLoading.set(false);
         } else {
           utils.setMessages(res.message, 'error');
+          utils.isAddActionLoading.set(false);
         }
       } else {
         utils.isTableEditAction.set(false);
