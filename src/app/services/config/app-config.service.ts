@@ -295,7 +295,7 @@ export class AppConfigService {
     ageGroup: {
       getAgeGroupList: `${this.hostUrl}/AgeGroupMaster/GetAgeGroupList`,
       saveAgeGroup: `${this.hostUrl}/AgeGroupMaster/SaveAgeGroupMaster`,
-      updateAgeGroup: `${this.hostUrl}/AgeGroupMaster/updateAgeGroupMaster/{{id}}`
+      updateAgeGroup: `${this.hostUrl}/AgeGroupMaster/updateAgeGroupMaster`
     }
   }
 

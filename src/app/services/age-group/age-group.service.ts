@@ -27,9 +27,8 @@ export class AgeGroupService {
     return this.http.post(this.ageGroupApiPath.saveAgeGroup, payload);
   }
 
-  updateAgeGroup(payload: any, competitionId: any): Observable<any> {
-    const getByIdApiPath = utils.getCleanPath(this.ageGroupApiPath.updateAgeGroup, competitionId);
-    return this.http.put(getByIdApiPath, payload);
+  updateAgeGroup(payload: any): Observable<any> {
+    return this.http.post(this.ageGroupApiPath.updateAgeGroup, payload);
   }
 
 }

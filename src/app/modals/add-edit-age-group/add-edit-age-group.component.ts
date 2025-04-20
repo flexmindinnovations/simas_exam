@@ -99,7 +99,7 @@ export class AddEditAgeGroupComponent {
 
     let apiCall = this.ageGroupService.saveAgeGroup(formVal);
     if (this.isEditMode) {
-      apiCall = this.ageGroupService.updateAgeGroup(formVal, formVal.compititionId);
+      apiCall = this.ageGroupService.updateAgeGroup(formVal);
     }
     apiCall.subscribe({
       next: (response: any) => {

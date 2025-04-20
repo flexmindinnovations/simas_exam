@@ -213,6 +213,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isFocused: boolean = false;
   focusTriggered = false;
   showNextRoundButton: boolean = true;
+  isFinalExam: boolean = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   @ViewChild('answerInput') answerInput!: ElementRef;
@@ -409,6 +410,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'speed':
         this.selectedSpeedOfQuestion = value;
         break;
+    }
+    if (this.selectedExamType != '2') {
+      this.isFinalExam = true;
     }
   }
 
@@ -1161,6 +1165,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
       data: {
+        isFinal: this.isFinalExam,
         questionList: questionAllResult,
         examInputData,
         totalTime: this.totalTime,
