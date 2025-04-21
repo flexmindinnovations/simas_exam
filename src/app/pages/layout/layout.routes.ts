@@ -23,6 +23,7 @@ import { BatchAllocationComponent } from '../batch-allocation/batch-allocation.c
 import { ExamActivationComponent } from '../exam-activation/exam-activation.component';
 import { StudentResultComponent } from '../student-result/student-result.component';
 import { UserTypeWrapperComponent } from '../user-type-wrapper/user-type-wrapper.component';
+import { AgeGroupComponent } from '../age-group/age-group.component';
 
 export const layoutRoutes: Routes = [
     {
@@ -133,6 +134,11 @@ export const layoutRoutes: Routes = [
                 path: 'student-result',
                 component: StudentResultComponent,
                 data: { animation: 'StudentResult' },
+            },
+            {
+                path: 'age-group',
+                component: AgeGroupComponent,
+                data: { animation: 'AgeGroup' },
             },
             {
                 path: '**',

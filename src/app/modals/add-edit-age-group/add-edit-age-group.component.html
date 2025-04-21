@@ -1,0 +1,142 @@
+<div class="dialog-body">
+  <div class="form-container">
+    <form
+      [formGroup]="formGroup"
+      class="grid grid-cols-1 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1"
+    >
+      <div class="flex form-input flex-col items-start w-full">
+        <label for="compititionName">Competition</label>
+        <p-dropdown
+          [options]="competitionList"
+          optionLabel="compititionName"
+          optionValue="compititionId"
+          id="compititionName"
+          formControlName="compititionId"
+          class="w-full"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              formGroup.get('compititionName')?.touched ||
+              formGroup.get('compititionName')?.dirty
+          }"
+          placeholder="Select"
+        ></p-dropdown>
+        <div
+          *ngIf="
+            formGroup.get('compititionName')?.invalid &&
+            (formGroup.get('compititionName')?.dirty ||
+              formGroup.get('compititionName')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('compititionName')?.errors?.['required']"
+            class="p-error"
+          >
+            This field is required.
+          </small>
+        </div>
+      </div>
+
+      <div class="flex form-input flex-col items-start w-full">
+        <label for="ageGroupName">Age Group</label>
+        <span class="p-input-icon-right w-full">
+          <i class="pi pi-user"></i>
+          <input
+            type="text"
+            pInputText
+            id="ageGroupName"
+            [ngClass]="
+              formGroup.get('ageGroupName')?.touched ||
+              formGroup.get('ageGroupName')?.dirty
+                ? 'ng-invalid ng-dirty'
+                : ''
+            "
+            formControlName="ageGroupName"
+          />
+        </span>
+        <div
+          *ngIf="
+            formGroup.get('ageGroupName')?.invalid &&
+            (formGroup.get('ageGroupName')?.dirty ||
+              formGroup.get('ageGroupName')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('ageGroupName')?.errors?.['required']"
+            class="p-error"
+            >This field is required.</small
+          >
+        </div>
+      </div>
+
+      <div class="flex form-input flex-col items-start w-full">
+        <label for="startDate">Start Date</label>
+        <p-calendar
+          appendTo="body"
+          ariaLabelledBy="startDate"
+          formControlName="startDate"
+          [showButtonBar]="true"
+          [iconDisplay]="'input'"
+          [showIcon]="true"
+          inputId="icondisplay"
+          dateFormat="dd-mm-yy"
+        />
+        <div
+          *ngIf="
+            formGroup.get('startDate')?.invalid &&
+            (formGroup.get('startDate')?.dirty ||
+              formGroup.get('startDate')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('startDate')?.errors?.['required']"
+            class="p-error"
+            >This field is required.</small
+          >
+        </div>
+      </div>
+      <div class="flex form-input flex-col items-start w-full">
+        <label for="endDate">End Date</label>
+        <p-calendar
+          appendTo="body"
+          ariaLabelledBy="endDate"
+          formControlName="endDate"
+          [showButtonBar]="true"
+          [iconDisplay]="'input'"
+          [showIcon]="true"
+          inputId="icondisplay"
+          dateFormat="dd-mm-yy"
+        />
+        <div
+          *ngIf="
+            formGroup.get('endDate')?.invalid &&
+            (formGroup.get('endDate')?.dirty ||
+              formGroup.get('endDate')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('startDate')?.errors?.['required']"
+            class="p-error"
+            >This field is required.</small
+          >
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="action w-full flex items-center justify-end gap-3 p-4">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [disabled]="isSubmitActionLoading"
+      (onClick)="handleDialogCancel()"
+    ></p-button>
+    <p-button
+      [label]="isEditMode ? 'Update' : 'Save'"
+      (onClick)="handleSubmitAction()"
+      [disabled]="formGroup.invalid"
+      [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'"
+      severity="primary"
+      [loading]="isSubmitActionLoading"
+      loadingIcon="pi pi-spin pi-spinner"
+    ></p-button>
+  </div>
+</div>

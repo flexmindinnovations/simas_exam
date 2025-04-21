@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation' | 'offlineStudent';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation' | 'offlineStudent' | 'ageGroup';
 
 export type ApiCallConfig = {
   settings: {};
@@ -127,17 +127,22 @@ export type ApiCallConfig = {
     studentListFromExamPaperLevelAndRoundWise: string;
     studentListFromExamPaperFranchiseAndInstructorWise: string;
     studentExamPaperDetailsReport: string
-  }
+  };
   hallticket: {
     getStudentHallTicketList: string;
-  },
+  };
   batchAllocation: {
     getStudentInfoHallTicketNoWise: string;
     saveStudentBatchAllocation: string;
-  }
+  };
   offlineStudent: {
     saveOfflineStudentMarkEntry: string;
     getOfflineStudentListCompititionIdWise: string;
+  };
+  ageGroup: {
+    getAgeGroupList: string;
+    saveAgeGroup: string;
+    updateAgeGroup: string;
   }
 
 }
@@ -286,6 +291,11 @@ export class AppConfigService {
     offlineStudent: {
       saveOfflineStudentMarkEntry: `${this.hostUrl}/OfflineStudentMarkEntry/saveOfflineStudentMarkEntry`,
       getOfflineStudentListCompititionIdWise: `${this.hostUrl}/OfflineStudentMarkEntry/getOfflineStudentListCompititionIdWise`,
+    },
+    ageGroup: {
+      getAgeGroupList: `${this.hostUrl}/AgeGroupMaster/GetAgeGroupList`,
+      saveAgeGroup: `${this.hostUrl}/AgeGroupMaster/SaveAgeGroupMaster`,
+      updateAgeGroup: `${this.hostUrl}/AgeGroupMaster/updateAgeGroupMaster`
     }
   }
 

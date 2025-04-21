@@ -125,7 +125,7 @@ export class SidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 22,
+      id: 23,
       title: 'More',
       label: 'More',
       moduleName: 'more',

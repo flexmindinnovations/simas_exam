@@ -168,5 +168,13 @@ export const MENU_ITEMS: Array<MenuItem> = [
         icon: 'pi pi-ban',
         isActive: false,
         route: 'student-result'
+    },
+    {
+        id: 22,
+        title: 'Age Group',
+        moduleName: 'Age Group',
+        icon: 'pi pi-user',
+        isActive: false,
+        route: 'age-group'
     }
 ]
