@@ -61,6 +61,7 @@ export class AddEditAgeGroupComponent {
       ageGroupName: ['', [Validators.required]],
       startDate: ['', [Validators.required]],
       endDate: ['', [Validators.required]],
+      bonusMark: ['', [Validators.required]]
     })
   }
 

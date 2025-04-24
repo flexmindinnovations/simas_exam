@@ -69,6 +69,38 @@
       </div>
 
       <div class="flex form-input flex-col items-start w-full">
+        <label for="bonusMark">Bonus Mark</label>
+        <span class="p-input-icon-right w-full">
+          <i class="pi pi-gift"></i>
+          <input
+            type="number"
+            pKeyFilter="int"
+            pInputText
+            formControlName="bonusMark"
+            [ngClass]="
+              formGroup.get('bonusMark')?.touched ||
+              formGroup.get('bonusMark')?.dirty
+                ? 'ng-invalid ng-dirty'
+                : ''
+            "
+          />
+        </span>
+        <div
+          *ngIf="
+            formGroup.get('bonusMark')?.invalid &&
+            (formGroup.get('bonusMark')?.dirty ||
+              formGroup.get('bonusMark')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('bonusMark')?.errors?.['required']"
+            class="p-error"
+            >This field is required.</small
+          >
+        </div>
+      </div>
+
+      <div class="flex form-input flex-col items-start w-full">
         <label for="startDate">Start Date</label>
         <p-calendar
           appendTo="body"
