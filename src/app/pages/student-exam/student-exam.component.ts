@@ -509,6 +509,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.isAnswerSubmitted) {
+      console.log("User Answer", this.selectedAnswer);
+      console.log("Correct Answer", this.questionList[this.activeQuestionIndex].answer)
       this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
       this.formatSequence();
       this.submitedlashQuestionsIndex = this.activeQuestionIndex;
