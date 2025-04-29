@@ -270,9 +270,8 @@ export class ReportsComponent implements OnInit {
   }
 
   handleShowPaper(item: any) {
-    const studentId = sessionStorage.getItem('userId') || '';
     const payload = {
-      studentId,
+      studentId: this.selectedStudent,
       examPaperId: item?.examPaperId
     }
     const apiCall = this.reportService.getExamPaperDetailsReport(payload);
@@ -339,7 +338,9 @@ export class ReportsComponent implements OnInit {
     const apiCall = this.reportService.getExampByExamTypeAndLevel(payloadBystudentIdAndExamTypeIdAndLevel);
     apiCall.subscribe({
       next: (response: any) => {
-        this.tableDataSource = response;
+        this.tableDataSource = response?.sort((a: any, b: any) => {
+          return b.examPaperId - a.examPaperId;
+        });
         this.showGrid = this.tableDataSource.length > 0 ? true : false;
         this.isSearchActionLoading = false;
       },
