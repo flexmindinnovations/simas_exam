@@ -270,9 +270,8 @@ export class ReportsComponent implements OnInit {
   }
 
   handleShowPaper(item: any) {
-    const studentId = sessionStorage.getItem('userId') || '';
     const payload = {
-      studentId,
+      studentId: this.selectedStudent,
       examPaperId: item?.examPaperId
     }
     const apiCall = this.reportService.getExamPaperDetailsReport(payload);
