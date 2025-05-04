@@ -31,9 +31,8 @@ export class ExamCenterService {
     return this.http.post<any>(this.examCenterApi.saveExamCenter, payload);
   }
 
-  updateExamCenter(payload: any, examCenterId: string): Observable<any> {
-    const getByIdApiPath = utils.getCleanPath(this.examCenterApi.updateExamCenter, examCenterId);
-    return this.http.put(getByIdApiPath, payload);
+  updateExamCenter(payload: any): Observable<any> {
+    return this.http.post<any>(this.examCenterApi.updateExamCenter, payload);
   }
 
   deleteExamCenter(examCenterId: string): Observable<any> {

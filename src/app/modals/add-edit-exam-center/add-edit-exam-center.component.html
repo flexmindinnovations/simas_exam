@@ -1,67 +1,172 @@
 <div class="dialog-body">
-    <div class="form-container overflow-hidden">
-        <form [formGroup]="formGroup" class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1">
-            <div class="flex form-input flex-col items-start w-full col-span-2">
-                <label for="status">Status</label>
-                <p-inputSwitch formControlName="status" />
+  <div class="form-container overflow-hidden">
+    <form
+      [formGroup]="formGroup"
+      class="grid grid-cols-2 gap-2 lg:xl:gap-x-2 lg:xl:gap-y-1"
+    >
+      <div class="flex form-input flex-col items-start w-full col-span-2">
+        <label for="status">Status</label>
+        <p-inputSwitch formControlName="status" />
+      </div>
+      <div class="flex form-input flex-col items-start">
+        <label for="examCenterName">Exam Center Name</label>
+        <input
+          type="text"
+          [ngClass]="
+            formGroup.get('examCenterName')?.touched ||
+            formGroup.get('examCenterName')?.dirty
+              ? 'ng-invalid ng-dirty'
+              : ''
+          "
+          pInputText
+          formControlName="examCenterName"
+        />
+        <div
+          *ngIf="
+            formGroup.get('examCenterName')?.invalid &&
+            (formGroup.get('examCenterName')?.dirty ||
+              formGroup.get('examCenterName')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('examCenterName')?.errors?.['required']"
+            class="p-error"
+            >This field is required.</small
+          >
+        </div>
+      </div>
+      <div class="flex form-input flex-col items-start">
+        <label for="examDate">Exam Date</label>
+        <p-calendar
+          appendTo="body"
+          ariaLabelledBy="examDate"
+          formControlName="examDate"
+          [showButtonBar]="true"
+          [iconDisplay]="'input'"
+          [showIcon]="true"
+          inputId="icondisplay"
+          dateFormat="dd-mm-yy"
+        />
+        <div
+          *ngIf="
+            formGroup.get('examgDate')?.invalid &&
+            (formGroup.get('examDate')?.dirty ||
+              formGroup.get('examDate')?.touched)
+          "
+        >
+          <small
+            *ngIf="formGroup.get('examDate')?.errors?.['required']"
+            class="p-error"
+            >Exam Date is required.</small
+          >
+        </div>
+      </div>
+
+      <div
+        class="dynamic-section col-span-2 flex items-center justify-end flex-col gap-4"
+        formArrayName="batchTimeSlotList"
+      >
+        <div class="add-action w-full flex items-center justify-between">
+          <p class="text-xs lg:xl:text-sm select-none opacity-60">
+            Batch details:
+          </p>
+          <p-button
+            styleClass="action"
+            iconPos="left"
+            class="w-auto"
+            styleClass="add-row-btn"
+            icon="pi pi-plus"
+            pTooltip="Add new row below"
+            [loading]="isAddLoading"
+            [disabled]="isSubmitActionLoading"
+            loadingIcon="pi pi-spin pi-spinner"
+            [disabled]="isAddLoading"
+            (onClick)="handleAddItem()"
+          />
+        </div>
+        <div class="form-array-wrapper">
+          @for (batch of batchTimeSlotList.controls; track $index) {
+          <div
+            class="wrapper flex items-center justify-center lg:justify-center xl:justify-center md:justify-center gap-3"
+            [ngClass]="
+              batchTimeSlotList.controls.length > 2 ? ' last:pb-16' : 'pb-4'
+            "
+            [formGroupName]="$index"
+          >
+            <div class="flex form-input flex-col items-start lg:xl:flex-1">
+              <label for="batchTimeSlotName">Batch Name</label>
+              <input
+                type="text"
+                class="lg:xl:!w-full"
+                [ngClass]="
+                  batch.get('batchTimeSlotName')?.touched ||
+                  batch.get('batchTimeSlotName')?.dirty
+                    ? 'ng-invalid ng-dirty'
+                    : ''
+                "
+                pInputText
+                formControlName="batchTimeSlotName"
+              />
+              <div
+                *ngIf="
+                  batch.get('batchTimeSlotName')?.invalid &&
+                  (batch.get('batchTimeSlotName')?.dirty ||
+                    batch.get('batchTimeSlotName')?.touched)
+                "
+              >
+                <small
+                  *ngIf="batch.get('batchTimeSlotName')?.errors?.['required']"
+                  class="p-error"
+                  >This field is required.</small
+                >
+              </div>
             </div>
-            <div class="flex form-input flex-col items-start w-full  col-span-2">
-                <label for="examCenterName">Exam Center Name</label>
-                <input type="text"
-                    [ngClass]="formGroup.get('examCenterName')?.touched || formGroup.get('examCenterName')?.dirty ? 'ng-invalid ng-dirty' : ''"
-                    pInputText formControlName="examCenterName" />
-                <div
-                    *ngIf="formGroup.get('examCenterName')?.invalid && (formGroup.get('examCenterName')?.dirty || formGroup.get('examCenterName')?.touched)">
-                    <small *ngIf="formGroup.get('examCenterName')?.errors?.['required']" class="p-error">This field is
-                        required.</small>
-                </div>
+            <div
+              class="actions array-actions flex items-center justify-center gap-4"
+            >
+              <p-button
+                [text]="true"
+                styleClass="action"
+                class="w-full"
+                icon="pi pi-times"
+                severity="danger"
+                [loading]="isRemoveLoading"
+                loadingIcon="pi pi-spin pi-spinner"
+                [pTooltip]="
+                  batchTimeSlotList.controls.length === 1
+                    ? 'At least one item is required.'
+                    : 'Remove this item'
+                "
+                [disabled]="
+                  isSubmitActionLoading ||
+                  isRemoveLoading ||
+                  batchTimeSlotList.controls.length === 1
+                "
+                iconPos="right"
+                (onClick)="handleRemoveItem($index)"
+              />
             </div>
-            <div class="dynamic-section col-span-2 flex items-center justify-end flex-col gap-4"
-                formArrayName="batchTimeSlotList">
-                <div class="add-action w-full flex items-center justify-between">
-                    <p class="text-xs lg:xl:text-sm select-none opacity-60">
-                        Batch details: </p>
-                    <p-button styleClass="action" iconPos="left" class="w-auto" styleClass="add-row-btn"
-                        icon="pi pi-plus" pTooltip="Add new row below" [loading]="isAddLoading"
-                        [disabled]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner" [disabled]="isAddLoading"
-                        (onClick)="handleAddItem()" />
-                </div>
-                <div class="form-array-wrapper">
-                    @for (batch of batchTimeSlotList.controls; track $index) {
-                    <div class="wrapper flex items-center justify-center lg:justify-center xl:justify-center md:justify-center gap-3"
-                        [ngClass]="batchTimeSlotList.controls.length > 2 ? ' last:pb-16' : 'pb-4'"
-                        [formGroupName]="$index">
-                        <div class="flex form-input flex-col items-start lg:xl:flex-1">
-                            <label for="batchTimeSlotName">Batch Name</label>
-                            <input type="text" class="lg:xl:!w-full"
-                                [ngClass]="batch.get('batchTimeSlotName')?.touched || batch.get('batchTimeSlotName')?.dirty ? 'ng-invalid ng-dirty' : ''"
-                                pInputText formControlName="batchTimeSlotName" />
-                            <div
-                                *ngIf="batch.get('batchTimeSlotName')?.invalid && (batch.get('batchTimeSlotName')?.dirty || batch.get('batchTimeSlotName')?.touched)">
-                                <small *ngIf="batch.get('batchTimeSlotName')?.errors?.['required']"
-                                    class="p-error">This
-                                    field is
-                                    required.</small>
-                            </div>
-                        </div>
-                        <div class="actions array-actions flex items-center justify-center gap-4">
-                            <p-button [text]="true" styleClass="action" class="w-full" icon="pi pi-times"
-                                severity="danger" [loading]="isRemoveLoading" loadingIcon="pi pi-spin pi-spinner"
-                                [pTooltip]="batchTimeSlotList.controls.length === 1 ? 'At least one item is required.' : 'Remove this item'"
-                                [disabled]="isSubmitActionLoading || isRemoveLoading || batchTimeSlotList.controls.length === 1"
-                                iconPos="right" (onClick)="handleRemoveItem($index)" />
-                        </div>
-                    </div>
-                    }
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="action w-full flex items-center justify-end gap-3 p-4">
-        <p-button label="Cancel" severity="secondary" [disabled]="isSubmitActionLoading"
-            (onClick)="handleDialogCancel()"></p-button>
-        <p-button [label]="isEditMode ? 'Update' : 'Save'" (onClick)="handleSubmitAction()"
-            [disabled]="formGroup.invalid" [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'" severity="primary"
-            [loading]="isSubmitActionLoading" loadingIcon="pi pi-spin pi-spinner"></p-button>
-    </div>
+          </div>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="action w-full flex items-center justify-end gap-3 p-4">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [disabled]="isSubmitActionLoading"
+      (onClick)="handleDialogCancel()"
+    ></p-button>
+    <p-button
+      [label]="isEditMode ? 'Update' : 'Save'"
+      (onClick)="handleSubmitAction()"
+      [disabled]="formGroup.invalid"
+      [icon]="isEditMode ? 'pi pi-refresh' : 'pi pi-save'"
+      severity="primary"
+      [loading]="isSubmitActionLoading"
+      loadingIcon="pi pi-spin pi-spinner"
+    ></p-button>
+  </div>
 </div>

@@ -229,7 +229,7 @@ export class AppConfigService {
       examCenterById: `${this.hostUrl}/ExamCenter/getExamCenterById/{{id}}`,
       batchTimeSlotListByExamCenterId: `${this.hostUrl}/ExamCenter/getBatchTimeSlotListByExamCenterId/{{id}}`,
       saveExamCenter: `${this.hostUrl}/ExamCenter/saveExamCenter`,
-      updateExamCenter: `${this.hostUrl}/ExamCenter/updateExamCenter/{{id}}`,
+      updateExamCenter: `${this.hostUrl}/ExamCenter/updateExamCenter`,
       deleteExamCenter: `${this.hostUrl}/ExamCenter/Delete/{{id}}`,
     },
     examType: {

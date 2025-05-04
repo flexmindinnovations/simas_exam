@@ -50,6 +50,7 @@ export class AddEditExamCenterComponent implements OnInit, AfterViewInit {
     if (this.isEditMode && this.dialogData) {
       const formData = JSON.parse(JSON.stringify(this.dialogData));
       formData['status'] = formData['status'] === '1' ? true : false;
+      formData['examDate'] = formData['examDate'] ? new Date(formData['examDate']) : new Date();
       const children = this.dialogData?.children.map((item: any) => {
         const obj = {
           batchTimeSlotName: item?.batchTimeSlotName,
@@ -77,6 +78,7 @@ export class AddEditExamCenterComponent implements OnInit, AfterViewInit {
     this.formGroup = this.fb.group({
       status: [true, ![Validators.required]],
       examCenterName: ['', [Validators.required]],
+      examDate: ['', [Validators.required]],
       batchTimeSlotList: this.isEditMode ? this.fb.array([]) : this.fb.array(
         [
           this.addFormArrayControl()
@@ -129,7 +131,7 @@ export class AddEditExamCenterComponent implements OnInit, AfterViewInit {
 
     let apiCall = this.examCenterService.saveExamCenter(formVal);
     if (this.isEditMode) {
-      apiCall = this.examCenterService.updateExamCenter(formVal, this.examCenterId);
+      apiCall = this.examCenterService.updateExamCenter(formVal);
     }
 
     apiCall.subscribe({
