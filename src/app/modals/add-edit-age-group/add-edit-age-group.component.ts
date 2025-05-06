@@ -93,11 +93,10 @@ export class AddEditAgeGroupComponent {
     const formVal = this.formGroup.getRawValue();
     formVal['compititionName'] = this.getCompetitionName(formVal);
     formVal['ageGroupId'] = this.dialogData['ageGroupId'] ? this.dialogData['ageGroupId'] : 0;
-    const startDate = new Date(formVal['startDate']).toISOString();
-    const endDate = new Date(formVal['endDate']).toISOString();
-    formVal['startDate'] = startDate;
-    formVal['endDate'] = endDate;
-
+    const startDate = this.adjustDateToMidday(new Date(formVal['startDate']));
+    const endDate = this.adjustDateToMidday(new Date(formVal['endDate']));
+    formVal['startDate'] = startDate.toISOString();
+    formVal['endDate'] = endDate.toISOString();
     let apiCall = this.ageGroupService.saveAgeGroup(formVal);
     if (this.isEditMode) {
       apiCall = this.ageGroupService.updateAgeGroup(formVal);
@@ -115,5 +114,11 @@ export class AddEditAgeGroupComponent {
         utils.setMessages(error.message, 'error');
       }
     })
+  }
+
+
+  adjustDateToMidday(date: Date): Date {
+    date.setHours(12, 0, 0, 0);
+    return date;
   }
 }
