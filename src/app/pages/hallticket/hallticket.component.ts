@@ -228,9 +228,9 @@ export class HallticketComponent {
               instructorName: item.instructorName,
               competitionName: item.compititionName,
               examCenter: item.examCenterName,
-              batchDate: new Date(item.batchAllocatedDate),
-              group: item?.group ? item.group : '—', // If group info exists, replace this
-              center: item?.franchiseName ? item?.franchiseName : '—', // If center (franchise name) exists, replace this
+              batchDate: new Date(item.examDate),
+              group: item?.ageGroupName,
+              center: item?.franchiseName,
               batchTime: item.batchTimeSlotName,
               website: 'www.simasacademy.com',
               email: 'info@simasacademy.com'
