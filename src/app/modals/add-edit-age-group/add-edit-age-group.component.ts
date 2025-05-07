@@ -93,10 +93,17 @@ export class AddEditAgeGroupComponent {
     const formVal = this.formGroup.getRawValue();
     formVal['compititionName'] = this.getCompetitionName(formVal);
     formVal['ageGroupId'] = this.dialogData['ageGroupId'] ? this.dialogData['ageGroupId'] : 0;
-    const startDate = this.adjustDateToMidday(new Date(formVal['startDate']));
-    const endDate = this.adjustDateToMidday(new Date(formVal['endDate']));
-    formVal['startDate'] = startDate.toISOString();
-    formVal['endDate'] = endDate.toISOString();
+
+    const formatDateOnly = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    formVal['startDate'] = formatDateOnly(new Date(formVal['startDate']));
+    formVal['endDate'] = formatDateOnly(new Date(formVal['endDate']));
+
     let apiCall = this.ageGroupService.saveAgeGroup(formVal);
     if (this.isEditMode) {
       apiCall = this.ageGroupService.updateAgeGroup(formVal);
@@ -106,19 +113,15 @@ export class AddEditAgeGroupComponent {
         if (response) {
           setTimeout(() => {
             this.dialogRef.close(response);
-          })
+          });
         }
       },
       error: (error: HttpErrorResponse) => {
         this.dialogRef.close(false);
         utils.setMessages(error.message, 'error');
       }
-    })
+    });
   }
 
 
-  adjustDateToMidday(date: Date): Date {
-    date.setHours(12, 0, 0, 0);
-    return date;
-  }
 }
