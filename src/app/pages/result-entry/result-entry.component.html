@@ -1,4 +1,181 @@
-<div class="result-entry-container page-container">
+<div
+  class="student-result-container page-container"
+  [ngClass]="!isPanelCollapsed ? 'overflow-auto' : 'overflow-hidden'"
+>
+  <p-panel
+    [toggleable]="true"
+    [(collapsed)]="isPanelCollapsed"
+    class="panel-component"
+  >
+    <ng-template pTemplate="header">
+      <div
+        class="flex flex-col lg:flex-row xl:flex-row 2xl:flex-row items-center justify-start space-x-2"
+      >
+        <div class="header min-w-40 flex items-start justify-start gap-2">
+          <i class="pi pi-cog"></i>
+          <span> Student Result Options </span>
+        </div>
+        <ng-container *ngIf="isPanelCollapsed">
+          <br />
+          <div
+            class="!ml-5 hidden lg:flex xl:flex 2xl:flex items-center justify-start space-x-2 w-full"
+          >
+            <p-chip
+              class="chip-component min-w-32"
+              label="Competition: {{ selectedCompetition }}"
+            />
+            <p-chip
+              class="chip-component min-w-24"
+              label="Hall Ticket No: {{ selectedHallTicket }}"
+            />
+          </div>
+        </ng-container>
+      </div>
+    </ng-template>
+    <form
+      [formGroup]="formSearch"
+      class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5"
+    >
+      <div class="flex flex-col items-start w-full max-w-48">
+        <label for="competitionList">Competition</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="competitionList"
+          [options]="competitionList"
+          [loading]="isCompetitionListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          formControlName="competitionId"
+          ariaLabelledBy="compititionName"
+          placeholder="Select"
+          (onChange)="handleOnCompetitionChange($event)"
+          optionValue="compititionId"
+          optionLabel="compititionName"
+          [filter]="true"
+          filterBy="compititionName"
+          [showClear]="false"
+        />
+      </div>
+      <div class="flex flex-col items-start w-full max-w-48">
+        <label for="hallTicketNo">Hall Ticket No</label>
+        <input
+          id="hallTicketNo"
+          placeholder="Enter Hall Ticket No"
+          type="text"
+          class="p-inputtext p-component w-full"
+          formControlName="hallTicketNo"
+          ariaLabelledBy="hallTicketNo"
+        />
+      </div>
+      <p-button
+        label="Search"
+        (onClick)="handleSearchAction()"
+        [disabled]="formSearch.invalid"
+        icon="pi pi-search"
+        styleClass="py-2.5"
+        severity="primary"
+        [loading]="isSearchActionLoading"
+        loadingIcon="pi pi-spin pi-spinner"
+      ></p-button>
+    </form>
+    @if(showLevels){
+    <div class="my-5 px-5">
+      <label class="block text-lg font-semibold text-gray-800 mb-3"
+        >Round details:</label
+      >
+      <form [formGroup]="formLevels" class="space-y-6">
+        <div formArrayName="roundGroups" class="space-y-6">
+          <div
+            *ngFor="let group of roundGroups.controls; let i = index"
+            [formGroupName]="i"
+            class="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg shadow"
+          >
+            <div class="flex flex-col w-full max-w-48">
+              <label class="text-sm text-gray-600 font-medium"
+                >Student Name</label
+              >
+              <label class="text-lg font-semibold text-gray-900 mt-1">
+                {{ fullName }}
+              </label>
+            </div>
+            <div class="flex flex-col w-full max-w-48">
+              <label class="text-sm text-gray-600 font-medium"
+                >Level Name</label
+              >
+              <label class="text-lg font-semibold text-gray-900 mt-1">
+                {{ levelName }}
+              </label>
+            </div>
+            <div class="flex flex-col w-full max-w-48">
+              <label class="text-sm text-gray-600 font-medium">Round 1</label>
+              <input
+                type="text"
+                formControlName="round1"
+                placeholder="Enter Round 1"
+                class="p-inputtext p-component w-full rounded-full px-4 py-2 border"
+              />
+            </div>
+
+            <div class="flex flex-col w-full max-w-48">
+              <label class="text-sm text-gray-600 font-medium">Round 2</label>
+              <input
+                type="text"
+                formControlName="round2"
+                placeholder="Enter Round 2"
+                class="p-inputtext p-component w-full rounded-full px-4 py-2 border"
+              />
+            </div>
+
+            <div class="flex flex-col w-full max-w-48">
+              <label class="text-sm text-gray-600 font-medium">Round 3</label>
+              <input
+                type="text"
+                formControlName="round3"
+                placeholder="Enter Round 3"
+                class="p-inputtext p-component w-full rounded-full px-4 py-2 border"
+              />
+            </div>
+            <p-button
+              (click)="removeRoundGroup(i)"
+              [text]="true"
+              styleClass="action"
+              class="flex flex-col w-full max-w-12"
+              icon="pi pi-times"
+              severity="danger"
+              iconPos="right"
+              [loading]="isRemoveLoading"
+              loadingIcon="pi pi-spin pi-spinner"
+              *ngIf="roundGroups.length > 1"
+            >
+            </p-button>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-4">
+          <button
+            type="button"
+            (click)="addRoundGroup()"
+            class="rounded-full border border-purple-500 text-purple-600 px-4 py-2 hover:bg-purple-50 flex items-center gap-2"
+          >
+            <i class="pi pi-plus"></i> Add
+          </button>
+
+          <div class="flex gap-4">
+            <p-button
+              label="Save"
+              (onClick)="handleFormLevelsAction()"
+              icon="pi pi-save"
+              styleClass="py-2.5"
+              severity="primary"
+              [loading]="isSearchActionLoading"
+              loadingIcon="pi pi-spin pi-spinner"
+            ></p-button>
+          </div>
+        </div>
+      </form>
+    </div>
+    }
+  </p-panel>
+  @if(showGrid){
   <div class="table-container">
     <app-data-grid
       [colDefs]="colDefs"
@@ -6,4 +183,5 @@
       (onAddAction)="handleAddEditAction()"
     ></app-data-grid>
   </div>
+  }
 </div>
