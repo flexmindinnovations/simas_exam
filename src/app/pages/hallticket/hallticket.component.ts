@@ -211,6 +211,14 @@ export class HallticketComponent {
     // console.log("download All")
   }
 
+  formatDate(dateInput: string | Date): string {
+    const date = new Date(dateInput);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   handleSearchAction() {
     this.setTableColumns();
     utils.isTableLoading.set(true);
@@ -228,7 +236,7 @@ export class HallticketComponent {
               instructorName: item.instructorName,
               competitionName: item.compititionName,
               examCenter: item.examCenterName,
-              batchDate: new Date(item.examDate),
+              batchDate: `${this.formatDate(item.examDate)} (${item.batchTimeSlotName})`,
               group: item?.ageGroupName,
               center: item?.franchiseName,
               batchTime: item.batchTimeSlotName,
@@ -399,7 +407,7 @@ export class HallticketComponent {
           </tr>
           <tr>
             <td>Batch Date & Time</td>
-            <td colspan="2">${new Date(selectedStudent.batchDate).toLocaleString()}</td>
+            <td colspan="2">${selectedStudent.batchDate}</td>
           </tr>
           <tr>
             <td colspan="3" class="center"><strong>Website & Email</strong><br>${selectedStudent.website} | ${selectedStudent.email}</td>
