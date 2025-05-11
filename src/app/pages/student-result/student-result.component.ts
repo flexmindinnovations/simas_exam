@@ -53,6 +53,9 @@ export class StudentResultComponent implements OnInit {
   showLevels: boolean = false;
   hallTicketNowiseInfo: any;
   showGrid: boolean = false;
+  roundTotal: number = 0;
+  ageGroup: string = '';
+  bonusMarks: number = 0;
 
 
   constructor(
@@ -78,6 +81,13 @@ export class StudentResultComponent implements OnInit {
       level2: ['', [Validators.required]],
       level3: ['', [Validators.required]]
     });
+  }
+
+  getTotal(): number {
+    const l1 = Number(this.formLevels.get('level1')?.value) || 0;
+    const l2 = Number(this.formLevels.get('level2')?.value) || 0;
+    const l3 = Number(this.formLevels.get('level3')?.value) || 0;
+    return Math.round(l1 + l2 + l3);
   }
 
   getCompetitionList() {
@@ -128,8 +138,10 @@ export class StudentResultComponent implements OnInit {
       this.batchService.getStudentInfoHallTicketNoWise({ compititionId: this.selectedCompetition, hallTicketNumber }).subscribe({
         next: (response) => {
           this.hallTicketNowiseInfo = response;
-          this.fullName = response?.studentFullName
-          this.levelName = response?.levelName;
+          this.fullName = response?.studentFullName ? response?.studentFullName : "-"
+          this.levelName = response?.levelName ? response?.levelName : "-";
+          this.ageGroup = response?.ageGroupName ? response?.ageGroupName : "-";
+          this.bonusMarks = response?.bonusMarks ? response.bonusMarks : "-"
           this.isSearchActionLoading = false;
           this.formLevels.reset();
           this.showLevels = true;
@@ -160,6 +172,7 @@ export class StudentResultComponent implements OnInit {
         "round2Mark": formLevels.level2,
         "round3Mark": formLevels.level3,
         "createdDate": new Date(),
+        "examMode": "Offline"
       };
       forkJoin({
         saveMarkEntry: this.offlineService.saveOfflineStudentMarkEntry(payload),
