@@ -24,7 +24,6 @@ import { ExamActivationComponent } from '../exam-activation/exam-activation.comp
 import { StudentResultComponent } from '../student-result/student-result.component';
 import { UserTypeWrapperComponent } from '../user-type-wrapper/user-type-wrapper.component';
 import { AgeGroupComponent } from '../age-group/age-group.component';
-import { ResultEntryComponent } from '../result-entry/result-entry.component';
 
 export const layoutRoutes: Routes = [
     {
@@ -140,11 +139,6 @@ export const layoutRoutes: Routes = [
                 path: 'age-group',
                 component: AgeGroupComponent,
                 data: { animation: 'AgeGroup' },
-            },
-            {
-                path: 'result-entry',
-                component: ResultEntryComponent,
-                data: { animation: 'ResultEntry' },
             },
             {
                 path: '**',
