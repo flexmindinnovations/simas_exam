@@ -244,7 +244,7 @@ export class HallticketComponent {
               email: 'info@simasacademy.com'
             }));
             this.tableDataSource = response;
-            this.showGrid = this.tableDataSource.length > 1;
+            this.showGrid = this.tableDataSource.length > 0;
           }
         },
         error: (error: HttpErrorResponse) => {
