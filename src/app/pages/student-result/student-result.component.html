@@ -78,97 +78,103 @@
       ></p-button>
     </form>
     @if(showLevels){
-    <div
-      class="flex flex-wrap items-end gap-3 lg:gap-5 w-full px-3 lg:px-5 my-5"
-    >
-      <div class="flex flex-row gap-5 w-full items-end">
-        <div class="flex flex-col w-full max-w-48">
+    <div class="w-full px-3 lg:px-5 my-5 space-y-6">
+      <!-- Info Section -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6 gap-4">
+        <div>
           <label class="text-sm text-gray-600 font-medium">Hallticket No</label>
-          <label class="text-lg font-semibold text-gray-900 mt-1">
+          <label class="text-lg font-semibold text-gray-900 mt-2 block">
             {{ formSearch.get("hallTicketNo")?.value }}
           </label>
         </div>
-        <div class="flex flex-col w-full max-w-48">
+        <div>
           <label class="text-sm text-gray-600 font-medium">Student Name</label>
-          <label class="text-lg font-semibold text-gray-900 mt-1">
+          <label class="text-lg font-semibold text-gray-900 mt-2 block">
             {{ fullName }}
           </label>
         </div>
-        <div class="flex flex-col w-full max-w-48">
+        <div>
           <label class="text-sm text-gray-600 font-medium">Level Name</label>
-          <label class="text-lg font-semibold text-gray-900 mt-1">
+          <label class="text-lg font-semibold text-gray-900 mt-2 block">
             {{ levelName }}
           </label>
         </div>
-        <div class="flex flex-col w-full max-w-48">
+        <div>
           <label class="text-sm text-gray-600 font-medium">Age Group</label>
-          <label class="text-lg font-semibold text-gray-900 mt-1">
+          <label class="text-lg font-semibold text-gray-900 mt-2 block">
             {{ ageGroup }}
           </label>
         </div>
       </div>
+
+      <!-- Form Section -->
       <form
         [formGroup]="formLevels"
-        class="flex flex-row gap-5 w-full items-end"
+        class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
       >
-        <div class="flex flex-col w-full max-w-48">
+        <div>
           <label class="text-sm text-gray-600 font-medium">Bonus Marks</label>
-          <label class="text-lg font-semibold text-gray-900 mt-1">
+          <label class="text-lg font-semibold text-gray-900 mt-2 block">
             {{ bonusMarks }}
           </label>
         </div>
-        <div class="flex flex-col items-start w-full max-w-48">
+
+        <div>
           <label for="level1" class="text-sm text-gray-600 font-medium"
             >Round 1</label
           >
           <input
             id="level1"
-            placeholder="Enter level 1"
             type="text"
-            class="p-inputtext p-component w-full"
+            placeholder="Enter level 1"
+            class="p-inputtext p-component w-full mt-2"
             formControlName="level1"
             ariaLabelledBy="level1"
           />
         </div>
-        <div class="flex flex-col items-start w-full max-w-48">
+
+        <div>
           <label for="level2" class="text-sm text-gray-600 font-medium"
             >Round 2</label
           >
           <input
             id="level2"
-            placeholder="Enter level 2"
             type="text"
-            class="p-inputtext p-component w-full"
+            placeholder="Enter level 2"
+            class="p-inputtext p-component w-full mt-2"
             formControlName="level2"
             ariaLabelledBy="level2"
           />
         </div>
-        <div class="flex flex-col items-start w-full max-w-48">
+
+        <div>
           <label for="level3" class="text-sm text-gray-600 font-medium"
             >Round 3</label
           >
           <input
             id="level3"
-            placeholder="Enter level 3"
             type="text"
-            class="p-inputtext p-component w-full"
+            placeholder="Enter level 3"
+            class="p-inputtext p-component w-full mt-2"
             formControlName="level3"
             ariaLabelledBy="level3"
           />
         </div>
-        <div class="flex flex-col w-full max-w-24">
-          <label class="text-sm text-gray-600 font-medium">Round Total</label>
-          <label class="text-lg font-semibold text-gray-900 mt-1">
+
+        <div>
+          <label class="text-sm text-gray-600 font-medium">Rounds Total</label>
+          <label class="text-lg font-semibold text-gray-900 mt-2 block">
             {{ getTotal() }}
           </label>
         </div>
-        <div class="flex flex-col w-full max-w-48">
+
+        <div class="flex items-center">
           <p-button
             label="Save"
             (onClick)="handleFormLevelsAction()"
-            [disabled]="formLevels.invalid"
+            [disabled]="formLevels.invalid || isExists"
             icon="pi pi-save"
-            class="py-2.5"
+            class="py-2.5 w-full"
             severity="primary"
             [loading]="isSubmitActionLoading"
             loadingIcon="pi pi-spin pi-spinner"
@@ -176,6 +182,7 @@
         </div>
       </form>
     </div>
+
     }
   </p-panel>
   @if(showGrid){
