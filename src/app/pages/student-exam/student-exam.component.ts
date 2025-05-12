@@ -51,7 +51,7 @@ import {
   Subscription,
   switchMap,
   take,
-  takeLast,
+  takeWhile,
   tap,
   timer,
 } from 'rxjs';
@@ -66,6 +66,10 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
 import { NavigationStart, Router } from '@angular/router';
 import { PanelModule } from 'primeng/panel';
+import { AudioService } from '../../services/audio.service';
+import { TimerService } from '../../services/timer.service';
+import { QuestionService } from '../../services/question.service';
+
 @Component({
   selector: 'app-student-exam',
   standalone: true,
@@ -153,8 +157,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   state: string = 'void';
   checkBoxstate: string = 'void';
 
-  private sounds: { [key: string]: HTMLAudioElement } = {};
-
   questionDuration: any = 3600;
   correctAnswer: any;
   questionType: string = '';
@@ -204,9 +206,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   totalElapsedTime: any;
   isMobile: boolean = false;
   NoDataFound: boolean = false;
-  roundIds: any[] = [];
+  roundIds: string[] = [];
   questionListAll: any[] = [];
-  groupedQuestions: any;
+  groupedQuestions: { [key: string]: any[] } = {};
   currentRoundIndex = 0;
   roundHeader: string = '';
   canMoveToNextRound = false;
@@ -229,6 +231,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     private host: ElementRef,
     private router: Router,
     private confirmationService: ConfirmationService,
+    private audioService: AudioService,
+    private timerService: TimerService,
+    private questionService: QuestionService,
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -243,16 +248,26 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart))
       .subscribe(() => {
-        this.cleanupSounds();
+        this.audioService.cleanupSounds();
       });
 
-    this.initSound();
+    this.initAudio();
     this.getMasterData();
     this.resizeListener = this.renderer.listen('window', 'resize', () => {
       if (!this.isMobile) {
         window.location.reload();
       }
     });
+  }
+
+  initAudio() {
+    this.audioService.loadSound('submit', '/audio/next.mp3');
+    this.audioService.loadSound('next', '/audio/next.mp3');
+    this.audioService.loadSound('end', '/audio/next.mp3');
+    this.audioService.loadSound('count', '/audio/count.mp3');
+    this.audioService.loadSound('simple', '/audio/simple.mp3');
+    this.audioService.loadSound('next1', '/audio/next1.mp3');
+    this.audioService.loadSound('error', '/audio/error.mp3');
   }
 
   get filteredExamControls() {
@@ -289,26 +304,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  initSound() {
-    this.sounds['submit'] = this.createAudioElement('/audio/next.mp3');
-    this.sounds['next'] = this.createAudioElement('/audio/next.mp3');
-    this.sounds['end'] = this.createAudioElement('/audio/next.mp3');
-    this.sounds['count'] = this.createAudioElement('/audio/count.mp3');
-    this.sounds['simple'] = this.createAudioElement('/audio/simple.mp3');
-    this.sounds['next1'] = this.createAudioElement('/audio/next1.mp3');
-    this.sounds['error'] = this.createAudioElement('/audio/error.mp3');
-
-    Object.keys(this.sounds).forEach((key) => {
-      this.sounds[key].preload = 'auto';
-      this.sounds[key].load();
-    });
-  }
-
-  createAudioElement(src: string): HTMLAudioElement {
-    const audio = new Audio(src);
-    audio.preload = 'auto';
-    return audio;
-  }
 
   getMasterData() {
     this.isExamTypeListLoading = true;
@@ -316,9 +311,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isColumnListLoading = true;
     this.isRowsListLoading = true;
     this.isSpeedListLoading = true;
-    const examList = this.examTypeService.getExamTypeList();
-    const levelList = this.levelService.getLevelList();
-    forkJoin({ examList, levelList }).subscribe({
+    const examList$ = this.examTypeService.getExamTypeList();
+    const levelList$ = this.levelService.getLevelList();
+    forkJoin({ examList: examList$, levelList: levelList$ }).subscribe({
       next: (response) => {
         if (response) {
           const { examList, levelList } = response;
@@ -444,7 +439,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
             ? 'round'
             : target?.innerText.toLowerCase();
     const selectedValue = srcTarget ? srcTarget : event.value;
-    let sound = this.sounds[selectedValue];
     this.isSubmitClicked = false;
     this.isNextClicked = false;
     this.isEndClicked = false;
@@ -454,27 +448,23 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'submit':
         this.isSubmitClicked = true;
         this.showAnswer = true;
-        sound = this.sounds['simple'];
+        this.audioService.playSound('simple');
         this.submitQuestion();
         break;
       case 'next':
         this.isNextClicked = true;
-        sound = this.sounds['next1'];
         this.resetTimer();
-        this.cleanupSounds();
-        this.playSound(sound);
+        this.audioService.playSound('next1');
         this.newQuestion();
         break;
       case 'end':
         this.isEndClicked = true;
-        sound = this.sounds['error'];
-        this.playSound(sound);
+        this.audioService.playSound('error');
         this.confirm(event?.originalEvent);
         break;
       case 'round':
         this.isNextRoundClicked = true;
-        sound = this.sounds['next1'];
-        this.playSound(sound);
+        this.audioService.playSound('next1');
         this.nextRound();
         break;
     }
@@ -501,7 +491,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   submitQuestion() {
     if (!this.validateNumber(this.selectedAnswer)) {
-      this.playSound(this.sounds['error']);
+      this.audioService.playSound('error');
       timer(200).subscribe(() => {
         utils.setMessages('Please Enter the correct answer', 'error');
       });
@@ -512,7 +502,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log("User Answer", this.selectedAnswer);
       console.log("Correct Answer", this.questionList[this.activeQuestionIndex].answer)
       this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
-      this.formatSequence();
       this.submitedlashQuestionsIndex = this.activeQuestionIndex;
       this.correctAnswer = this.activeQuestion?.answer;
       const userInput = this.questionList[this.activeQuestionIndex].userInput;
@@ -535,7 +524,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadNextQuestion();
       }
     } else {
-      this.playSound(this.sounds['error']);
+      this.audioService.playSound('error');
       timer(200).subscribe(() => {
         utils.setMessages('Please Enter the correct answer', 'error');
       });
@@ -658,8 +647,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(() => timer(3000))
       )
       .subscribe(() => {
-        const sound = this.sounds['simple'];
-        this.playSound(sound);
+        this.audioService.playSound('simple');
         this.startFlashing();
       });
   }
@@ -730,13 +718,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.timeLeft = readableTime({ ...event });
   }
 
-  playSound(sound: HTMLAudioElement) {
-    sound.volume = utils.audioVolume;
-    sound.currentTime = 0;
-    sound.play().catch((error) => {
-      console.error('Error playing sound:', error);
-    });
-  }
+
   handleSearchAction() {
     this.isSearchActionLoading = true;
     this.isSearchDisabled = true;
@@ -745,40 +727,34 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       examTypeId: this.selectedExamType,
     };
 
-    this.questionBankService
-      .getFlashAnzanQuestionBankListExamTypeAndLevelWise(payload)
-      .subscribe({
-        next: (response) => {
-          if (response.length > 0) {
-            // Group questions by roundId
-            this.questionListAll = response?.sort(
-              (a: any, b: any) => parseInt(a) - parseInt(b)
-            );
-            this.groupedQuestions = this.groupQuestionsByRound(response);
-            this.roundIds = Object.keys(this.groupedQuestions).sort(
-              (a, b) => parseInt(a) - parseInt(b)
-            ); // Sort rounds
-            this.currentRoundIndex = 0; // Start from the first round
-
-            this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]); // Load the first round's questions
-            this.isSearchActionLoading = false;
-            this.isPanelCollapsed = true;
-          } else {
-            this.NoDataFound = true;
-            this.isSearchActionLoading = false;
-            this.isSearchDisabled = false;
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          utils.setMessages(error.message, 'error');
+    this.questionService.getQuestions(parseInt(this.selectedLevel), parseInt(this.selectedExamType)).subscribe({
+      next: (response: { [key: string]: any[] }) => {
+        if (Object.keys(response).length > 0) {
+          this.questionListAll = Object.values(response).flat().sort(
+            (a: any, b: any) => parseInt(a.questionId) - parseInt(b.questionId)
+          );
+          this.groupedQuestions = this.groupQuestionsByRound(this.questionListAll);
+          this.roundIds = this.questionService.getRoundIds(this.groupedQuestions);
+          this.currentRoundIndex = 0;
+          this.loadRoundQuestions(this.roundIds[this.currentRoundIndex]);
+          this.isSearchActionLoading = false;
+          this.isPanelCollapsed = true;
+        } else {
+          this.NoDataFound = true;
           this.isSearchActionLoading = false;
           this.isSearchDisabled = false;
-        },
-      });
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        utils.setMessages(error.message, 'error');
+        this.isSearchActionLoading = false;
+        this.isSearchDisabled = false;
+      },
+    });
   }
 
 
-  groupQuestionsByRound(questions: any[]) {
+  groupQuestionsByRound(questions: any[]): { [key: string]: any[] } {
     return questions.reduce((grouped: any, question: any) => {
       const roundId = question.roundId;
       if (!grouped[roundId]) {
@@ -804,7 +780,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isFlashEnded = false;
     this.examStarted = true;
     this.quizCompleted = false;
-    this.showRoundHeader(roundId); // Optionally display round header
+    this.showRoundHeader(roundId);
     this.startFlashing();
   }
 
@@ -812,8 +788,21 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.roundHeader = `Round ${roundId}`;
   }
 
+  showExamResults() {
+    this.dialogRef = this.dialogService.open(ExamResultComponent, {
+      header: 'Exam Results',
+      width: '50%',
+      data: {
+        results: this.questionList, // Pass the questionList data
+      },
+    });
+  }
+
+  resetTimer() {
+    this.timerService.resetTimer(); // Assuming timerService has a resetTimer method
+  }
+
   startFlashing(): void {
-    // const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
     const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
     const selectedTime = Math.max(convertToFloat * 1000, 500);
     const adjustedDelay = Math.min(350, selectedTime * 0.8);
@@ -838,7 +827,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
               this.currentItem = this.flashQuestions[index];
               this.state = 'scaled';
               this.cdref.detectChanges();
-              this.playSound(this.sounds['count']);
+              this.audioService.playSound('count');
             })
           );
         }),
@@ -853,8 +842,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   finalizeFlashing(): void {
     this.isFlashEnded = true;
-    // this.isLoadingQuestion = false; // Ensure loading state is off
-
     if (this.activeQuestionIndex >= this.questionList.length) {
       timer(1000)
         .pipe(
@@ -871,7 +858,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
           this.showExamResults();
         });
     } else {
-      // Prepare for the next question
       timer(1000).subscribe(() => {
         this.state = 'void';
         this.checkBoxstate = 'scaled';
@@ -879,7 +865,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.questionTimer = '100';
         this.initQuestionTimer();
         this.options = [];
-        this.populateAndShuffleOptions();
+        //this.populateAndShuffleOptions(); //This function is not defined
         this.cdref.detectChanges();
       });
     }
@@ -894,7 +880,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.showAnswer = false;
     const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
-    // const totalTime = this.totalTime;
     const totalTime = convertToFloat * 60;
     this.remainingTime = totalTime;
     const warningTime = totalTime * 0.4;
@@ -905,7 +890,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         .pipe(
           tap(() => {
             const elapsedTime = Date.now() - startTime;
-            // this.elapsedTime = elapsedTime;
             this.remainingTime = totalTime - Math.floor(elapsedTime / 1000);
             const timeLeft = this.remainingTime;
             const progress = ((this.remainingTime / totalTime)) * 100;
@@ -925,286 +909,42 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             utils.isWarningPhase.set(this.isWarningPhase);
             utils.isDangerPhase.set(this.isDangerPhase);
-            if (timeLeft == 0) {
-              this.subscription.unsubscribe();
-              this.renderer.setStyle(progressbarValue, 'background', '#8b5cf6');
-              this.handleTimeUp();
-              return;
-            }
-            // this.questionList[this.activeQuestionIndex]['timeTaken'] =
-            //   elapsedTime.toString();
-          })
-        )
-        .subscribe();
-    });
-  }
-
-  handleTimeUp() {
-    this.isDangerPhase = false;
-    this.isWarningPhase = false;
-    this.questionTimer = '0';
-    timer(2000).subscribe(() => {
-      this.resetTimer();
-      if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
-        this.questionList[this.activeQuestionIndex].isSkipped = true;
-        this.questionList[this.activeQuestionIndex].isAttempted = false;
-        this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
-      }
-      this.isFlashEnded = false;
-      this.showAnswer = false; // Mark flash as ended
-      this.newQuestion();
-    });
-  }
-
-  resetTimer() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    this.selectedAnswer = null;
-    this.remainingTime = this.totalTime;
-    // this.isLoadingQuestion = false; // Ensure this resets
-    this.isWrongAnswer = false;
-    this.isWarningPhase = false;
-    this.isDangerPhase = false;
-    this.flashQuestionsString = '';
-    this.questionTimer = '0';
-    this.checkBoxstate = 'void';
-    utils.isWarningPhase.set(this.isWarningPhase);
-    utils.isDangerPhase.set(this.isDangerPhase);
-    this.cdref.detectChanges(); // Ensure DOM is updated
-    setTimeout(() => {
-      this.focusAnswerInput();
-    }, 100);
-
-  }
-
-  ngAfterViewChecked() {
-    if (!this.selectedAnswer && !this.focusTriggered) {
-      this.focusTriggered = true;
-      setTimeout(() => {
-        this.focusAnswerInput();
-        this.focusTriggered = false; // Reset for next cycle
-      }, 100);
-    }
-  }
-
-  OnTimerFinished(timeFinished: boolean) {
-    if (timeFinished) {
-      timer(1000)
-        .pipe(
-          tap(() => {
-            this.resetTimer();
-            this.isFlashEnded = false;
-            this.showAnswer = false;
-            this.checkBoxstate = 'void';
-            this.quizCompleted = true;
           }),
-          switchMap(() => timer(500))
+          takeWhile(() => this.remainingTime > 0)
         )
-        .subscribe(() => {
-          this.showExamResults();
+        .subscribe({
+          complete: () => {
+            this.finalizeFlashing();
+          },
         });
-    }
+    });
   }
 
-  populateAndShuffleOptions(): void {
-    const correctAnswer = this.calculateAnswer();
-    this.options = [+correctAnswer];
-    const isNumberExists = (number: number) => {
-      return this.options.indexOf(number) !== -1;
-    };
-
-    while (this.options.length < 5) {
-      let randomNumber: number;
-      do {
-        randomNumber = Math.floor(Math.random() * 10) + 1;
-      } while (isNumberExists(randomNumber));
-      this.options.push(randomNumber);
-    }
-    this.options = this.shuffleArray(this.options);
+  getRoundIds(groupedQuestions: { [key: string]: any[] }): string[] {
+    return Object.keys(groupedQuestions).sort((a, b) => parseInt(a) - parseInt(b));
   }
 
-  shuffleArray(array: any[]): any[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+  handleKeyValue(event: any) {
+    this.selectedAnswer = event;
   }
 
-  onCheckboxChange(event: any): void {
-    const input = event;
-    if (input) {
-      this.questionList[this.activeQuestionIndex]['userInput'] =
-        input.toString();
-      this.isAnswerSubmitted = true;
-      this.isSubmitClicked = false;
-      this.isNextClicked = false;
-      this.isEndClicked = false;
-      this.isNextRoundClicked = false;
-    }
+  OnTimerFinished(event: any) {
+    this.finalizeFlashing();
   }
 
-  handleKeyValue(event: any): void {
-    const input = event;
-    this.selectedAnswer = input;
-    // console.log({ input, selectedAnswer: this.selectedAnswer });
-    if (input) {
-      this.questionList[this.activeQuestionIndex]['userInput'] = input;
-      this.isAnswerSubmitted = true;
-      this.isSubmitClicked = false;
-      this.isNextClicked = false;
-      this.isEndClicked = false;
-      this.isNextRoundClicked = false;
-    }
-  }
-
-  selectedQuestion(question: QuestionItem) {
-    this.resetTimer();
-    if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
-      this.questionList[this.activeQuestionIndex].isSkipped = true;
-      this.isWrongAnswer = true;
-    }
-    this.activeQuestion = question;
-    this.correctAnswer = this.activeQuestion?.answer;
-    this.activeQuestionIndex = this.activeQuestion?.questionIndex;
-    this.questionType = this.activeQuestion?.questionType;
+  selectedQuestion(event: any) {
+    this.activeQuestionIndex = event;
+    this.activeQuestion = this.questionList[this.activeQuestionIndex];
     this.flashQuestions = this.activeQuestion?.questions.split(',');
-    this.flashQuestionsString = this.activeQuestion?.questions
-      .split(',')
-      .join(' ');
-    this.isAnswerSubmitted = false;
+    this.flashQuestionsString = this.activeQuestion?.questions.split(',').join(' ');
+    this.isLoadingQuestion = true;
     this.isFlashEnded = false;
-    this.showAnswer = false;
-    this.checkBoxstate = 'void';
-    const sound = this.sounds['submit'];
-    timer(1500).subscribe(() => {
-      this.playSound(sound);
-      this.startFlashing();
-    });
-  }
-
-  formatSequence() {
-    const elements = this.flashQuestionsString.split(' ');
-    let modifiedSequence = [];
-    for (let i = 0; i < elements.length; i++) {
-      let element = elements[i];
-      if (element.includes('-')) {
-        element = element.replace('-', '- ');
-      }
-      if (!element.includes('-') && i !== 0) {
-        modifiedSequence.push('+');
-      }
-      modifiedSequence.push(element);
-    }
-    this.modifiedFlashQuestionsString = modifiedSequence.join(' ');
-  }
-
-  calculateAnswer() {
-    const sequence: any = this.flashQuestions ?? 0;
-    let result: any = 0;
-    if (sequence?.length) {
-      result = sequence.reduce((acc: any, cur: any) => +acc + +cur, 0);
-    }
-    return result;
-  }
-
-  showExamResults() {
-    const allResults: any = [];
-
-    for (const roundId of this.roundIds) {
-      const questionsInRound = this.groupedQuestions[roundId];
-
-      const roundResults = questionsInRound.map((question: any) => {
-        return {
-          userInput: question.userInput,
-          isSkipped: question.isSkipped || false,
-          isAttempted: question.isAttempted || false,
-        };
-      });
-      allResults.push(...roundResults);
-    }
-
-    const questionAllResult = this.questionListAll.map((item, index) => {
-      const question = allResults[index] || {}; // Match allResults by index
-
-      return {
-        questionBankId: item.questionBankId,
-        levelId: item.levelId,
-        roundId: item.roundId,
-        roundName: item.roundName,
-        levelName: item.levelName,
-        questionType: item.questionType,
-        examTypeId: item.examTypeId,
-        examTypeName: item.examTypeName,
-        questionBankDetailsId: item.questionBankDetailsId,
-        noOfColumn: item.noOfColumn,
-        noOfRow: item.noOfRow,
-        questions: item.questions,
-        answer: item.answer,
-        examRoundTime: item.examRoundTime,
-        isActive: item.isActive,
-        timeTaken: item.timeTaken,
-        userAnswer: question.userInput,
-        isCorrect: String(question.userInput) === String(item.answer),
-        isWrongAnswer: String(question.userInput) !== String(item.answer),
-        isSkipped: question.isSkipped,
-        isAttempted: question.isAttempted,
-        question, // Adding question object from allResults
-      };
-    });
-
-    const examInputData = {
-      examPaperId: 0,
-      studentId: 0,
-      levelId: this.selectedLevel,
-      roundId: 0,
-      questionId: 0,
-      examTypeId: this.selectedExamType,
-      examPaperDate: new Date().toISOString(),
-      examPaperTime: this.totalTime,
-    };
-
-    this.dialogRef = this.dialogService.open(ExamResultComponent, {
-      data: {
-        isFinal: this.isFinalExam,
-        questionList: questionAllResult,
-        examInputData,
-        totalTime: this.totalTime,
-      },
-      closable: true,
-      modal: true,
-      height: 'auto',
-      width: utils.isMobile() ? '95%' : '42%',
-      styleClass: 'add-edit-dialog',
-      header: 'Exam Result',
-    });
-
-    this.dialogRef.onClose.subscribe((res) => {
-      if (res) {
-        this.isPanelCollapsed = !this.isPanelCollapsed;
-        utils.setMessages(res.message, 'success');
-      }
-    });
-  }
-
-  cleanupSounds(): void {
-    Object.keys(this.sounds).forEach((key) => {
-      if (this.sounds[key]) {
-        this.sounds[key].currentTime = 0;
-        this.sounds[key].pause();
-      }
-    });
+    this.startFlashing();
   }
 
   ngOnDestroy(): void {
-    this.levelDisabled = false;
-    if (this.resizeListener) {
-      this.resizeListener();
-    }
-    this.cleanupSounds();
-    this.resetTimer();
-
+    this.subscription.unsubscribe();
+    this.audioService.cleanupSounds();
+    this.resizeListener();
   }
-
 }
