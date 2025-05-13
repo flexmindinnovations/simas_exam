@@ -278,6 +278,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.setTimerWidth();
+    setTimeout(() => {
+      this.focusAnswerInput();
+    }, 100);
   }
 
 
@@ -607,9 +610,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.loadNextQuestion();
     this.cdref.detectChanges();
-    setTimeout(() => {
-      this.focusAnswerInput();
-    }, 100);
   }
 
 
@@ -677,6 +677,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(() => timer(500))
       )
       .subscribe(() => {
+
+        console.log('called endExam');
+
         this.showExamResults();
       });
   }
@@ -800,17 +803,86 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showExamResults() {
+    const allResults: any = [];
+
+    for (const roundId of this.roundIds) {
+      const questionsInRound = this.groupedQuestions[roundId];
+
+      const roundResults = questionsInRound.map((question: any) => {
+        return {
+          userInput: question.userInput,
+          isSkipped: question.isSkipped || false,
+          isAttempted: question.isAttempted || false,
+        };
+      });
+      allResults.push(...roundResults);
+    }
+
+    const questionAllResult = this.questionListAll.map((item, index) => {
+      const question = allResults[index] || {}; // Match allResults by index
+
+      return {
+        questionBankId: item.questionBankId,
+        levelId: item.levelId,
+        roundId: item.roundId,
+        roundName: item.roundName,
+        levelName: item.levelName,
+        questionType: item.questionType,
+        examTypeId: item.examTypeId,
+        examTypeName: item.examTypeName,
+        questionBankDetailsId: item.questionBankDetailsId,
+        noOfColumn: item.noOfColumn,
+        noOfRow: item.noOfRow,
+        questions: item.questions,
+        answer: item.answer,
+        examRoundTime: item.examRoundTime,
+        isActive: item.isActive,
+        timeTaken: item.timeTaken,
+        userAnswer: question.userInput,
+        isCorrect: String(question.userInput) === String(item.answer),
+        isWrongAnswer: String(question.userInput) !== String(item.answer),
+        isSkipped: question.isSkipped,
+        isAttempted: question.isAttempted,
+        question,
+      };
+    });
+
+    const examInputData = {
+      examPaperId: 0,
+      studentId: 0,
+      levelId: this.selectedLevel,
+      roundId: 0,
+      questionId: 0,
+      examTypeId: this.selectedExamType,
+      examPaperDate: new Date().toISOString(),
+      examPaperTime: this.totalTime,
+    };
+
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
-      header: 'Exam Results',
-      width: '50%',
       data: {
-        results: this.questionList, // Pass the questionList data
+        isFinal: this.isFinalExam,
+        questionList: questionAllResult,
+        examInputData,
+        totalTime: this.totalTime,
       },
+      closable: true,
+      modal: true,
+      height: 'auto',
+      width: utils.isMobile() ? '95%' : '42%',
+      styleClass: 'add-edit-dialog',
+      header: 'Exam Result',
+    });
+
+    this.dialogRef.onClose.subscribe((res) => {
+      if (res) {
+        this.isPanelCollapsed = !this.isPanelCollapsed;
+        utils.setMessages(res.message, 'success');
+      }
     });
   }
 
   resetTimer() {
-    this.timerService.resetTimer(); // Assuming timerService has a resetTimer method
+    this.timerService.resetTimer();
   }
 
   startFlashing(): void {
