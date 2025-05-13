@@ -1,14 +1,14 @@
 .wrapper {
-  @apply grid-cols-1 grid-rows-[12rem_auto] 
-         md:grid-cols-[1fr_40%] md:grid-rows-[16rem_1fr] 
-         lg:grid-rows-[24rem_1fr] xl:grid-rows-[28rem_1fr] 
-         2xl:grid-rows-[32rem_1fr] 
-         lg:grid-cols-[1fr_40%] xl:grid-cols-[1fr_45%] 
-         2xl:grid-cols-[1fr_45%] 
-         md:max-h-[calc(100vh-235px)] 
-         lg:max-h-[calc(100vh-148px)] 
-         xl:max-h-[calc(100vh-100px)] 
-         2xl:max-h-[calc(100vh-100px)] 
+  @apply grid-cols-1 grid-rows-[12rem_auto]
+         md:grid-cols-[1fr_40%] md:grid-rows-[16rem_1fr]
+         lg:grid-rows-[24rem_1fr] xl:grid-rows-[28rem_1fr]
+         2xl:grid-rows-[32rem_1fr]
+         lg:grid-cols-[1fr_40%] xl:grid-cols-[1fr_45%]
+         2xl:grid-cols-[1fr_45%]
+         md:max-h-[calc(100vh-235px)]
+         lg:max-h-[calc(100vh-148px)]
+         xl:max-h-[calc(100vh-100px)]
+         2xl:max-h-[calc(100vh-100px)]
          overflow-y-auto; /* Removed incorrect `2x:` and ensured proper breakpoints */
 }
 
@@ -151,4 +151,79 @@
   ::ng-deep .exampOptionsCard .p-selectbutton {
     @apply flex flex-nowrap justify-center gap-1 overflow-x-auto;
   }
+}
+
+// Responsive container
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.exam-wrapper, .main-content, .question-panel, .options-panel, .result-panel {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.exam-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .exam-wrapper {
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .exam-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding: 1rem 0.5rem;
+  }
+  .main-content, .question-panel, .options-panel, .result-panel {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .exam-wrapper {
+    padding: 0.5rem 0.2rem;
+    gap: 1rem;
+  }
+  .main-content, .question-panel, .options-panel, .result-panel {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .question-panel input, .options-panel input, .options-panel select {
+    font-size: 1rem;
+    width: 100%;
+    min-width: 0;
+  }
+  .p-button, button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+// Ensure tables and panels are scrollable on small screens
+.result-panel table, .p-table, .p-datatable {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+// Make sure dialog modals are responsive
+::ng-deep .p-dialog {
+  max-width: 95vw !important;
+  width: 100% !important;
 }

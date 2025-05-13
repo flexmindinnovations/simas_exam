@@ -490,21 +490,32 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submitQuestion() {
-    if (!this.validateNumber(this.selectedAnswer)) {
+    const isNumber = this.validateNumber(this.selectedAnswer);
+    if (this.selectedAnswer === '' || this.selectedAnswer === undefined) {
       this.audioService.playSound('error');
       timer(200).subscribe(() => {
         utils.setMessages('Please Enter the correct answer', 'error');
       });
       return;
     }
+    if (this.selectedAnswer === '0' && this.questionList[this.activeQuestionIndex].answer === 0) {
+      this.audioService.playSound('error');
+      timer(200).subscribe(() => {
+        utils.setMessages('Please Enter the correct answer', 'error');
+      });
+      return;
+    }
+    this.isAnswerSubmitted = true;
 
     if (this.isAnswerSubmitted) {
-      console.log("User Answer", this.selectedAnswer);
-      console.log("Correct Answer", this.questionList[this.activeQuestionIndex].answer)
       this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
+      this.formatSequence();
       this.submitedlashQuestionsIndex = this.activeQuestionIndex;
       this.correctAnswer = this.activeQuestion?.answer;
       const userInput = this.questionList[this.activeQuestionIndex].userInput;
+
+      // Check if the user input is a number and matches the correct answer
+
       const isWrongAnswer = String(userInput) !== String(this.correctAnswer);
 
       this.questionList[this.activeQuestionIndex].isCompleted = true;
@@ -803,6 +814,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startFlashing(): void {
+    this.questionList[this.activeQuestionIndex].userInput = undefined;
+    this.selectedAnswer = null;
     const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
     const selectedTime = Math.max(convertToFloat * 1000, 500);
     const adjustedDelay = Math.min(350, selectedTime * 0.8);
@@ -865,7 +878,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.questionTimer = '100';
         this.initQuestionTimer();
         this.options = [];
-        //this.populateAndShuffleOptions(); //This function is not defined
+        // this.populateAndShuffleOptions();
         this.cdref.detectChanges();
       });
     }
@@ -925,6 +938,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleKeyValue(event: any) {
+    this.questionList[this.activeQuestionIndex].userInput = event;
     this.selectedAnswer = event;
   }
 
@@ -940,6 +954,22 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoadingQuestion = true;
     this.isFlashEnded = false;
     this.startFlashing();
+  }
+
+  formatSequence() {
+    const elements = this.flashQuestionsString.split(' ');
+    let modifiedSequence = [];
+    for (let i = 0; i < elements.length; i++) {
+      let element = elements[i];
+      if (element.includes('-')) {
+        element = element.replace('-', '- ');
+      }
+      if (!element.includes('-') && i !== 0) {
+        modifiedSequence.push('+');
+      }
+      modifiedSequence.push(element);
+    }
+    this.modifiedFlashQuestionsString = modifiedSequence.join(' ');
   }
 
   ngOnDestroy(): void {
