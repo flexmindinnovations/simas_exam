@@ -25,6 +25,7 @@ export class ExamResultComponent implements OnInit {
   correctQuestions: any[] = [];
   skippedQuestions: any[] = [];
   wrongQuestions: any[] = []
+  roundWiseResults: any[] = [];
 
   constructor(
     private dialogRef: DynamicDialogRef,
@@ -33,6 +34,7 @@ export class ExamResultComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     this.dialogData = this.config.data;
     this.questionList = this.dialogData?.questionList;
     this.examInputData = this.dialogData?.examInputData;
@@ -43,12 +45,44 @@ export class ExamResultComponent implements OnInit {
       this.wrongQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === true);
       this.correctQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
     }
-    this.saveExamPaper(); // as per the requirement of user
+    this.generateRoundWiseResults();
+    this.saveExamPaper();
   }
 
   handleDialogCancel() {
     this.dialogRef.close(false);
   }
+
+  generateRoundWiseResults() {
+    const groupedRounds: { [roundId: string]: any[] } = {};
+
+    this.questionList.forEach(q => {
+      if (!groupedRounds[q.roundId]) {
+        groupedRounds[q.roundId] = [];
+      }
+      groupedRounds[q.roundId].push(q);
+    });
+
+    this.roundWiseResults = Object.keys(groupedRounds).map(roundId => {
+      const roundQuestions = groupedRounds[roundId];
+      const attempted = roundQuestions.filter(q => q.isAttempted);
+      const correct = attempted.filter(q => !q.isWrongAnswer);
+      const wrong = attempted.filter(q => q.isWrongAnswer);
+      const skipped = roundQuestions.filter(q => !q.isAttempted);
+
+      return {
+        roundId,
+        roundName: roundQuestions[0]?.roundName || `Round ${roundId}`,
+        total: roundQuestions.length,
+        attempted: attempted.length,
+        correct: correct.length,
+        wrong: wrong.length,
+        skipped: skipped.length,
+        accuracy: attempted.length ? ((correct.length / attempted.length) * 100).toFixed(1) : '0.0'
+      };
+    });
+  }
+
 
   // handleSubmitAction() {  // as per the requirement of user
   //   this.saveExamPaper();
@@ -75,7 +109,11 @@ export class ExamResultComponent implements OnInit {
         skipQuestions: this.skippedQuestions?.length,
         rightAnswer: this.correctQuestions?.length,
         wrongAnswer: this.wrongQuestions?.length,
-        totalTimeTaken: item.timeTaken
+        totalTimeTaken: item.timeTaken,
+        srno: 0,
+        round1Mark: this.roundWiseResults[0]?.correct,
+        round2Mark: this.roundWiseResults[1]?.correct,
+        round3Mark: this.roundWiseResults[2]?.correct,
       };
       return obj;
     });

@@ -1,36 +1,89 @@
-<div class="dialog-body p-2" [@grow]>
-  <div class="form-container w-full flex flex-col items-start justify-center">
-    <p>
-      <span>Total Questions:</span>
-      <span>{{ questionList.length }}</span>
-    </p>
-    <p>
-      <span>Attempted Questions:</span>
-      <span>{{ attemptedQuestions.length }}</span>
-    </p>
-    <p>
-      <span>Skipped Questions:</span>
-      <span class="text-orange-500">{{ skippedQuestions.length }}</span>
-    </p>
-    @if(!dialogData?.isFinal === false){
-    <p>
-      <span>Correct Answers:</span>
-      <span class="text-green-500">{{ correctQuestions.length }}</span>
-    </p>
-    <p>
-      <span>Wrong Answers:</span>
-      <span class="text-red-500">{{ wrongQuestions.length }}</span>
-    </p>
-    }
+<div
+  class="dialog-body py-2 px-6 bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-auto border border-gray-200"
+  [@grow]
+>
+  <!-- Summary Section -->
+  <div class="grid md:grid-cols-2 gap-4">
+    <!-- Round-wise Summary -->
+    <div>
+      <h3
+        class="text-xl font-semibold text-indigo-600 mb-3 flex items-center gap-2"
+      >
+        <i class="pi pi-list text-indigo-500 text-sm"></i> Round-wise Summary
+      </h3>
+      <div
+        *ngFor="let round of roundWiseResults"
+        class="mb-4 p-4 rounded-xl bg-indigo-50/40 border border-indigo-100 hover:shadow transition-all"
+      >
+        <p class="font-semibold text-indigo-700 text-md mb-2">
+          {{ round.roundName }} :
+          <strong>Total Questions : {{ round.total }}</strong>
+        </p>
+        <div class="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+          <div><strong>Attempted : </strong> {{ round.attempted }}</div>
+          <div><strong>Skipped : </strong> {{ round.skipped }}</div>
+          <div>
+            <strong>Correct : </strong>
+            <span class="text-green-600 font-medium">{{ round.correct }}</span>
+          </div>
+          <div>
+            <strong>Wrong : </strong>
+            <span class="text-red-500 font-medium">{{ round.wrong }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Summary -->
+    <div>
+      <h3
+        class="text-xl font-semibold text-blue-600 mb-3 flex items-center gap-2"
+      >
+        <i class="pi pi-list text-blue-500 text-sm"></i> Overall Summary
+      </h3>
+      <ul class="space-y-4 text-base text-gray-800">
+        <li class="flex justify-between border-b">
+          <span>Total Questions</span>
+          <span class="font-semibold">{{ questionList.length }}</span>
+        </li>
+        <li class="flex justify-between border-b">
+          <span>Attempted</span>
+          <span class="font-semibold">{{ attemptedQuestions.length }}</span>
+        </li>
+        <li class="flex justify-between border-b">
+          <span>Skipped</span>
+          <span class="text-orange-500 font-semibold">{{
+            skippedQuestions.length
+          }}</span>
+        </li>
+        @if (!dialogData?.isFinal === false) {
+        <li class="flex justify-between border-b">
+          <span>Correct</span>
+          <span class="text-green-600 font-semibold">{{
+            correctQuestions.length
+          }}</span>
+        </li>
+        <li class="flex justify-between">
+          <span>Wrong</span>
+          <span class="text-red-500 font-semibold">{{
+            wrongQuestions.length
+          }}</span>
+        </li>
+        }
+      </ul>
+    </div>
   </div>
-  <div class="action w-full flex items-center justify-end gap-3 p-4">
+
+  <!-- Footer Button -->
+  <div class="flex justify-end mt-8">
     <p-button
       label="Close"
       (onClick)="handleDialogCancel()"
-      icon="pi pi-check"
-      severity="primary"
+      icon="pi pi-times"
+      severity="danger"
       [loading]="isSubmitActionLoading"
       loadingIcon="pi pi-spin pi-spinner"
+      styleClass="px-5 py-2 text-base font-semibold"
     ></p-button>
   </div>
 </div>

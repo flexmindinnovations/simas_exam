@@ -90,6 +90,7 @@ export type ApiCallConfig = {
     examPaperList: string;
     SaveExamPaper: string;
     SaveExamPaperList: string;
+    TempSaveExamPaperList: string
   };
   questionBank: {
     questionBankList: string;
@@ -242,7 +243,8 @@ export class AppConfigService {
     examPaper: {
       examPaperList: `${this.hostUrl}/ExamPaper/getExamPaper`,
       SaveExamPaper: `${this.hostUrl}/ExamPaper/SaveExamPaper`,
-      SaveExamPaperList: `${this.hostUrl}/ExamPaper/SaveExamPaperList`
+      SaveExamPaperList: `${this.hostUrl}/ExamPaper/SaveExamPaperList`,
+      TempSaveExamPaperList: `${this.hostUrl}/ExamPaper/TempSaveExamPaperList`,
     },
     questionBank: {
       questionBankList: `${this.hostUrl}/QuestionBank/getQuestionBankList`,
