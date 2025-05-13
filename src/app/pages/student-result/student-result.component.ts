@@ -56,6 +56,7 @@ export class StudentResultComponent implements OnInit {
   roundTotal: number = 0;
   ageGroup: string = '';
   bonusMarks: number = 0;
+  isExists: boolean = false;
 
 
   constructor(
@@ -138,12 +139,22 @@ export class StudentResultComponent implements OnInit {
       this.batchService.getStudentInfoHallTicketNoWise({ compititionId: this.selectedCompetition, hallTicketNumber }).subscribe({
         next: (response) => {
           this.hallTicketNowiseInfo = response;
+          this.isExists = response?.isExist ? true : false;
           this.fullName = response?.studentFullName ? response?.studentFullName : "-"
           this.levelName = response?.levelName ? response?.levelName : "-";
           this.ageGroup = response?.ageGroupName ? response?.ageGroupName : "-";
-          this.bonusMarks = response?.bonusMarks ? response.bonusMarks : "-"
+          this.bonusMarks = response?.bonusMark ? response.bonusMark : "-";
           this.isSearchActionLoading = false;
           this.formLevels.reset();
+          if (this.isExists) {
+            const markData = response.studentMarkResponseList[0];
+            this.formLevels.patchValue({
+              level1: markData?.round1Mark,
+              level2: markData?.round2Mark,
+              level3: markData?.round3Mark
+            });
+
+          }
           this.showLevels = true;
         },
         error: (error: HttpErrorResponse) => {

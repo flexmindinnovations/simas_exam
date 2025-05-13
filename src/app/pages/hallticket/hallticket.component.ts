@@ -565,7 +565,7 @@ export class HallticketComponent {
                 </tr>
                 <tr>
                   <td>Batch Date & Time</td>
-                  <td colspan="2">${new Date(selectedStudent.batchDate).toLocaleString()}</td>
+                  <td colspan="2">${selectedStudent.batchDate}</td>
                 </tr>
                 <tr>
                   <td colspan="3" class="center"><strong>Website & Email</strong><br>${selectedStudent.website} | ${selectedStudent.email}</td>
