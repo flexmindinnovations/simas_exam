@@ -117,7 +117,7 @@ export class ExamResultComponent implements OnInit {
       };
       return obj;
     });
-    const savePaperList = this.examPaperService.saveExamPaperList(payload);
+    const savePaperList = this.examPaperService.TempSaveExamPaperList(payload);
     savePaperList.subscribe({
       next: (response) => {
         this.isSubmitActionLoading = false;

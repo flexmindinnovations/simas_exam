@@ -66,6 +66,8 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
 import { NavigationStart, Router } from '@angular/router';
 import { PanelModule } from 'primeng/panel';
+import { UserTypeService } from '../../services/user-type.service';
+import { StudentService } from '../../services/student/student.service';
 @Component({
   selector: 'app-student-exam',
   standalone: true,
@@ -214,6 +216,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   focusTriggered = false;
   showNextRoundButton: boolean = true;
   isFinalExam: boolean = false;
+  userType: string = '';
+  examStatus: boolean = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   @ViewChild('answerInput') answerInput!: ElementRef;
@@ -229,6 +233,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     private host: ElementRef,
     private router: Router,
     private confirmationService: ConfirmationService,
+    private userTypeService: UserTypeService,
+    private studentService: StudentService,
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -240,6 +246,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getExamType();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart))
       .subscribe(() => {
@@ -253,6 +260,28 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         window.location.reload();
       }
     });
+  }
+
+  getExamType() {
+    this.userType = this.userTypeService.getUserType();
+    if (this.userType === 'Student') {
+      this.isSearchActionLoading = true;
+      const userId = sessionStorage.getItem('userId');
+      const studentId = Number(userId);
+      this.studentService.getStudentById(studentId)
+        .subscribe({
+          next: (response) => {
+            if (response) {
+              this.examStatus = response?.examStatus === '0' ? true : false;
+              this.isSearchActionLoading = false;
+            }
+          },
+          error: (error: HttpErrorResponse) => {
+            this.isSearchActionLoading = false;
+            utils.setMessages(error.message, 'error');
+          }
+        });
+    }
   }
 
   get filteredExamControls() {
@@ -323,7 +352,9 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         if (response) {
           const { examList, levelList } = response;
           this.levelList = levelList;
-          this.examTypeList = examList;
+          this.examTypeList = this.examStatus ? examList.filter(
+            (e: any) => e.examTypeName !== 'Final Compitition'
+          ) : examList;
           if (examList.length) this.isExamTypeListLoading = false;
           if (levelList.length) this.isLevelListLoading = false;
           const roleName = sessionStorage.getItem('role') || '';
