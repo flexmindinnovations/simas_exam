@@ -149,8 +149,20 @@
             <!-- <div
               class="flex flex-col items-center justify-start gap-2"
             > -->
+            <!-- @for (item of options; track $index) {
+                            <div class="flex items-center justify-start gap-4 h-8">
+                                <p-radioButton [inputId]="item" name="question" [value]="item"
+                                    (ngModelChange)="onCheckboxChange($event)" [(ngModel)]="selectedAnswer" />
+                                <label [for]="item"
+                                    class="mb-0 text-base sm:text-base md:!text-lg lg:!text-xl xl:!text-2xl 2xl:!text-2xl font-semibold"
+                                    style="margin-bottom: 0;">
+                                    {{ item }}
+                                </label>
+
+                            </div>
+                            } -->
             <input
-              type="number"
+              type="text"
               #answerInput
               pInputText
               [(ngModel)]="selectedAnswer"
@@ -178,7 +190,7 @@
         <div class="questionResultContainer" id="questionResultContainer">
           @if (showAnswer && submitedlashQuestionsIndex > -1) {
           <div
-            class="innerQuestionResult rounded-md w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
+            class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
             [ngClass]="
               questionList[submitedlashQuestionsIndex].isWrongAnswer
                 ? 'bg-red-500'
@@ -209,7 +221,7 @@
         [questionDuration]="questionDuration"
         (timeEnded)="OnTimerFinished($event)"
         (timeLeft)="handleTimer($event)"
-        class="lg:max-w-xs xl:max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
+        class="max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
         [examStarted]="examStarted"
         [questionsList]="questionList"
         [activeQuestion]="activeQuestion"
