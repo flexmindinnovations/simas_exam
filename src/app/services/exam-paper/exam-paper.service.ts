@@ -27,4 +27,8 @@ export class ExamPaperService {
   saveExamPaperList(payload: any): Observable<any> {
     return this.http.post(this.exampPaperApiPath.SaveExamPaperList, payload);
   }
+
+  TempSaveExamPaperList(payload: any): Observable<any> {
+    return this.http.post(this.exampPaperApiPath.TempSaveExamPaperList, payload);
+  }
 }
