@@ -421,8 +421,9 @@ export class ExamActivationComponent {
             ? 'DeActive'
             : 'Active',
     }
-    let apiCall = this.selectedRows && this.selectedRows.length > 1 ?
-      this.activationService.saveMultipleExamActivation({ "data": this.data, ...payload }) : this.activationService.saveActivation(payload);
+    // let apiCall = this.selectedRows && this.selectedRows.length > 1 ?
+    //   this.activationService.saveMultipleExamActivation({ "data": this.data, ...payload }) : this.activationService.saveActivation(payload);
+    let apiCall = this.activationService.saveMultipleExamActivation({ "data": this.data, ...payload });
     apiCall.subscribe({
       next: (response) => {
         if (response) {

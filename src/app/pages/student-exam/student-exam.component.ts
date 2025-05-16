@@ -215,7 +215,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   isFocused: boolean = false;
   focusTriggered = false;
   showNextRoundButton: boolean = true;
-  isFinalExam: boolean = false;
+  isFinalExam: boolean = true;
   userType: string = '';
   examStatus: boolean = false;
 
@@ -442,9 +442,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedSpeedOfQuestion = value;
         break;
     }
-    if (this.selectedExamType != '2') {
-      this.isFinalExam = true;
-    }
+    this.isFinalExam = this.selectedExamType == '1' ? false : true;
   }
 
   canStartExam(): boolean {

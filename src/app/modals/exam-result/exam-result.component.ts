@@ -91,32 +91,38 @@ export class ExamResultComponent implements OnInit {
   saveExamPaper() {
     this.isSubmitActionLoading = true;
     const userId = sessionStorage.getItem('userId')
-    const payload = this.questionList.map((item: any) => {
-      const correctAnswer = item.isAttempted === true && item.isWrongAnswer === false;
-      const obj = {
-        examPaperId: 0,
-        studentId: userId ? +userId : 0,
-        levelId: item?.levelId,
-        roundId: item?.roundId,
-        questionId: item?.questionBankDetailsId,
-        examTypeId: item?.examTypeId,
-        examPaperDate: new Date(),
-        examPaperTime: new Date().toLocaleTimeString(),
-        answer: item?.userAnswer?.toString() ?? '', // userInput is not exist in object key name is userAnswer
-        answerStatus: correctAnswer ? 'Y' : 'N',
-        answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
-        totalQuestions: this.questionList?.length,
-        skipQuestions: this.skippedQuestions?.length,
-        rightAnswer: this.correctQuestions?.length,
-        wrongAnswer: this.wrongQuestions?.length,
-        totalTimeTaken: item.timeTaken,
-        srno: 0,
-        round1Mark: this.roundWiseResults[0]?.correct,
-        round2Mark: this.roundWiseResults[1]?.correct,
-        round3Mark: this.roundWiseResults[2]?.correct,
-      };
-      return obj;
-    });
+    const payload = this.questionList
+      .map((item: any, index: number) => {
+        const correctAnswer = item.isAttempted === true && item.isWrongAnswer === false;
+        const obj: any = {
+          examPaperId: 0,
+          studentId: userId ? +userId : 0,
+          levelId: item?.levelId,
+          roundId: item?.roundId,
+          questionId: item?.questionBankDetailsId,
+          examTypeId: item?.examTypeId,
+          examPaperDate: new Date(),
+          examPaperTime: new Date().toLocaleTimeString(),
+          answer: item?.userAnswer?.toString() ?? '',
+          answerStatus: correctAnswer ? 'Y' : 'N',
+          answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
+          totalQuestions: this.questionList?.length,
+          skipQuestions: this.skippedQuestions?.length,
+          rightAnswer: this.correctQuestions?.length,
+          wrongAnswer: this.wrongQuestions?.length,
+          totalTimeTaken: item.timeTaken,
+          srno: 0,
+        };
+
+        // Add round1Mark etc. ONLY to the first object
+        if (index === 0) {
+          obj.round1Mark = this.roundWiseResults[0]?.correct ?? 0;
+          obj.round2Mark = this.roundWiseResults[1]?.correct ?? 0;
+          obj.round3Mark = this.roundWiseResults[2]?.correct ?? 0;
+        }
+
+        return obj;
+      });
     const savePaperList = this.examPaperService.TempSaveExamPaperList(payload);
     savePaperList.subscribe({
       next: (response) => {

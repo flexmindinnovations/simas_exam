@@ -5,7 +5,7 @@
   <!-- Summary Section -->
   <div class="grid md:grid-cols-2 gap-4">
     <!-- Round-wise Summary -->
-    @if (!dialogData?.isFinal === false) {
+    @if (!dialogData?.isFinal) {
     <div>
       <h3
         class="text-xl font-semibold text-indigo-600 mb-3 flex items-center gap-2"
@@ -58,7 +58,7 @@
             skippedQuestions.length
           }}</span>
         </li>
-        @if (!dialogData?.isFinal === false) {
+        @if (!dialogData?.isFinal) {
         <li class="flex justify-between border-b">
           <span>Correct</span>
           <span class="text-green-600 font-semibold">{{

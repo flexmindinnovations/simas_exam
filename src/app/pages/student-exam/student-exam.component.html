@@ -162,7 +162,7 @@
                             </div>
                             } -->
             <input
-              type="text"
+              type="number"
               #answerInput
               pInputText
               [(ngModel)]="selectedAnswer"
@@ -186,7 +186,7 @@
           </div>
           }
         </div>
-        @if(isFinalExam){
+        @if(!isFinalExam){
         <div class="questionResultContainer" id="questionResultContainer">
           @if (showAnswer && submitedlashQuestionsIndex > -1) {
           <div
