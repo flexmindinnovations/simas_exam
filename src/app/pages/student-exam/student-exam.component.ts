@@ -352,9 +352,13 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         if (response) {
           const { examList, levelList } = response;
           this.levelList = levelList;
-          this.examTypeList = this.examStatus ? examList.filter(
+          // this.examTypeList = this.examStatus ? examList.filter(
+          //   (e: any) => e.examTypeName !== 'Final Compitition'
+          // ) : examList;
+          const tempExamList = examList.filter((e: any) => e.examTypeName !== 'Practise Compitition')
+          this.examTypeList = this.examStatus ? tempExamList.filter(
             (e: any) => e.examTypeName !== 'Final Compitition'
-          ) : examList;
+          ) : tempExamList;
           if (examList.length) this.isExamTypeListLoading = false;
           if (levelList.length) this.isLevelListLoading = false;
           const roleName = sessionStorage.getItem('role') || '';
