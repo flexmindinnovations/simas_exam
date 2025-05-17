@@ -538,8 +538,8 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.isAnswerSubmitted) {
-      console.log("User Answer", this.selectedAnswer);
-      console.log("Correct Answer", this.questionList[this.activeQuestionIndex].answer)
+      // console.log("User Answer", this.selectedAnswer);
+      // console.log("Correct Answer", this.questionList[this.activeQuestionIndex].answer)
       this.flashQuestionsString = this.questionList[this.activeQuestionIndex].questions.split(',').join(' ');
       this.formatSequence();
       this.submitedlashQuestionsIndex = this.activeQuestionIndex;
@@ -1194,12 +1194,25 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       examPaperTime: this.totalTime,
     };
 
+    const roundListMarks = this.levelList?.find(
+      (item: any) => item.levelId === this.selectedLevel
+    )?.examRoundList;
+
+    const markRoundWise = [
+      roundListMarks.reduce((acc: any, round: any, index: any) => {
+        const key = `round${index + 1}MarkPerQuestion`;
+        acc[key] = round.markPerQuestion;
+        return acc;
+      }, {})
+    ];
+
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
       data: {
         isFinal: this.isFinalExam,
         questionList: questionAllResult,
         examInputData,
         totalTime: this.totalTime,
+        ...markRoundWise[0],
       },
       closable: true,
       modal: true,
