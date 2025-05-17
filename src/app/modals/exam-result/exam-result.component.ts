@@ -116,9 +116,9 @@ export class ExamResultComponent implements OnInit {
 
         // Add round1Mark etc. ONLY to the first object
         if (index === 0) {
-          obj.round1Mark = this.roundWiseResults[0]?.correct ?? 0;
-          obj.round2Mark = this.roundWiseResults[1]?.correct ?? 0;
-          obj.round3Mark = this.roundWiseResults[2]?.correct ?? 0;
+          obj.round1Mark = (this.dialogData?.round1MarkPerQuestion != 0 ? (this.roundWiseResults[0]?.correct * this.dialogData?.round1MarkPerQuestion) : this.roundWiseResults[0]?.correct) ?? 0;
+          obj.round2Mark = (this.dialogData?.round2MarkPerQuestion != 0 ? (this.roundWiseResults[1]?.correct * this.dialogData?.round2MarkPerQuestion) : this.roundWiseResults[1]?.correct) ?? 0;
+          obj.round3Mark = (this.dialogData?.round3MarkPerQuestion != 0 ? (this.roundWiseResults[2]?.correct * this.dialogData?.round3MarkPerQuestion) : this.roundWiseResults[2]?.correct) ?? 0;
         }
 
         return obj;
