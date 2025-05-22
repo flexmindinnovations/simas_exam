@@ -1,0 +1,214 @@
+<div
+  class="max-h-screen overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-white"
+>
+  <!-- Search Panel -->
+  <p-panel header="Search Result">
+    <form
+      [formGroup]="formSearch"
+      class="grid grid-cols-1 xl:grid-cols-4 gap-4 items-end"
+    >
+      <!-- Competition Dropdown -->
+      <div>
+        <label
+          for="competitionId"
+          class="block font-semibold mb-1 text-gray-700"
+          >Competition</label
+        >
+        <p-dropdown
+          inputId="competitionId"
+          formControlName="competitionId"
+          [options]="competitionList"
+          optionLabel="compititionName"
+          optionValue="compititionId"
+          placeholder="Select Competition"
+          (onChange)="handleOnCompetitionChange($event)"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+
+      <!-- Level Dropdown -->
+      <div>
+        <label for="levelId" class="block font-semibold mb-1 text-gray-700"
+          >Level</label
+        >
+        <p-dropdown
+          inputId="levelId"
+          formControlName="levelId"
+          [options]="levelList"
+          optionLabel="levelName"
+          optionValue="levelId"
+          placeholder="Select Level"
+          (onChange)="handleOnLevelChange($event)"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+
+      <!-- Search Button -->
+      <div>
+        <p-button
+          label="Search"
+          [disabled]="isSearchDisabled || formSearch.invalid"
+          (onClick)="handleSearchAction()"
+          class="w-full"
+        ></p-button>
+      </div>
+    </form>
+  </p-panel>
+
+  <div class="flex flex-col lg:flex-row gap-6">
+    <!-- Champion of Champion -->
+    <p-panel
+      header="🏆 Champion of Champion"
+      class="flex-1 shadow-lg rounded-xl border border-blue-100"
+      styleClass="!bg-white"
+      *ngIf="championOfChampion"
+    >
+      <div class="p-6">
+        <div class="flex flex-col md:flex-row items-center gap-6">
+          <img
+            [src]="championOfChampion.studentPhoto"
+            alt="Student Photo"
+            class="w-32 h-32 object-cover border-4 border-blue-400 rounded-xl shadow-md"
+          />
+          <div class="text-center md:text-left space-y-2">
+            <h3 class="text-2xl font-extrabold text-blue-700 tracking-wide">
+              {{ championOfChampion.studentFirstName }}
+              {{ championOfChampion.studentMiddleName }}
+              {{ championOfChampion.studentLastName }}
+            </h3>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Age Group:</span>
+              <span class="font-semibold text-green-600">
+                {{ championOfChampion.ageGroupName }}
+              </span>
+            </p>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Total Mark:</span>
+              <span class="font-semibold text-green-600">
+                {{ championOfChampion.totalMark }}
+              </span>
+            </p>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Bonus:</span>
+              <span class="font-semibold text-green-600">
+                {{ championOfChampion.bonusMark }}
+              </span>
+            </p>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Total with Bonus:</span>
+              <span class="text-lg font-bold text-green-600">
+                {{ championOfChampion.totalWithBonusMark }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </p-panel>
+
+    <!-- Competition Champions -->
+    <p-panel
+      header="🏅 Competition Champions"
+      class="flex-1 shadow-lg rounded-xl border border-blue-100"
+      styleClass="!bg-white"
+      *ngIf="competitionChampions.length"
+    >
+      <div class="p-6 space-y-8">
+        <div
+          *ngFor="let student of competitionChampions"
+          class="flex flex-col md:flex-row items-center gap-6"
+        >
+          <img
+            [src]="student.studentPhoto"
+            alt="Student Photo"
+            class="w-32 h-32 object-cover border-4 border-blue-400 rounded-xl shadow-md"
+          />
+          <div class="text-center md:text-left space-y-2">
+            <h3 class="text-2xl font-extrabold text-blue-700 tracking-wide">
+              {{ student.studentFirstName }}
+              {{ student.studentMiddleName }}
+              {{ student.studentLastName }}
+            </h3>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Age Group:</span>
+              <span class="font-semibold text-green-600">
+                {{ student.ageGroupName }}
+              </span>
+            </p>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Total Mark:</span>
+              <span class="font-semibold text-green-600">
+                {{ student.totalMark }}
+              </span>
+            </p>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Bonus:</span>
+              <span class="font-semibold text-green-600">
+                {{ student.bonusMark }}
+              </span>
+            </p>
+            <p class="text-gray-700">
+              <span class="font-semibold text-blue-600">Total with Bonus:</span>
+              <span class="text-lg font-bold text-green-600">
+                {{ student.totalWithBonusMark }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </p-panel>
+  </div>
+
+  <!-- Prize Tables -->
+  <ng-container
+    *ngFor="
+      let prize of [
+        { title: 'First Prize Winners', list: firstPrizeWinners },
+        { title: 'Second Prize Winners', list: secondPrizeWinners },
+        { title: 'Third Prize Winners', list: thirdPrizeWinners }
+      ]
+    "
+  >
+    <p-panel
+      [header]="prize.title"
+      class="mb-6 shadow-md rounded-lg"
+      styleClass="!bg-white"
+      *ngIf="prize.list.length"
+    >
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left border">
+          <thead>
+            <tr
+              class="bg-blue-100 text-blue-900 uppercase text-xs tracking-wide"
+            >
+              <th class="px-4 py-3 border">Sr.</th>
+              <th class="px-4 py-3 border">Student Name</th>
+              <th class="px-4 py-3 border">Age Group</th>
+              <th class="px-4 py-3 border">Total Mark</th>
+              <th class="px-4 py-3 border">OutOf Mark</th>
+              <th class="px-4 py-3 border">Bonus</th>
+              <th class="px-4 py-3 border">Total with Bonus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let student of prize.list; let i = index"
+              [ngClass]="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
+              class="hover:bg-gray-100 transition-colors"
+            >
+              <td class="px-4 py-2 border">{{ i + 1 }}</td>
+              <td class="px-4 py-2 border">
+                {{ student.studentFirstName }} {{ student.studentMiddleName }}
+                {{ student.studentLastName }}
+              </td>
+              <td class="px-4 py-2 border">{{ student.ageGroupName }}</td>
+              <td class="px-4 py-2 border">{{ student.totalMark }}</td>
+              <td class="px-4 py-2 border">{{ student.outOfMark }}</td>
+              <td class="px-4 py-2 border">{{ student.bonusMark }}</td>
+              <td class="px-4 py-2 border">{{ student.totalWithBonusMark }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </p-panel>
+  </ng-container>
+</div>

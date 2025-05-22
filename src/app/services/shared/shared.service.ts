@@ -13,12 +13,14 @@ export class SharedService {
 
   locationPath: ApiCallConfig['location'];
   franchisePath: ApiCallConfig['franchise'];
+  resultPath: ApiCallConfig['result'];
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient
   ) {
     this.locationPath = this.appConfig.get('location');
     this.franchisePath = this.appConfig.get('franchise');
+    this.resultPath = this.appConfig.get('result');
   }
 
   getCountryList(): Observable<Array<Country>> {
@@ -43,4 +45,9 @@ export class SharedService {
     const franchiseListByTypeApi = this.franchisePath.franchiseListByType.replace('{{id}}', franchiseTypeId.toString())
     return this.http.get(franchiseListByTypeApi);
   }
+
+  getDisplayResultListCompititionAndLevelWise(compititionId: any | number, levelId: any | number) {
+    return this.http.get(this.resultPath.getDisplayResultListCompititionAndLevelWise(compititionId, levelId));
+  }
+
 }
