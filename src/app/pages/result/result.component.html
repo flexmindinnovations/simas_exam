@@ -55,114 +55,128 @@
     </form>
   </p-panel>
 
-  <div class="flex flex-col lg:flex-row gap-6">
-    <!-- Champion of Champion -->
+  <!-- Champion Cards -->
+  <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-3 px-4 py-6">
     <p-panel
-      header="🏆 Champion of Champion"
-      class="flex-1 shadow-lg rounded-xl border border-blue-100"
-      styleClass="!bg-white"
-      *ngIf="championOfChampion"
+      *ngFor="let student of mergedChampionList"
+      [header]="'🏆 ' + student.rankTitle"
+      class="shadow-xl rounded-3xl border-4"
+      [styleClass]="
+        student.rankTitle === 'Champion of Champion'
+          ? '!bg-gradient-to-br from-white via-blue-50 to-blue-100 border-blue-200'
+          : student.rankTitle === 'Competition Champion'
+          ? '!bg-gradient-to-br from-white via-green-50 to-green-100 border-green-200'
+          : '!bg-gradient-to-br from-white via-yellow-50 to-yellow-100 border-yellow-200'
+      "
     >
-      <div class="p-6">
-        <div class="flex flex-col md:flex-row items-center gap-6">
-          <img
-            [src]="championOfChampion.studentPhoto"
-            alt="Student Photo"
-            class="w-32 h-32 object-cover border-4 border-blue-400 rounded-xl shadow-md"
-          />
-          <div class="text-center md:text-left space-y-2">
-            <h3 class="text-2xl font-extrabold text-blue-700 tracking-wide">
-              {{ championOfChampion.studentFirstName }}
-              {{ championOfChampion.studentMiddleName }}
-              {{ championOfChampion.studentLastName }}
-            </h3>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Age Group:</span>
-              <span class="font-semibold text-green-600">
-                {{ championOfChampion.ageGroupName }}
-              </span>
-            </p>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Total Mark:</span>
-              <span class="font-semibold text-green-600">
-                {{ championOfChampion.totalMark }}
-              </span>
-            </p>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Bonus:</span>
-              <span class="font-semibold text-green-600">
-                {{ championOfChampion.bonusMark }}
-              </span>
-            </p>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Total with Bonus:</span>
-              <span class="text-lg font-bold text-green-600">
-                {{ championOfChampion.totalWithBonusMark }}
-              </span>
-            </p>
-          </div>
-        </div>
+      <!-- Franchise -->
+      <div
+        class="text-center text-white bg-gradient-to-r from-pink-500 to-yellow-400 text-xs font-medium tracking-wide px-4 py-2 rounded-full shadow mb-6"
+      >
+        <span>Franchise Name:</span> {{ student.franchiseName }}
       </div>
-    </p-panel>
 
-    <!-- Competition Champions -->
-    <p-panel
-      header="🏅 Competition Champions"
-      class="flex-1 shadow-lg rounded-xl border border-blue-100"
-      styleClass="!bg-white"
-      *ngIf="competitionChampions.length"
-    >
-      <div class="p-6 space-y-8">
+      <!-- Panel Content -->
+      <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+        <!-- Photo -->
         <div
-          *ngFor="let student of competitionChampions"
-          class="flex flex-col md:flex-row items-center gap-6"
+          class="w-36 h-36 bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-lg p-1 shadow-lg transform transition-transform duration-300"
         >
           <img
-            [src]="student.studentPhoto"
-            alt="Student Photo"
-            class="w-32 h-32 object-cover border-4 border-blue-400 rounded-xl shadow-md"
+            [src]="student.studentPhoto || 'assets/images/default-photo.png'"
+            [alt]="
+              'Photo of ' +
+              student.studentFirstName +
+              ' ' +
+              student.studentLastName
+            "
+            class="w-full h-full object-cover rounded-lg border-4 border-white shadow-md"
           />
-          <div class="text-center md:text-left space-y-2">
-            <h3 class="text-2xl font-extrabold text-blue-700 tracking-wide">
-              {{ student.studentFirstName }}
-              {{ student.studentMiddleName }}
-              {{ student.studentLastName }}
-            </h3>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Age Group:</span>
-              <span class="font-semibold text-green-600">
-                {{ student.ageGroupName }}
+        </div>
+
+        <!-- Details -->
+        <div class="flex-1 w-full">
+          <div
+            class="text-xl font-extrabold mb-1 text-center md:text-left tracking-wide"
+            [ngClass]="{
+              'text-blue-800': student.rankTitle === 'Champion of Champion',
+              'text-green-800': student.rankTitle === 'Competition Champion',
+              'text-yellow-800': student.rankTitle === '1st Prize Winner'
+            }"
+          >
+            {{ student.studentFirstName }} {{ student.studentMiddleName }}
+            {{ student.studentLastName }}
+          </div>
+
+          <div class="flex flex-col gap-2 text-sm sm:text-base">
+            <div class="flex items-center gap-2">
+              <i
+                class="pi pi-user"
+                [ngClass]="getIconClass(student.rankTitle)"
+              ></i>
+              <span
+                class="font-semibold"
+                [ngClass]="getTextClass(student.rankTitle)"
+              >
+                Age Group:
               </span>
-            </p>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Total Mark:</span>
-              <span class="font-semibold text-green-600">
-                {{ student.totalMark }}
+              <span class="text-green-700">{{ student.ageGroupName }}</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <i
+                class="pi pi-chart-bar"
+                [ngClass]="getIconClass(student.rankTitle)"
+              ></i>
+              <span
+                class="font-semibold"
+                [ngClass]="getTextClass(student.rankTitle)"
+              >
+                Marks:
               </span>
-            </p>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Bonus:</span>
-              <span class="font-semibold text-green-600">
-                {{ student.bonusMark }}
+              <span class="text-green-700"
+                >{{ student.outOfMark }}/{{ student.totalMark }}</span
+              >
+            </div>
+
+            <div class="flex items-center gap-2">
+              <i
+                class="pi pi-plus-circle"
+                [ngClass]="getIconClass(student.rankTitle)"
+              ></i>
+              <span
+                class="font-semibold"
+                [ngClass]="getTextClass(student.rankTitle)"
+              >
+                Bonus:
               </span>
-            </p>
-            <p class="text-gray-700">
-              <span class="font-semibold text-blue-600">Total with Bonus:</span>
-              <span class="text-lg font-bold text-green-600">
+              <span class="text-green-700">{{ student.bonusMark }}</span>
+            </div>
+
+            <div class="flex items-center gap-2 col-span-1 sm:col-span-2">
+              <i class="pi pi-star-fill text-yellow-500 text-xl"></i>
+              <span
+                class="font-semibold"
+                [ngClass]="getTextClass(student.rankTitle)"
+              >
+                Total with Bonus:
+              </span>
+              <span class="text-2xl font-bold text-green-800 ml-2">
                 {{ student.totalWithBonusMark }}
               </span>
-            </p>
+            </div>
           </div>
         </div>
       </div>
     </p-panel>
   </div>
 
+  <!-- ✅ Missing closing tag added here -->
+
   <!-- Prize Tables -->
   <ng-container
     *ngFor="
       let prize of [
-        { title: 'First Prize Winners', list: firstPrizeWinners },
         { title: 'Second Prize Winners', list: secondPrizeWinners },
         { title: 'Third Prize Winners', list: thirdPrizeWinners }
       ]
@@ -182,6 +196,7 @@
             >
               <th class="px-4 py-3 border">Sr.</th>
               <th class="px-4 py-3 border">Student Name</th>
+              <th class="px-4 py-3 border">Franchise Name</th>
               <th class="px-4 py-3 border">Age Group</th>
               <th class="px-4 py-3 border">Total Mark</th>
               <th class="px-4 py-3 border">OutOf Mark</th>
@@ -200,6 +215,7 @@
                 {{ student.studentFirstName }} {{ student.studentMiddleName }}
                 {{ student.studentLastName }}
               </td>
+              <td class="px-4 py-2 border">{{ student.franchiseName }}</td>
               <td class="px-4 py-2 border">{{ student.ageGroupName }}</td>
               <td class="px-4 py-2 border">{{ student.totalMark }}</td>
               <td class="px-4 py-2 border">{{ student.outOfMark }}</td>

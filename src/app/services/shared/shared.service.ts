@@ -50,4 +50,9 @@ export class SharedService {
     return this.http.get(this.resultPath.getDisplayResultListCompititionAndLevelWise(compititionId, levelId));
   }
 
+
+  getDisplayResultListCompititionWise(compititionId: any | number) {
+    return this.http.get(this.resultPath.getDisplayResultListCompititionWise(compititionId));
+  }
+
 }

@@ -29,6 +29,7 @@ interface Student {
   ageGroupName: string;
   rank: string;
   studentPhoto?: string;
+  franchiseName: string;
 }
 
 @Component({
@@ -74,6 +75,7 @@ export class ResultComponent {
   firstPrizeWinners: Student[] = [];
   secondPrizeWinners: Student[] = [];
   thirdPrizeWinners: Student[] = [];
+  mergedChampionList: Array<Student & { rankTitle: string }> = [];
 
 
 
@@ -95,11 +97,39 @@ export class ResultComponent {
     this.setTableColumns();
   }
 
+  getTextClass(rankTitle: string): string {
+    switch (rankTitle) {
+      case 'Champion of Champion':
+        return 'text-blue-800';
+      case 'Competition Champion':
+        return 'text-green-800';
+      case '1st Prize Winner':
+        return 'text-yellow-800';
+      default:
+        return 'text-gray-700';
+    }
+  }
+
+  getIconClass(rankTitle: string): string {
+    switch (rankTitle) {
+      case 'Champion of Champion':
+        return 'text-blue-500';
+      case 'CCompetition Champion':
+        return 'text-green-500';
+      case '1st Prize Winner':
+        return 'text-yellow-500';
+      default:
+        return 'text-gray-500';
+    }
+  }
+
+
   ngAfterViewInit() {
     this.activatedRoute.queryParams.subscribe((params: any) => {
       const compId = params['competitionId'];
       if (compId) {
         this.selectedCompetition = compId;
+        this.getResultByCompetition();
         this.formSearch.patchValue({ competitionId: parseInt(compId) });
       }
       this.router.navigateByUrl(`result?competitionId=${compId}`);
@@ -190,6 +220,18 @@ export class ResultComponent {
     ];
   }
 
+  getResultByCompetition() {
+    this.sharedService.getDisplayResultListCompititionWise(this.selectedCompetition).subscribe({
+      next: (response: any) => {
+        this.populateResults(response)
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isSearchActionLoading = false;
+        utils.setMessages(error.message, 'error');
+      }
+    });
+  }
+
   handleSearchAction() {
     this.sharedService.getDisplayResultListCompititionAndLevelWise(this.selectedCompetition, this.selectedLevel).subscribe({
       next: (response: any) => {
@@ -208,6 +250,7 @@ export class ResultComponent {
     this.firstPrizeWinners = [];
     this.secondPrizeWinners = [];
     this.thirdPrizeWinners = [];
+    this.mergedChampionList = [];
 
     for (const student of students) {
       student.studentPhoto = student.studentPhoto === null ? '/images/logo1.png' : `https://comp.simasacademy.com/${student.studentPhoto}`;
@@ -215,12 +258,15 @@ export class ResultComponent {
       switch (student.rank) {
         case 'Champion of Champion':
           this.championOfChampion = student;
+          this.mergedChampionList.push({ ...student, rankTitle: 'Champion of Champion' });
           break;
         case 'Champion':
           this.competitionChampions.push(student);
+          this.mergedChampionList.push({ ...student, rankTitle: 'Competition Champion' });
           break;
         case '1st Prize':
           this.firstPrizeWinners.push(student);
+          this.mergedChampionList.push({ ...student, rankTitle: '1st Prize Winner' });
           break;
         case '2nd Prize':
           this.secondPrizeWinners.push(student);
@@ -231,5 +277,6 @@ export class ResultComponent {
       }
     }
   }
+
 
 }

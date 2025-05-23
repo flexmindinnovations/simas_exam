@@ -147,6 +147,7 @@ export type ApiCallConfig = {
   },
   result: {
     getDisplayResultListCompititionAndLevelWise: (competitionId: string | number, level: string | number) => any,
+    getDisplayResultListCompititionWise: (competitionId: string | number) => any,
   }
 
 }
@@ -186,7 +187,7 @@ export class AppConfigService {
       upload: `${this.hostUrl}/Student/Upload`,
       uploadandUpdateStudent: `${this.hostUrl}/Student/UploadandUpdateStudent`,
       deleteStudent: `${this.hostUrl} /Student/Delete/{{id}}`,
-      studentListWithBatchAllocation: (competitionId: any | number, franchiseId: any | number) => `${this.hostUrl}/Student/GetStudentListWithBatchAllocation?compititionId=${competitionId}&franchiseId=${franchiseId}`
+      studentListWithBatchAllocation: (competitionId: any | number, franchiseId: any | number) => `${this.hostUrl}/Student/GetStudentListWithBatchAllocation?compititionId=${competitionId}&franchiseId=${franchiseId}`,
     },
     franchise: {
       franchiseList: `${this.hostUrl}/Franchise/GetFranchiseList/{{id}}`,
@@ -303,7 +304,8 @@ export class AppConfigService {
       updateAgeGroup: `${this.hostUrl}/AgeGroupMaster/updateAgeGroupMaster`
     },
     result: {
-      getDisplayResultListCompititionAndLevelWise: (competitionId: any | number, levelId: any | number) => `${this.hostUrl}/Result/getDisplayResultListCompititionAndLevelWise/${competitionId}/${levelId}`
+      getDisplayResultListCompititionAndLevelWise: (competitionId: any | number, levelId: any | number) => `${this.hostUrl}/Result/getDisplayResultListCompititionAndLevelWise/${competitionId}/${levelId}`,
+      getDisplayResultListCompititionWise: (competitionId: any | number) => `${this.hostUrl}/Result/getDisplayResultListCompititionWise/${competitionId}`
     }
   }
 
