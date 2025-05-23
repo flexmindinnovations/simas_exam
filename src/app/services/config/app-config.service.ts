@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { utils } from '../../utils';
 
-type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation' | 'offlineStudent' | 'ageGroup';
+type ApiCallType = 'settings' | 'token' | 'login' | 'activation' | 'competition' | 'register' | 'instructor' | 'student' | 'franchise' | 'role' | 'level' | 'admin' | 'location' | 'exam' | 'examCenter' | 'examType' | 'examPaper' | 'questionBank' | 'reports' | 'questionPaper' | 'hallticket' | 'batchAllocation' | 'offlineStudent' | 'ageGroup' | 'result';
 
 export type ApiCallConfig = {
   settings: {};
@@ -144,6 +144,9 @@ export type ApiCallConfig = {
     getAgeGroupList: string;
     saveAgeGroup: string;
     updateAgeGroup: string;
+  },
+  result: {
+    getDisplayResultListCompititionAndLevelWise: (competitionId: string | number, level: string | number) => any,
   }
 
 }
@@ -298,6 +301,9 @@ export class AppConfigService {
       getAgeGroupList: `${this.hostUrl}/AgeGroupMaster/GetAgeGroupList`,
       saveAgeGroup: `${this.hostUrl}/AgeGroupMaster/SaveAgeGroupMaster`,
       updateAgeGroup: `${this.hostUrl}/AgeGroupMaster/updateAgeGroupMaster`
+    },
+    result: {
+      getDisplayResultListCompititionAndLevelWise: (competitionId: any | number, levelId: any | number) => `${this.hostUrl}/Result/getDisplayResultListCompititionAndLevelWise/${competitionId}/${levelId}`
     }
   }
 
