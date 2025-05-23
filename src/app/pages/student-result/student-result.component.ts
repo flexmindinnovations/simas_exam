@@ -88,7 +88,8 @@ export class StudentResultComponent implements OnInit {
     const l1 = Number(this.formLevels.get('level1')?.value) || 0;
     const l2 = Number(this.formLevels.get('level2')?.value) || 0;
     const l3 = Number(this.formLevels.get('level3')?.value) || 0;
-    return Math.round(l1 + l2 + l3);
+    const bonus = Number(this.bonusMarks) || 0
+    return Math.round(bonus + l1 + l2 + l3);
   }
 
   getCompetitionList() {
