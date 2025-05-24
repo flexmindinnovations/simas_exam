@@ -55,125 +55,246 @@
     </form>
   </p-panel>
 
-  <!-- Champion Cards -->
-  <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-3 px-4 py-6">
-    <p-panel
-      *ngFor="let student of mergedChampionList"
-      [header]="'🏆 ' + student.rankTitle"
-      class="shadow-xl rounded-3xl border-4"
-      [styleClass]="
-        student.rankTitle === 'Champion of Champion'
-          ? '!bg-gradient-to-br from-white via-blue-50 to-blue-100 border-blue-200'
-          : student.rankTitle === 'Competition Champion'
-          ? '!bg-gradient-to-br from-white via-green-50 to-green-100 border-green-200'
-          : '!bg-gradient-to-br from-white via-yellow-50 to-yellow-100 border-yellow-200'
-      "
+  <p-panel
+    class="mb-6 shadow-xl rounded-3xl border-4"
+    styleClass="!bg-gradient-to-br from-white via-blue-100 to-blue-200 border-blue-300"
+    *ngIf="championOfChampion?.length"
+  >
+    <ng-template pTemplate="header">
+      <div class="w-full text-center text-xl font-bold text-blue-900">
+        🏆 Champion of Champion
+      </div>
+    </ng-template>
+
+    <div
+      [ngClass]="{
+        'flex flex-col items-center gap-6': championOfChampion.length === 1,
+        'grid gap-6 md:grid-cols-2 lg:grid-cols-3':
+          championOfChampion.length > 1
+      }"
     >
-      <!-- Franchise -->
-      <div
-        class="text-center text-white bg-gradient-to-r from-pink-500 to-yellow-400 text-xs font-medium tracking-wide px-4 py-2 rounded-full shadow mb-6"
-      >
-        <span>Franchise Name:</span> {{ student.franchiseName }}
-      </div>
-
-      <!-- Panel Content -->
-      <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
-        <!-- Photo -->
+      <ng-container *ngFor="let student of championOfChampion">
         <div
-          class="w-36 h-36 bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-lg p-1 shadow-lg transform transition-transform duration-300"
+          class="bg-white rounded-2xl shadow-lg p-4 mx-auto"
+          [ngClass]="{
+            'w-full md:w-full': championOfChampion.length > 1,
+            'w-96': championOfChampion.length === 1
+          }"
         >
-          <img
-            [src]="student.studentPhoto || 'assets/images/default-photo.png'"
-            [alt]="
-              'Photo of ' +
-              student.studentFirstName +
-              ' ' +
-              student.studentLastName
-            "
-            class="w-full h-full object-cover rounded-lg border-4 border-white shadow-md"
-          />
-        </div>
-
-        <!-- Details -->
-        <div class="flex-1 w-full">
+          <!-- Franchise Badge -->
           <div
-            class="text-xl font-extrabold mb-1 text-center md:text-left tracking-wide"
-            [ngClass]="{
-              'text-blue-800': student.rankTitle === 'Champion of Champion',
-              'text-green-800': student.rankTitle === 'Competition Champion',
-              'text-yellow-800': student.rankTitle === '1st Prize Winner'
-            }"
+            class="inline-block mb-2 rounded-full px-4 py-1 text-white text-sm font-semibold text-center truncate w-full"
+            style="background: linear-gradient(to right, #3b82f6, #06b6d4)"
+            title="Franchise Name: {{ student.franchiseName }}"
           >
-            {{ student.studentFirstName }} {{ student.studentMiddleName }}
-            {{ student.studentLastName }}
+            Franchise Name: {{ student.franchiseName }}
           </div>
 
-          <div class="flex flex-col gap-2 text-sm sm:text-base">
-            <div class="flex items-center gap-2">
-              <i
-                class="pi pi-user"
-                [ngClass]="getIconClass(student.rankTitle)"
-              ></i>
-              <span
-                class="font-semibold"
-                [ngClass]="getTextClass(student.rankTitle)"
-              >
-                Age Group:
-              </span>
-              <span class="text-green-700">{{ student.ageGroupName }}</span>
+          <!-- Student Info Flex Row -->
+          <div class="flex items-center gap-4">
+            <!-- Student Photo -->
+            <div
+              class="w-20 h-20 rounded-xl bg-yellow-400 p-1 flex-shrink-0 shadow-lg"
+            >
+              <img
+                [src]="
+                  student.studentPhoto || 'assets/images/default-photo.png'
+                "
+                [alt]="student.studentFirstName + ' ' + student.studentLastName"
+                class="w-full h-full object-cover rounded-xl border-2 border-white"
+              />
             </div>
 
-            <div class="flex items-center gap-2">
-              <i
-                class="pi pi-chart-bar"
-                [ngClass]="getIconClass(student.rankTitle)"
-              ></i>
-              <span
-                class="font-semibold"
-                [ngClass]="getTextClass(student.rankTitle)"
-              >
-                Marks:
-              </span>
-              <span class="text-green-700"
-                >{{ student.outOfMark }}/{{ student.totalMark }}</span
-              >
-            </div>
-
-            <div class="flex items-center gap-2">
-              <i
-                class="pi pi-plus-circle"
-                [ngClass]="getIconClass(student.rankTitle)"
-              ></i>
-              <span
-                class="font-semibold"
-                [ngClass]="getTextClass(student.rankTitle)"
-              >
-                Bonus:
-              </span>
-              <span class="text-green-700">{{ student.bonusMark }}</span>
-            </div>
-
-            <div class="flex items-center gap-2 col-span-1 sm:col-span-2">
-              <i class="pi pi-star-fill text-yellow-500 text-xl"></i>
-              <span
-                class="font-semibold"
-                [ngClass]="getTextClass(student.rankTitle)"
-              >
-                Total with Bonus:
-              </span>
-              <span class="text-2xl font-bold text-green-800 ml-2">
-                {{ student.totalWithBonusMark }}
-              </span>
+            <!-- Text Info -->
+            <div class="text-sm text-blue-900 space-y-1">
+              <div class="font-bold text-base">
+                {{ student.studentFirstName }} {{ student.studentMiddleName }}
+                {{ student.studentLastName }}
+              </div>
+              <div>
+                <i class="pi pi-user mr-1"></i> Age Group:
+                {{ student.ageGroupName }}
+              </div>
+              <div>
+                <i class="pi pi-chart-bar mr-1"></i> Marks:
+                {{ student.outOfMark }}/{{ student.totalMark }}
+              </div>
+              <div>
+                <i class="pi pi-plus-circle mr-1"></i> Bonus:
+                {{ student.bonusMark }}
+              </div>
+              <div class="text-blue-800 font-semibold">
+                <i class="pi pi-star-fill text-yellow-400 mr-1"></i>
+                Total with Bonus: {{ student.totalWithBonusMark }}
+              </div>
             </div>
           </div>
         </div>
+      </ng-container>
+    </div>
+  </p-panel>
+
+  <!-- 🥈 Competition Champions -->
+
+  <p-panel
+    class="mb-6 shadow-xl rounded-3xl border-4"
+    styleClass="!bg-gradient-to-br from-white via-green-100 to-green-200 border-green-300"
+    *ngIf="competitionChampions.length"
+  >
+    <ng-template pTemplate="header">
+      <div class="w-full text-center text-xl font-bold text-blue-900">
+        🥈 Competition Champions
       </div>
-    </p-panel>
-  </div>
+    </ng-template>
 
-  <!-- ✅ Missing closing tag added here -->
+    <div
+      [ngClass]="{
+        'flex flex-col items-center gap-6': competitionChampions.length === 1,
+        'grid gap-6 md:grid-cols-2 lg:grid-cols-3':
+          competitionChampions.length > 1
+      }"
+    >
+      <ng-container *ngFor="let student of competitionChampions">
+        <div
+          class="bg-white rounded-2xl shadow-lg p-4 mx-auto"
+          [ngClass]="{
+            'w-full md:w-full': competitionChampions.length > 1,
+            'w-96': championOfChampion.length === 1
+          }"
+        >
+          <!-- Franchise Badge -->
+          <div
+            class="inline-block mb-2 rounded-full px-4 py-1 text-white text-sm font-semibold text-center truncate w-full"
+            style="background: linear-gradient(to right, #10b981, #34d399)"
+            title="Franchise Name: {{ student.franchiseName }}"
+          >
+            Franchise Name: {{ student.franchiseName }}
+          </div>
 
-  <!-- Prize Tables -->
+          <!-- Student Info Flex Row -->
+          <div class="flex items-center gap-4">
+            <!-- Student Photo -->
+            <div
+              class="w-20 h-20 rounded-xl bg-green-400 p-1 flex-shrink-0 shadow-lg"
+            >
+              <img
+                [src]="
+                  student.studentPhoto || 'assets/images/default-photo.png'
+                "
+                [alt]="student.studentFirstName + ' ' + student.studentLastName"
+                class="w-full h-full object-cover rounded-xl border-2 border-white"
+              />
+            </div>
+
+            <!-- Text Info -->
+            <div class="text-sm text-green-900 space-y-1">
+              <div class="font-bold text-base">
+                {{ student.studentFirstName }} {{ student.studentMiddleName }}
+                {{ student.studentLastName }}
+              </div>
+              <div>
+                <i class="pi pi-user mr-1"></i> Age Group:
+                {{ student.ageGroupName }}
+              </div>
+              <div>
+                <i class="pi pi-chart-bar mr-1"></i> Marks:
+                {{ student.outOfMark }}/{{ student.totalMark }}
+              </div>
+              <div>
+                <i class="pi pi-plus-circle mr-1"></i> Bonus:
+                {{ student.bonusMark }}
+              </div>
+              <div class="text-green-700 font-semibold">
+                <i class="pi pi-star-fill text-yellow-500 mr-1"></i>
+                Total with Bonus: {{ student.totalWithBonusMark }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </p-panel>
+
+  <!-- 🥇 1st Prize Winners -->
+
+  <p-panel
+    class="mb-6 shadow-xl rounded-3xl border-4"
+    styleClass="!bg-gradient-to-br from-white via-yellow-100 to-yellow-200 border-yellow-300"
+    *ngIf="firstPrizeWinners.length"
+  >
+    <ng-template pTemplate="header">
+      <div class="w-full text-center text-xl font-bold text-blue-900">
+        🥇 1st Prize Winners
+      </div>
+    </ng-template>
+
+    <div
+      [ngClass]="{
+        'flex flex-col items-center gap-6': firstPrizeWinners.length === 1,
+        'grid gap-6 md:grid-cols-2 lg:grid-cols-3': firstPrizeWinners.length > 1
+      }"
+    >
+      <ng-container *ngFor="let student of firstPrizeWinners">
+        <div
+          class="bg-white rounded-2xl shadow-lg p-4 mx-auto"
+          [ngClass]="{
+            'w-full md:w-full': firstPrizeWinners.length > 1,
+            'w-96': firstPrizeWinners.length === 1
+          }"
+        >
+          <!-- Franchise Badge -->
+          <div
+            class="inline-block mb-2 rounded-full px-4 py-1 text-white text-sm font-semibold text-center truncate w-full"
+            style="background: linear-gradient(to right, #ec4899, #f59e0b)"
+            title="Franchise Name: {{ student.franchiseName }}"
+          >
+            Franchise Name: {{ student.franchiseName }}
+          </div>
+
+          <!-- Student Info Flex Row -->
+          <div class="flex items-center gap-4">
+            <!-- Student Photo -->
+            <div
+              class="w-20 h-20 rounded-xl bg-yellow-400 p-1 flex-shrink-0 shadow-lg"
+            >
+              <img
+                [src]="
+                  student.studentPhoto || 'assets/images/default-photo.png'
+                "
+                [alt]="student.studentFirstName + ' ' + student.studentLastName"
+                class="w-full h-full object-cover rounded-xl border-2 border-white"
+              />
+            </div>
+
+            <!-- Text Info -->
+            <div class="text-sm text-yellow-900 space-y-1">
+              <div class="font-bold text-base">
+                {{ student.studentFirstName }} {{ student.studentMiddleName }}
+                {{ student.studentLastName }}
+              </div>
+              <div>
+                <i class="pi pi-user mr-1"></i> Age Group:
+                {{ student.ageGroupName }}
+              </div>
+              <div>
+                <i class="pi pi-chart-bar mr-1"></i> Marks:
+                {{ student.outOfMark }}/{{ student.totalMark }}
+              </div>
+              <div>
+                <i class="pi pi-plus-circle mr-1"></i> Bonus:
+                {{ student.bonusMark }}
+              </div>
+              <div class="text-yellow-700 font-semibold">
+                <i class="pi pi-star-fill text-yellow-500 mr-1"></i>
+                Total with Bonus: {{ student.totalWithBonusMark }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </p-panel>
+
   <ng-container
     *ngFor="
       let prize of [
