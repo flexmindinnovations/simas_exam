@@ -20,6 +20,10 @@ export class CompetitionService {
   getCompetitionList(): Observable<any> {
     return this.http.get(this.competitionApiPath.competitionList);
   }
+
+  getAllCompititionList(): Observable<any> {
+    return this.http.get(this.competitionApiPath.getAllCompititionList);
+  }
   getCompetitionById(competitionId: string): Observable<any> {
     const getByIdApiPath = this.competitionApiPath.competitionById.replace(/\s+/g, '').replace(/\u200B/g, '').replace('{{id}}', competitionId);
 
