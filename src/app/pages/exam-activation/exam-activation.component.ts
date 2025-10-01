@@ -17,6 +17,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DataGridComponent } from '../../components/data-grid/data-grid.component';
 import { AddEditExamActivationComponent } from '../../modals/add-edit-exam-activation/add-edit-exam-activation.component';
 import { ActivationService } from '../../services/activation/activation.service';
+import { CompetitionService } from '../../services/competition/competition.service';
 
 @Component({
   selector: 'app-exam-activation',
@@ -48,6 +49,9 @@ export class ExamActivationComponent {
   validActivate: boolean = false;
   data: string = '';
   selectedRows: any[] = [];
+  competitionList: any[] = [];
+  isCompetitionListLoading: boolean = false;
+  selectedCompetiton: string = '';
 
   constructor(
     private examService: ExamService,
@@ -56,6 +60,7 @@ export class ExamActivationComponent {
     private instructorService: InstructorService,
     private dialogService: DialogService,
     private activationService: ActivationService,
+    private competitionService: CompetitionService
   ) {
 
     effect(() => {
@@ -77,6 +82,7 @@ export class ExamActivationComponent {
     utils.addButtonTitle.set('Activation');
     this.setActivationTypeList();
     this.getFranchiseList();
+    this.getCompetitionList();
   }
 
   getFranchiseList() {
@@ -126,6 +132,33 @@ export class ExamActivationComponent {
     }
   }
 
+  handleOnCompetitionChange(event: DropdownChangeEvent) {
+    this.colDefs = [];
+    this.tableDataSource = [];
+    this.showGrid = false;
+    if (this.selectedCompetiton !== '') {
+      this.isSearchDisabled = false;
+    } else {
+      this.isSearchDisabled = true;
+    }
+  }
+
+  getCompetitionList() {
+    this.competitionService.getAllCompititionList().subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.competitionList = response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
+          // utils.isTableLoading.update(val => !val);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
   handleSearchAction() {
     utils.isTableLoading.set(true);
     let isFranchiseListCall: boolean = true;
@@ -137,7 +170,7 @@ export class ExamActivationComponent {
       this.setTableColumns('student');
       isFranchiseListCall = false;
       isStudentListCall = true;
-      apiCall = this.studentService.getStudentListByFranchiseId(this.selectedFranchise.toString());
+      apiCall = this.studentService.getStudentListCompititionWise(this.selectedCompetiton, this.selectedFranchise);
     } else if (this.selectedActivationType === this.activationType.Instructor) {
       this.setTableColumns('instructor');
       isFranchiseListCall = false;

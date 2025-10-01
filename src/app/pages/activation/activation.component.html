@@ -20,8 +20,26 @@
         [showClear]="false"
       />
     </div>
-
-    @if ( selectedActivationType === activationType.Student ||
+    @if ( selectedActivationType === activationType.Student ) {
+    <div class="flex flex-col items-start w-full max-w-48">
+      <label for="competitionType">Compitition</label>
+      <p-dropdown
+        appendTo="body"
+        inputId="competitionType"
+        [options]="competitionList"
+        ariaLabelledBy="compititionName"
+        [disabled]="isCompetitionListLoading"
+        [(ngModel)]="selectedCompetiton"
+        placeholder="Select"
+        (onChange)="handleOnCompetitionChange($event)"
+        optionValue="compititionId"
+        optionLabel="compititionName"
+        [filter]="true"
+        filterBy="compititionName"
+        [showClear]="false"
+      />
+    </div>
+    } @if ( selectedActivationType === activationType.Student ||
     selectedActivationType === activationType.Instructor ) {
     <div class="flex flex-col items-start w-full max-w-48">
       <label for="franchiseList">Franchise</label>
