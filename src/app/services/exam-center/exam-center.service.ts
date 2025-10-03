@@ -22,6 +22,11 @@ export class ExamCenterService {
     return this.http.get(this.examCenterApi.examCenterList);
   }
 
+  getExamCenterListByCompititionIdWise(compititionId: string): Observable<any> {
+    const getByIdApiPath = utils.getCleanPath(this.examCenterApi.getExamCenterListByCompititionIdWise, compititionId);
+    return this.http.get(getByIdApiPath);
+  }
+
   getExamCenterById(examCenterId: string): Observable<any> {
     const getByIdApiPath = utils.getCleanPath(this.examCenterApi.examCenterById, examCenterId);
     return this.http.get(getByIdApiPath);

@@ -75,6 +75,7 @@ export type ApiCallConfig = {
   };
   examCenter: {
     examCenterList: string;
+    getExamCenterListByCompititionIdWise: string;
     examCenterById: string;
     batchTimeSlotListByExamCenterId: string;
     saveExamCenter: string;
@@ -236,6 +237,7 @@ export class AppConfigService {
 
     examCenter: {
       examCenterList: `${this.hostUrl}/ExamCenter/getExamCenterList`,
+      getExamCenterListByCompititionIdWise: `${this.hostUrl}/ExamCenter/getExamCenterListByCompititionIdWise/{{id}}`,
       examCenterById: `${this.hostUrl}/ExamCenter/getExamCenterById/{{id}}`,
       batchTimeSlotListByExamCenterId: `${this.hostUrl}/ExamCenter/getBatchTimeSlotListByExamCenterId/{{id}}`,
       saveExamCenter: `${this.hostUrl}/ExamCenter/saveExamCenter`,

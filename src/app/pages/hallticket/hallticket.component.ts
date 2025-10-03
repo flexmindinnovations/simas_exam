@@ -112,7 +112,7 @@ export class HallticketComponent {
   }
 
   getCompetitionList() {
-    this.competitionService.getCompetitionList().subscribe({
+    this.competitionService.getAllCompititionList().subscribe({
       next: (response) => {
         if (response) {
           this.competitionList = response;

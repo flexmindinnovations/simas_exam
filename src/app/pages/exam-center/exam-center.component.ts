@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, type AfterViewInit, type OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogService, type DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,11 +12,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { utils } from '../../utils';
 import { Message } from 'primeng/api';
 import { AddEditExamCenterComponent } from '../../modals/add-edit-exam-center/add-edit-exam-center.component';
+import { CompetitionService } from '../../services/competition/competition.service';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { ChipModule } from 'primeng/chip';
+import { PanelModule } from 'primeng/panel';
 
 @Component({
   selector: 'app-exam-center',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, ButtonModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule],
   providers: [DialogService],
   templateUrl: './exam-center.component.html',
   styleUrl: './exam-center.component.scss'
@@ -31,9 +35,19 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
   searchValue: string = '';
   isTreeList: boolean = true;
   examCenterList: any[] = [];
+  isPanelCollapsed: boolean = false;
+  formGroup!: FormGroup;
+  showGrid: boolean = false;
+  competitionList: any[] = [];
+  isCompetitionListLoading: boolean = false;
+  selectedCompetiton: string = '';
+  isSearchDisabled: boolean = true;
+  isSearchActionLoading: boolean = false;
   constructor(
     private examCenterService: ExamCenterService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private competitionService: CompetitionService,
+    private fb: FormBuilder,
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
@@ -52,14 +66,52 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.initFormGroup();
     utils.addButtonTitle.set('Exam Center');
     utils.setPageTitle('Exam Center');
-    this.setTableColumns();
+    // this.setTableColumns();
   }
 
   ngAfterViewInit(): void {
-    this.getExamCenterList();
+    this.getCompetitionList();
   }
+
+
+  getCompetitionList() {
+    this.competitionService.getAllCompititionList().subscribe({
+      next: (response) => {
+        if (response) {
+          this.competitionList = response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
+          // utils.isTableLoading.update(val => !val);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
+  handleOnCompetitionChange(event: DropdownChangeEvent) {
+    this.colDefs = [];
+    this.tableDataSource = [];
+    if (this.selectedCompetiton !== '') {
+      this.isSearchDisabled = false;
+    } else {
+      this.isSearchDisabled = true;
+    }
+  }
+
+  handleSearchAction() {
+    this.setTableColumns();
+    utils.isTableLoading.set(true);
+
+    if (this.formGroup.valid) {
+      this.getExamCenterList();
+    }
+  }
+
 
   setTableColumns() {
     this.colDefs = [
@@ -101,9 +153,16 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
     ];
   }
 
+  initFormGroup() {
+    this.formGroup = this.fb.group({
+      compititionId: ['', [Validators.required]],
+    })
+  }
+
   getExamCenterList() {
     utils.isTableLoading.set(true);
-    const apiCall = this.examCenterService.getExamCenterList();
+    const formVal = this.formGroup.getRawValue();
+    const apiCall = this.examCenterService.getExamCenterListByCompititionIdWise(formVal.compititionId);
     apiCall.subscribe({
       next: (response: any) => {
         if (response) {
@@ -116,13 +175,13 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
             return item;
           })
           this.setChildColDefs();
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
           utils.setMessages(error.message, 'error');
-        // utils.isTableLoading.update(val => !val);
+          // utils.isTableLoading.update(val => !val);
         }
       }
     })
