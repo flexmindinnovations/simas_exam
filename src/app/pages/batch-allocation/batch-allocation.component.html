@@ -37,6 +37,26 @@
       class="criteria-container flex items-end justify-start lg:justify-start xl:justify-start 2xl:justify-start gap-3 flex-wrap md:flex-auto lg:flex-auto xl:flex-auto 2xl:flex-auto lg:gap-5 xl:gap-5 2xl:gap-5 max-w-72 px-3 lg:px-5 xl:px-5 2xl:px-5 min-w-full mb-5"
     >
       <div class="flex flex-col items-start w-full max-w-48">
+        <label for="competitionList">Compitition</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="competitionList"
+          [options]="competitionList"
+          [loading]="isCompetitionListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          [(ngModel)]="selectedCompetiton"
+          [disabled]="isSearchActionLoading"
+          ariaLabelledBy="compititionName"
+          placeholder="Select"
+          (onChange)="handleOnCompetitionChange($event)"
+          optionValue="compititionId"
+          optionLabel="compititionName"
+          [filter]="true"
+          filterBy="compititionName"
+          [showClear]="false"
+        />
+      </div>
+      <div class="flex flex-col items-start w-full max-w-48">
         <label for="instructorId">Exam center</label>
         <p-dropdown
           appendTo="body"
@@ -73,26 +93,6 @@
           optionLabel="batchTimeSlotName"
           [filter]="true"
           filterBy="batchTimeSlotName"
-          [showClear]="false"
-        />
-      </div>
-      <div class="flex flex-col items-start w-full max-w-48">
-        <label for="competitionList">Compitition</label>
-        <p-dropdown
-          appendTo="body"
-          inputId="competitionList"
-          [options]="competitionList"
-          [loading]="isCompetitionListLoading"
-          loadingIcon="pi pi-spin pi-spinner"
-          [(ngModel)]="selectedCompetiton"
-          [disabled]="isSearchActionLoading"
-          ariaLabelledBy="compititionName"
-          placeholder="Select"
-          (onChange)="handleOnCompetitionChange($event)"
-          optionValue="compititionId"
-          optionLabel="compititionName"
-          [filter]="true"
-          filterBy="compititionName"
           [showClear]="false"
         />
       </div>
