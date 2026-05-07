@@ -103,7 +103,10 @@ export class StudentsComponent implements OnInit {
     this.competitionService.getAllCompititionList().subscribe({
       next: (response: any) => {
         if (response) {
-          this.competitionList = response;
+          const roleName = sessionStorage.getItem('role') || '';
+          const secretKey = sessionStorage.getItem('token') || '';
+          const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+          this.competitionList = role === 'franchisee' ? response.filter((res: any) => res.isActive === true) : response;
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
           // utils.isTableLoading.update(val => !val);
         }
@@ -159,7 +162,8 @@ export class StudentsComponent implements OnInit {
               return item;
             });
             this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
-            this.showGrid = this.tableDataSource.length > 0 ? true : false;
+            // this.showGrid = this.tableDataSource.length > 0 ? true : false; // as per required by client
+            this.showGrid = true;
             // utils.isTableLoading.update(val => !val);
           }
         },
