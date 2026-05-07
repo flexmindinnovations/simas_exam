@@ -1,5 +1,5 @@
 import { Component, effect, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Student } from '../../interfaces/Student';
 import { DataGridComponent, TableColumn } from '../../components/data-grid/data-grid.component';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -10,11 +10,18 @@ import { AddEditStudentComponent } from '../../modals/add-edit-student/add-edit-
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
+import { CompetitionService } from '../../services/competition/competition.service';
+import { ChipModule } from 'primeng/chip';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { PanelModule } from 'primeng/panel';
+import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-students',
   standalone: true,
-  imports: [CommonModule, DataGridComponent, ButtonModule, AddEditStudentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule, ButtonModule, AddEditStudentComponent],
   providers: [DialogService, StudentService],
   templateUrl: './students.component.html',
   styleUrl: './students.component.scss'
@@ -27,10 +34,20 @@ export class StudentsComponent implements OnInit {
   dialogRef: DynamicDialogRef | undefined;
   isEditMode: boolean = false;
   editModeData: any;
+  competitionList: any[] = [];
+  isCompetitionListLoading: boolean = false;
+  selectedCompetiton: string = '';
+  isPanelCollapsed: boolean = false;
+  formGroup!: FormGroup;
+  showGrid: boolean = false;
+  isSearchActionLoading: boolean = false;
+  isSearchDisabled: boolean = true;
 
   constructor(
     private studentService: StudentService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private fb: FormBuilder,
+    private competitionService: CompetitionService
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
@@ -49,9 +66,56 @@ export class StudentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initFormGroup();
     utils.addButtonTitle.set('Student');
+    this.getCompetitionList();
     this.setTableColumns();
-    this.getStudentList();
+  }
+
+  initFormGroup() {
+    this.formGroup = this.fb.group({
+      compititionId: ['', [Validators.required]],
+    })
+  }
+
+  handleOnCompetitionChange(event: DropdownChangeEvent) {
+    this.colDefs = [];
+    this.tableDataSource = [];
+    this.showGrid = false;
+    if (this.selectedCompetiton !== '') {
+      this.isSearchDisabled = false;
+    } else {
+      this.isSearchDisabled = true;
+    }
+  }
+
+  handleSearchAction() {
+    this.setTableColumns();
+    utils.isTableLoading.set(true);
+    if (this.formGroup.valid) {
+      this.getStudentList();
+    }
+  }
+
+
+
+  getCompetitionList() {
+    this.competitionService.getAllCompititionList().subscribe({
+      next: (response: any) => {
+        if (response) {
+          const roleName = sessionStorage.getItem('role') || '';
+          const secretKey = sessionStorage.getItem('token') || '';
+          const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+          this.competitionList = role === 'franchisee' ? response.filter((res: any) => res.isActive === true) : response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
+          // utils.isTableLoading.update(val => !val);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
   }
 
   setTableColumns() {
@@ -85,8 +149,10 @@ export class StudentsComponent implements OnInit {
     if (roleName) {
       const instructorId = sessionStorage.getItem('instructorId');
       const franchiseId = sessionStorage.getItem('franchiseId');
+      const formVal = this.formGroup.getRawValue();
+      const compititionId = formVal['compititionId'];
       const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
-      let endpoint = role === 'instructor' ? this.studentService.getStudentListByInstructor(instructorId) : role === 'franchisee' ? this.studentService.getStudentListByFranchiseId(franchiseId) : this.studentService.getStudentList();
+      let endpoint = role === 'instructor' ? this.studentService.getStudentListInstructorWise(compititionId, instructorId) : this.studentService.getStudentListCompititionWise(compititionId, franchiseId === null ? 0 : franchiseId);
       endpoint.subscribe({
         next: (response) => {
           if (response) {
@@ -96,6 +162,8 @@ export class StudentsComponent implements OnInit {
               return item;
             });
             this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.studentList);
+            // this.showGrid = this.tableDataSource.length > 0 ? true : false; // as per required by client
+            this.showGrid = true;
             // utils.isTableLoading.update(val => !val);
           }
         },

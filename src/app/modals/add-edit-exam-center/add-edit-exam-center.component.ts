@@ -12,6 +12,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ExamCenterService } from '../../services/exam-center/exam-center.service';
 import { utils } from '../../utils';
 import type { HttpErrorResponse } from '@angular/common/http';
+import { CompetitionService } from '../../services/competition/competition.service';
 
 @Component({
   selector: 'app-add-edit-exam-center',
@@ -29,19 +30,28 @@ export class AddEditExamCenterComponent implements OnInit, AfterViewInit {
   isEditMode: boolean = false;
   isSubmitActionLoading: boolean = false;
   examCenterId: any;
+  compititionId: any;
+  competitionList: any[] = [];
+  isCompetitionListLoading: boolean = false;
+  selectedCompetiton: string = '';
+
 
   constructor(
     private examCenterService: ExamCenterService,
     private dialogRef: DynamicDialogRef,
     private config: DynamicDialogConfig,
     private fb: FormBuilder,
-    private cdref: ChangeDetectorRef
+    private cdref: ChangeDetectorRef,
+    private competitionService: CompetitionService,
   ) { }
 
   ngOnInit(): void {
+
     this.dialogData = this.config.data;
     this.isEditMode = this.dialogData?.isEditMode;
     this.examCenterId = this.dialogData?.examCenterId ?? 0;
+    this.compititionId = this.dialogData?.compititionId ?? 0,
+      this.getCompetitionList();
     this.initFormGroup();
   }
 
@@ -79,6 +89,7 @@ export class AddEditExamCenterComponent implements OnInit, AfterViewInit {
       status: [true, ![Validators.required]],
       examCenterName: ['', [Validators.required]],
       examDate: ['', [Validators.required]],
+      compititionId: [this.compititionId, ![Validators.required]],
       batchTimeSlotList: this.isEditMode ? this.fb.array([]) : this.fb.array(
         [
           this.addFormArrayControl()
@@ -98,6 +109,25 @@ export class AddEditExamCenterComponent implements OnInit, AfterViewInit {
       examCenterId: [this.examCenterId, ![Validators.required]],
     })
   }
+
+  getCompetitionList() {
+    this.competitionService.getAllCompititionList().subscribe({
+      next: (response) => {
+        if (response) {
+          this.competitionList = response;
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
+  handleOnCompetitionChange(event: any) {
+    this.compititionId = event.value;
+  }
+
 
   handleAddItem() {
     this.batchTimeSlotList.push(this.addFormArrayControl());

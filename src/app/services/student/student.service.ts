@@ -21,6 +21,15 @@ export class StudentService {
     return this.http.get(this.studentPath.studentList);
   }
 
+  getStudentListCompititionWise(compititionId: any | number, franchiseId: any | number): Observable<any> {
+    return this.http.get(this.studentPath.getStudentListCompititionWise(compititionId, franchiseId));
+  }
+
+  getStudentListInstructorWise(compititionId: any | number, instructorId: any | number): Observable<any> {
+    return this.http.get(this.studentPath.getStudentListInstructorWise(compititionId, instructorId));
+  }
+
+
   getStudentListByInstructor(instructorId: any | number): Observable<any> {
     return this.http.get(this.studentPath.studentListInstructorWise(instructorId));
   }

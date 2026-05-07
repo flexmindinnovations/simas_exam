@@ -65,13 +65,12 @@ export class BatchAllocationComponent {
 
   ngOnInit(): void {
     this.getFranchiseList();
-    this.getExamCenterList();
     this.getCompetitionList();
     utils.addButtonTitle.set('Allocate Batch');
   }
 
   getCompetitionList() {
-    this.competitionService.getCompetitionList().subscribe({
+    this.competitionService.getAllCompititionList().subscribe({
       next: (response) => {
         if (response) {
           this.competitionList = response;
@@ -129,9 +128,9 @@ export class BatchAllocationComponent {
     })
 
   }
-  getExamCenterList() {
+  getExamCenterList(compititionId: any) {
     utils.isTableLoading.set(true);
-    const apiCall = this.examCenterService.getExamCenterList();
+    const apiCall = this.examCenterService.getExamCenterListByCompititionIdWise(compititionId);
     apiCall.subscribe({
       next: (response: any) => {
         if (response) {
@@ -244,6 +243,7 @@ export class BatchAllocationComponent {
   handleOnCompetitionChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.getExamCenterList(event.value);
     if (this.selectedCompetiton !== '') {
       this.isSearchDisabled = false;
     } else {

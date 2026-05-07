@@ -19,6 +19,7 @@ import { InstructorService } from '../../services/instructor/instructor.service'
 import { AddEditActivationComponent } from '../../modals/add-edit-activation/add-edit-activation.component';
 import { ActivationService } from '../../services/activation/activation.service';
 import { switchMap, timer } from 'rxjs';
+import { CompetitionService } from '../../services/competition/competition.service';
 
 @Component({
   selector: 'app-activation',
@@ -58,6 +59,9 @@ export class ActivationComponent {
   isActivateActionLoading: boolean = false;
   showGrid: boolean = false;
   selectedRows: any[] = [];
+  competitionList: any[] = [];
+  isCompetitionListLoading: boolean = false;
+  selectedCompetiton: string = '';
 
   constructor(
     private examService: ExamService,
@@ -65,7 +69,8 @@ export class ActivationComponent {
     private studentService: StudentService,
     private instructorService: InstructorService,
     private dialogService: DialogService,
-    private activationService: ActivationService
+    private activationService: ActivationService,
+    private competitionService: CompetitionService
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
@@ -89,6 +94,7 @@ export class ActivationComponent {
     utils.addButtonTitle.set('Activation');
     this.setActivationTypeList();
     this.getFranchiseList();
+    this.getCompetitionList();
   }
 
   getFranchiseList() {
@@ -139,6 +145,22 @@ export class ActivationComponent {
     }
   }
 
+  getCompetitionList() {
+    this.competitionService.getAllCompititionList().subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.competitionList = response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList)
+          // utils.isTableLoading.update(val => !val);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
+  }
+
   handleSearchAction() {
     utils.isTableLoading.set(true);
     let isFranchiseListCall: boolean = true;
@@ -150,9 +172,7 @@ export class ActivationComponent {
       this.setTableColumns('student');
       isFranchiseListCall = false;
       isStudentListCall = true;
-      apiCall = this.studentService.getStudentListByFranchiseId(
-        this.selectedFranchise
-      );
+      apiCall = this.studentService.getStudentListCompititionWise(this.selectedCompetiton, this.selectedFranchise);
     } else if (this.selectedActivationType === this.activationType.Instructor) {
       this.setTableColumns('instructor');
       isFranchiseListCall = false;
@@ -415,6 +435,18 @@ export class ActivationComponent {
     }
   }
 
+  handleOnCompetitionChange(event: DropdownChangeEvent) {
+    this.colDefs = [];
+    this.tableDataSource = [];
+    this.showGrid = false;
+    if (this.selectedCompetiton !== '') {
+      this.isSearchDisabled = false;
+    } else {
+      this.isSearchDisabled = true;
+    }
+  }
+
+
   handleTableRefresh(event: any) {
     this.handleSearchAction();
   }
@@ -472,9 +504,9 @@ export class ActivationComponent {
         utils.setMessages(error.message, 'error');
       },
       complete: () => {
-          timer(500).subscribe(() => {
-            this.handleSearchAction();
-          });
+        timer(500).subscribe(() => {
+          this.handleSearchAction();
+        });
       }
     });
   }

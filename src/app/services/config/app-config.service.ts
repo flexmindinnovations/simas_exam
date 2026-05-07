@@ -23,8 +23,10 @@ export type ApiCallConfig = {
   };
   student: {
     studentList: any;
+    getStudentListCompititionWise: any,
     studentListByFranchiseId: any;
     studentListInstructorWise: any;
+    getStudentListInstructorWise: any,
     studentById: (userId: string | number) => any,
     saveStudent: string;
     updateStudent: string;
@@ -73,6 +75,7 @@ export type ApiCallConfig = {
   };
   examCenter: {
     examCenterList: string;
+    getExamCenterListByCompititionIdWise: string;
     examCenterById: string;
     batchTimeSlotListByExamCenterId: string;
     saveExamCenter: string;
@@ -119,6 +122,7 @@ export type ApiCallConfig = {
   };
   competition: {
     competitionList: string;
+    getAllCompititionList: string,
     competitionById: string;
     saveCompetition: string;
     updateCompetition: string;
@@ -179,8 +183,10 @@ export class AppConfigService {
     },
     student: {
       studentList: `${this.hostUrl}/Student/GetStudentList`,
+      getStudentListCompititionWise: (competitionId: any | number, franchiseId: any | number) => `${this.hostUrl}/Student/GetStudentListCompititionWise?compititionId=${competitionId}&franchiseId=${franchiseId}`,
       studentListByFranchiseId: (franchiseId = 0) => `${this.hostUrl}/Student/GetStudentList?franchiseId=${franchiseId}`,
       studentListInstructorWise: (instructorId: any | number) => `${this.hostUrl}/Student/GetStudentListInstructorWise?instructorId=${instructorId}`,
+      getStudentListInstructorWise: (competitionId: any | number, instructorId: any | number) => `${this.hostUrl}/Student/GetStudentListInstructorWise?compititionId=${competitionId}&instructorId=${instructorId}`,
       studentById: (userId) => `${this.hostUrl}/Student/GetStudentById?id=${userId}`,
       saveStudent: `${this.hostUrl}/Student/SaveStudent`,
       updateStudent: `${this.hostUrl}/Student/UpdateStudent`,
@@ -231,6 +237,7 @@ export class AppConfigService {
 
     examCenter: {
       examCenterList: `${this.hostUrl}/ExamCenter/getExamCenterList`,
+      getExamCenterListByCompititionIdWise: `${this.hostUrl}/ExamCenter/getExamCenterListByCompititionIdWise/{{id}}`,
       examCenterById: `${this.hostUrl}/ExamCenter/getExamCenterById/{{id}}`,
       batchTimeSlotListByExamCenterId: `${this.hostUrl}/ExamCenter/getBatchTimeSlotListByExamCenterId/{{id}}`,
       saveExamCenter: `${this.hostUrl}/ExamCenter/saveExamCenter`,
@@ -277,6 +284,7 @@ export class AppConfigService {
     },
     competition: {
       competitionList: `${this.hostUrl}/Compitition/getCompititionList`,
+      getAllCompititionList: `${this.hostUrl}/Compitition/getAllCompititionList`,
       competitionById: `${this.hostUrl}/Compitition/getCompititionById/{{id}}`,
       saveCompetition: `${this.hostUrl}/Compitition/SaveCompititionMaster`,
       updateCompetition: `${this.hostUrl}/Compitition/updateCompititionMaster`,

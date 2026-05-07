@@ -9,6 +9,25 @@
         <p-inputSwitch formControlName="status" />
       </div>
       <div class="flex form-input flex-col items-start">
+        <label for="competitionList">Compitition</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="competitionList"
+          [options]="competitionList"
+          [loading]="isCompetitionListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          ariaLabelledBy="compititionName"
+          placeholder="Select"
+          (onChange)="handleOnCompetitionChange($event)"
+          optionValue="compititionId"
+          formControlName="compititionId"
+          optionLabel="compititionName"
+          [filter]="true"
+          filterBy="compititionName"
+          [showClear]="false"
+        />
+      </div>
+      <div class="flex form-input flex-col items-start">
         <label for="examCenterName">Exam Center Name</label>
         <input
           type="text"
