@@ -190,12 +190,14 @@ export class ReportsComponent implements OnInit {
             if (response) {
               resolve(response);
               this.toggleLoading(src, false);
+              this.isSearchActionLoading = false;
             }
           },
           error: (error: HttpErrorResponse) => {
             if (error) {
               utils.setMessages(error.message, 'error');
               this.toggleLoading(src, false);
+              this.isSearchActionLoading = false;
             }
           }
         })
@@ -320,7 +322,7 @@ export class ReportsComponent implements OnInit {
   }
 
   handleSearchAction() {
-    // this.isSearchActionLoading = true;
+    this.isSearchActionLoading = true;
     const payload = {
       selectedFranchise: this.selectedFranchise ?? 0,
       selectedInstructor: this.selectedInstructor ?? 0,

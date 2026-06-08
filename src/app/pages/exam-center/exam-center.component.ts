@@ -96,6 +96,7 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
   handleOnCompetitionChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedCompetiton !== '') {
       this.isSearchDisabled = false;
     } else {
@@ -106,7 +107,8 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
   handleSearchAction() {
     this.setTableColumns();
     utils.isTableLoading.set(true);
-
+    this.showGrid = true;
+    this.isSearchActionLoading = true;
     if (this.formGroup.valid) {
       this.getExamCenterList();
     }
@@ -176,6 +178,7 @@ export class ExamCenterComponent implements OnInit, AfterViewInit {
           })
           this.setChildColDefs();
           // utils.isTableLoading.update(val => !val);
+          this.isSearchActionLoading = false;
         }
       },
       error: (error: HttpErrorResponse) => {

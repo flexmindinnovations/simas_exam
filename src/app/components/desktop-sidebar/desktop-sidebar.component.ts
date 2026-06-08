@@ -119,7 +119,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 23,
+      id: 26,
       title: 'More',
       label: 'More',
       moduleName: 'more',
