@@ -561,7 +561,10 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoadingQuestion = false;
         this.resetTimer();
       } else {
-        this.loadNextQuestion();
+        utils.setMessages(
+          'Answer submitted. Click Next/Skip for next question.',
+          'success'
+        );
       }
     } else {
       this.playSound(this.sounds['error']);
@@ -972,17 +975,32 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isDangerPhase = false;
     this.isWarningPhase = false;
     this.questionTimer = '0';
-    timer(2000).subscribe(() => {
-      this.resetTimer();
-      if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
-        this.questionList[this.activeQuestionIndex].isSkipped = true;
-        this.questionList[this.activeQuestionIndex].isAttempted = false;
-        this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
-      }
-      this.isFlashEnded = false;
-      this.showAnswer = false; // Mark flash as ended
-      this.newQuestion();
-    });
+
+    this.resetTimer();
+
+    if (!this.isAnswerSubmitted || !this.isSubmitClicked) {
+      this.questionList[this.activeQuestionIndex].isSkipped = true;
+      this.questionList[this.activeQuestionIndex].isAttempted = false;
+      this.questionList[this.activeQuestionIndex].isWrongAnswer = true;
+    }
+
+    this.showAnswer = false;
+
+    const isLastQuestionInRound =
+      this.activeQuestionIndex === this.questionList.length - 1;
+
+    if (isLastQuestionInRound) {
+      this.canMoveToNextRound = true;
+      utils.setMessages(
+        `Round ${this.currentRoundIndex + 1} completed. Click Next Round.`,
+        'info'
+      );
+    } else {
+      utils.setMessages(
+        'Time up! Click Next/Skip to continue.',
+        'info'
+      );
+    }
   }
 
   resetTimer() {
