@@ -1,4 +1,4 @@
-<div class="franchise-container page-container">
+<div class="students-container page-container">
   <p-panel
     [toggleable]="true"
     [(collapsed)]="isPanelCollapsed"
@@ -10,7 +10,7 @@
       >
         <div class="header min-w-40 flex items-start justify-start gap-2">
           <i class="pi pi-cog"></i>
-          <span>Exam Center Options </span>
+          <span> Result Options </span>
         </div>
         @if (isPanelCollapsed) {
           <br />
@@ -19,7 +19,7 @@
           >
             <p-chip
               class="chip-component min-w-32"
-              label="Franchise: {{ selectedCompetiton }}"
+              label="Compitition: {{ selectedCompetiton }}"
             />
           </div>
         }
@@ -48,6 +48,27 @@
           [showClear]="false"
         />
       </div>
+
+      <div class="flex flex-col items-start w-full max-w-48">
+        <label for="levelName">Level</label>
+        <p-dropdown
+          appendTo="body"
+          inputId="levelList"
+          [options]="levelList"
+          ariaLabelledBy="levelName"
+          [loading]="levelListLoading"
+          loadingIcon="pi pi-spin pi-spinner"
+          placeholder="Select"
+          (onChange)="handleOnLevelChange($event)"
+          optionValue="levelId"
+          formControlName="levelId"
+          optionLabel="levelName"
+          [filter]="true"
+          filterBy="levelName"
+          [showClear]="false"
+        />
+      </div>
+
       <p-button
         label="Search"
         (onClick)="handleSearchAction()"
@@ -60,12 +81,10 @@
       ></p-button>
     </form>
   </p-panel>
-  <div class="table-container" *ngIf="showGrid">
+  <div *ngIf="showGrid" class="table-container">
     <app-data-grid
       [colDefs]="colDefs"
-      [isTreeList]="isTreeList"
       [dataSource]="tableDataSource"
-      [childColDefs]="childColDefs"
       (onAddAction)="handleAddEditAction()"
     ></app-data-grid>
   </div>

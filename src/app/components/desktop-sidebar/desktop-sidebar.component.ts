@@ -50,7 +50,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('moreMenu', { static: false }) moreMenu!: ElementRef;
 
   @Input({ required: true }) permissionList: any[] = [];
-  readonly MENU_THRESHOLD = 7;
+  readonly MENU_THRESHOLD = 8;
   isMoreMenuActive: boolean = false;
 
   constructor(
@@ -119,7 +119,7 @@ export class DesktopSidebarComponent implements OnInit, OnChanges, OnDestroy {
 
   createMoreMenuItem(moreItems: MenuItem[]): MenuItem {
     return {
-      id: 23,
+      id: 26,
       title: 'More',
       label: 'More',
       moduleName: 'more',

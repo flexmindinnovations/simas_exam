@@ -176,5 +176,30 @@ export const MENU_ITEMS: Array<MenuItem> = [
         icon: 'pi pi-user',
         isActive: false,
         route: 'age-group'
-    }
+    },
+    {
+        id: 23,
+        title: 'Result',
+        moduleName: 'Result',
+        icon: 'pi pi-trophy',
+        isActive: false,
+        route: 'result'
+    },
+    {
+        id: 24,
+        title: 'World Record Activation',
+        moduleName: 'WorldRecordActivation',
+        icon: 'pi pi-key',
+        isActive: false,
+        route: 'world-record-activation'
+    },
+    {
+        id: 25,
+        title: 'World Record Exam',
+        moduleName: 'WorldRecordExam',
+        icon: 'pi pi-file-edit',
+        isActive: false,
+        route: 'world-record'
+    },
 ]
+

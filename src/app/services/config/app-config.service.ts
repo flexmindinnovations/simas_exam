@@ -119,6 +119,7 @@ export type ApiCallConfig = {
     saveMultipleActivation: string;
     updateActivation: string;
     saveMultipleExamActivation: string
+    saveMultipleWorldRecordExamActivation: string
   };
   competition: {
     competitionList: string;
@@ -280,7 +281,8 @@ export class AppConfigService {
       saveActivation: `${this.hostUrl}/Activation/SaveActivation`,
       updateActivation: `${this.hostUrl}/Activation/UpdateActivation`,
       saveMultipleActivation: `${this.hostUrl}/Activation/SaveMultipleActivation`,
-      saveMultipleExamActivation: `${this.hostUrl}/Activation/SaveMultipleExamActivation`
+      saveMultipleExamActivation: `${this.hostUrl}/Activation/SaveMultipleExamActivation`,
+      saveMultipleWorldRecordExamActivation: `${this.hostUrl}/Activation/SaveMultipleWorldRecordExamActivation`
     },
     competition: {
       competitionList: `${this.hostUrl}/Compitition/getCompititionList`,

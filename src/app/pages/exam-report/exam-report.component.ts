@@ -325,7 +325,7 @@ export class ExamReportComponent {
   }
 
   handleSearchAction() {
-    // this.isSearchActionLoading = true;
+    this.isSearchActionLoading = true;
     const payload = {
       selectedFranchise: this.selectedFranchise ?? 0,
       selectedInstructor: this.selectedInstructor ?? 0,

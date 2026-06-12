@@ -24,6 +24,9 @@ import { ExamActivationComponent } from '../exam-activation/exam-activation.comp
 import { StudentResultComponent } from '../student-result/student-result.component';
 import { UserTypeWrapperComponent } from '../user-type-wrapper/user-type-wrapper.component';
 import { AgeGroupComponent } from '../age-group/age-group.component';
+import { NewResultComponent } from '../new-result/new-result.component';
+import { WorldRecordActivationComponent } from '../world-record-activation/world-record-activation.component';
+import { WorldRecordComponent } from '../world-record/world-record.component';
 
 export const layoutRoutes: Routes = [
     {
@@ -139,6 +142,20 @@ export const layoutRoutes: Routes = [
                 path: 'age-group',
                 component: AgeGroupComponent,
                 data: { animation: 'AgeGroup' },
+            },
+            {
+                path: 'result',
+                component: NewResultComponent,
+                data: { animation: 'Result' },
+            },
+            {
+                path: 'world-record-activation',
+                component: WorldRecordActivationComponent,
+                data: { animation: 'WorldRecordActivation' },
+            }, {
+                path: 'world-record',
+                component: WorldRecordComponent,
+                data: { animation: 'WorldRecord' },
             },
             {
                 path: '**',

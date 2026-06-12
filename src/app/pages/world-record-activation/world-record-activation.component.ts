@@ -22,7 +22,7 @@ import { switchMap, timer } from 'rxjs';
 import { CompetitionService } from '../../services/competition/competition.service';
 
 @Component({
-  selector: 'app-activation',
+  selector: 'app-world-record-activation',
   standalone: true,
   imports: [
     CommonModule,
@@ -35,10 +35,10 @@ import { CompetitionService } from '../../services/competition/competition.servi
     DataGridComponent,
   ],
   providers: [DialogService],
-  templateUrl: './activation.component.html',
-  styleUrl: './activation.component.scss',
+  templateUrl: './world-record-activation.component.html',
+  styleUrl: './world-record-activation.component.scss'
 })
-export class ActivationComponent {
+export class WorldRecordActivationComponent {
   colDefs: any[] = [];
   activationList: any[] = [];
   tableDataSource: any[] = [];
@@ -254,7 +254,7 @@ export class ActivationComponent {
         styleClass: 'endDate',
       },
       {
-        field: 'status',
+        field: 'worldRecordExamStatus',
         header: 'Status',
         width: '10%',
         styleClass: 'status',
@@ -307,7 +307,7 @@ export class ActivationComponent {
         styleClass: 'endDate',
       },
       {
-        field: 'status',
+        field: 'worldRecordExamStatus',
         header: 'Status',
         width: '10%',
         styleClass: 'status',
@@ -354,7 +354,7 @@ export class ActivationComponent {
         styleClass: 'endDate',
       },
       {
-        field: 'status',
+        field: 'worldRecordExamStatus',
         header: 'Status',
         width: '10%',
         styleClass: 'status',
@@ -487,17 +487,20 @@ export class ActivationComponent {
       status:
         this.selectedRows && this.selectedRows.length > 1
           ? multipleStatus
-          : selectedRows[0].status === 'Active'
+          : selectedRows[0].worldRecordExamStatus === 'Active'
             ? 'DeActive'
             : 'Active',
     };
     let apiCall =
       this.selectedRows && this.selectedRows.length > 1
-        ? this.activationService.saveMultipleActivation({
+        ? this.activationService.saveMultipleWorldRecordExamActivation({
           data: this.data,
           ...payload,
         })
-        : this.activationService.saveActivation(payload);
+        : this.activationService.saveMultipleWorldRecordExamActivation({
+          data: this.data,
+          ...payload,
+        });
     apiCall.subscribe({
       next: (response) => {
         if (response) {

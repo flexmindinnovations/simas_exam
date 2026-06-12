@@ -28,7 +28,7 @@ export class MobileSidebarComponent implements OnInit, OnChanges, OnDestroy {
   isMobile: boolean = false;
   isTablet: boolean = false;
 
-  readonly MENU_THRESHOLD = 7;
+  readonly MENU_THRESHOLD = 8;
 
   activeItem: any;
   @Input({ required: true }) permissionList: any[] = [];

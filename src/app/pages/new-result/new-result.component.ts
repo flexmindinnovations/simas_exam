@@ -1,33 +1,32 @@
+import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Student } from '../../interfaces/Student';
-import { DataGridComponent, TableColumn } from '../../components/data-grid/data-grid.component';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { StudentService } from '../../services/student/student.service';
-import { utils } from '../../utils';
-import { HttpErrorResponse } from '@angular/common/http';
-import { AddEditStudentComponent } from '../../modals/add-edit-student/add-edit-student.component';
-import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { HallticketModalComponent } from '../../modals/hallticket-modal/hallticket-modal.component';
-import { CompetitionService } from '../../services/competition/competition.service';
 import { ChipModule } from 'primeng/chip';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
+import { DataGridComponent, TableColumn } from '../../components/data-grid/data-grid.component';
+import { AddEditStudentComponent } from '../../modals/add-edit-student/add-edit-student.component';
+import { StudentService } from '../../services/student/student.service';
+import { Student } from '../../interfaces/Student';
+import { utils } from '../../utils';
+import { CompetitionService } from '../../services/competition/competition.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { LevelService } from '../../services/level/level.service';
 
 @Component({
-  selector: 'app-students',
+  selector: 'app-new-result',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, InputTextModule, TooltipModule, DataGridComponent, DropdownModule, PanelModule, ChipModule, ButtonModule, AddEditStudentComponent],
   providers: [DialogService, StudentService],
-  templateUrl: './students.component.html',
-  styleUrl: './students.component.scss'
+  templateUrl: './new-result.component.html',
+  styleUrl: './new-result.component.scss'
 })
-export class StudentsComponent implements OnInit {
-
+export class NewResultComponent implements OnInit {
   studentList: Array<Student> = [];
   colDefs: Array<TableColumn> = [];
   tableDataSource: any[] = [];
@@ -35,6 +34,7 @@ export class StudentsComponent implements OnInit {
   isEditMode: boolean = false;
   editModeData: any;
   competitionList: any[] = [];
+  levelNameList: Array<any> = [];
   isCompetitionListLoading: boolean = false;
   selectedCompetiton: string = '';
   isPanelCollapsed: boolean = false;
@@ -42,12 +42,16 @@ export class StudentsComponent implements OnInit {
   showGrid: boolean = false;
   isSearchActionLoading: boolean = false;
   isSearchDisabled: boolean = true;
+  levelListLoading: boolean = false;
+  selectedLevel: any = undefined;
+  levelList: any[] = [];
 
   constructor(
     private studentService: StudentService,
     private dialogService: DialogService,
     private fb: FormBuilder,
-    private competitionService: CompetitionService
+    private competitionService: CompetitionService,
+    private levelService: LevelService,
   ) {
     effect(() => {
       const isDeleteAction = utils.isTableDeleteAction();
@@ -69,12 +73,14 @@ export class StudentsComponent implements OnInit {
     this.initFormGroup();
     utils.addButtonTitle.set('Student');
     this.getCompetitionList();
+    this.getLevelList();
     this.setTableColumns();
   }
 
   initFormGroup() {
     this.formGroup = this.fb.group({
       compititionId: ['', [Validators.required]],
+      levelId: ['', [Validators.required]],
     })
   }
 
@@ -89,12 +95,18 @@ export class StudentsComponent implements OnInit {
     }
   }
 
+  handleOnLevelChange(event: DropdownChangeEvent) {
+    this.selectedLevel = event.value;
+    this.isSearchDisabled = this.selectedLevel === '';
+  }
+
   handleSearchAction() {
     this.setTableColumns();
     utils.isTableLoading.set(true);
     this.isSearchActionLoading = true;
     if (this.formGroup.valid) {
       this.getStudentList();
+      this.showGrid = true;
     }
   }
 
@@ -134,12 +146,6 @@ export class StudentsComponent implements OnInit {
       // { field: 'franchiseName', header: 'Franchise', width: '15%', styleClass: 'franchiseName' },
       // { field: 'instructorName', header: 'Instructor', width: '20%', styleClass: 'instructorName' },
       { field: 'status', header: 'Status', width: '20%', styleClass: 'status' },
-      {
-        field: 'action',
-        header: 'Action',
-        width: '10%',
-        styleClass: 'action'
-      }
     ];
   }
 
@@ -176,6 +182,26 @@ export class StudentsComponent implements OnInit {
         }
       })
     }
+  }
+
+  getLevelList() {
+    utils.isTableLoading.set(true);
+    this.levelService.getLevelList().subscribe({
+      next: (response) => {
+        if (response) {
+          const roleName = sessionStorage.getItem('role') || '';
+          const secretKey = sessionStorage.getItem('token') || '';
+          const role = utils.decryptString(roleName, secretKey)?.toLowerCase();
+          this.levelList = role === 'franchisee' ? response.filter((res: any) => res.isActive === true) : response;
+          this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.levelList)
+          // utils.isTableLoading.update(val => !val);
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        // utils.isTableLoading.update(val => !val);
+        utils.setMessages(error.message, 'error');
+      }
+    })
   }
 
   handleAddEditAction(data?: any) {
@@ -235,19 +261,4 @@ export class StudentsComponent implements OnInit {
       utils.isTableDeleteAction.set(false);
     }, 2000);
   }
-
-  // handleGenerateOperation(data: any) {
-  //   const { rowData, rowIndex } = data;
-  //   this.dialogRef = this.dialogService.open(HallticketModalComponent, {
-  //     data: rowData,
-  //     closable: false,
-  //     modal: true,
-  //     width: utils.isMobile() ? '95%' : '28%',
-  //     styleClass: 'hallticket-dialog',
-  //     header: 'Admit Card',
-  //   });
-  //   this.dialogRef.onClose.subscribe((res) => {
-  //     utils.onModalClose.set(rowIndex)
-  //   })
-  // }
 }

@@ -27,4 +27,7 @@ export class ActivationService {
   saveMultipleExamActivation(payload: any): Observable<any> {
     return this.http.post(this.activationPath.saveMultipleExamActivation, payload);
   }
+  saveMultipleWorldRecordExamActivation(payload: any): Observable<any> {
+    return this.http.post(this.activationPath.saveMultipleWorldRecordExamActivation, payload);
+  }
 }

@@ -190,6 +190,7 @@ export class HallticketComponent {
   handleOnCompetitionChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedCompetiton !== '') {
       this.isSearchDisabled = false;
     } else {
@@ -200,6 +201,7 @@ export class HallticketComponent {
   handleOnFranchiseChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedFranchise !== '') {
       this.isSearchDisabled = false;
     } else {
@@ -222,6 +224,7 @@ export class HallticketComponent {
   handleSearchAction() {
     this.setTableColumns();
     utils.isTableLoading.set(true);
+    this.isSearchActionLoading = true;
 
     if (this.formGroup.valid) {
       this.hallticketService.getStudentHallTicketList(this.formGroup.value).subscribe({
@@ -244,11 +247,15 @@ export class HallticketComponent {
               email: 'info@simasacademy.com'
             }));
             this.tableDataSource = response;
-            this.showGrid = this.tableDataSource.length > 0;
+            // this.showGrid = this.tableDataSource.length > 0;
+            this.showGrid = true;
+            this.isSearchActionLoading = false;
           }
         },
         error: (error: HttpErrorResponse) => {
           utils.setMessages(error.message, 'error');
+          this.showGrid = true;
+          this.isSearchActionLoading = false;
         }
       });
     }
@@ -258,6 +265,7 @@ export class HallticketComponent {
   handleOnInstructorNameChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedInstructor !== '') {
       this.isSearchDisabled = false;
     } else {
@@ -267,6 +275,7 @@ export class HallticketComponent {
   handleOnExamCenterChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedExamCenter !== '') {
       this.isSearchDisabled = false;
     } else {
@@ -278,6 +287,7 @@ export class HallticketComponent {
   handleOnBatchTimeChange(event: DropdownChangeEvent) {
     this.colDefs = [];
     this.tableDataSource = [];
+    this.showGrid = false;
     if (this.selectedExamCenter !== '') {
       this.isSearchDisabled = false;
     } else {
