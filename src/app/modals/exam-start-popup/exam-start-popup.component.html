@@ -1,0 +1,27 @@
+<div class="p-3">
+  <div class="flex justify-content-center gap-6 mb-4">
+    <div class="flex align-items-center gap-2">
+      <p-radioButton
+        name="examOption"
+        value="type"
+        [(ngModel)]="selectedOption"
+      >
+      </p-radioButton>
+      <label>Type Answer</label>
+    </div>
+
+    <div class="flex align-items-center gap-2">
+      <p-radioButton
+        name="examOption"
+        value="show"
+        [(ngModel)]="selectedOption"
+      >
+      </p-radioButton>
+      <label>Show Answer</label>
+    </div>
+  </div>
+  <div class="mt-4 text-center">
+    <p-button label="Start Exam" icon="pi pi-play" (onClick)="startExam()">
+    </p-button>
+  </div>
+</div>
