@@ -134,43 +134,14 @@
           </div>
 
           <div id="questionCard" class="question-container w-full flex-1">
-            <div class="card w-full p-0 pb-2">
-              <p-progressBar [value]="questionTimer" />
-            </div>
-            @if (isFlashEnded) {
-              <div
-                class="checkbox-container w-full card flex flex-col items-center justify-center gap-2 py-5"
-                [@scaleUpQuestion]="checkBoxstate"
-              >
-                <p class="text-lg font-semibold mb-0">
-                  <!-- Choose the correct answer: -->
-                  Type correct answer:
-                </p>
-                <!-- <div
-              class="flex flex-col items-center justify-start gap-2"
-            > -->
-                <!-- @for (item of options; track $index) {
-                            <div class="flex items-center justify-start gap-4 h-8">
-                                <p-radioButton [inputId]="item" name="question" [value]="item"
-                                    (ngModelChange)="onCheckboxChange($event)" [(ngModel)]="selectedAnswer" />
-                                <label [for]="item"
-                                    class="mb-0 text-base sm:text-base md:!text-lg lg:!text-xl xl:!text-2xl 2xl:!text-2xl font-semibold"
-                                    style="margin-bottom: 0;">
-                                    {{ item }}
-                                </label>
-
-                            </div>
-                            } -->
-                <input
-                  type="text"
-                  #answerInput
-                  pInputText
-                  [(ngModel)]="selectedAnswer"
-                  (ngModelChange)="handleKeyValue($event)"
-                  (keydown)="handleKeydown($event)"
-                />
-                <!-- </div> -->
-              </div>
+            @if (isTypeAnswer && isFlashEnded) {
+              <input
+                type="text"
+                #answerInput
+                pInputText
+                [(ngModel)]="selectedAnswer"
+                (ngModelChange)="handleKeyValue($event)"
+              />
             } @else if (isLoadingQuestion && !quizCompleted) {
               <div
                 class="flex w-full my-3 py-3 items-center justify-center gap-3"
@@ -180,7 +151,20 @@
               </div>
             } @else {
               <div class="flash-container">
-                @if (currentItem) {
+                <!-- SHOW ANSWER MODE -->
+                @if (isShowAnswer && showAnswer) {
+                  <div
+                    class="text-3xl font-bold text-center py-5"
+                    [@scaleUp]="state"
+                  >
+                    {{ modifiedFlashQuestionsString }}
+                    =
+                    {{ correctAnswer }}
+                  </div>
+                }
+
+                <!-- NORMAL FLASHING -->
+                @else if (currentItem) {
                   <div class="flash-item" [@scaleUp]="state">
                     {{ currentItem }}
                   </div>
@@ -188,48 +172,33 @@
               </div>
             }
           </div>
-          @if (!isFinalExam) {
-            <div class="questionResultContainer" id="questionResultContainer">
-              @if (showAnswer && submitedlashQuestionsIndex > -1) {
-                <div
-                  class="innerQuestionResult rounded-2xl w-full h-full flex flex-col items-start justify-start gap-2 text-white py-2 px-2"
-                  [ngClass]="
-                    questionList[submitedlashQuestionsIndex].isWrongAnswer
-                      ? 'bg-red-500'
-                      : 'bg-green-500'
-                  "
-                >
-                  <p class="m-0 font-semibold">
-                    {{
-                      questionList[submitedlashQuestionsIndex].isWrongAnswer
-                        ? "Wrong
-                            Answer"
-                        : "Correct Answer"
-                    }}
-                  </p>
-                  <p class="m-0 tracking-wider">
-                    {{ modifiedFlashQuestionsString }} = {{ correctAnswer }}
-                  </p>
-                </div>
-              }
+          <!-- @if (isShowAnswer && showAnswer) {
+            <div class="questionResultContainer">
+              <div class="innerQuestionResult">
+                {{ modifiedFlashQuestionsString }}
+                =
+                {{ correctAnswer }}
+              </div>
             </div>
-          }
+          } -->
         </div>
       </div>
       <div
         class="right-timer flex flex-col gap-2 items-end justify-center lg:justify-end flex-auto row-start-1 md:row-start-1 md:row-end-2 md:col-start-2 md:col-span-1 md:flex-row lg:col-start-2"
       >
-        <app-timer
+        <app-world-record-exam-question-panel
+          [hideProgressBar]="true"
           [questionDuration]="questionDuration"
-          (timeEnded)="OnTimerFinished($event)"
-          (timeLeft)="handleTimer($event)"
-          class="max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
-          [examStarted]="examStarted"
           [questionsList]="questionList"
           [activeQuestion]="activeQuestion"
           [activeQuestionIndex]="activeQuestionIndex"
+          [examStarted]="examStarted"
           (selectedQuestion)="selectedQuestion($event)"
-        ></app-timer>
+          (timeEnded)="OnTimerFinished($event)"
+          (timeLeft)="handleTimer($event)"
+          class="max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
+        >
+        </app-world-record-exam-question-panel>
       </div>
       <div class="card flex-1 col-span-2 flex items-center justify-center">
         <p-selectButton
