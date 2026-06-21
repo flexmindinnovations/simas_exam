@@ -299,8 +299,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         x =>
           x.value === 'submit' ||
           x.value === 'next' ||
-          x.value === 'end' ||
-          x.value === 'round'
+          x.value === 'end'
       );
     }
 
@@ -308,8 +307,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.examControls.filter(
         x =>
           x.value === 'next' ||
-          x.value === 'end' ||
-          x.value === 'round'
+          x.value === 'end'
       );
     }
 
@@ -428,7 +426,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
       { label: 'Submit', value: 'submit', styleClass: 'submit-action' },
       { label: 'Next/Skip', value: 'next', styleClass: 'next-action' },
       { label: 'End Exam', value: 'end', styleClass: 'end-action' },
-      { label: 'Next Round', value: 'round', styleClass: 'nextRound-action' },
+      // { label: 'Next Round', value: 'round', styleClass: 'nextRound-action' },
     ];
 
     this.noOfRowsList = [
@@ -534,12 +532,12 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         this.playSound(sound);
         this.confirm(event?.originalEvent);
         break;
-      case 'round':
-        this.isNextRoundClicked = true;
-        sound = this.sounds['next1'];
-        this.playSound(sound);
-        this.nextRound();
-        break;
+      // case 'round':
+      //   this.isNextRoundClicked = true;
+      //   sound = this.sounds['next1'];
+      //   this.playSound(sound);
+      //   this.nextRound();
+      //   break;
     }
   }
 
@@ -588,7 +586,6 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // TYPE ANSWER MODE
     if (this.isTypeAnswer) {
-
       if (!this.validateNumber(this.selectedAnswer)) {
 
         this.playSound(this.sounds['error']);
@@ -601,11 +598,24 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      const userInput =
-        this.questionList[this.activeQuestionIndex].userInput;
+      // REQUIRED FOR RESULT PANEL
+      this.submitedlashQuestionsIndex = this.activeQuestionIndex;
+
+      this.flashQuestionsString =
+        this.questionList[this.activeQuestionIndex]
+          .questions
+          .split(',')
+          .join(' ');
+
+      this.formatSequence();
 
       this.correctAnswer =
         this.questionList[this.activeQuestionIndex].answer;
+
+      this.showAnswer = true;
+
+      const userInput =
+        this.questionList[this.activeQuestionIndex].userInput;
 
       const isWrongAnswer =
         String(userInput) !== String(this.correctAnswer);
@@ -623,30 +633,15 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         this.activeQuestionIndex ===
         this.questionList.length - 1
       ) {
-
-        this.canMoveToNextRound = true;
-
-        if (
-          this.currentRoundIndex ===
-          this.roundIds.length - 1
-        ) {
+        setTimeout(() => {
           this.endExam();
-        }
+        }, 1500);
 
         return;
       }
-
-      // AUTO NEXT QUESTION
-      this.selectedAnswer = null;
-      this.showAnswer = false;
-
-      setTimeout(() => {
-        this.loadNextQuestion();
-      }, 300);
-
-      return;
     }
   }
+
   validateNumber(input: string): boolean {
     const regex = /^-?\d+$/;
     return regex.test(input);
@@ -814,7 +809,10 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(() => timer(500))
       )
       .subscribe(() => {
-        this.showExamResults();
+        utils.setMessages(
+          'Exam Completed Successfully',
+          'success'
+        )
       });
   }
 
@@ -1322,97 +1320,97 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     return result;
   }
 
-  showExamResults() {
-    const allResults: any = [];
+  // showExamResults() {
+  //   const allResults: any = [];
 
-    for (const roundId of this.roundIds) {
-      const questionsInRound = this.groupedQuestions[roundId];
+  //   for (const roundId of this.roundIds) {
+  //     const questionsInRound = this.groupedQuestions[roundId];
 
-      const roundResults = questionsInRound.map((question: any) => {
-        return {
-          userInput: question.userInput,
-          isSkipped: question.isSkipped || false,
-          isAttempted: question.isAttempted || false,
-        };
-      });
-      allResults.push(...roundResults);
-    }
+  //     const roundResults = questionsInRound.map((question: any) => {
+  //       return {
+  //         userInput: question.userInput,
+  //         isSkipped: question.isSkipped || false,
+  //         isAttempted: question.isAttempted || false,
+  //       };
+  //     });
+  //     allResults.push(...roundResults);
+  //   }
 
-    const questionAllResult = this.questionListAll.map((item, index) => {
-      const question = allResults[index] || {}; // Match allResults by index
+  //   const questionAllResult = this.questionListAll.map((item, index) => {
+  //     const question = allResults[index] || {}; // Match allResults by index
 
-      return {
-        questionBankId: item.questionBankId,
-        levelId: item.levelId,
-        roundId: item.roundId,
-        roundName: item.roundName,
-        levelName: item.levelName,
-        questionType: item.questionType,
-        examTypeId: item.examTypeId,
-        examTypeName: item.examTypeName,
-        questionBankDetailsId: item.questionBankDetailsId,
-        noOfColumn: item.noOfColumn,
-        noOfRow: item.noOfRow,
-        questions: item.questions,
-        answer: item.answer,
-        examRoundTime: item.examRoundTime,
-        isActive: item.isActive,
-        timeTaken: item.timeTaken,
-        userAnswer: question.userInput,
-        isCorrect: String(question.userInput) === String(item.answer),
-        isWrongAnswer: String(question.userInput) !== String(item.answer),
-        isSkipped: question.isSkipped,
-        isAttempted: question.isAttempted,
-        question, // Adding question object from allResults
-      };
-    });
+  //     return {
+  //       questionBankId: item.questionBankId,
+  //       levelId: item.levelId,
+  //       roundId: item.roundId,
+  //       roundName: item.roundName,
+  //       levelName: item.levelName,
+  //       questionType: item.questionType,
+  //       examTypeId: item.examTypeId,
+  //       examTypeName: item.examTypeName,
+  //       questionBankDetailsId: item.questionBankDetailsId,
+  //       noOfColumn: item.noOfColumn,
+  //       noOfRow: item.noOfRow,
+  //       questions: item.questions,
+  //       answer: item.answer,
+  //       examRoundTime: item.examRoundTime,
+  //       isActive: item.isActive,
+  //       timeTaken: item.timeTaken,
+  //       userAnswer: question.userInput,
+  //       isCorrect: String(question.userInput) === String(item.answer),
+  //       isWrongAnswer: String(question.userInput) !== String(item.answer),
+  //       isSkipped: question.isSkipped,
+  //       isAttempted: question.isAttempted,
+  //       question, // Adding question object from allResults
+  //     };
+  //   });
 
-    const examInputData = {
-      examPaperId: 0,
-      studentId: 0,
-      levelId: this.selectedLevel,
-      roundId: 0,
-      questionId: 0,
-      examTypeId: this.selectedExamType,
-      examPaperDate: new Date().toISOString(),
-      examPaperTime: this.totalTime,
-    };
+  //   const examInputData = {
+  //     examPaperId: 0,
+  //     studentId: 0,
+  //     levelId: this.selectedLevel,
+  //     roundId: 0,
+  //     questionId: 0,
+  //     examTypeId: this.selectedExamType,
+  //     examPaperDate: new Date().toISOString(),
+  //     examPaperTime: this.totalTime,
+  //   };
 
-    const roundListMarks = this.levelList?.find(
-      (item: any) => item.levelId === this.selectedLevel
-    )?.examRoundList;
+  //   const roundListMarks = this.levelList?.find(
+  //     (item: any) => item.levelId === this.selectedLevel
+  //   )?.examRoundList;
 
-    const markRoundWise = [
-      roundListMarks.reduce((acc: any, round: any, index: any) => {
-        const key = `round${index + 1}MarkPerQuestion`;
-        acc[key] = round.markPerQuestion;
-        return acc;
-      }, {})
-    ];
+  //   const markRoundWise = [
+  //     roundListMarks.reduce((acc: any, round: any, index: any) => {
+  //       const key = `round${index + 1}MarkPerQuestion`;
+  //       acc[key] = round.markPerQuestion;
+  //       return acc;
+  //     }, {})
+  //   ];
 
-    this.dialogRef = this.dialogService.open(ExamResultComponent, {
-      data: {
-        isFinal: this.isFinalExam,
-        questionList: questionAllResult,
-        examInputData,
-        totalTime: this.totalTime,
-        ...markRoundWise[0],
-      },
-      closable: true,
-      modal: true,
-      height: 'auto',
-      width: utils.isMobile() ? '95%' : '42%',
-      styleClass: 'add-edit-dialog',
-      header: 'Exam Result',
-    });
+  //   this.dialogRef = this.dialogService.open(ExamResultComponent, {
+  //     data: {
+  //       isFinal: this.isFinalExam,
+  //       questionList: questionAllResult,
+  //       examInputData,
+  //       totalTime: this.totalTime,
+  //       ...markRoundWise[0],
+  //     },
+  //     closable: true,
+  //     modal: true,
+  //     height: 'auto',
+  //     width: utils.isMobile() ? '95%' : '42%',
+  //     styleClass: 'add-edit-dialog',
+  //     header: 'Exam Result',
+  //   });
 
-    this.dialogRef.onClose.subscribe((res) => {
-      if (res) {
-        this.isPanelCollapsed = !this.isPanelCollapsed;
-        utils.setMessages(res.message, 'success');
-      }
-    });
-  }
+  //   this.dialogRef.onClose.subscribe((res) => {
+  //     if (res) {
+  //       this.isPanelCollapsed = !this.isPanelCollapsed;
+  //       utils.setMessages(res.message, 'success');
+  //     }
+  //   });
+  // }
   openExamSettingsPopup() {
     this.dialogRef = this.dialogService.open(ExamStartPopupComponent, {
       header: 'Exam Settings',

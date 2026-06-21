@@ -47,6 +47,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
   domain = utils.domain;
   isMobile: boolean = window.innerWidth <= 768;
   isLoading = false;
+  worldRecordExam = false;
+  roleName = "";
 
   private activatedRoute = inject(ActivatedRoute);
 
@@ -124,7 +126,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
         if (response) {
           const { token, roleId, roleName } = response;
           if (response.hasOwnProperty('student') && response?.student !== null) {
-            const { studentId, ...rest } = response?.student[0];
+            const { studentId, worldRecordExamStatus, ...rest } = response?.student[0];
+            this.worldRecordExam = worldRecordExamStatus === "Active" ? true : false;
+            this.roleName = roleName;
             utils.studentDetails.set(rest);
             utils.userType.set('student');
             sessionStorage.setItem('userId', studentId);
@@ -168,7 +172,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.roleService.getRolePermissionsById(roleId).subscribe({
       next: (response: any) => {
         if (response) {
-          db.permissiontem.bulkAdd(response);
+          const newList = this.worldRecordExam ? response : response.filter((permission: any) => permission.moduleName !== 'World Record Exam');
+          db.permissiontem.bulkAdd(this.roleName === "Student" ? newList : response);
           this.formGroup.enable();
           this.router.navigateByUrl('app');
           setTimeout(() => {

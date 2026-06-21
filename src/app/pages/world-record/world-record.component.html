@@ -45,9 +45,7 @@
           [loading]="isLevelListLoading"
           loadingIcon="pi pi-spin pi-spinner"
           [(ngModel)]="selectedLevel"
-          [disabled]="
-            isSearchActionLoading || isSearchDisabled || levelDisabled
-          "
+          [disabled]="isSearchActionLoading || isSearchDisabled"
           ariaLabelledBy="levelName"
           placeholder="Select"
           (onChange)="handleOnDropdownValueChange($event, 'level')"
@@ -134,7 +132,7 @@
           </div>
 
           <div id="questionCard" class="question-container w-full flex-1">
-            @if (isTypeAnswer && isFlashEnded) {
+            @if (isTypeAnswer && isFlashEnded && !showAnswer) {
               <input
                 type="text"
                 #answerInput
@@ -152,7 +150,7 @@
             } @else {
               <div class="flash-container">
                 <!-- SHOW ANSWER MODE -->
-                @if (isShowAnswer && showAnswer) {
+                @if (showAnswer) {
                   <div
                     class="text-3xl font-bold text-center py-5"
                     [@scaleUp]="state"
@@ -183,8 +181,8 @@
           } -->
         </div>
       </div>
-      <div
-        class="right-timer flex flex-col gap-2 items-end justify-center lg:justify-end flex-auto row-start-1 md:row-start-1 md:row-end-2 md:col-start-2 md:col-span-1 md:flex-row lg:col-start-2"
+      <!-- <div
+        class="right-timer flex flex-col gap-2 items-end justify-center lg:justify-end flex-auto row-start-1 md:row-start-1 md:row-end-2 md:col-start-2 md:col-span-1 md:flex-row lg:col-start-2 h-full w-full"
       >
         <app-world-record-exam-question-panel
           [hideProgressBar]="true"
@@ -196,10 +194,11 @@
           (selectedQuestion)="selectedQuestion($event)"
           (timeEnded)="OnTimerFinished($event)"
           (timeLeft)="handleTimer($event)"
-          class="max-w-xs md:min-w-[30%] md:flex md:items-start md:justify-center h-full w-full"
+          class="h-full w-full"
         >
         </app-world-record-exam-question-panel>
-      </div>
+      </div> -->
+
       <div class="card flex-1 col-span-2 flex items-center justify-center">
         <p-selectButton
           [disabled]="!isFlashEnded"
