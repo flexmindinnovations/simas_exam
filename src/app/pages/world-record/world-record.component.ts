@@ -149,7 +149,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedExamOption: string = 'all';
   selectedExamControlOption: string = '';
   selectedExamType: string = '';
-  selectedLevel: string = '';
+  selectedLevel: any = '';
   selectedRound: string = '';
   selectedNoOfColumn: string = '';
   selectedNoOfRows: string = '';
@@ -227,6 +227,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   isTypeAnswer = true;
   isShowAnswer = false;
   examTimeFinished = false;
+  isAnswerRevealed = false;
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   @ViewChild('answerInput') answerInput!: ElementRef;
@@ -306,6 +307,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isShowAnswer) {
       return this.examControls.filter(
         x =>
+          x.value === 'showAnswer' ||
           x.value === 'next' ||
           x.value === 'end'
       );
@@ -396,7 +398,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
             if (role === 'student') {
               const studentDetails = utils.studentDetails();
               if (studentDetails.hasOwnProperty('levelId') && studentDetails.levelId > 0) {
-                this.selectedLevel = studentDetails.levelId;
+                this.selectedLevel = 10;
                 this.levelDisabled = true;
               }
             }
@@ -423,6 +425,11 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
     this.examControls = [
+      {
+        label: 'Show Answer',
+        value: 'showAnswer',
+        styleClass: 'nextRound-action'
+      },
       { label: 'Submit', value: 'submit', styleClass: 'submit-action' },
       { label: 'Next/Skip', value: 'next', styleClass: 'next-action' },
       { label: 'End Exam', value: 'end', styleClass: 'end-action' },
@@ -512,6 +519,9 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isNextRoundClicked = false;
 
     switch (selectedValue) {
+      case 'show answer':
+        this.showCorrectAnswer();
+        break;
       case 'submit':
         this.isSubmitClicked = true;
         this.showAnswer = true;
@@ -718,6 +728,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   loadNextQuestion() {
 
     this.showAnswer = false;
+    this.isAnswerRevealed = false;
     this.currentItem = null;
     this.selectedAnswer = null;
     this.submitedlashQuestionsIndex = -1;
@@ -1010,22 +1021,10 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     // SHOW ANSWER MODE
     if (this.isShowAnswer) {
 
-      this.flashQuestionsString =
-        this.questionList[this.activeQuestionIndex]
-          .questions
-          .split(',')
-          .join(' ');
-
-      this.formatSequence();
-
-      this.correctAnswer =
-        this.questionList[this.activeQuestionIndex]
-          .answer;
-
-      this.currentItem =
-        `${this.modifiedFlashQuestionsString} = ${this.correctAnswer}`;
-
-      this.showAnswer = true;
+      this.isFlashEnded = true;
+      this.showAnswer = false;
+      this.isAnswerRevealed = false;
+      this.currentItem = null;
 
       return;
     }
@@ -1200,6 +1199,27 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         this.focusTriggered = false; // Reset for next cycle
       }, 100);
     }
+  }
+
+  showCorrectAnswer() {
+
+    this.submitedlashQuestionsIndex = this.activeQuestionIndex;
+
+    this.flashQuestionsString =
+      this.questionList[this.activeQuestionIndex]
+        .questions
+        .split(',')
+        .join(' ');
+
+    this.formatSequence();
+
+    this.correctAnswer =
+      this.questionList[this.activeQuestionIndex].answer;
+
+    this.currentItem = null;
+    this.showAnswer = true;
+
+    this.cdref.detectChanges();
   }
 
   OnTimerFinished(timeFinished: boolean) {
