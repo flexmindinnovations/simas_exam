@@ -148,7 +148,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectedExamOption: string = 'all';
   selectedExamControlOption: string = '';
-  selectedExamType: string = '';
+  selectedExamType: any = '';
   selectedLevel: any = '';
   selectedRound: string = '';
   selectedNoOfColumn: string = '';
@@ -180,6 +180,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   isNextRoundClicked: boolean = false;
 
   levelDisabled: boolean = false;
+  examTypeDisable: boolean = false;
 
   options: any[] = [];
   selectedOptions: Set<number> = new Set();
@@ -399,7 +400,9 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
               const studentDetails = utils.studentDetails();
               if (studentDetails.hasOwnProperty('levelId') && studentDetails.levelId > 0) {
                 this.selectedLevel = 10;
+                this.selectedExamType = 3;
                 this.levelDisabled = true;
+                this.examTypeDisable = true;
               }
             }
           }
@@ -1466,6 +1469,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.levelDisabled = false;
+    this.examTypeDisable = false;
     if (this.resizeListener) {
       this.resizeListener();
     }
