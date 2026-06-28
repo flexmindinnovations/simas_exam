@@ -24,7 +24,9 @@
           ariaLabelledBy="value"
           [loading]="isExamTypeListLoading"
           loadingIcon="pi pi-spin pi-spinner"
-          [disabled]="isSearchActionLoading || isSearchDisabled"
+          [disabled]="
+            isSearchActionLoading || isSearchDisabled || examTypeDisable
+          "
           [(ngModel)]="selectedExamType"
           placeholder="Select"
           (onChange)="handleOnDropdownValueChange($event, 'examType')"
@@ -112,13 +114,13 @@
     </div>
   </p-panel>
 
-  <div class="wrapper p-4 w-full h-full flex flex-col gap-4 overflow-auto">
+  <div
+    class="wrapper flex justify-center w-full h-full p-2 md:p-4 gap-2 overflow-hidden"
+  >
     @if (examStarted && !quizCompleted) {
-      <div
-        class="exam-container col-span-2 row-start-1 flex flex-col w-full h-full min-h-[400px]"
-      >
+      <div class="exam-container grid md:flex md:flex-col min-h-52">
         <div
-          class="flex flex-col items-center lg:items-center xl:items-center 2xl:items-center justify-center w-full h-full"
+          class="flex flex-col w-full h-full min-h-0 items-center justify-start gap-4"
         >
           <div
             #exampOptionsCard
@@ -133,15 +135,28 @@
             />
           </div>
 
-          <div id="questionCard" class="question-container w-full flex-1">
+          <div
+            id="questionCard"
+            class="question-container flex-1 w-full flex items-start justify-center min-h-[220px] sm:min-h-[260px] md:min-h-[340px] lg:min-h-[420px] xl:min-h-[500px] overflow-hidden"
+          >
             @if (isTypeAnswer && isFlashEnded && !showAnswer) {
-              <input
-                type="text"
-                #answerInput
-                pInputText
-                [(ngModel)]="selectedAnswer"
-                (ngModelChange)="handleKeyValue($event)"
-              />
+              <div
+                class="checkbox-container w-full max-w-md card flex flex-col items-center justify-center gap-4 p-4 sm:p-5"
+                [@scaleUpQuestion]="checkBoxstate"
+              >
+                <p class="text-base sm:text-lg font-semibold mb-0">
+                  Type correct answer:
+                </p>
+
+                <input
+                  type="text"
+                  #answerInput
+                  pInputText
+                  class="w-full"
+                  [(ngModel)]="selectedAnswer"
+                  (ngModelChange)="handleKeyValue($event)"
+                />
+              </div>
             } @else if (isLoadingQuestion && !quizCompleted) {
               <div
                 class="flex w-full my-3 py-3 items-center justify-center gap-3"
@@ -199,6 +214,18 @@
             </div>
           } -->
         </div>
+        <div class="card flex-1 col-span-1 flex items-center justify-center">
+          <p-selectButton
+            [disabled]="!isFlashEnded"
+            [options]="filteredExamControls"
+            (onChange)="handleExamControlOptionChange($event)"
+            [styleClass]="'examControls'"
+            [(ngModel)]="selectedExamControlOption"
+            optionLabel="label"
+            optionValue="value"
+          >
+          </p-selectButton>
+        </div>
       </div>
       <!-- <div
         class="right-timer flex flex-col gap-2 items-end justify-center lg:justify-end flex-auto row-start-1 md:row-start-1 md:row-end-2 md:col-start-2 md:col-span-1 md:flex-row lg:col-start-2 h-full w-full"
@@ -217,18 +244,6 @@
         >
         </app-world-record-exam-question-panel>
       </div> -->
-
-      <div class="card w-full flex items-center justify-center mt-4">
-        <p-selectButton
-          [disabled]="!isFlashEnded"
-          [options]="filteredExamControls"
-          (onChange)="handleExamControlOptionChange($event)"
-          [styleClass]="'examControls'"
-          [(ngModel)]="selectedExamControlOption"
-          optionLabel="label"
-          optionValue="value"
-        />
-      </div>
     } @else {
       <div
         class="col-span-2 row-span-2 md:row-start-1 md:row-end-3 flex flex-col items-center justify-center w-full h-full"
