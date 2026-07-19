@@ -53,36 +53,78 @@ export class ExamResultComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  generateRoundWiseResults() {
-    const groupedRounds: { [roundId: string]: any[] } = {};
+  getRoundMark(roundId: number, markPerQuestion: number): number {
 
-    this.questionList.forEach(q => {
-      if (!groupedRounds[q.roundId]) {
-        groupedRounds[q.roundId] = [];
-      }
-      groupedRounds[q.roundId].push(q);
-    });
+    const round = this.roundWiseResults.find(
+      x => x.roundId === roundId
+    );
 
-    this.roundWiseResults = Object.keys(groupedRounds).map(roundId => {
-      const roundQuestions = groupedRounds[roundId];
-      const attempted = roundQuestions.filter(q => q.isAttempted);
-      const correct = attempted.filter(q => !q.isWrongAnswer);
-      const wrong = attempted.filter(q => q.isWrongAnswer);
-      const skipped = roundQuestions.filter(q => !q.isAttempted);
+    if (!round) {
+      return 0;
+    }
 
-      return {
-        roundId,
-        roundName: roundQuestions[0]?.roundName || `Round ${roundId}`,
-        total: roundQuestions.length,
-        attempted: attempted.length,
-        correct: correct.length,
-        wrong: wrong.length,
-        skipped: skipped.length,
-        accuracy: attempted.length ? ((correct.length / attempted.length) * 100).toFixed(1) : '0.0'
-      };
-    });
+    return markPerQuestion && markPerQuestion > 0
+      ? round.correct * markPerQuestion
+      : round.correct;
+
   }
 
+  generateRoundWiseResults() {
+
+    const groupedRounds: { [roundId: string]: any[] } = {};
+
+    this.questionList.forEach(question => {
+
+      if (!groupedRounds[question.roundId]) {
+        groupedRounds[question.roundId] = [];
+      }
+
+      groupedRounds[question.roundId].push(question);
+
+    });
+
+    this.roundWiseResults = Object.keys(groupedRounds)
+      .map(roundId => {
+
+        const roundQuestions = groupedRounds[roundId];
+
+        const attempted = roundQuestions.filter(q => q.isAttempted);
+        const correct = attempted.filter(q => !q.isWrongAnswer);
+        const wrong = attempted.filter(q => q.isWrongAnswer);
+        const skipped = roundQuestions.filter(q => !q.isAttempted);
+
+        return {
+
+          roundId: Number(roundId),
+
+          roundName:
+            roundQuestions[0]?.roundName ??
+            `Round ${roundId}`,
+
+          total: roundQuestions.length,
+
+          attempted: attempted.length,
+
+          correct: correct.length,
+
+          wrong: wrong.length,
+
+          skipped: skipped.length,
+
+          accuracy:
+            attempted.length > 0
+              ? (
+                (correct.length / attempted.length) *
+                100
+              ).toFixed(1)
+              : '0.0'
+
+        };
+
+      })
+      .sort((a, b) => a.roundId - b.roundId);
+
+  }
 
   // handleSubmitAction() {  // as per the requirement of user
   //   this.saveExamPaper();
@@ -116,9 +158,22 @@ export class ExamResultComponent implements OnInit {
 
         // Add round1Mark etc. ONLY to the first object
         if (index === 0) {
-          obj.round1Mark = (this.dialogData?.round1MarkPerQuestion != 0 ? (this.roundWiseResults[0]?.correct * this.dialogData?.round1MarkPerQuestion) : this.roundWiseResults[0]?.correct) ?? 0;
-          obj.round2Mark = (this.dialogData?.round2MarkPerQuestion != 0 ? (this.roundWiseResults[1]?.correct * this.dialogData?.round2MarkPerQuestion) : this.roundWiseResults[1]?.correct) ?? 0;
-          obj.round3Mark = (this.dialogData?.round3MarkPerQuestion != 0 ? (this.roundWiseResults[2]?.correct * this.dialogData?.round3MarkPerQuestion) : this.roundWiseResults[2]?.correct) ?? 0;
+
+          obj.round1Mark = this.getRoundMark(
+            1,
+            this.dialogData?.round1MarkPerQuestion
+          );
+
+          obj.round2Mark = this.getRoundMark(
+            2,
+            this.dialogData?.round2MarkPerQuestion
+          );
+
+          obj.round3Mark = this.getRoundMark(
+            3,
+            this.dialogData?.round3MarkPerQuestion
+          );
+
         }
 
         return obj;
