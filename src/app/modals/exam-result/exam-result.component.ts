@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { utils } from '../../utils';
-import { ExamPaperService } from '../../services/exam-paper/exam-paper.service';
-import { HttpErrorResponse } from '@angular/common/http';
+// import { ExamPaperService } from '../../services/exam-paper/exam-paper.service';
+// import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-exam-result',
@@ -30,7 +30,7 @@ export class ExamResultComponent implements OnInit {
   constructor(
     private dialogRef: DynamicDialogRef,
     private config: DynamicDialogConfig,
-    private examPaperService: ExamPaperService
+    // private examPaperService: ExamPaperService
   ) { }
 
   ngOnInit(): void {
@@ -46,33 +46,15 @@ export class ExamResultComponent implements OnInit {
       this.correctQuestions = this.questionList.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
     }
     this.generateRoundWiseResults();
-    this.saveExamPaper();
+    // this.saveExamPaper();
   }
 
   handleDialogCancel() {
     this.dialogRef.close(false);
   }
 
-  getRoundMark(roundId: number, markPerQuestion: number): number {
-
-    const round = this.roundWiseResults.find(
-      x => x.roundId === roundId
-    );
-
-    if (!round) {
-      return 0;
-    }
-
-    return markPerQuestion && markPerQuestion > 0
-      ? round.correct * markPerQuestion
-      : round.correct;
-
-  }
-
   generateRoundWiseResults() {
-
     const groupedRounds: { [roundId: string]: any[] } = {};
-
     this.questionList.forEach(question => {
 
       if (!groupedRounds[question.roundId]) {
@@ -130,64 +112,80 @@ export class ExamResultComponent implements OnInit {
   //   this.saveExamPaper();
   // }
 
-  saveExamPaper() {
-    this.isSubmitActionLoading = true;
-    const userId = sessionStorage.getItem('userId')
-    const payload = this.questionList
-      .map((item: any, index: number) => {
-        const correctAnswer = item.isAttempted === true && item.isWrongAnswer === false;
-        const obj: any = {
-          examPaperId: 0,
-          studentId: userId ? +userId : 0,
-          levelId: item?.levelId,
-          roundId: item?.roundId,
-          questionId: item?.questionBankDetailsId,
-          examTypeId: item?.examTypeId,
-          examPaperDate: new Date(),
-          examPaperTime: new Date().toLocaleTimeString(),
-          answer: item?.userAnswer?.toString() ?? '',
-          answerStatus: correctAnswer ? 'Y' : 'N',
-          answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
-          totalQuestions: this.questionList?.length,
-          skipQuestions: this.skippedQuestions?.length,
-          rightAnswer: this.correctQuestions?.length,
-          wrongAnswer: this.wrongQuestions?.length,
-          totalTimeTaken: item.timeTaken,
-          srno: 0,
-        };
+  // getRoundMark(roundId: number, markPerQuestion: number): number {
 
-        // Add round1Mark etc. ONLY to the first object
-        if (index === 0) {
+  //   const round = this.roundWiseResults.find(
+  //     x => x.roundId === roundId
+  //   );
 
-          obj.round1Mark = this.getRoundMark(
-            1,
-            this.dialogData?.round1MarkPerQuestion
-          );
+  //   if (!round) {
+  //     return 0;
+  //   }
 
-          obj.round2Mark = this.getRoundMark(
-            2,
-            this.dialogData?.round2MarkPerQuestion
-          );
+  //   return markPerQuestion && markPerQuestion > 0
+  //     ? round.correct * markPerQuestion
+  //     : round.correct;
 
-          obj.round3Mark = this.getRoundMark(
-            3,
-            this.dialogData?.round3MarkPerQuestion
-          );
+  // }
 
-        }
+  // saveExamPaper() {
+  //   this.isSubmitActionLoading = true;
+  //   const userId = sessionStorage.getItem('userId')
+  //   const payload = this.questionList
+  //     .map((item: any, index: number) => {
+  //       const correctAnswer = item.isAttempted === true && item.isWrongAnswer === false;
+  //       const obj: any = {
+  //         examPaperId: 0,
+  //         studentId: userId ? +userId : 0,
+  //         levelId: item?.levelId,
+  //         roundId: item?.roundId,
+  //         questionId: item?.questionBankDetailsId,
+  //         examTypeId: item?.examTypeId,
+  //         examPaperDate: new Date(),
+  //         examPaperTime: new Date().toLocaleTimeString(),
+  //         answer: item?.userAnswer?.toString() ?? '',
+  //         answerStatus: correctAnswer ? 'Y' : 'N',
+  //         answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
+  //         totalQuestions: this.questionList?.length,
+  //         skipQuestions: this.skippedQuestions?.length,
+  //         rightAnswer: this.correctQuestions?.length,
+  //         wrongAnswer: this.wrongQuestions?.length,
+  //         totalTimeTaken: item.timeTaken,
+  //         srno: 0,
+  //       };
 
-        return obj;
-      });
-    const savePaperList = this.examPaperService.TempSaveExamPaperList(payload);
-    savePaperList.subscribe({
-      next: (response) => {
-        this.isSubmitActionLoading = false;
-        // this.dialogRef.close(response);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.isSubmitActionLoading = false;
-        utils.setMessages(error.message, 'error');
-      }
-    });
-  }
+  //       // Add round1Mark etc. ONLY to the first object
+  //       if (index === 0) {
+
+  //         obj.round1Mark = this.getRoundMark(
+  //           1,
+  //           this.dialogData?.round1MarkPerQuestion
+  //         );
+
+  //         obj.round2Mark = this.getRoundMark(
+  //           2,
+  //           this.dialogData?.round2MarkPerQuestion
+  //         );
+
+  //         obj.round3Mark = this.getRoundMark(
+  //           3,
+  //           this.dialogData?.round3MarkPerQuestion
+  //         );
+
+  //       }
+
+  //       return obj;
+  //     });
+  //   const savePaperList = this.examPaperService.TempSaveExamPaperList(payload);
+  //   savePaperList.subscribe({
+  //     next: (response) => {
+  //       this.isSubmitActionLoading = false;
+  //       // this.dialogRef.close(response);
+  //     },
+  //     error: (error: HttpErrorResponse) => {
+  //       this.isSubmitActionLoading = false;
+  //       utils.setMessages(error.message, 'error');
+  //     }
+  //   });
+  // }
 }
