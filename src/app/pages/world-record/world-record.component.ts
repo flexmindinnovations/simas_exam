@@ -229,6 +229,9 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   isShowAnswer = false;
   examTimeFinished = false;
   isAnswerRevealed = false;
+  examStartDateTime!: Date;
+  examEndDateTime!: Date;
+  answerList: any[] = [];
 
   @ViewChild('exampOptionsCard') exampOptionsCard!: ElementRef;
   @ViewChild('answerInput') answerInput!: ElementRef;
@@ -246,6 +249,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     private confirmationService: ConfirmationService,
     private userTypeService: UserTypeService,
     private studentService: StudentService,
+    private examPaperService: ExamPaperService
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -574,7 +578,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submitQuestion() {
-
+    this.answerList.push(this.selectedAnswer)
     // SHOW ANSWER MODE
     if (this.isShowAnswer) {
 
@@ -729,7 +733,6 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadNextQuestion() {
-
     this.showAnswer = false;
     this.isAnswerRevealed = false;
     this.currentItem = null;
@@ -810,6 +813,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
   endExam() {
+    this.examEndDateTime = new Date();
     this.quizCompleted = true; // Prevent any further progression
     this.examStarted = false;
     this.isFlashEnded = true;
@@ -819,15 +823,61 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(() => {
           this.isSearchDisabled = false;
           this.resetTimer();
+
         }),
         switchMap(() => timer(500))
       )
       .subscribe(() => {
-        utils.setMessages(
-          'Exam Completed Successfully',
-          'success'
-        )
+        this.saveWorldRecordExam();
       });
+  }
+
+  getTotalTimeTaken(): string {
+
+    const diff =
+      this.examEndDateTime.getTime() -
+      this.examStartDateTime.getTime();
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+
+    const minutes = Math.floor(
+      (diff % (1000 * 60 * 60)) / (1000 * 60)
+    );
+
+    const seconds = Math.floor(
+      (diff % (1000 * 60)) / 1000
+    );
+
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`;
+
+  }
+
+  saveWorldRecordExam() {
+    const payload = {
+      worldRecordExamId: 0,
+      compititionId: 0,
+      questionData: this.answerList.toString(),
+      examPaperDate: new Date().toISOString(),
+      examStartTime: this.examStartDateTime.toISOString(),
+      examDateTime: this.examEndDateTime.toISOString(),
+      totalTimeTaken: this.getTotalTimeTaken()
+    }
+
+    const saveWorldRecordExam = this.examPaperService.SaveWorldRecordExamPaper(payload);
+    saveWorldRecordExam.subscribe({
+      next: (response) => {
+        if (response) {
+          utils.setMessages(response.message, 'success');
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        utils.setMessages(error.message, 'error');
+      }
+    });
   }
 
   confirm(event: Event) {
@@ -888,6 +938,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   handleSearchAction() {
     this.isSearchActionLoading = true;
     this.isSearchDisabled = true;
+    this.examStartDateTime = new Date();
 
     const payload = {
       levelId: this.selectedLevel,
@@ -899,10 +950,10 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response?.length) {
-
             this.questionListAll = response.sort(
               (a: any, b: any) => Number(a.roundId) - Number(b.roundId)
             );
+
 
             this.groupedQuestions =
               this.groupQuestionsByRound(response);

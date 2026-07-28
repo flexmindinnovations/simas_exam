@@ -235,6 +235,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     private confirmationService: ConfirmationService,
     private userTypeService: UserTypeService,
     private studentService: StudentService,
+    private examPaperService: ExamPaperService
   ) {
     effect(() => {
       this.isSidebarOpened = utils.sideBarOpened();
@@ -547,7 +548,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       this.correctAnswer = this.activeQuestion?.answer;
       const userInput = this.questionList[this.activeQuestionIndex].userInput;
       const isWrongAnswer = String(userInput) !== String(this.correctAnswer);
-
       this.questionList[this.activeQuestionIndex].isCompleted = true;
       this.questionList[this.activeQuestionIndex].isAttempted = true;
       this.questionList[this.activeQuestionIndex].isSkipped = false;
@@ -1140,50 +1140,93 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showExamResults() {
-    const allResults: any = [];
-
-    for (const roundId of this.roundIds) {
-      const questionsInRound = this.groupedQuestions[roundId];
-
-      const roundResults = questionsInRound.map((question: any) => {
-        return {
+    const resultMap = new Map<number, any>();
+    for (const [index, roundId] of this.roundIds.entries()) {
+      const markKey = `round${index + 1}Mark`;
+      let totalRoundMark = 0;
+      const questionsInRound = this.groupedQuestions[roundId] || [];
+      questionsInRound.forEach((question: any) => {
+        if (question.answer === question.userInput) {
+          totalRoundMark += question.markPerQuestion || 0;
+        }
+        resultMap.set(question.questionBankDetailsId, {
           userInput: question.userInput,
           isSkipped: question.isSkipped || false,
           isAttempted: question.isAttempted || false,
-        };
+          [markKey]: totalRoundMark
+        });
       });
-      allResults.push(...roundResults);
+
     }
 
-    const questionAllResult = this.questionListAll.map((item, index) => {
-      const question = allResults[index] || {}; // Match allResults by index
+    const questionAllResult = this.questionListAll.map((item: any) => {
+      const question =
+        resultMap.get(item.questionBankDetailsId) || {};
 
       return {
-        questionBankId: item.questionBankId,
-        levelId: item.levelId,
-        roundId: item.roundId,
-        roundName: item.roundName,
-        levelName: item.levelName,
-        questionType: item.questionType,
-        examTypeId: item.examTypeId,
-        examTypeName: item.examTypeName,
-        questionBankDetailsId: item.questionBankDetailsId,
-        noOfColumn: item.noOfColumn,
-        noOfRow: item.noOfRow,
-        questions: item.questions,
-        answer: item.answer,
-        examRoundTime: item.examRoundTime,
-        isActive: item.isActive,
-        timeTaken: item.timeTaken,
+        ...item,
         userAnswer: question.userInput,
         isCorrect: String(question.userInput) === String(item.answer),
-        isWrongAnswer: String(question.userInput) !== String(item.answer),
-        isSkipped: question.isSkipped,
-        isAttempted: question.isAttempted,
-        question, // Adding question object from allResults
+        isWrongAnswer:
+          question.isAttempted &&
+          String(question.userInput) !== String(item.answer),
+        isSkipped: question.isSkipped || false,
+        isAttempted: question.isAttempted || false,
+        round1Mark: question.round1Mark || 0,
+        round2Mark: question.round2Mark || 0,
+        round3Mark: question.round3Mark || 0
       };
     });
 
+    const payload = this.preparePayload(questionAllResult);
+    this.examPaperService.TempSaveExamPaperList(payload).subscribe({
+      next: (response) => {
+        this.openResultDialog(questionAllResult);
+      },
+      error: (err) => {
+        utils.setMessages(err.message, 'error');
+      }
+    });
+  }
+
+  preparePayload(questionAllResult: any) {
+    const attemptedQuestions = questionAllResult.filter((item: any) => item.isAttempted === true);
+    const skippedQuestions = questionAllResult.filter((item: any) => item.isAttempted === false);
+    const wrongQuestions = questionAllResult.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === true);
+    const correctQuestions = questionAllResult.filter((item: any) => item.isAttempted === true && item.isWrongAnswer === false);
+
+    const userId = sessionStorage.getItem('userId')
+    const payload = questionAllResult
+      .map((item: any) => {
+        const correctAnswer = item.isAttempted === true && item.isWrongAnswer === false;
+        const obj: any = {
+          examPaperId: 0,
+          studentId: userId ? +userId : 0,
+          levelId: item?.levelId,
+          roundId: item?.roundId,
+          questionId: item?.questionBankDetailsId,
+          examTypeId: item?.examTypeId,
+          examPaperDate: new Date(),
+          examPaperTime: new Date().toLocaleTimeString(),
+          answer: item?.userAnswer?.toString() ?? '',
+          answerStatus: correctAnswer ? 'Y' : 'N',
+          answerType: item?.isAttempted ? 'Attempted' : 'Not Attempted',
+          totalQuestions: this.questionList?.length,
+          skipQuestions: skippedQuestions?.length,
+          rightAnswer: correctQuestions?.length,
+          wrongAnswer: wrongQuestions?.length,
+          totalTimeTaken: item.timeTaken,
+          srno: 0,
+          round1Mark: item.round1Mark,
+          round2Mark: item.round2Mark,
+          round3Mark: item.round3Mark,
+        };
+        return obj;
+      });
+    return payload;
+  }
+
+  openResultDialog(questionAllResult: any[]) {
     const examInputData = {
       examPaperId: 0,
       studentId: 0,
@@ -1194,7 +1237,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
       examPaperDate: new Date().toISOString(),
       examPaperTime: this.totalTime,
     };
-
     const roundListMarks = this.levelList?.find(
       (item: any) => item.levelId === this.selectedLevel
     )?.examRoundList;
@@ -1206,7 +1248,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         return acc;
       }, {})
     ];
-
     this.dialogRef = this.dialogService.open(ExamResultComponent, {
       data: {
         isFinal: this.isFinalExam,
