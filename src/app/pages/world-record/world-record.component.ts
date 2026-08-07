@@ -1030,8 +1030,8 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
   startFlashing(): void {
     this.showAnswer = false;
     // const selectedTime = parseFloat(this.selectedSpeedOfQuestion) * 1000;
-    const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.');
-    const selectedTime = Math.max(convertToFloat * 1000, 500);
+    // const convertToFloat = this.questionList[this.activeQuestionIndex]?.examRoundTime?.split(':').join('.'); //before
+    const selectedTime = Math.max(0.6 * 1000, 500); //temporary change
     const adjustedDelay = Math.min(350, selectedTime * 0.8);
     this.currentItem = null;
     this.currentIndex = 0;
