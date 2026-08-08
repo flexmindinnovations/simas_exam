@@ -152,9 +152,11 @@
                   type="text"
                   #answerInput
                   pInputText
-                  class="w-full"
+                  inputmode="numeric"
+                  autocomplete="off"
                   [(ngModel)]="selectedAnswer"
                   (ngModelChange)="handleKeyValue($event)"
+                  (keydown.enter)="validateAndSubmit()"
                 />
               </div>
             } @else if (isLoadingQuestion && !quizCompleted) {

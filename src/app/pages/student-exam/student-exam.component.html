@@ -165,6 +165,8 @@
                   type="text"
                   #answerInput
                   pInputText
+                  inputmode="numeric"
+                  autocomplete="off"
                   [(ngModel)]="selectedAnswer"
                   (ngModelChange)="handleKeyValue($event)"
                   (keydown.enter)="validateAndSubmit()"

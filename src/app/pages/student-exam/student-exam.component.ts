@@ -484,9 +484,6 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (selectedValue) {
       case 'submit':
         this.isSubmitClicked = true;
-        this.showAnswer = true;
-        sound = this.sounds['simple'];
-        this.playSound(sound);
         this.validateAndSubmit();
         break;
       case 'next':
@@ -531,62 +528,100 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     return false;
   }
 
-  submitQuestion() {
+  submitQuestion(): void {
+
+    const question = this.questionList[this.activeQuestionIndex];
+
+    if (!question) {
+      return;
+    }
+
+    const userInput = String(question.userInput ?? '').trim();
+    const correctAnswer = String(question.answer ?? '').trim();
 
     this.flashQuestionsString =
-      this.questionList[this.activeQuestionIndex].questions
-        .split(',')
-        .join(' ');
+      question.questions.split(',').join(' ');
 
     this.formatSequence();
 
-    this.submitedlashQuestionsIndex = this.activeQuestionIndex;
-    this.correctAnswer = this.activeQuestion?.answer;
+    this.submitedlashQuestionsIndex =
+      this.activeQuestionIndex;
 
-    const userInput =
-      this.questionList[this.activeQuestionIndex].userInput;
+    this.correctAnswer = question.answer;
 
     const isWrongAnswer =
-      String(userInput) !== String(this.correctAnswer);
+      userInput !== correctAnswer;
 
-    this.questionList[this.activeQuestionIndex].isCompleted = true;
-    this.questionList[this.activeQuestionIndex].isAttempted = true;
-    this.questionList[this.activeQuestionIndex].isSkipped = false;
-    this.questionList[this.activeQuestionIndex].isWrongAnswer = isWrongAnswer;
+    question.isCompleted = true;
+    question.isAttempted = true;
+    question.isSkipped = false;
+    question.isWrongAnswer = isWrongAnswer;
 
     this.isWrongAnswer = isWrongAnswer;
 
-    if (this.checkAndEndExam()) {
+    // Only show answer AFTER successful validation/submission
+    this.showAnswer = true;
+
+    // Last question of current round
+    if (this.activeQuestionIndex === this.questionList.length - 1) {
+
+      this.canMoveToNextRound = true;
+
+      this.currentItem = null;
+
+      this.resetTimer();
+
+      if (this.checkAndEndExam()) {
+        return;
+      }
+
       return;
     }
 
-    if (this.activeQuestionIndex === this.questionList.length - 1) {
-      this.canMoveToNextRound = true;
-      this.isLoadingQuestion = false;
-      this.resetTimer();
-    } else {
-      this.loadNextQuestion();
-    }
+    this.loadNextQuestion();
   }
-
 
   validateAndSubmit(): void {
-    const answer = this.selectedAnswer?.toString().trim();
+    const answer = String(this.selectedAnswer ?? '').trim();
+
     if (!answer) {
       this.playSound(this.sounds['error']);
-      utils.setMessages('Please enter an answer.', 'error');
+
+      utils.setMessages(
+        'Please enter the correct answer',
+        'error'
+      );
+
       return;
     }
 
-    if (!this.validateNumber(answer)) {
+    if (!/^-?\d+$/.test(answer)) {
       this.playSound(this.sounds['error']);
-      utils.setMessages('Only numeric values are allowed.', 'error');
+
+      utils.setMessages(
+        'Please enter a valid number',
+        'error'
+      );
+
       return;
     }
 
+    const question = this.questionList[this.activeQuestionIndex];
+
+    if (!question) {
+      return;
+    }
+
+    // Store answer first
+    question.userInput = answer;
+    this.selectedAnswer = answer;
+
+    this.isAnswerSubmitted = true;
+    this.isSubmitClicked = true;
+
+    // Submit
     this.submitQuestion();
   }
-
   validateNumber(input: any): boolean {
     if (input == null) {
       return false;
@@ -1091,18 +1126,22 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  handleKeyValue(value: any): void {
+  handleKeyValue(value: string): void {
     this.selectedAnswer = value;
-    this.questionList[this.activeQuestionIndex].userInput = value;
-    this.isAnswerSubmitted =
-      value !== null &&
-      value !== undefined &&
-      value.toString().trim() !== '';
-    // Reset control flags when user edits the answer
-    this.isSubmitClicked = false;
-    this.isNextClicked = false;
-    this.isEndClicked = false;
-    this.isNextRoundClicked = false;
+    const question = this.questionList[this.activeQuestionIndex];
+    if (question) {
+      question.userInput = value;
+    }
+
+    if (value?.trim()) {
+      this.isAnswerSubmitted = true;
+      this.isSubmitClicked = false;
+      this.isNextClicked = false;
+      this.isEndClicked = false;
+      this.isNextRoundClicked = false;
+    } else {
+      this.isAnswerSubmitted = false;
+    }
   }
 
   selectedQuestion(question: QuestionItem) {
