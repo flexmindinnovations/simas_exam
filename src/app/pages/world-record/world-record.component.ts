@@ -531,9 +531,7 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
       case 'submit':
         this.isSubmitClicked = true;
-        this.showAnswer = true;
-        sound = this.sounds['simple'];
-        this.submitQuestion();
+        this.validateAndSubmit();
         break;
       case 'next':
         this.isNextClicked = true;
@@ -558,12 +556,12 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      const mockEvent = { originalEvent: { target: { innerText: 'Submit' } } };
-      this.handleExamControlOptionChange(mockEvent);
-      event.preventDefault(); // Prevent default form submission or unwanted behavior
+  handleKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter') {
+      return;
     }
+    event.preventDefault();
+    this.validateAndSubmit();
   }
 
   checkAndEndExam() {
@@ -575,6 +573,49 @@ export class WorldRecordComponent implements OnInit, AfterViewInit, OnDestroy {
       return true;
     }
     return false;
+  }
+
+
+  validateAndSubmit(): void {
+    const answer = String(this.selectedAnswer ?? '').trim();
+
+    if (!answer) {
+      this.playSound(this.sounds['error']);
+
+      utils.setMessages(
+        'Please enter the correct answer',
+        'error'
+      );
+
+      return;
+    }
+
+    if (!/^-?\d+$/.test(answer)) {
+      this.playSound(this.sounds['error']);
+
+      utils.setMessages(
+        'Please enter a valid number',
+        'error'
+      );
+
+      return;
+    }
+
+    const question = this.questionList[this.activeQuestionIndex];
+
+    if (!question) {
+      return;
+    }
+
+    // Store answer first
+    question.userInput = answer;
+    this.selectedAnswer = answer;
+
+    this.isAnswerSubmitted = true;
+    this.isSubmitClicked = true;
+
+    // Submit
+    this.submitQuestion();
   }
 
   submitQuestion() {
