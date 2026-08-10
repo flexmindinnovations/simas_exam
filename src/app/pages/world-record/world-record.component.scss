@@ -80,7 +80,7 @@
 
   .flash-item {
     @apply text-8xl md:text-11xl lg:text-[15rem] xl:text-[15rem] font-bold;
-    animation: scaleUp 0.5s ease-in-out forwards;
+    // animation: scaleUp 0.5s ease-in-out forwards; // removed for speed 0.6
     // opacity: 0;
   }
 }
