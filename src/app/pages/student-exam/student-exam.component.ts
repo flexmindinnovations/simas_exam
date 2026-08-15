@@ -353,7 +353,7 @@ export class StudentExamComponent implements OnInit, AfterViewInit, OnDestroy {
         if (response) {
           const { examList, levelList } = response;
           this.levelList = levelList?.filter((e: any) => e.levelName?.trim() !== "World Record");
-          const newExamList = examList?.filter((e: any) => e.examTypeName !== "World Record");
+          const newExamList = examList?.filter((e: any) => e.examTypeName !== "World Record" && e.examTypeName !== "Practise Compitition"); // temporary hide the practice Compitition
           this.examTypeList = this.examStatus ? newExamList.filter(
             (e: any) => e.examTypeName !== 'Final Compitition'
           ) : newExamList;
