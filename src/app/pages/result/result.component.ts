@@ -145,6 +145,14 @@ export class ResultComponent {
       next: (response) => {
         if (response) {
           this.competitionList = response;
+          const competitionId = Number(this.selectedCompetition);
+          const isSelected = this.competitionList.some(
+            comp => comp.compititionId === competitionId
+          );
+
+          isSelected
+            ? this.formSearch.get('competitionId')?.disable()
+            : this.formSearch.get('competitionId')?.enable();
           this.tableDataSource = utils.filterDataByColumns(this.colDefs, this.competitionList);
         }
         this.isCompetitionListLoading = false;
