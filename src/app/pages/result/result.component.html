@@ -71,7 +71,7 @@
       [ngClass]="{
         'flex flex-col items-center gap-6': championOfChampion.length === 1,
         'grid gap-6 md:grid-cols-2 lg:grid-cols-3':
-          championOfChampion.length > 1
+          championOfChampion.length > 1,
       }"
     >
       <ng-container *ngFor="let student of championOfChampion">
@@ -79,7 +79,7 @@
           class="bg-white rounded-2xl shadow-lg p-4 mx-auto"
           [ngClass]="{
             'w-full md:w-full': championOfChampion.length > 1,
-            'w-96': championOfChampion.length === 1
+            'w-96': championOfChampion.length === 1,
           }"
         >
           <!-- Franchise Badge -->
@@ -152,7 +152,7 @@
       [ngClass]="{
         'flex flex-col items-center gap-6': competitionChampions.length === 1,
         'grid gap-6 md:grid-cols-2 lg:grid-cols-3':
-          competitionChampions.length > 1
+          competitionChampions.length > 1,
       }"
     >
       <ng-container *ngFor="let student of competitionChampions">
@@ -160,7 +160,7 @@
           class="bg-white rounded-2xl shadow-lg p-4 mx-auto"
           [ngClass]="{
             'w-full md:w-full': competitionChampions.length > 1,
-            'w-96': championOfChampion.length === 1
+            'w-96': championOfChampion.length === 1,
           }"
         >
           <!-- Franchise Badge -->
@@ -231,7 +231,8 @@
     <div
       [ngClass]="{
         'flex flex-col items-center gap-6': firstPrizeWinners.length === 1,
-        'grid gap-6 md:grid-cols-2 lg:grid-cols-3': firstPrizeWinners.length > 1
+        'grid gap-6 md:grid-cols-2 lg:grid-cols-3':
+          firstPrizeWinners.length > 1,
       }"
     >
       <ng-container *ngFor="let student of firstPrizeWinners">
@@ -239,7 +240,7 @@
           class="bg-white rounded-2xl shadow-lg p-4 mx-auto"
           [ngClass]="{
             'w-full md:w-full': firstPrizeWinners.length > 1,
-            'w-96': firstPrizeWinners.length === 1
+            'w-96': firstPrizeWinners.length === 1,
           }"
         >
           <!-- Franchise Badge -->
@@ -299,7 +300,7 @@
     *ngFor="
       let prize of [
         { title: 'Second Prize Winners', list: secondPrizeWinners },
-        { title: 'Third Prize Winners', list: thirdPrizeWinners }
+        { title: 'Third Prize Winners', list: thirdPrizeWinners },
       ]
     "
   >
